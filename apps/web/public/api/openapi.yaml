@@ -1,0 +1,315 @@
+openapi: 3.0.3
+info:
+  title: CarboScan Public API
+  version: "1.0.0"
+  description: |
+    API REST publique CarboScan pour intégrer vos systèmes ERP / SI à la plateforme
+    de comptabilité carbone. Toutes les requêtes sont authentifiées via une **clé API**
+    scopée à une organisation.
+
+    - Base URL : `https://jhucjukyvlilhgjbtlkt.supabase.co/functions/v1`
+    - Header d'authentification : `x-api-key: sk_live_...` ou `sk_test_...`
+    - Format : JSON (UTF-8)
+
+    Contact : api@carboscan.io
+servers:
+  - url: https://jhucjukyvlilhgjbtlkt.supabase.co/functions/v1
+    description: Production
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: Activity Data
+    description: Données d'activité (Collecte) — la source de vérité des émissions
+  - name: Emission Factors
+    description: Référentiel de facteurs d'émission (ADEME, DEFRA, custom)
+  - name: Calculate
+    description: Calcul d'émissions à la volée (clé live requise)
+
+paths:
+  /collect-api:
+    get:
+      tags: [Activity Data]
+      summary: Lister les données d'activité
+      description: Retourne les données d'activité de l'organisation liée à la clé API.
+      parameters:
+        - in: query
+          name: category
+          schema: { type: string }
+          description: Filtre par catégorie (ex. `scope1`, `scope2`, `cat6_business_travel`).
+        - in: query
+          name: limit
+          schema: { type: integer, default: 50, maximum: 200 }
+        - in: query
+          name: offset
+          schema: { type: integer, default: 0 }
+      responses:
+        '200':
+          description: Liste paginée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/ActivityData' }
+                  pagination:
+                    type: object
+                    properties:
+                      total: { type: integer }
+                      limit: { type: integer }
+                      offset: { type: integer }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [Activity Data]
+      summary: Créer une donnée d'activité
+      description: Nécessite le scope `write:activity`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActivityDataInput' }
+      responses:
+        '201':
+          description: Créé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/ActivityData' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /collect-api/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [Activity Data]
+      summary: Récupérer une donnée d'activité
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/ActivityData' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Activity Data]
+      summary: Mettre à jour une donnée d'activité
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ActivityDataInput' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/ActivityData' }
+    delete:
+      tags: [Activity Data]
+      summary: Supprimer une donnée d'activité
+      responses:
+        '204': { description: Supprimé }
+
+  /emission-factors:
+    get:
+      tags: [Emission Factors]
+      summary: Lister les facteurs d'émission
+      description: |
+        Retourne le référentiel actif des facteurs d'émission. Accepte les clés `sk_test_` et `sk_live_`.
+        Scope requis : `read:activity`.
+      parameters:
+        - in: query
+          name: category
+          schema: { type: string }
+        - in: query
+          name: subcategory
+          schema: { type: string }
+        - in: query
+          name: source
+          schema: { type: string, example: ADEME }
+        - in: query
+          name: year
+          schema: { type: integer, example: 2024 }
+        - in: query
+          name: q
+          schema: { type: string }
+          description: Recherche full-text sur `factor_name` / `nom_affiche`.
+        - in: query
+          name: limit
+          schema: { type: integer, default: 50, maximum: 200 }
+        - in: query
+          name: cursor
+          schema: { type: string, format: uuid }
+          description: ID du dernier facteur reçu pour la page suivante.
+      responses:
+        '200':
+          description: Liste paginée par cursor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/EmissionFactor' }
+                  pagination:
+                    type: object
+                    properties:
+                      limit: { type: integer }
+                      next_cursor: { type: string, nullable: true }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /calculate:
+    post:
+      tags: [Calculate]
+      summary: Calculer les émissions kgCO2e d'une activité
+      description: |
+        Calcule `quantity × emission_factor` avec le facteur fourni (`factor_id`) ou résolu par `category`/`subcategory`.
+        **Requiert une clé `sk_live_`** et scope `write:activity`.
+        Support de l'idempotence via le header `Idempotency-Key`.
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: false
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CalculateInput' }
+      responses:
+        '200':
+          description: Résultat du calcul
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CalculateResult' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '402': { description: Clé test refusée, upgrade en live requis }
+        '404': { description: Facteur d'émission introuvable }
+        '409': { description: Requête dupliquée (Idempotency-Key déjà utilisé) }
+
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: |
+        Clé API générée dans **Paramètres → Clés API**. Format :
+        `sk_live_<64 hex>` ou `sk_test_<64 hex>`. Ne jamais exposer côté navigateur.
+  schemas:
+    ActivityData:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        organization_id: { type: string, format: uuid }
+        category: { type: string, example: scope1 }
+        activity_type: { type: string, example: fuel }
+        description: { type: string }
+        quantity: { type: number }
+        unit: { type: string, example: L }
+        emission_factor: { type: number, description: "kgCO2e / unit" }
+        total_emissions_kgco2e: { type: number }
+        period_start: { type: string, format: date }
+        period_end: { type: string, format: date }
+        created_at: { type: string, format: date-time }
+    ActivityDataInput:
+      type: object
+      required: [category, activity_type, quantity, unit]
+      properties:
+        category: { type: string }
+        activity_type: { type: string }
+        description: { type: string }
+        quantity: { type: number }
+        unit: { type: string }
+        emission_factor: { type: number }
+        period_start: { type: string, format: date }
+        period_end: { type: string, format: date }
+        site_id: { type: string, format: uuid }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+    EmissionFactor:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        factor_name: { type: string }
+        nom_affiche: { type: string, nullable: true }
+        category: { type: string }
+        subcategory: { type: string, nullable: true }
+        source: { type: string, nullable: true, example: ADEME }
+        year: { type: integer, nullable: true, example: 2024 }
+        emission_factor: { type: number, description: "kgCO2e / unit" }
+        unit: { type: string, example: kWh }
+        slug: { type: string, nullable: true }
+    CalculateInput:
+      type: object
+      required: [quantity, unit]
+      properties:
+        activity_type: { type: string, example: electricity }
+        quantity: { type: number, example: 1000 }
+        unit: { type: string, example: kWh }
+        factor_id: { type: string, format: uuid, nullable: true }
+        category: { type: string, nullable: true, description: "Utilisé si factor_id absent" }
+        subcategory: { type: string, nullable: true }
+    CalculateResult:
+      type: object
+      properties:
+        emissions_kgco2e: { type: number }
+        emissions_tco2e: { type: number }
+        factor_used:
+          type: object
+          properties:
+            id: { type: string, format: uuid }
+            name: { type: string }
+            value: { type: number }
+            unit: { type: string }
+            source: { type: string, nullable: true }
+            year: { type: integer, nullable: true }
+        breakdown:
+          type: object
+          properties:
+            activity_type: { type: string, nullable: true }
+            quantity: { type: number }
+            unit: { type: string }
+            formula: { type: string, example: "1000 × 0.0571 = 57.1 kgCO2e" }
+
+  responses:
+    BadRequest:
+      description: Requête invalide
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Clé API manquante, invalide ou révoquée
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Forbidden:
+      description: Scope insuffisant
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: Ressource introuvable
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

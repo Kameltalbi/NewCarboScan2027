@@ -1,0 +1,9 @@
+export { ProfessionalDashboard } from './ProfessionalDashboard';
+export { DashboardHeader } from './DashboardHeader';
+export { KPICards } from './KPICards';
+export { ScopeChart } from './ScopeChart';
+export { EmissionsByPostChart } from './EmissionsByPostChart';
+export { EvolutionChart } from './EvolutionChart';
+export { CarbonScoreCard } from './CarbonScoreCard';
+export { PriorityActions } from './PriorityActions';
+export { DashboardFooter } from './DashboardFooter';

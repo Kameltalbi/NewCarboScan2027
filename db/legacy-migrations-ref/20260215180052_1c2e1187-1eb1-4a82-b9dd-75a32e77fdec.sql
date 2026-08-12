@@ -1,0 +1,1 @@
+UPDATE organizations SET reference_year = 2025 WHERE id = '69ec7061-faab-44f3-9a98-18be354637ba';

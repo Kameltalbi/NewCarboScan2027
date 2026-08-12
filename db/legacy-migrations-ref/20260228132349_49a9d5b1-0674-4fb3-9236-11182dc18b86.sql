@@ -1,0 +1,1 @@
+DELETE FROM bilans_carbone WHERE id = '8506b52d-7886-4272-8c8f-c653768603bf';

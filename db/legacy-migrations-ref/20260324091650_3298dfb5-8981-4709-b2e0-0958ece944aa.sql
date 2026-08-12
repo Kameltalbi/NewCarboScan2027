@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX idx_invoice_carbon_unique_invoice ON public.invoice_carbon_results(invoice_id);

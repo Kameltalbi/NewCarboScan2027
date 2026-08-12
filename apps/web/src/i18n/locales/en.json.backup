@@ -1,0 +1,2307 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "export": "Export",
+    "import": "Import",
+    "download": "Download",
+    "upload": "Upload",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "navigation": {
+    "solutions": "Solutions",
+    "formations": "Carbon Assessment® Training: Awareness, Certification and Workshops",
+    "about": "About",
+    "resources": "Resources",
+    "contact": "Contact",
+    "pricing": "Pricing",
+    "cbam": "CBAM – Carbon Border Tax",
+    "faq": "FAQ",
+    "blog": "Blog",
+    "blogDescription": "Articles and advice on carbon footprint",
+    "regulatoryWatch": "Regulatory Watch",
+    "regulatoryWatchDescription": "Environmental regulatory news",
+    "cbamCalculator": "CBAM Calculator",
+    "register": "Register",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "help": "Help",
+    "language": "Language",
+    "menu": "Menu",
+    "carbonAssessment": {
+      "title": "Carbon Accounting",
+      "description": "Perform your carbon assessments with ease."
+    },
+    "cbamModule": {
+      "title": "CBAM (MACF) Export Module",
+      "description": "Prepare your exports to Europe 2026."
+    },
+    "economicSimulator": {
+      "title": "Economic Simulator",
+      "description": "Assess the economic impact of your emissions.",
+      "subtitle": "Barrel Equivalent Method",
+      "fullTitle": "Economic Simulator – Barrel Equivalent Method",
+      "description_detailed": "Converts your Scope 1 + 2 (CO₂) emissions into barrel equivalents using a factor (default 0.43 tCO₂/barrel), valued by barrel price. Add scenarios (barrel price multiplier and carbon tax) to estimate additional costs.",
+      "export": "Export",
+      "execute": "Execute",
+      "tabs": {
+        "inputs": "Data",
+        "scenarios": "Scenarios",
+        "results": "Results"
+      },
+      "sections": {
+        "generalParams": "General Parameters",
+        "emissions": "Emissions (tCO₂) – Scopes 1 & 2",
+        "barrelMethod": "Barrel Equivalent Method",
+        "carbonPrice": "Internal Carbon Price (base option)",
+        "scenarios": "Scenarios",
+        "comparison": "Scenario Comparison",
+        "baseDistribution": "Base Distribution",
+        "detailTable": "Detail Table"
+      },
+      "fields": {
+        "organization": "Organization",
+        "year": "Year",
+        "currency": "Currency (ISO)",
+        "scope1": "Scope 1 (tCO₂)",
+        "scope2": "Scope 2 (tCO₂)",
+        "total": "Total (tCO₂)",
+        "factor": "Factor (tCO₂ / barrel)",
+        "barrelPrice": "Barrel Price ({{currency}}/barrel)",
+        "barrelEquivalents": "Barrel Equivalents",
+        "baseCostEnergy": "Base Cost (energy)",
+        "baseCostCarbon": "Base Cost (carbon)",
+        "enableInternalPrice": "Enable internal price (base)",
+        "internalPrice": "Internal Price ({{currency}}/tCO₂)",
+        "scenarioName": "Name",
+        "barrelMultiplier": "Barrel Multiplier",
+        "carbonTax": "Carbon Tax",
+        "taxPrice": "Tax Price ({{currency}}/tCO₂)"
+      },
+      "buttons": {
+        "addScenario": "Add Scenario"
+      },
+      "placeholders": {
+        "newScenario": "New Scenario"
+      },
+      "hints": {
+        "currency": "Barrel price and taxes are expressed in this currency.",
+        "multiplier": "1.2 = +20%"
+      },
+      "chart": {
+        "energyCost": "Energy Cost",
+        "carbonCost": "Carbon Cost",
+        "total": "Total",
+        "deltaVsBase": "∆ vs base"
+      },
+      "table": {
+        "scenario": "Scenario",
+        "energy": "Energy",
+        "carbon": "Carbon",
+        "total": "Total",
+        "delta": "∆ vs base"
+      },
+      "pie": {
+        "baseEnergy": "Base Energy",
+        "baseCarbon": "Base Carbon",
+        "baseCarbonZero": "Base Carbon (0)"
+      },
+      "notes": {
+        "title": "Notes:",
+        "factor": "• The 'barrel equivalent' method uses a default factor of 0.43 tCO₂/barrel (modifiable).",
+        "scope3": "• Scope 3 is excluded from this simulation.",
+        "currency": "• Amounts displayed are expressed in the selected currency."
+      }
+    },
+    "lcaAnalysis": {
+      "title": "LCA (Life Cycle Analysis)",
+      "description": "Measure complete environmental impacts."
+    },
+    "blogArticles": {
+      "title": "Blog & Articles",
+      "description": "Our publications to understand carbon transition."
+    },
+    "trainingWebinars": {
+      "title": "Training & Webinars",
+      "description": "Join our workshops and programs."
+    },
+    "ourMission": {
+      "title": "Our mission",
+      "description": "Discover CarboScan's vision."
+    },
+    "ourTeam": {
+      "title": "The team",
+      "description": "Meet our founders and experts."
+    },
+    "cta": {
+      "tryFree": "Try for free",
+      "requestDemo": "Request a demo",
+      "login": "Login"
+    }
+  },
+  "hero": {
+    "title": "Measure. Monitor. Reduce.",
+    "subtitle": "Your Simplified Carbon Footprint",
+    "description": "The Tunisian platform that democratizes Carbon Footprint® for Tunisian and African SMEs",
+    "registerButton": "Register",
+    "discoverButton": "Discover our solutions"
+  },
+  "newHomepage": {
+    "hero": {
+      "badge": "Powered by AI",
+      "title": {
+        "line1": "Calculate your",
+        "line2": "Carbon Footprint",
+        "line3": "with Artificial Intelligence"
+      },
+      "subtitle": "Measure your company's carbon footprint in minutes with our advanced AI. Get personalized recommendations to reduce your environmental impact and optimize your CSR strategy.",
+      "stats": {
+        "companies": "Companies",
+        "co2Saved": "Tons CO₂e saved",
+        "satisfaction": "% satisfaction"
+      },
+      "buttons": {
+        "calculate": "Calculate our footprint",
+        "demo": "Watch demo"
+      },
+      "dataCards": {
+        "travel": "Travel",
+        "transport": "Transport",
+        "electricity": "Electricity"
+      },
+      "floatingCards": {
+        "treesPlanted": "+3 trees planted",
+        "wasteReduction": "-15% waste",
+        "greenEnergy": "100% green energy"
+      },
+      "scrollIndicator": "Discover"
+    },
+    "references": {
+      "title": "They trust us",
+      "testimonials": [
+        {
+          "text": "CarboScan helped me reduce my carbon footprint by 30% in 6 months. The AI recommendations are really relevant!",
+          "author": "Sofiane Ghali",
+          "role": "CEO La Baguette"
+        },
+        {
+          "text": "The perfect tool to raise awareness among our employees about environmental impact. Intuitive interface and accurate results.",
+          "author": "Soufiene Majoul",
+          "role": "Manager Selvador Food"
+        },
+        {
+          "text": "As a startup, we needed to measure our impact. CarboScan gave us the tools to become a responsible company.",
+          "author": "Iheb Beji",
+          "role": "CEO Startup Village"
+        },
+        {
+          "text": "Thanks to CarboScan, we were able to identify our main emission sources and implement concrete reduction actions.",
+          "author": "Mourad Gueddiche",
+          "role": "CEO Express FM"
+        },
+        {
+          "text": "An essential tool for any company concerned about its environmental impact. Reports are clear and recommendations very useful.",
+          "author": "Amel Souissi",
+          "role": "CEO Archibat"
+        }
+      ]
+    },
+    "process": {
+      "title": "How it works?",
+      "subtitle": "Our artificial intelligence analyzes your lifestyle in 3 simple steps",
+      "steps": {
+        "step1": {
+          "title": "Smart questionnaire",
+          "description": "Answer a few questions about your lifestyle: transport, housing, food, consumption. Our AI adapts questions based on your answers.",
+          "features": {
+            "adaptive": "Adaptive AI",
+            "time": "3 minutes"
+          }
+        },
+        "step2": {
+          "title": "AI Analysis",
+          "description": "Our artificial intelligence analyzes your data in real time, compares with thousands of similar profiles and calculates your precise carbon footprint.",
+          "features": {
+            "ml": "Machine Learning",
+            "realTime": "Real time"
+          }
+        },
+        "step3": {
+          "title": "Personalized report",
+          "description": "Receive a detailed report with your carbon footprint, personalized recommendations and an action plan to reduce your environmental impact.",
+          "features": {
+            "ai": "AI Recommendations",
+            "action": "Action plan"
+          }
+        }
+      }
+    },
+    "tester": {
+      "title": "Test for free",
+      "subtitle": "Discover your carbon footprint in less than 3 minutes with our free tester. No registration required, immediate results.",
+      "features": {
+        "free": "100% free",
+        "time": "3 minutes",
+        "secure": "Secure data",
+        "pdf": "PDF report"
+      },
+      "chartTitle": "Average GHG emissions distribution by scope",
+      "chartSubtitle": "Sample carbon footprint",
+      "preview": {
+        "title": "Carbon Footprint Test",
+        "step": "Step 2/5",
+        "question": "How do you mainly get around?",
+        "options": {
+          "car": "Car",
+          "bike": "Bike",
+          "public": "Public transport"
+        }
+      },
+      "cta": {
+        "button": "Calculate your emissions in 3 minutes",
+        "note": "No registration required • Immediate results"
+      }
+    },
+    "pricing": {
+      "title": "Choose your plan",
+      "subtitle": "Solutions adapted to your needs, from individual to enterprise",
+      "toggle": {
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "discount": "-20%"
+      },
+      "plans": {
+        "essential": {
+          "name": "Essential",
+          "description": "Perfect to get started",
+          "price": "1300",
+          "currency": "TND HT",
+          "period": "/year",
+          "features": {
+            "calculation": "Carbon footprint calculation",
+            "report": "Monthly report",
+            "recommendations": "5 recommendations",
+            "support": "Email support",
+            "auditScopes12": "Carbon audit scopes 1 and 2",
+            "reportFREN": "Report (FR or EN)",
+            "aiGenerated": "AI-generated according to ADEME methodology",
+            "economicSimulation": "Economic simulation (emission costs)",
+            "recommendations": "Recommendations",
+            "twoRevisions": "2 revisions per year",
+            "validatedReport": "Report validated by a consultant"
+          },
+          "cta": "Get started"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "For advanced users",
+          "popular": "Popular",
+          "price": "2400",
+          "currency": "TND HT",
+          "period": "/year",
+          "features": {
+            "everything": "Everything Essential",
+            "realTime": "Real-time monitoring",
+            "unlimited": "Unlimited AI recommendations",
+            "comparison": "Peer comparison",
+            "detailed": "Detailed reports",
+            "priority": "Priority support",
+            "emissionsTracking": "Track your GHG emissions and identify your main reduction areas",
+            "auditScopes123": "Carbon audit scopes 1, 2 and 3",
+            "bilingualReport": "Bilingual report FR and EN",
+            "aiGeneratedADEME": "AI-generated according to ADEME methodology",
+            "economicSimulationScenarios": "Economic simulation with scenarios",
+            "detailedRecommendations": "Detailed recommendations",
+            "reductionPlan": "Reduction plan",
+            "twoRevisions": "2 revisions per year",
+            "validatedReport": "Report validated by a consultant"
+          },
+          "cta": "Get started"
+        },
+        "expert": {
+          "name": "Expert",
+          "description": "For enterprises",
+          "price": "On quote",
+          "currency": "",
+          "period": "",
+          "features": {
+            "everything": "Everything Pro",
+            "team": "Team management",
+            "api": "API integration",
+            "custom": "Custom reports",
+            "training": "Team training",
+            "dedicated": "Dedicated support",
+            "comprehensiveAudit": "Comprehensive carbon audit scopes 1, 2 and 3",
+            "customReport": "Custom report according to your needs",
+            "strategicConsulting": "Personalized strategic consulting",
+            "implementationSupport": "Implementation support",
+            "trainingSessions": "Training sessions included",
+            "prioritySupport": "Dedicated priority support"
+          },
+          "cta": "Contact us"
+        }
+      }
+    },
+    "professionalPlans": {
+      "common": {
+        "from": "From"
+      },
+      "essential": {
+        "name": "Essential",
+        "description": "SMEs and organizations — Basic compliance",
+        "price": "TND 1300 / year",
+        "features": {
+          "scopes": "Scopes 1 & 2 (direct emissions + purchased energy)",
+          "automated": "Automated calculation on platform",
+          "report": "Annual PDF report in French or English",
+          "verification": "Certified expert verification",
+          "revisions": "2 revisions included",
+          "support": "Basic email support (72h response)"
+        }
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "SMEs and exporting companies — CBAM compliance and optimization",
+        "price": "From TND 2400 / year",
+        "features": {
+          "allScopes": "Scopes 1, 2 & 3 (includes purchases, transport, waste)",
+          "cbam": "Integrated CBAM module (Europe export 2026)",
+          "simulation": "Detailed economic simulation (€/tCO₂e + scenarios)",
+          "actionPlan": "Prioritized and costed action plan",
+          "expert": "Dedicated expert + monthly hotline",
+          "report": "Professional PDF report in French and English"
+        }
+      },
+      "expert": {
+        "name": "Expert",
+        "description": "Large companies & groups — Net Zero strategy",
+        "price": "On quote",
+        "features": {
+          "reporting": "Consolidated multi-subsidiary / multi-site reporting",
+          "cbamComplete": "CBAM module + complete regulatory monitoring",
+          "economicAnalysis": "Personalized economic analysis with scenarios",
+          "seniorConsultant": "Dedicated senior consultant + regular meetings",
+          "netZero": "10-year Net Zero trajectory with monitored KPIs",
+          "professionalReport": "Professional PDF report in French and English",
+          "premiumSupport": "Premium support (email <24h + video)"
+        }
+      }
+    },
+    "references": {
+      "title": "They trust us",
+      "subtitle": "More than 50,000 users and 200 companies trust us",
+      "testimonials": {
+        "testimonial1": {
+          "text": "CarboScan helped me reduce my carbon footprint by 30% in 6 months. The AI recommendations are really relevant!",
+          "author": "Marie Dubois",
+          "role": "Environmental consultant"
+        },
+        "testimonial2": {
+          "text": "The perfect tool to raise employee awareness about environmental impact. Intuitive interface and accurate results.",
+          "author": "Pierre Martin",
+          "role": "CSR Director, TechCorp"
+        },
+        "testimonial3": {
+          "text": "As a startup, we needed to measure our impact. CarboScan gave us the tools to become a responsible company.",
+          "author": "Sophie Chen",
+          "role": "CEO, GreenStart"
+        }
+      },
+      "companies": {
+        "title": "They trust us",
+        "names": {
+          "techcorp": "TechCorp",
+          "greenstart": "GreenStart",
+          "ecoworld": "EcoWorld",
+          "cleantech": "CleanTech",
+          "solarcorp": "SolarCorp"
+        }
+      },
+      "finalCta": {
+        "title": "Ready to join the green revolution?",
+        "subtitle": "Start your ecological transition today",
+        "button": "Get started now"
+      }
+    },
+    "footer": {
+      "tagline": "Artificial intelligence serving the environment. Calculate, analyze and reduce your carbon footprint with precision.",
+      "sections": {
+        "product": {
+          "title": "Product",
+          "links": {
+            "howItWorks": "How it works",
+            "freeTester": "Free tester",
+            "pricing": "Pricing",
+            "api": "API",
+            "integrations": "Integrations"
+          }
+        },
+        "company": {
+          "title": "Company",
+          "links": {
+            "about": "About",
+            "careers": "Careers",
+            "press": "Press",
+            "partners": "Partners",
+            "blog": "Blog"
+          }
+        },
+        "support": {
+          "title": "Support",
+          "links": {
+            "helpCenter": "Help center",
+            "contact": "Contact",
+            "status": "Status",
+            "community": "Community",
+            "training": "Training"
+          }
+        },
+        "legal": {
+          "title": "Legal",
+          "links": {
+            "legalMentions": "Legal mentions",
+            "privacy": "Privacy policy",
+            "terms": "Terms of service",
+            "cookies": "Cookies",
+            "gdpr": "GDPR"
+          }
+        }
+      },
+      "bottom": {
+        "copyright": "© 2024 CarboScan. All rights reserved.",
+        "links": {
+          "legal": "Legal mentions",
+          "privacy": "Privacy",
+          "terms": "Terms"
+        }
+      }
+    }
+  },
+  "solutions": {
+    "carboStart": {
+      "title": "Carbo Essentiel",
+      "description": "Quick carbon estimation for SMEs & mid-size companies"
+    },
+    "carboPro": {
+      "title": "CarboPro",
+      "description": "Complete diagnosis & expert support"
+    },
+    "carboOmnibus": {
+      "title": "Carbo Complet",
+      "description": "Multi-site & multi-company package"
+    }
+  },
+  "formations": {
+    "carbonAwareness": {
+      "title": "Carbon awareness",
+      "description": "Raise your teams' awareness of climate issues"
+    },
+    "carbonFootprint": {
+      "title": "Carbon Footprint® Training",
+      "description": "Certified training in carbon methodologies"
+    },
+    "internalWorkshops": {
+      "title": "Internal workshops",
+      "description": "Custom workshops in your company"
+    }
+  },
+  "carboStart": {
+    "title": "CarboStart — Your first simplified carbon footprint",
+    "description": "An accessible solution for small businesses that want to start their environmental approach with a complete carbon footprint and personalized recommendations.",
+    "accessButton": "Access CarboScan",
+    "startAssessmentButton": "Take my Carbon Footprint",
+    "requestInfoButton": "Request information",
+    "whyChoose": "Why choose CarboStart?",
+    "whyDescription": "CarboStart is specially designed for small businesses that want to take the step of measuring their carbon footprint without complicating their lives. Our adaptive questionnaire covers scopes 1 and 2 (direct and energy emissions) with a personalized approach according to your business sector.",
+    "features": "What CarboStart offers you",
+    "featuresList": {
+      "adaptiveQuestionnaire": "Adaptive questionnaire — Personalized questions according to your business sector",
+      "scopes12": "Optimized scopes 1 and 2 — Focus on your direct and energy emissions",
+      "detailedReport": "Detailed carbon footprint — Analysis by emission source with charts",
+      "personalizedRecommendations": "Personalized recommendations — Concrete action plan according to your activity",
+      "professionalReport": "Professional PDF report — Document ready to communicate internally or externally",
+      "emailSupport": "Email support — Technical assistance for 6 months",
+      "basicTraining": "Basic training included — Introduction webinar to carbon footprint",
+      "affordablePrice": "Affordable price — 2500 DT/year, i.e. 208 DT/month"
+    },
+    "howItWorks": "How does it work?",
+    "steps": {
+      "questionnaire": {
+        "title": "Questionnaire",
+        "description": "Fill out our adaptive questionnaire in 15-25 minutes"
+      },
+      "analysis": {
+        "title": "Analysis",
+        "description": "Our system automatically calculates your carbon footprint"
+      },
+      "results": {
+        "title": "Results",
+        "description": "Get your personalized report immediately"
+      }
+    },
+    "testimonials": "They trust us",
+    "testimonial1": {
+      "text": "CarboStart allowed us to do our first carbon footprint quickly and at an affordable price. The recommendations are very concrete!",
+      "author": "— Kerm Makni, Société la Baguette"
+    },
+    "testimonial2": {
+      "text": "The questionnaire is complete without being intimidating. The report serves us for our tenders.",
+      "author": "— B Dhaouadi, Startup Village"
+    },
+    "finalCTA": "Start your environmental approach today with CarboStart!",
+    "startWithCarboScan": "Start with CarboScan",
+    "askQuestion": "Ask a question"
+  },
+  "features": {
+    "title": "A simplified",
+    "titleHighlight": "approach",
+    "subtitle": "Discover how our solution supports you at every step",
+    "feature1": {
+      "title": "Your Carbon Footprint® made simple",
+      "description": "You provide your data, the application automatically structures it following the Carbon Footprint® methodology and GHG Protocol."
+    },
+    "feature2": {
+      "title": "Get an automated report as soon as you enter your data",
+      "description": "The report is clear, structured and can be shared directly with your teams or partners."
+    },
+    "feature3": {
+      "title": "Report reviewed by an expert within 48 business hours",
+      "description": "An expert verifies and validates the results. You receive an enhanced version with action recommendations."
+    }
+  },
+  "benefits": {
+    "title": "Why CarboScan?",
+    "subtitle": "A comprehensive approach to transform your carbon impact into a competitive advantage",
+    "benefit1": {
+      "title": "CSR Management",
+      "description": "Intuitive dashboard to track your emissions in real time and manage your CSR approach"
+    },
+    "benefit2": {
+      "title": "Regulatory compliance",
+      "description": "Automatic compliance with CSRD requirements, energy-climate law and extra-financial reporting"
+    },
+    "benefit3": {
+      "title": "Climate strategy",
+      "description": "Personalized action plan with Net Zero trajectory and SBTi goal tracking"
+    },
+    "benefit4": {
+      "title": "Measurable savings",
+      "description": "Identification of savings potential and calculation of ROI for your decarbonization actions"
+    }
+  },
+  "calculator": {
+    "title": "Test your carbon footprint in 3 minutes",
+    "subtitle": "Get a quick estimate of your emissions with our simplified calculator, available free online.",
+    "button": "Do a quick calculation",
+    "whyTitle": "Why measure your carbon footprint?",
+    "reason1": "Identify your main emission sources",
+    "reason2": "Define realistic reduction targets",
+    "reason3": "Meet your stakeholders' expectations",
+    "chartTitle": "Typical emission distribution",
+    "chartSubtitle": "Average distribution by scope for a company",
+    "emissionsLabel": "Emissions",
+    "scope1": "Scope 1 - Direct emissions",
+    "scope2": "Scope 2 - Electricity/Heat",
+    "scope3": "Scope 3 - Indirect emissions",
+    "scope3Note": "Scope 3 often represents the majority of a company's emissions"
+  },
+  "howItWorks": {
+    "title": "How does it work?",
+    "subtitle": "3 simple steps to start your carbon transition",
+    "step1": {
+      "title": "Fill out the questionnaire",
+      "description": "Guided interface to collect your activity data in maximum 15 minutes"
+    },
+    "step2": {
+      "title": "Get your results",
+      "description": "Detailed report with scope breakdown and personalized recommendations"
+    },
+    "step3": {
+      "title": "Manage your actions",
+      "description": "Dashboard to track your progress and achieve your climate goals"
+    }
+  },
+  "references": {
+    "title": "Our References",
+    "subtitle": "CarboScan supports companies from all sectors with customized carbon footprints, adapted to their challenges.",
+    "sector": "Sector",
+    "client1": {
+      "title": "Baguette & Baguette",
+      "sector": "Fast food",
+      "services": [
+        "Complete Carbon Footprint (Scopes 1, 2 & 3)",
+        "Production, energy & delivery analysis",
+        "Emission source identification",
+        "Reduction action plan"
+      ]
+    },
+    "client2": {
+      "title": "Start Up Village",
+      "sector": "Coworking & Entrepreneurship",
+      "services": [
+        "Multi-company consolidated Carbon Footprint",
+        "Energy, travel & purchasing analysis",
+        "Site diagnosis & recommendations",
+        "Resident awareness"
+      ]
+    },
+    "client3": {
+      "title": "ABC Archibat",
+      "sector": "Services & Communication",
+      "services": [
+        "Complete Carbon Footprint (Scopes 1, 2 & 3)",
+        "Service activities & travel analysis",
+        "CSR strategy support",
+        "Action plan & annual follow-up"
+      ]
+    },
+    "client4": {
+      "title": "Radio Express FM",
+      "sector": "Media & Communication",
+      "services": [
+        "Complete Carbon Footprint (Scopes 1, 2 & 3)",
+        "Studio energy consumption analysis",
+        "Team & guest travel assessment",
+        "Responsible communication strategy"
+      ]
+    },
+    "client5": {
+      "title": "SMIP",
+      "sector": "Petroleum Services",
+      "services": [
+        "Carbon Footprint Scopes 1 and 2",
+        "Environmental performance",
+        "Collaboration with Key Values",
+        "Specialized industrial support"
+      ]
+    }
+  },
+  "pricing": {
+    "title": "Our",
+    "titleHighlight": "Pricing",
+    "subtitle": "A simple and transparent approach for your carbon footprint",
+    "currencyToggle": "Show prices in",
+    "commonFeatures": "Common to both plans:",
+    "feature1": "CarboScan platform access",
+    "feature2": "1 assessment + 2 revisions/year",
+    "feature3": "Report verified in 2 days",
+    "feature4": "Customer support",
+    "forWho": "For whom?",
+    "essentialPlan": "Essential:",
+    "essentialDescription": "SMEs, agencies, simple industrial sites, restaurateurs, workshops, retail outlets...",
+    "completePlan": "Pro:",
+    "completeDescription": "Companies committed to CSR, meeting regulatory requirements or wanting structured ESG reporting.",
+    "proPlan": "Premium:",
+    "proDescription": "Large companies, groups and multi-sites requiring custom support and advanced features.",
+    "talkToExpert": "Talk to an expert",
+    "popular": "Popular",
+    "discover": "Discover",
+    "contactUs": "Contact us",
+    "perYear": "/year",
+    "onQuote": "On quote",
+    "plans": {
+      "essential": {
+        "name": "Essential",
+        "description": "Scopes 1 & 2 (direct emissions + purchased energy)"
+      },
+      "complete": {
+        "name": "Pro",
+        "description": "Scopes 1, 2 & 3 (purchases, transport, waste, etc.)"
+      },
+      "pro": {
+        "name": "Premium",
+        "description": "Large account, multi-site, strategic services"
+      }
+    },
+    "features": {
+      "scope1": {
+        "title": "Direct emissions analysis (Scope 1)",
+        "description": "Fuel consumption, emissions related to direct use of equipment or vehicles"
+      },
+      "scope2": {
+        "title": "Energy-related indirect emissions analysis (Scope 2)",
+        "description": "Purchased electricity, heat, steam or cooling"
+      },
+      "automatedCalculation": {
+        "title": "Automated carbon footprint calculation",
+        "description": "Via the CarboScan platform"
+      },
+      "expertValidation": {
+        "title": "Review and validation by a certified expert",
+        "description": "Human verification by a professional"
+      },
+      "finalReport": {
+        "title": "Delivery of structured final report (PDF)",
+        "description": "Shareable professional document"
+      },
+      "revisions": {
+        "title": "Two free revisions per year",
+        "description": "In case of data updates"
+      },
+      "delivery": {
+        "title": "Report delivered within 2 business days",
+        "description": "After data validation"
+      },
+      "unlimitedUsers": {
+        "title": "Unlimited users",
+        "description": "Inter-site & inter-department collaboration"
+      },
+      "expertSupport": {
+        "title": "Dedicated expert support",
+        "description": "Hotline & monthly meetings"
+      },
+      "scope3": {
+        "title": "Complete Scope 3 analysis",
+        "description": "Purchases, transport, travel, waste...",
+        "descriptionComplete": "Purchases of goods and services, upstream and downstream transport, business travel, generated waste, fixed assets..."
+      },
+      "actionPlan": {
+        "title": "Personalized action plan",
+        "description": "Expert support & follow-up"
+      },
+      "netZero": {
+        "title": "Net Zero trajectory over 10 years",
+        "description": "Detailed plan with steps & milestones"
+      },
+      "completeFootprint": {
+        "title": "Complete Carbon Footprint®",
+        "description": "Integrates scopes 1, 2 and 3, including indirect emissions related to purchases, travel, freight, fixed assets..."
+      },
+      "strategicSupport": {
+        "title": "Personalized strategic support",
+        "description": "Detailed analysis of sector-specific features, initial framing with a senior consultant, development of a realistic and prioritized action plan"
+      },
+      "internalTraining": {
+        "title": "Internal Carbon training included",
+        "description": "2 to 4 training sessions to equip your teams, training materials provided, quizzes and certification possible"
+      },
+      "reports": {
+        "title": "Reports & Exports",
+        "description": "Automated report + Expert-reviewed report, export in PDF and Excel formats, possible integration with your internal tools"
+      },
+      "updates": {
+        "title": "Revisions & periodic updates",
+        "description": "Possibility of quarterly, semi-annual or annual updates, adjustment to regulatory developments"
+      },
+      "consolidatedReporting": {
+        "title": "Consolidated reporting",
+        "description": "Multi-site or multi-subsidiary aggregation, preparation for extra-financial reporting obligations (CSRD, CSR...)"
+      }
+    },
+    "notes": {
+      "title": "Services included in all plans",
+      "completeFootprint": "Complete carbon footprint - Professional assessment of your emissions",
+      "twoRevisions": "Two revisions/year - Data update included",
+      "automatedReport": "Automatically generated report - Structured and professional document",
+      "humanVerification": "Human verification by an expert - Validation by a certified professional",
+      "delivery2Days": "Delivery within 2 business days - Guaranteed speed",
+      "customerSupport": "Customer support - Dedicated assistance for your project"
+    },
+    "plansDetails": {
+      "essential": {
+        "badge": "Essential Plan",
+        "title": "Carbon Footprint – Scopes 1 & 2",
+        "description": "Start your environmental journey with our comprehensive solution for analyzing direct and indirect energy-related emissions.",
+        "price": "1000 DT",
+        "priceUnit": "per year",
+        "deliveryTime": "Report delivered within 2 business days",
+        "ctaPrimary": "Start my assessment",
+        "ctaSecondary": "Request a quote",
+        "featuresTitle": "Everything you need",
+        "featuresSubtitle": "A complete solution to analyze and understand your carbon footprint",
+        "features": {
+          "scope1": {
+            "title": "Direct emissions analysis (Scope 1)",
+            "description": "Fuel consumption, emissions from direct use of equipment or vehicles"
+          },
+          "scope2": {
+            "title": "Indirect energy-related emissions analysis (Scope 2)",
+            "description": "Purchased electricity, heat, steam or cooling"
+          },
+          "automated": {
+            "title": "Automated carbon footprint calculation",
+            "description": "Via the CarboScan platform"
+          },
+          "validation": {
+            "title": "Review and validation by a certified expert",
+            "description": "Human verification by a professional"
+          },
+          "report": {
+            "title": "Delivery of structured final report (PDF)",
+            "description": "Professional shareable document"
+          },
+          "revisions": {
+            "title": "Two free revisions per year",
+            "description": "In case of data updates"
+          }
+        },
+        "processTitle": "How does it work?",
+        "processSubtitle": "A simple and transparent process for your carbon footprint",
+        "process": {
+          "step1": {
+            "title": "Automated collection",
+            "description": "Enter your data on the CarboScan platform for automated calculation"
+          },
+          "step2": {
+            "title": "Expert validation",
+            "description": "A certified expert validates and verifies your results to ensure accuracy"
+          },
+          "step3": {
+            "title": "Final report",
+            "description": "Receive your structured PDF report within 2 business days"
+          }
+        },
+        "ctaTitle": "Ready to start your carbon footprint?",
+        "ctaSubtitle": "Join companies that choose environmental transparency",
+        "ctaFeatures": {
+          "professional": "Professional report",
+          "certified": "Certified expert",
+          "revisions": "2 free revisions"
+        },
+        "ctaButton": "Start now"
+      },
+      "pro": {
+        "badge": "CarboPro",
+        "title": "Expert Solution for Large Companies",
+        "description": "Complete diagnosis & expert support to drive your climate strategy at group scale with dedicated support.",
+        "price": "On quote",
+        "priceUnit": "Personalized solution",
+        "ctaPrimary": "Request a quote",
+        "ctaSecondary": "Talk to an expert",
+        "featuresTitle": "A complete expert solution",
+        "featuresSubtitle": "All advanced features for professional carbon footprint management",
+        "features": {
+          "complete": {
+            "title": "Complete Carbon Footprint (Scopes 1, 2 & 3)",
+            "description": "Multi-site, multi-activity for comprehensive coverage"
+          },
+          "users": {
+            "title": "Unlimited users",
+            "description": "Team management, reporting and internal validation"
+          },
+          "support": {
+            "title": "Dedicated expert support",
+            "description": "Hotline, monthly meetings, personalized follow-up"
+          },
+          "reporting": {
+            "title": "Consolidated reporting",
+            "description": "Multi-site visualization and data consolidation"
+          },
+          "trajectory": {
+            "title": "10-year Net Zero trajectory",
+            "description": "Quantified plan with detailed milestones and stages"
+          },
+          "exports": {
+            "title": "Professional PDF & Excel exports",
+            "description": "Detailed results ready to be communicated"
+          }
+        },
+        "clientsTitle": "They trust us",
+        "clientsSubtitle": "Companies that have chosen our expertise",
+        "clients": {
+          "baguette": {
+            "name": "Baguette & Baguette",
+            "description": "Fast food (multi-site)"
+          },
+          "startup": {
+            "name": "Start Up Village",
+            "description": "Coworking & business incubators"
+          },
+          "abc": {
+            "name": "ABC Archibat",
+            "description": "Multi-activity services & communication"
+          }
+        },
+        "processTitle": "How does it work?",
+        "processSubtitle": "A tailor-made approach for large companies",
+        "process": {
+          "step1": {
+            "title": "Needs analysis",
+            "description": "We study your organization to propose a tailored solution"
+          },
+          "step2": {
+            "title": "Solution deployment",
+            "description": "Implementation of tools and team training"
+          },
+          "step3": {
+            "title": "Continuous support",
+            "description": "Expert follow-up and result optimization"
+          }
+        },
+        "ctaTitle": "Ready to accelerate your climate transition?",
+        "ctaSubtitle": "Join large companies that are taking action for the climate",
+        "ctaFeatures": {
+          "expert": "Dedicated expert",
+          "complete": "Complete solution",
+          "support": "Priority support"
+        },
+        "ctaButton": "Contact our experts"
+      },
+      "complete": {
+        "badge": "Carbo Complete",
+        "title": "Solution for Networks & Franchises",
+        "description": "A global solution to manage, aggregate and monitor carbon emissions across all entities of a group, franchise network or business portfolio.",
+        "price": "On quote",
+        "priceUnit": "Pricing adapted to your network",
+        "supportNote": "Priority support & dedicated hotline",
+        "ctaPrimary": "Request a quote",
+        "ctaSecondary": "Discover the solution",
+        "featuresTitle": "Carbo Complete advantages",
+        "featuresSubtitle": "A solution designed for complex structures and business networks",
+        "features": {
+          "multiEntity": {
+            "title": "Multi-entity & multi-site",
+            "description": "Management of subsidiaries, franchises, agencies or partners"
+          },
+          "users": {
+            "title": "Unlimited users",
+            "description": "Dedicated access for each structure with centralized management"
+          },
+          "reporting": {
+            "title": "Consolidated reporting",
+            "description": "Real-time overview of the network or group"
+          },
+          "support": {
+            "title": "Tailor-made strategic support",
+            "description": "Expert follow-up adapted to your network structure"
+          },
+          "exports": {
+            "title": "Professional PDF & Excel exports",
+            "description": "Consolidated reports and by entity"
+          },
+          "trajectory": {
+            "title": "Common carbon trajectory",
+            "description": "Global action plans & personalized by entity"
+          }
+        },
+        "clientsTitle": "They trust us",
+        "clientsSubtitle": "Networks that have chosen our solution",
+        "clients": {
+          "baguette": {
+            "name": "Baguette & Baguette",
+            "description": "Multi-site fast food"
+          },
+          "startup": {
+            "name": "Start Up Village",
+            "description": "Coworking space network"
+          },
+          "abc": {
+            "name": "ABC Archibat",
+            "description": "Multi-activity communication & media"
+          }
+        },
+        "processTitle": "How does it work?",
+        "processSubtitle": "A methodology adapted to complex networks",
+        "process": {
+          "step1": {
+            "title": "Network architecture",
+            "description": "We map your entities and define the governance structure"
+          },
+          "step2": {
+            "title": "Progressive deployment",
+            "description": "Gradual rollout with training and local support"
+          },
+          "step3": {
+            "title": "Centralized management",
+            "description": "Consolidated monitoring and reporting for informed decision-making"
+          }
+        },
+        "ctaTitle": "Ready to manage your network's climate impact?",
+        "ctaSubtitle": "Join networks that are committed to environmental transparency",
+        "ctaFeatures": {
+          "consolidated": "Consolidated view",
+          "personalized": "Personalized support",
+          "priority": "Priority hotline"
+        },
+        "ctaButton": "Start the assessment"
+      }
+    }
+  },
+  "cta": {
+    "title": "Take action today",
+    "subtitle": "Join the companies that have chosen CarboScan for their carbon transition. Start your assessment and build your climate strategy.",
+    "contactButton": "Contact us",
+    "calculatorButton": "Discover the calculator"
+  },
+  "footer": {
+    "description": "Simplify your carbon footprint calculation and accelerate your ecological transition",
+    "quickLinks": "Quick links",
+    "legal": "Legal",
+    "legalMentions": "Legal mentions",
+    "privacyPolicy": "Privacy policy",
+    "terms": "Terms",
+    "copyright": "All rights reserved.",
+    "hosted": "Hosted with ❤️ in France",
+    "emailLabel": "Send us an email"
+  },
+  "carbonCalculator": {
+    "title": "Carbon Calculator",
+    "sidebar": {
+      "sections": {
+        "company": "Company",
+        "offices": "Offices",
+        "fleet": "Fleet",
+        "travel": "Travel",
+        "it": "IT",
+        "results": "Results"
+      },
+      "lastStep": "Last step!"
+    },
+    "questions": {
+      "selectPlaceholder": "Select an option",
+      "inputPlaceholder": "Enter your answer",
+      "previous": "Previous",
+      "next": "Next",
+      "employeeCount": {
+        "title": "Number of employees",
+        "question": "How many employees do you have?",
+        "description": "Total number of employees in your company"
+      },
+      "industrySector": {
+        "title": "Industry sector",
+        "question": "What is your company's sector?",
+        "description": "Select the main sector of your company",
+        "options": {
+          "btp": "Construction",
+          "restauration": "Restaurant",
+          "services": "Services",
+          "industrie": "Industry",
+          "commerce": "Commerce",
+          "transport": "Transport",
+          "agriculture": "Agriculture",
+          "sante": "Health",
+          "education": "Education",
+          "technologie": "Technology",
+          "finance": "Finance",
+          "immobilier": "Real Estate",
+          "autre": "Other"
+        }
+      },
+      "heatingSource": {
+        "title": "Heating source",
+        "question": "What is your heating source?",
+        "description": "Main heating source for your premises",
+        "options": {
+          "electricite": "Electricity",
+          "gaz": "Gas",
+          "fioul": "Oil",
+          "bois": "Wood",
+          "climatisation": "Reversible air conditioning",
+          "aucun": "No heating"
+        }
+      },
+      "officeSpace": {
+        "title": "Office space",
+        "question": "What surface area do your premises occupy? (in m²)",
+        "description": "Total surface area in square meters of your professional premises"
+      },
+      "vehicleCount": {
+        "title": "Vehicle fleet",
+        "question": "How many cars make up your company's fleet?",
+        "description": "Total number of vehicles used by your company"
+      },
+      "averageKilometers": {
+        "title": "Kilometers per vehicle",
+        "question": "How many kilometers per year does each car in your fleet travel on average?",
+        "description": "Average annual distance per vehicle in kilometers"
+      },
+      "shortFlights": {
+        "title": "Short-haul flights",
+        "question": "How many short-haul business flights (<1h30) round trip take place per year on average?",
+        "description": "Number of round-trip flights under 1h30 per year"
+      },
+      "mediumFlights": {
+        "title": "Medium-haul flights",
+        "question": "How many medium-haul business flights (1h30-4h) round trip take place on average per year?",
+        "description": "Number of round-trip flights between 1h30 and 4h per year"
+      },
+      "longFlights": {
+        "title": "Long-haul flights",
+        "question": "How many long-haul business flights (>4h) round trip take place on average per year?",
+        "description": "Number of round-trip flights over 4h per year"
+      },
+      "trainTrips": {
+        "title": "Train trips",
+        "question": "How many train trips are made on average each year?",
+        "description": "Total number of train trips per year for the company"
+      },
+      "laptops": {
+        "title": "Laptops",
+        "question": "How many laptops does your company provide?",
+        "description": "Number of laptops provided to employees"
+      },
+      "mobilePhones": {
+        "title": "Mobile phones",
+        "question": "How many mobile phones does your company provide?",
+        "description": "Number of mobile phones provided to employees"
+      },
+      "monitors": {
+        "title": "Fixed screens",
+        "question": "How many fixed screens does your company provide?",
+        "description": "Number of fixed screens/monitors in the company"
+      },
+      "desktopComputers": {
+        "title": "Desktop computers",
+        "question": "How many desktop computers does your company provide?",
+        "description": "Number of fixed desktop computers in the company"
+      }
+    },
+    "contactForm": {
+      "title": "Your contact information",
+      "subtitle": "Leave us your contact details to receive your detailed report",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Professional email",
+      "company": "Company",
+      "phone": "Phone",
+      "position": "Industry sector",
+      "placeholders": {
+        "firstName": "Your first name",
+        "lastName": "Your last name",
+        "email": "your.email@company.com",
+        "company": "Your company name",
+        "phone": "+216 XX XXX XXX",
+        "position": "Ex: Industry, Services, Commerce..."
+      },
+      "submitButton": "Receive my report",
+      "validation": {
+        "firstNameMin": "First name must contain at least 2 characters",
+        "lastNameMin": "Last name must contain at least 2 characters",
+        "emailInvalid": "Invalid email",
+        "companyMin": "Company name must contain at least 2 characters",
+        "phoneMin": "Phone number must contain at least 8 digits"
+      }
+    },
+    "results": {
+      "title": "Your Carbon Footprint",
+      "subtitle": "Discover the details of your carbon footprint and our personalized recommendations to reduce your emissions.",
+      "totalEmissions": "Total annual emissions",
+      "tonnesCO2e": "tonnes CO₂ equivalent",
+      "scopeBreakdown": "Breakdown by scope",
+      "topEmitters": "Top emitting categories",
+      "analysis": "Analysis & Recommendations",
+      "mainEmissionSource": "Main emission source",
+      "recommendation": "Our recommendation",
+      "categoryDetail": "Detail by category",
+      "scopes": {
+        "scope1": "Scope 1 - Direct emissions",
+        "scope2": "Scope 2 - Purchased energy",
+        "scope3": "Scope 3 - Other indirect emissions"
+      },
+      "categories": {
+        "heating": "Heating",
+        "fleetTransport": "Fleet transport",
+        "vehicles": "Vehicles",
+        "businessTravel": "Business travel",
+        "flights": "Flights",
+        "commuteTransport": "Commute transport",
+        "train": "Train",
+        "itEquipment": "IT equipment",
+        "digital": "Digital",
+        "electricityConsumption": "Electricity consumption",
+        "purchases": "Purchases of goods and services"
+      },
+      "recommendations": {
+        "fleet": "Consider electrifying your fleet, carpooling or public transport for your employees.",
+        "heating": "Improve the insulation of your premises and switch to renewable energy sources.",
+        "travel": "Prioritize video conferencing and limit non-essential business travel.",
+        "it": "Optimize your IT equipment management and prioritize the circular economy.",
+        "commute": "Encourage teleworking and sustainable transport modes for home-work commutes.",
+        "electricity": "Optimize your electricity consumption and switch to renewable energy sources.",
+        "purchases": "Prioritize local and eco-responsible suppliers, reduce non-essential purchases.",
+        "default": "Focus your efforts on this priority emission source."
+      },
+      "represents": "represents",
+      "ofYourTotalEmissions": "of your total emissions",
+      "scope": "Scope",
+      "cta": {
+        "title": "Take action!",
+        "subtitle": "Get a detailed report with a personalized action plan to reduce your carbon footprint.",
+        "requestDiagnostic": "Request a complete diagnosis",
+        "backToHome": "Back to home"
+      }
+    },
+    "messages": {
+      "success": "Your information has been successfully recorded",
+      "error": "Error recording information"
+    }
+  },
+  "auth": {
+    "welcome": "Welcome to CarboScan",
+    "subtitle": "Sign in or create your account",
+    "authentication": "Authentication",
+    "accessDashboard": "Access your carbon dashboard",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full Name",
+    "company": "Company",
+    "confirmPassword": "Confirm Password",
+    "placeholders": {
+      "email": "your@email.com",
+      "password": "••••••••",
+      "fullName": "Your full name",
+      "company": "Your company name"
+    },
+    "buttons": {
+      "signIn": "Sign In",
+      "signInLoading": "Signing in...",
+      "signUp": "Create Account",
+      "signUpLoading": "Signing up...",
+      "backToHome": "← Back to home"
+    },
+    "messages": {
+      "signInSuccess": "Sign in successful",
+      "signInSuccessDesc": "Redirecting...",
+      "signUpSuccess": "Sign up successful",
+      "signUpSuccessDesc": "Redirecting to payment page...",
+      "passwordMismatch": "Passwords do not match.",
+      "signInError": "Sign in error",
+      "signUpError": "Sign up error",
+      "unexpectedError": "An unexpected error occurred.",
+      "ipBlocked": "Your IP address is temporarily blocked due to multiple failed login attempts. Please try again in 24 hours.",
+      "accessBlocked": "Temporarily blocked access"
+    }
+  },
+  "inscription": {
+    "title": "Create your CarboScan account",
+    "subtitle": "Join the community of climate-committed companies",
+    "formTitle": "Registration",
+    "formSubtitle": "Complete your information to start your carbon assessment",
+    "personalInfo": "Personal information",
+    "companyInfo": "Company information",
+    "security": "Security",
+    "choosePlan": "Choose your plan",
+    "fields": {
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "company": "Company Name",
+      "sector": "Industry Sector",
+      "companySize": "Company Size",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "placeholders": {
+      "fullName": "Your full name",
+      "email": "your@email.com",
+      "phone": "+216 XX XXX XXX",
+      "company": "Your company name",
+      "sector": "Select your sector",
+      "companySize": "Number of employees"
+    },
+    "sectors": {
+      "construction": "Construction",
+      "industrie": "Industry",
+      "transport": "Transport",
+      "agriculture": "Agriculture",
+      "services": "Services",
+      "technologie": "Technology",
+      "autre": "Other"
+    },
+    "companySizes": {
+      "1-10": "1-10 employees",
+      "11-50": "11-50 employees",
+      "51-200": "51-200 employees",
+      "201-500": "201-500 employees",
+      "500+": "More than 500 employees"
+    },
+    "plans": {
+      "essential": "Essential Plan - 1000 DT/year",
+      "complete": "Complete Plan - 2500 DT/year",
+      "pro": "CarboPro - On quote"
+    },
+    "planSelected": "Selected plan",
+    "buttons": {
+      "createAccount": "Create my account and proceed to payment",
+      "creatingAccount": "Creating account...",
+      "signIn": "Sign In",
+      "backToHome": "← Back to home"
+    },
+    "messages": {
+      "success": "Registration successful",
+      "successDesc": "Redirecting to payment page...",
+      "error": "Registration error",
+      "unexpectedError": "An unexpected error occurred.",
+      "passwordMismatch": "Passwords do not match.",
+      "alreadyHaveAccount": "Already have an account?"
+    }
+  },
+  "inscriptionForm": {
+    "title": "CarboScan Registration",
+    "subtitle": "Fill out this form to access our carbon accounting solutions",
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Professional Email",
+      "phone": "Phone",
+      "company": "Company",
+      "position": "Position",
+      "sector": "Industry Sector",
+      "employeeCount": "Company Size",
+      "plan": "Desired Offer",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "placeholders": {
+      "firstName": "Your first name",
+      "lastName": "Your last name",
+      "email": "your.email@company.com",
+      "phone": "+216 XX XXX XXX",
+      "company": "Your company name",
+      "position": "Your function",
+      "sector": "Select your sector",
+      "employeeCount": "Number of employees",
+      "plan": "Choose your offer",
+      "password": "Minimum 6 characters",
+      "confirmPassword": "Confirm your password"
+    },
+    "sectors": {
+      "industrie": "Industry",
+      "services": "Services",
+      "commerce": "Commerce",
+      "construction": "Construction",
+      "transport": "Transport",
+      "agriculture": "Agriculture",
+      "energie": "Energy",
+      "autre": "Other"
+    },
+    "companySizes": {
+      "1-10": "1-10 employees",
+      "11-50": "11-50 employees",
+      "51-200": "51-200 employees",
+      "201-500": "201-500 employees",
+      "500+": "More than 500 employees"
+    },
+    "plans": {
+      "essential": "Essential Plan - 1000 DT/year",
+      "complete": "Complete Plan - 2500 DT/year",
+      "pro": "CarboPro - On quote"
+    },
+    "buttons": {
+      "continue": "Continue to payment",
+      "loading": "Registration in progress..."
+    },
+    "messages": {
+      "success": "Registration successful!",
+      "successDesc": "Your account has been created. You will be redirected to the payment page.",
+      "error": "Registration error",
+      "errorDesc": "An error occurred during registration"
+    },
+    "validation": {
+      "firstNameMin": "First name must contain at least 2 characters",
+      "lastNameMin": "Last name must contain at least 2 characters",
+      "emailInvalid": "Invalid email",
+      "phoneMin": "Invalid phone number",
+      "companyMin": "Company name is required",
+      "positionMin": "Position is required",
+      "sectorRequired": "Please select a sector",
+      "employeeCountRequired": "Please select company size",
+      "planRequired": "Please select an offer",
+      "passwordMin": "Password must contain at least 6 characters",
+      "confirmPasswordMin": "Please confirm your password",
+      "passwordMismatch": "Passwords do not match"
+    }
+  },
+  "inscriptionCalculator": {
+    "title": "Calculator Access",
+    "subtitle": "Fill out this information to access the carbon footprint calculator",
+    "fields": {
+      "name": "Full Name",
+      "email": "Professional Email",
+      "phone": "Phone",
+      "company": "Company"
+    },
+    "placeholders": {
+      "name": "Your name",
+      "email": "name@company.com",
+      "phone": "06 12 34 56 78",
+      "company": "Your company name"
+    },
+    "buttons": {
+      "accessCalculator": "Access Calculator"
+    },
+    "freeInfo": "100% free • Instant results • No commitment"
+  },
+  "checkout": {
+    "title": "Order and Payment",
+    "selectedPlan": "Selected Plan",
+    "changePlan": "Change Plan",
+    "perYear": "per year",
+    "onQuote": "On quote",
+    "description": "Thank you for your trust. To finalize your subscription to the plan",
+    "description2": "please choose your payment method and fill in your information. Your account will be activated upon receipt of your payment.",
+    "cardPayment": {
+      "title": "Credit Card Payment",
+      "description": "Secure payment and immediate activation of your CarboScan Starter account.",
+      "option": "Credit Card",
+      "securePayment": "Secure payment by credit card",
+      "payButton": "Pay by Credit Card",
+      "redirectNote": "After payment, you will be automatically redirected to your CarboScan Starter dashboard"
+    },
+    "otherPayment": {
+      "title": "Other Payment Methods",
+      "description": "Choose an alternative payment method according to your preferences.",
+      "bankTransfer": {
+        "title": "Bank Transfer",
+        "holder": "Account Holder",
+        "iban": "IBAN",
+        "bic": "BIC",
+        "rib": "RIB"
+      },
+      "check": {
+        "title": "By Check",
+        "description": "Make payable to",
+        "appointment": "We can arrange an appointment for pickup."
+      },
+      "cash": {
+        "title": "Cash",
+        "description": "Cash payment during an appointment with our team."
+      },
+      "intermediary": {
+        "title": "Payment Intermediary",
+        "description": "Available services:",
+        "services": [
+          "MoneyGram",
+          "Western Union",
+          "Tunisian Post Express Money Order",
+          "Konnect"
+        ]
+      }
+    },
+    "form": {
+      "title": "Your Information",
+      "fields": {
+        "name": "Full Name",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "notes": "Additional Notes"
+      },
+      "placeholders": {
+        "notes": "Additional information, contact preferences..."
+      },
+      "submitButton": "Finalize My Order",
+      "processing": "Processing..."
+    },
+    "success": {
+      "title": "Thank You!",
+      "message": "Your order has been successfully recorded.",
+      "description": "Your CarboScan account will be activated upon receipt of your payment. You will receive a confirmation email within 24 business hours.",
+      "closeButton": "Close"
+    },
+    "messages": {
+      "loginRequired": "You must be logged in to make a payment",
+      "loginRequiredOrder": "You must be logged in to place an order",
+      "fillRequiredFields": "Please fill in all required fields",
+      "orderCreationError": "Unable to create order",
+      "unexpectedError": "An error occurred"
+    }
+  },
+  "about": {
+    "title": "About CarboScan",
+    "vision": {
+      "title": "Our Vision",
+      "content": "We believe that the transition to a low-carbon economy depends on companies' ability to understand and master their environmental footprint. In a context where regulations are intensifying and stakeholder expectations are evolving, organizations must equip themselves with reliable, simple and effective tools to measure, monitor and reduce their greenhouse gas emissions. CarboScan was founded to meet this need by offering a professional digital solution, designed to be both accessible and rigorous."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "content": "Our mission is to support companies — from SMEs to large organizations — in managing their carbon impact. We provide solutions adapted to each stage of their approach: from initial assessment to action plan definition, through progress monitoring. CarboScan acts as a true strategic partner, enabling companies to integrate carbon management into their governance and daily practices."
+    },
+    "solutions": {
+      "title": "Our Solutions",
+      "intro": "CarboScan offers a structured offer in three complementary services:",
+      "carboStart": "CarboStart — For SMEs and growing companies, wishing to structure their climate policy with a simple and effective tool.",
+      "carboPro": "CarboPro — For large companies and multi-site groups seeking expert support, consolidated reporting and multi-user management.",
+      "carboOmnibus": "CarboOmnibus — For networks, franchises and business federations requiring a consolidated view of their members' or subsidiaries' carbon assessments."
+    },
+    "commitments": {
+      "title": "Our Commitments",
+      "methodologyTitle": "Methodological rigor",
+      "methodology": "All our analyses comply with recognized Carbon Footprint® standards.",
+      "transparencyTitle": "Transparency and independence",
+      "transparency": "We guarantee total confidentiality and absence of conflicts of interest.",
+      "supportTitle": "Personalized support",
+      "support": "Each client benefits from adapted follow-up and tailor-made advice.",
+      "innovationTitle": "Continuous innovation",
+      "innovation": "We invest in the development of high-performance, accessible and scalable digital tools."
+    },
+    "whyChoose": {
+      "title": "Why choose CarboScan?",
+      "content": "CarboScan is aimed at companies that want to go beyond declarative approaches to engage in real transformation. Our platform provides access to reliable analysis, high-performance monitoring tools and human support, to transform environmental constraints into sustainable competitiveness levers. By choosing CarboScan, you choose a pragmatic, results-oriented vision, at the service of your climate strategy."
+    },
+    "cta": "Contact us to learn more"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "A question about our solutions, need a quote for a Carbon Assessment, or simply want to discuss your project? Our team is here to support you.",
+    "email": "contact@carbotrack.io",
+    "phone": "+216 55 053 505",
+    "whatsapp": "WhatsApp: +216 98 704 385",
+    "talkProject": {
+      "title": "Let's talk about your project",
+      "subtitle": "Our team is listening to answer all your questions."
+    },
+    "contactInfo": {
+      "email": "Email",
+      "phone": "Phone",
+      "whatsapp": "WhatsApp",
+      "hours": "Opening Hours",
+      "hoursContent": "Monday to Friday: 9:00 AM - 6:00 PM\nSaturday: 9:00 AM - 1:00 PM"
+    },
+    "form": {
+      "title": "Send us a message",
+      "name": "Your name",
+      "email": "Your email",
+      "subject": "Subject",
+      "message": "Your message",
+      "submit": "Send message"
+    },
+    "cta": {
+      "title": "Ready to start your carbon approach?",
+      "subtitle": "Our team of experts is here to support you in your ecological transition.",
+      "quote": "Request a quote",
+      "call": "Call now"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "questions": {
+      "carbonFootprint": {
+        "question": "What is a carbon footprint?",
+        "answer": "A carbon footprint is a quantitative assessment of an organization's greenhouse gas emissions."
+      },
+      "howToUse": {
+        "question": "How to use CarboScan?",
+        "answer": "CarboScan guides you step by step in calculating your carbon footprint through an intuitive questionnaire."
+      },
+      "pricing": {
+        "question": "What are the prices?",
+        "answer": "We offer an SME & mid-size company plan at 300 TND and a custom plan for large companies."
+      },
+      "security": {
+        "question": "Is my data secure?",
+        "answer1": "Yes, we take the security of your data very seriously.",
+        "answer2": "All data is encrypted and stored securely."
+      },
+      "sectors": {
+        "question": "What business sectors do you cover?",
+        "answer": "We cover all business sectors:",
+        "sectors": [
+          "Industry",
+          "Services",
+          "Commerce",
+          "Transport"
+        ]
+      }
+    },
+    "moreQuestions": {
+      "title": "Do you have other questions?",
+      "subtitle": "Don't hesitate to contact us for more information",
+      "contactPage": "Contact page"
+    }
+  },
+  "blog": {
+    "title": "CarboScan Blog",
+    "subtitle": "Concrete resources to understand and act on the carbon challenge.",
+    "intro": {
+      "content": "At CarboScan, we believe that action begins with understanding. Very soon, you will find here clear, useful and accessible articles to:",
+      "points": [
+        "Understand the challenges of Carbon Footprint®",
+        "Assess the environmental impact of your products (LCA)",
+        "Follow the evolution of climate regulations (CSRD, MACF, SBTi...)",
+        "Discover concrete best practices to reduce your emissions"
+      ]
+    },
+    "comingSoon": {
+      "title": "The first articles will be published soon.",
+      "subtitle": "In the meantime, don't hesitate to write to us if a topic interests you.",
+      "contact": "Contact us"
+    },
+    "newsletter": {
+      "title": "Be informed as soon as our first article is published.",
+      "subtitle": "Subscribe to our newsletter",
+      "placeholder": "Your email address",
+      "subscribe": "Subscribe"
+    }
+  },
+  "legal": {
+    "mentions": {
+      "title": "Legal Mentions",
+      "publisher": {
+        "title": "Website Publisher",
+        "company": "CarboScan",
+        "description": "Company specialized in carbon transition consulting",
+        "location": "Tunis, Tunisia",
+        "email": "Email:",
+        "vat": "VAT: In process of attribution"
+      },
+      "director": {
+        "title": "Publication Director",
+        "name": "CarboScan Team"
+      },
+      "hosting": {
+        "title": "Hosting",
+        "description1": "Secure cloud services",
+        "description2": "Professional hosting",
+        "description3": "Technical support available"
+      }
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated:",
+      "companyInfo": {
+        "title": "Company legal information",
+        "companyName": "Company name:",
+        "address": "Address:",
+        "phone": "Phone:",
+        "email": "Email:",
+        "website": "Website:",
+        "taxRegime": "Tax regime:",
+        "taxId": "Tax identification number:",
+        "tradeRegister": "Trade register:"
+      },
+      "legalBasis": {
+        "title": "Legal basis for collection",
+        "description": "The collection and processing of your personal data is based on:",
+        "law1": "Organic Law No. 2004-63 of July 27, 2004 relating to the protection of personal data",
+        "law2": "Decree No. 2007-2994 of November 16, 2007 implementing the organic law",
+        "law3": "General Data Protection Regulation (GDPR) for European users",
+        "consent": "Explicit user consent",
+        "contract": "Contract execution for services",
+        "legitimateInterest": "Legitimate interest of the company"
+      },
+      "dataCollected": {
+        "title": "Data collected",
+        "description": "We collect the following data, in accordance with Tunisian legal requirements:",
+        "identification": {
+          "title": "Identification data:",
+          "items": [
+            "Name of the responsible person",
+            "Company name",
+            "Complete address",
+            "Phone number",
+            "Professional email address"
+          ]
+        },
+        "activity": {
+          "title": "Activity data:",
+          "items": [
+            "Business sector",
+            "Company size",
+            "Energy consumption data",
+            "Transport data",
+            "Production data"
+          ]
+        }
+      },
+      "purposes": {
+        "title": "Processing purposes",
+        "description": "Your data is processed exclusively for the following purposes:",
+        "items": [
+          "Calculation and analysis of your company's carbon footprint",
+          "Generation of environmental reports compliant with Tunisian standards",
+          "Provision of our ecological transition consulting services",
+          "Communication regarding our services and your account",
+          "Improvement of our services and development of new features",
+          "Compliance with legal and regulatory obligations"
+        ]
+      },
+      "recipients": {
+        "title": "Data recipients",
+        "description": "Your data may be shared with:",
+        "items": [
+          "Authorized CarboScan personnel for service provision",
+          "Technical service providers (hosting, maintenance) under subcontracting agreements",
+          "Competent authorities in case of legal or regulatory obligation",
+          "Third parties only with your prior explicit consent"
+        ],
+        "important": "Important: No data transfer is made to third countries without appropriate guarantees."
+      },
+      "retention": {
+        "title": "Data retention period",
+        "description": "In accordance with Tunisian legislation, your data is retained:",
+        "accountData": "Account data: During your subscription period + 3 years",
+        "billingData": "Billing data: 10 years (Tunisian tax obligation)",
+        "technicalData": "Technical data: Maximum 2 years",
+        "connectionData": "Connection data: Maximum 1 year",
+        "cookies": "Cookies: Maximum 13 months",
+        "note": "Beyond these periods, your data is either deleted or anonymized."
+      },
+      "security": {
+        "title": "Security measures",
+        "description": "We implement appropriate technical and organizational measures:",
+        "items": [
+          "Data encryption in transit and at rest (AES-256)",
+          "Multi-factor authentication for data access",
+          "Continuous system monitoring and intrusion detection",
+          "Secure and encrypted backups",
+          "Regular staff security training",
+          "Annual security audits"
+        ]
+      },
+      "rights": {
+        "title": "Your rights",
+        "description": "In accordance with Tunisian law and GDPR, you have the following rights:",
+        "items": [
+          "Right of access: Know the data concerning you",
+          "Right of rectification: Correct inaccurate data",
+          "Right to erasure: Delete your data",
+          "Right to restriction: Restrict processing",
+          "Right to portability: Retrieve your data",
+          "Right to object: Object to processing",
+          "Right to withdraw consent at any time"
+        ],
+        "contact": "To exercise your rights, contact our data protection officer:",
+        "dpoEmail": "Email:",
+        "dpoAddress": "Address:",
+        "dpoPhone": "Phone:"
+      },
+      "cookies": {
+        "title": "Cookie policy",
+        "description": "Our site uses cookies to improve your experience:",
+        "technical": {
+          "title": "Technical cookies:",
+          "items": [
+            "User session",
+            "Language preferences",
+            "Security and authentication"
+          ]
+        },
+        "analytical": {
+          "title": "Analytical cookies:",
+          "items": [
+            "Visit statistics",
+            "Site performance",
+            "Experience improvement"
+          ]
+        },
+        "management": "You can manage your cookie preferences in your browser settings."
+      },
+      "transfers": {
+        "title": "Data transfers",
+        "description": "Your data is primarily processed in Tunisia. In case of transfer to the European Union, we ensure that the destination country offers an adequate level of protection or put in place appropriate safeguards in accordance with legal requirements."
+      },
+      "contact": {
+        "title": "Contact and complaints",
+        "description": "For any questions regarding this policy or to exercise your rights:",
+        "mainEmail": "Main email:",
+        "dpoEmail": "Data protection officer:",
+        "postalAddress": "Postal address:",
+        "phone": "Phone:",
+        "complaints": "Complaints: You have the right to file a complaint with the National Authority for the Protection of Personal Data (INPDP) if you believe your rights are not being respected."
+      },
+      "updates": {
+        "title": "Policy modifications",
+        "description": "This policy may be updated to reflect legal developments or changes to our services. Any significant modification will be notified by email at least 30 days before implementation. The date of last update is indicated at the top of this document."
+      }
+    },
+    "terms": {
+      "title": "Terms and Conditions",
+      "sections": {
+        "object": {
+          "title": "1. Object",
+          "content": "These general terms and conditions apply to all services offered by CarboScan."
+        },
+        "services": {
+          "title": "2. Services",
+          "content": "CarboScan offers carbon footprint calculation and analysis services for companies."
+        },
+        "pricing": {
+          "title": "3. Pricing",
+          "content": "Prices are indicated in Tunisian dinars (TND) and are subject to change."
+        },
+        "payment": {
+          "title": "4. Payment",
+          "content": "Payment is made according to the terms agreed upon during subscription."
+        },
+        "responsibility": {
+          "title": "5. Responsibility",
+          "content": "CarboScan undertakes to provide a quality service in compliance with current standards."
+        },
+        "applicableLaw": {
+          "title": "6. Applicable law",
+          "content": "These terms are subject to Tunisian law."
+        }
+      }
+    }
+  },
+  "dashboard": {
+    "sidebar": {
+      "navigation": "Navigation",
+      "dashboard": "Dashboard",
+      "dataCollection": "Data Collection",
+      "myAssessments": "My Assessments",
+      "settings": "Settings",
+      "logout": "Logout"
+    },
+    "header": {
+      "newAssessment": "New Assessment",
+      "contactUs": "New Assessment - Contact Us",
+      "quotaReached": "Quota reached • Contact us for an additional assessment",
+      "assessments": "Assessments",
+      "limitReached": "Limit reached",
+      "myProfile": "My profile",
+      "settingsLabel": "Settings",
+      "disconnect": "Disconnect"
+    },
+    "adaptive": {
+      "loading": "Loading...",
+      "error": "Error",
+      "cannotLoadPlan": "Unable to load your plan information",
+      "retry": "Retry",
+      "noActivePlan": "No active plan",
+      "noActivePlanDesc": "To access the CarboScan dashboard, you must subscribe to one of our plans.",
+      "choosePlan": "Choose a plan",
+      "alreadyOrdered": "I already ordered",
+      "planNotRecognized": "Plan not recognized",
+      "planNotSupported": "Plan type \"{planType}\" is not supported.",
+      "seeAvailablePlans": "See available plans",
+      "titles": {
+        "start": "Start Plan Dashboard",
+        "complete": "Complete Plan Dashboard",
+        "pro": "CarboPro Dashboard",
+        "default": "CarboScan Dashboard"
+      },
+      "subtitles": {
+        "start": "{planName} Plan - Access to standard features",
+        "complete": "{planName} Plan - Access to standard features",
+        "pro": "{planName} Plan - Access to unlimited features"
+      }
+    },
+    "essential": {
+      "planBadge": "CarboStart Plan",
+      "scope12": "Carbon Footprint Scope 1 & 2",
+      "scope12Desc": "Direct and energy emissions from your company",
+      "scopesIncluded": "Scopes included",
+      "assessmentStatus": "Assessment status",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "pending": "Pending",
+      "progress": "Progress",
+      "quickActions": "Quick actions",
+      "startAssessment": "Start an assessment",
+      "viewReports": "View reports",
+      "recentActivity": "Recent activity",
+      "noActivity": "No recent activity",
+      "viewAll": "View all"
+    },
+    "complete": {
+      "overview": "Overview",
+      "totalEmissions": "Total emissions",
+      "scope1": "Scope 1",
+      "scope2": "Scope 2",
+      "scope3": "Scope 3",
+      "emissionsBreakdown": "Emissions breakdown",
+      "trends": "Trends",
+      "monthlyTrend": "Monthly trend",
+      "recentAssessments": "Recent assessments",
+      "assessment": "Assessment",
+      "status": "Status",
+      "date": "Date",
+      "actions": "Actions",
+      "view": "View",
+      "download": "Download",
+      "quickStats": "Quick stats",
+      "assessmentsCompleted": "Assessments completed",
+      "totalEmissionsReduced": "Emissions reduced",
+      "complianceRate": "Compliance rate",
+      "recommendations": "Recommendations",
+      "viewAllRecommendations": "View all recommendations",
+      "bySector": "By business sector",
+      "ghgDistribution": "GHG emissions distribution",
+      "sectorComparison": "Sector Comparison",
+      "companyVsSector": "Your company vs business sector",
+      "emissionSources": "Emission Sources",
+      "detailedBreakdown": "Detailed breakdown by source",
+      "yourCompany": "Your company",
+      "averageSector": "Average sector"
+    },
+    "pro": {
+      "advancedAnalytics": "Advanced analytics",
+      "realTimeMonitoring": "Real-time monitoring",
+      "customReports": "Custom reports",
+      "teamCollaboration": "Team collaboration",
+      "apiAccess": "API access",
+      "prioritySupport": "Priority support",
+      "advancedFeatures": "Advanced features",
+      "unlimitedAssessments": "Unlimited assessments",
+      "customScopes": "Custom scopes",
+      "advancedReporting": "Advanced reporting",
+      "teamManagement": "Team management",
+      "apiIntegration": "API integration",
+      "whiteLabel": "White label",
+      "dedicatedSupport": "Dedicated support"
+    },
+    "layout": {
+      "welcome": "Welcome",
+      "backToHome": "Back to home",
+      "unspecifiedOrganization": "Unspecified organization"
+    }
+  },
+  "assessment": {
+    "title": "My Carbon Assessments",
+    "subtitle": "History of your completed carbon assessments",
+    "empty": {
+      "title": "No assessments completed",
+      "description": "You haven't completed any carbon assessments yet. Start now!",
+      "button": "Complete my first assessment"
+    },
+    "card": {
+      "title": "Carbon Assessment"
+    },
+    "scopes": {
+      "scope1": "Scope 1",
+      "scope2": "Scope 2",
+      "scope3": "Scope 3",
+      "directEmissions": "Direct emissions",
+      "purchasedEnergy": "Purchased energy",
+      "otherEmissions": "Other emissions"
+    },
+    "actions": {
+      "consult": "Consult",
+      "consultReport": "Consult your report",
+      "compare": "Compare"
+    },
+    "history": {
+      "title": "History of your carbon assessments",
+      "count": "assessment",
+      "assessmentNumber": "Assessment #{{number}}",
+      "completedOn": "Completed on {{date}}"
+    },
+    "units": {
+      "tonnesCO2e": "tonnes CO₂eq"
+    },
+    "messages": {
+      "error": "Error",
+      "loadError": "Unable to load your assessments",
+      "missingData": "Assessment data missing",
+      "loadingReport": "Loading report",
+      "consultingReport": "Consulting your carbon assessment...",
+      "consultError": "Unable to consult the report"
+    }
+  },
+  "formationPages": {
+    "carbonAwareness": {
+      "title": "Carbon Awareness Workshops",
+      "subtitle": "Engage your teams, develop a climate culture, initiate your company's ecological transition.",
+      "whyTitle": "Why raise awareness among your employees?",
+      "whyDescription": "The ecological transition begins with collective awareness. Our interactive workshops help understand climate change issues, identify action levers within the company, and mobilize teams around CSR objectives.",
+      "formatTitle": "Workshop format",
+      "formatItems": [
+        "Sessions from 2h to 1 full day",
+        "In-person or remote",
+        "Led by Carbon & CSR experts",
+        "Educational materials provided"
+      ],
+      "ctaButton": "Request a proposal"
+    },
+    "carbonFootprint": {
+      "title": "Carbon Footprint® Certification Training",
+      "subtitle": "Master the official Carbon Footprint® methodology and become an actor in environmental transition.",
+      "objectivesTitle": "Training objectives",
+      "objectivesItems": [
+        "Understand the fundamentals of Carbon Footprint®",
+        "Know how to collect, analyze and interpret emissions data",
+        "Develop an adapted action plan",
+        "Master digital assessment tools"
+      ],
+      "audienceTitle": "Target audience",
+      "audienceDescription": "CSR managers, executives, consultants, purchasing, energy or production managers. Certification training recognized by the professional network.",
+      "ctaButton": "Request detailed program"
+    },
+    "internalWorkshops": {
+      "title": "Custom Carbon Workshops in your company",
+      "subtitle": "Specifically designed for your teams, your business challenges and your CSR strategy.",
+      "themesTitle": "Example themes",
+      "themesItems": [
+        "Understand and act on your activities' carbon footprint",
+        "Eco-design, responsible purchasing, sustainable mobility",
+        "Definition of internal action plans",
+        "Monitoring and steering results"
+      ],
+      "description": "Our internal workshops adapt to your company culture, your needs and your business sector. Intervention possible in-person or remotely.",
+      "ctaButton": "Request a personalized quote"
+    }
+  },
+  "cbamCalculator": {
+    "title": "CBAM Calculator - Estimate Your Carbon Costs",
+    "subtitle": "Calculate the impact of the Carbon Border Adjustment Mechanism on your EU exports",
+    "steps": {
+      "general": "General Information",
+      "directData": "Energy Data",
+      "indirectData": "Transport & Logistics",
+      "summary": "Summary",
+      "results": "Results"
+    },
+    "questions": {
+      "sector": {
+        "title": "What is your business sector?",
+        "description": "Select the sector corresponding to your products exported to the EU",
+        "options": {
+          "cement": "Cement",
+          "steel": "Iron and Steel",
+          "aluminum": "Aluminum",
+          "fertilizer": "Fertilizers",
+          "electricity": "Electricity",
+          "hydrogen": "Hydrogen",
+          "other": "Other"
+        }
+      },
+      "exportCountry": {
+        "title": "What is your export country?",
+        "description": "The country where your production takes place"
+      },
+      "annualVolume": {
+        "title": "What volume do you export to the EU per year?",
+        "description": "Annual volume in tonnes of your exports to the European Union",
+        "placeholder": "e.g. 1000"
+      },
+      "energyConsumption": {
+        "title": "Annual energy consumption for your production",
+        "description": "Enter your energy data or use EU default values",
+        "electricity": "Electricity (kWh)",
+        "gas": "Natural gas (m³)",
+        "fuel": "Liquid fuels (liters)",
+        "useDefault": "I don't have this data → use EU default values"
+      },
+      "transport": {
+        "title": "Distance traveled to transport your products to the EU",
+        "description": "Transport modes used and approximate distances",
+        "truck": "Road transport (km)",
+        "ship": "Maritime transport (km)",
+        "air": "Air transport (km)",
+        "useAverage": "Use sector averages"
+      }
+    },
+    "results": {
+      "title": "Your CBAM Results",
+      "totalEmissions": "Total Emissions",
+      "emissionsPerTonne": "Emissions per exported tonne",
+      "cbamCost": "Estimated CBAM Cost",
+      "breakdown": {
+        "title": "Emissions Breakdown",
+        "production": "Production",
+        "energy": "Energy",
+        "transport": "Transport"
+      },
+      "comparison": {
+        "title": "Comparison with EU Default Values",
+        "realData": "Your Data",
+        "defaultData": "EU Default Values",
+        "savings": "Potential Savings"
+      },
+      "recommendations": {
+        "title": "Personalized Recommendations"
+      },
+      "actions": {
+        "downloadReport": "Download My PDF Report",
+        "contactExperts": "Contact Our CarboScan Experts",
+        "newCalculation": "New Simulation"
+      }
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "calculate": "Launch CBAM Calculation",
+      "restart": "Restart"
+    }
+  },
+  "questionnaire": {
+    "questions": {
+      "sections": {
+        "generalInfo": "General information",
+        "combustion": "Scope 1 - Combustion",
+        "energy": "Scope 2 - Energy",
+        "transport": "Scope 1 - Transport",
+        "refrigerants": "Scope 1 - Refrigerants",
+        "industrialProcesses": "Scope 1 - Industrial processes",
+        "purchases": "Scope 3 - Purchases",
+        "travel": "Scope 3 - Travel",
+        "freight": "Scope 3 - Freight",
+        "waste": "Scope 3 - Waste",
+        "productUse": "Scope 3 - Product use",
+        "endOfLife": "Scope 3 - End of life"
+      },
+      "general": {
+        "employees": "How many employees does your company have?",
+        "annualRevenue": "What is your annual revenue (TND)?",
+        "businessSector": "What business sector would you describe for your company?",
+        "sitesCount": "How many sites or subsidiaries are included in the assessment scope?",
+        "sitesLocation": "Where are these sites or subsidiaries located?"
+      },
+      "combustion": {
+        "naturalGas": "How many m³ of natural gas did you consume last year?",
+        "fuelOil": "What quantity of fuel oil (t) did you use?",
+        "coal": "What quantity of coal (t) did you use?",
+        "biomass": "What quantity of biomass (t) did you consume?",
+        "boilers": "How many boilers or combustion installations do you operate?"
+      },
+      "energy": {
+        "electricity": "How many kWh of electricity did you purchase?",
+        "steam": "What quantity of steam (t) did you purchase?",
+        "cooling": "How many kWh of industrial cooling did you purchase?",
+        "heating": "How many kWh of heat did you purchase?",
+        "renewable": "What percentage of your energy comes from renewable sources?"
+      },
+      "transport": {
+        "fleet": "How many vehicles does your fleet have?",
+        "fleetSize": "How many vehicles does your fleet have?",
+        "fuelType": "What fuels do you use for these vehicles?",
+        "fuelConsumption": "How many liters of fuel did the fleet consume?",
+        "distance": "What average distance do your vehicles travel each year (km)?"
+      },
+      "refrigerants": {
+        "refill": "How many kg of refrigerants did you refill?",
+        "leaks": "What quantity of refrigerant leaks was detected?"
+      },
+      "industrialProcesses": {
+        "processes": "Which industrial processes other than combustion generate emissions?"
+      },
+      "purchases": {
+        "rawMaterials": "What quantity of raw materials (t) do you use annually?",
+        "goodsServices": "How much do you spend on purchasing goods and services (TND)?",
+        "supplierDistance": "What average distance do your supplier deliveries travel (km)?",
+        "supplierTransport": "What mode of transport do your suppliers mainly use?"
+      },
+      "travel": {
+        "businessTrips": "How many business trips do you take annually?",
+        "hotelNights": "How many hotel nights for business trips?",
+        "carRental": "How many days of car rental for business trips?",
+        "publicTransport": "How much spent on public transport for business trips (TND)?",
+        "flights": "How many business flights do you take per year?",
+        "commuting": "Average home-work distance of your employees (km)?",
+        "commutingMode": "What is the main mode of transport of your employees?"
+      },
+      "freight": {
+        "inboundFreight": "How much do you spend on inbound freight annually (TND)?",
+        "outboundFreight": "How much do you spend on outbound freight annually (TND)?",
+        "freightDistance": "What average distance for your goods transport (km)?"
+      },
+      "waste": {
+        "wasteProduction": "What quantity of waste do you produce annually (t)?",
+        "wasteTypes": "What types of waste does your company produce?",
+        "wasteTypesDescription": "Describe your main types of waste",
+        "wasteTreatment": "What treatment or recycling channels do you use for your waste?",
+        "productUse": "Do your products generate emissions during their use by your customers?",
+        "endOfLife": "How are your products treated at end of life?",
+        "endOfLifeDescription": "Describe the end-of-life treatment of your products",
+        "recyclingRate": "What percentage of your products is recycled at end of life?"
+      },
+      "businessTravel": {
+        "carTrips": "How many business car trips were made?",
+        "trainTrips": "How many business train trips were made?",
+        "flightTrips": "How many business flights were made?",
+        "averageDistance": "What average distance do you travel per business trip (km)?",
+        "commuteMode": "What mode of transport do you mainly use for home-work trips?",
+        "commuteDistance": "What average distance do you travel to work (km)?",
+        "commuteFrequency": "How often do you make this trip (days/week)?"
+      },
+      "logistics": {
+        "freightVolume": "What volume of goods (t) did you ship?",
+        "transportMode": "What transport modes did you use for logistics?",
+        "freightDistance": "What average distance do your goods travel (km)?"
+      },
+      "commuteTransport": {
+        "car": "Car",
+        "publicTransport": "Public transport",
+        "bike": "Bike",
+        "walk": "Walking",
+        "mixed": "Mixed"
+      },
+      "fuelTypes": {
+        "gasoline": "Gasoline",
+        "diesel": "Diesel", 
+        "mixed": "Mixed",
+        "none": "No vehicles",
+        "other": "Other"
+      },
+      "transportModes": {
+        "truck": "Truck",
+        "train": "Train",
+        "boat": "Boat",
+        "plane": "Plane",
+        "mixed": "Mixed"
+      },
+      "wasteTypes": {
+        "general": "General waste",
+        "hazardous": "Hazardous waste",
+        "recyclable": "Recyclable waste",
+        "organic": "Organic waste"
+      },
+      "responses": {
+        "yes": "Yes",
+        "no": "No",
+        "dontKnow": "I don't know"
+      },
+      "placeholders": {
+        "employees": "Ex: 50",
+        "annualRevenue": "Ex: 1000000",
+        "selectSector": "Select your sector",
+        "sitesCount": "Ex: 3",
+        "sitesLocation": "Describe the location of your sites",
+        "fleetSize": "Ex: 10",
+        "fuelType": "Main fuel type",
+        "fuelConsumption": "Ex: 5000",
+        "distance": "Ex: 50000",
+        "refill": "Ex: 5",
+        "leaks": "Ex: 2",
+        "industrialProcesses": "Describe your emitting industrial processes",
+        "rawMaterials": "Ex: 100",
+        "goodsServices": "Ex: 500000",
+        "carTrips": "Ex: 200",
+        "trainTrips": "Ex: 50",
+        "flightTrips": "Ex: 10",
+        "averageDistance": "Ex: 200",
+        "commuteMode": "Main transport mode",
+        "commuteDistance": "Ex: 15",
+        "commuteFrequency": "Ex: 5",
+        "freightVolume": "Ex: 1000",
+        "transportMode": "Main transport mode",
+        "freightDistance": "Ex: 500",
+        "wasteProduction": "Ex: 50",
+        "wasteTreatment": "Main treatment method",
+        "productUse": "Select",
+        "recyclingRate": "Ex: 60 (in %)"
+      },
+      "sectors": {
+        "industry": "Industry",
+        "services": "Services",
+        "commerce": "Commerce",
+        "construction": "Construction", 
+        "transport": "Transport",
+        "agriculture": "Agriculture",
+        "other": "Other"
+      },
+      "validation": {
+        "commuteFrequency": "Please enter a whole number between 1 and 7 days"
+      }
+    },
+    "progress": {
+      "restored": "Progress restored",
+      "restoredDesc": "Your previous answers have been restored. You can continue where you left off.",
+      "autoSave": "Auto-save enabled",
+      "autoSaveDesc": "Your answers are automatically saved at each step."
+    }
+  }
+}

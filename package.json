@@ -1,0 +1,40 @@
+{
+  "name": "newcarboscan-2027",
+  "version": "2027.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Newcarboscan 2027 — plateforme carbone audit-ready sur PostgreSQL (sans Supabase)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev:api & npm run dev:web",
+    "dev:api": "npm run dev -w @newcarboscan/api",
+    "dev:web": "npm run dev -w @newcarboscan/web",
+    "build:engine": "npm run build -w @newcarboscan/carbon-engine",
+    "build:api": "npm run build:engine && npm run build -w @newcarboscan/api",
+    "build:web": "npm run build -w @newcarboscan/web",
+    "build": "npm run build:api && npm run build:web",
+    "start:api": "npm run start -w @newcarboscan/api",
+    "test": "npm run test -w @newcarboscan/carbon-engine && npm run test -w @newcarboscan/api",
+    "typecheck": "npm run build:engine && npm run typecheck -w @newcarboscan/api",
+    "lint": "npm run lint:trust && bash scripts/lint-invented-claims.sh",
+    "lint:trust": "eslint apps/api/src packages/carbon-engine/src apps/web/src/integrations/api --max-warnings=0",
+    "lint:claims": "bash scripts/lint-invented-claims.sh",
+    "lint:web-legacy": "npm run lint -w @newcarboscan/web",
+    "db:up": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres",
+    "db:migrate": "bash scripts/migrate.sh",
+    "db:down": "docker compose down",
+    "deploy:up": "docker compose up -d --build",
+    "deploy:down": "docker compose down"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "typescript-eslint": "^8.67.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

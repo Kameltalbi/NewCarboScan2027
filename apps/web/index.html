@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#006F5A" />
+    <meta name="application-name" content="CarboScan" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="CarboScan" />
+    <meta name="robots" content="index, follow" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href="https://carboscan.io/" />
+
+    <title>CarboScan — Plateforme Bilan Carbone & Décarbonation pour entreprises</title>
+    <meta
+      name="description"
+      content="Mesurez, pilotez et réduisez vos émissions GES. Collecte de données, bilan carbone scopes 1-2-3, empreinte produit, ACV et rapports professionnels alignés GHG Protocol."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="CarboScan" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CarboScan — Plateforme Bilan Carbone & Décarbonation pour entreprises" />
+    <meta
+      property="og:description"
+      content="Mesurez, pilotez et réduisez vos émissions GES. Collecte de données, bilan carbone scopes 1-2-3, empreinte produit, ACV et rapports professionnels."
+    />
+    <meta property="og:url" content="https://carboscan.io/" />
+    <meta property="og:image" content="https://carboscan.io/logos/CarboScan-logo.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CarboScan — Plateforme Bilan Carbone & Décarbonation" />
+    <meta
+      name="twitter:description"
+      content="Mesurez, pilotez et réduisez vos émissions GES avec CarboScan."
+    />
+    <meta name="twitter:image" content="https://carboscan.io/logos/CarboScan-logo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lato:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Google tag (gtag.js) — standard GA4 snippet for Search Console verification -->
+    <script>
+      window.__GA_ID__ = '%VITE_GA_MEASUREMENT_ID%';
+      // Block hits on localhost only (snippet stays detectable in production View Source)
+      (function () {
+        var host = location.hostname;
+        if (host === 'localhost' || host === '127.0.0.1' || host === '::1') {
+          window['ga-disable-%VITE_GA_MEASUREMENT_ID%'] = true;
+          window['ga-disable-G-T07PGN0WZK'] = true;
+        }
+      })();
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_GA_MEASUREMENT_ID%"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', '%VITE_GA_MEASUREMENT_ID%');
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

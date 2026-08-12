@@ -1,0 +1,1 @@
+INSERT INTO api_keys (organization_id, key_hash, key_prefix, app_name, is_active) VALUES ('29cff39e-7a86-46da-83da-a76e0d3bd5ca', '61f27394f0489828301e9908250dba0420cab8a62642aa971c6b7d7ffa4eabe2', 'cbs_live_6f6', 'SoftFacture', true);

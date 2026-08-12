@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-width: 0;
+  }
+
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  :root {
+    /* Forest & Moss palette — contact redesign tokens */
+    --forest-deep: 148 30% 17%;
+    --forest-mid: 148 30% 26%;
+    --forest-light: 128 25% 45%;
+    --forest-sage: 100 22% 70%;
+    --forest-bg: 100 10% 97%;
+
+    /* Nature and turquoise colors */
+    --primary: 168 100% 27%; /* #0E7C66 Vert foncé du logo */
+    --primary-dark: 180 100% 27%; /* #008B8B Dark turquoise */
+    --primary-light: 180 100% 73%; /* #7FFFD4 Light turquoise */
+    --secondary: 147 50% 36%; /* #2E8B57 Sea green */
+    --accent: 123 100% 50%; /* #32CD32 Lime green */
+    --nature-green: 120 61% 34%; /* #228B22 Forest green */
+    --nature-blue: 207 44% 49%; /* #4682B4 Steel blue */
+    --nature-teal: 180 100% 25%; /* #008080 Teal */
+    
+    /* Dashboard B2B Professional Colors */
+    --dashboard-bg: 220 14% 96%; /* #F5F7FA */
+    --dashboard-header: 222 47% 11%; /* #0F172A */
+    --dashboard-text: 220 13% 18%; /* #1F2937 */
+    --dashboard-separator: 220 13% 91%; /* #E5E7EB */
+    
+    /* Carbon Impact Colors */
+    --carbon-impact: 168 76% 42%; /* #1ABC9C - Vert émeraude (CTA principal) */
+    --carbon-impact-hover: 168 76% 38%; /* #159A80 - Hover CTA */
+    --carbon-dark: 168 100% 27%; /* #0E7C66 */
+    --carbon-turquoise: 174 83% 56%; /* #4FD1C5 */
+    --carbon-blue: 224 76% 48%; /* #2563EB */
+    
+    /* Home Page Colors */
+    --home-emerald: 168 76% 42%; /* #1ABC9C - Vert émeraude (branding & CTA) */
+    --home-emerald-hover: 168 76% 38%; /* #159A80 - Hover CTA */
+    --home-blue-night: 222 47% 11%; /* #0F172A - Bleu nuit (header/footer/titres) */
+    --home-bg-alt: 220 14% 96%; /* #F5F7FA - Gris très clair (sections alternées) */
+    --home-text-primary: 217 33% 17%; /* #1F2937 - Gris foncé (texte principal) */
+    --home-text-secondary: 215 16% 47%; /* #6B7280 - Gris moyen (texte secondaire) */
+    
+    /* Scope Colors */
+    --scope-1: 168 100% 27%; /* #0E7C66 */
+    --scope-2: 174 83% 56%; /* #4FD1C5 */
+    --scope-3: 224 76% 48%; /* #2563EB */
+    
+    /* Maturity Score Colors */
+    --score-a: 142 71% 45%;
+    --score-b: 142 71% 55%;
+    --score-c: 38 92% 50%;
+    --score-d: 0 65% 51%;
+    
+    /* Sidebar – Dark forest green (Greenly-inspired) */
+    --sidebar: 150 30% 16%; /* Deep forest green #1B3A2D */
+    --sidebar-foreground: 140 15% 85%; /* Light sage text */
+    --sidebar-border: 150 20% 22%; /* Subtle green border */
+    --sidebar-accent: 150 25% 21%; /* Hover – slightly lighter green */
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%; /* White for active text */
+    --sidebar-primary-foreground: 150 30% 16%;
+    --sidebar-ring: 160 60% 45%;
+    --sidebar-muted: 140 10% 55%; /* Muted sage text */
+    --sidebar-active-bg: 155 35% 25%; /* Highlighted green bg for active */
+    --sidebar-active-border: 160 60% 50%; /* Bright green accent bar */
+    
+    --background: 0 0% 100%;
+    --foreground: 180 25% 25%; /* #2F4F4F Dark slate gray */
+    --card: 0 0% 100%;
+    --card-foreground: 180 25% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 180 25% 25%;
+    --primary-foreground: 0 0% 98%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 96%; /* #F5F5F5 */
+    --muted-foreground: 210 14% 53%; /* #708090 Slate gray */
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 174 70% 41% / 0.1;
+    --input: 174 70% 41% / 0.1;
+    --ring: 174 70% 41%;
+    --radius: 1.25rem;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 0 0% 95%;
+    --card: 222 47% 11%;
+    --card-foreground: 0 0% 95%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 168 76% 42%;
+    --primary-dark: 168 76% 38%;
+    --primary-light: 168 76% 52%;
+    --primary-foreground: 222 47% 8%;
+    --secondary: 147 50% 42%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 222 30% 15%;
+    --muted-foreground: 220 13% 65%;
+    --accent: 168 76% 42%;
+    --accent-foreground: 222 47% 8%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 168 76% 42%;
+    
+    /* Dashboard B2B Dark Mode */
+    --dashboard-bg: 222 47% 8%;
+    --dashboard-header: 222 47% 6%;
+    --dashboard-text: 0 0% 95%;
+    --dashboard-separator: 222 30% 18%;
+    
+    /* Carbon Impact Colors - Dark */
+    --carbon-impact: 168 76% 48%;
+    --carbon-impact-hover: 168 76% 42%;
+    --carbon-dark: 168 76% 38%;
+    --carbon-turquoise: 174 83% 50%;
+    --carbon-blue: 224 76% 58%;
+    
+    /* Sidebar Dark */
+    --sidebar: 222 47% 6%;
+    --sidebar-foreground: 220 13% 75%;
+    --sidebar-border: 222 30% 15%;
+    --sidebar-accent: 222 30% 12%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-ring: 168 76% 42%;
+    --sidebar-muted: 220 13% 55%;
+    --sidebar-active-bg: 168 76% 20%;
+    --sidebar-active-border: 168 76% 42%;
+    
+    /* Scope Colors - Dark */
+    --scope-1: 168 76% 42%;
+    --scope-2: 174 83% 50%;
+    --scope-3: 224 76% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-inter;
+  }
+  /* Accessibility: Focus visible indicator for keyboard navigation */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring rounded-sm;
+  }
+  /* Ensure sufficient contrast for interactive elements */
+  a:not([class]) {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+}
+
+/* Accessibility: Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
