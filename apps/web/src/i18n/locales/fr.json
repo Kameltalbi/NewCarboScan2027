@@ -5830,13 +5830,22 @@
   },
   "homepage": {
     "hero": {
+      "eyebrow": "Carbon & ESG Intelligence",
       "badge": "Bilan carbone · PCF · CBAM",
+      "titleLine1": "Pilotez votre",
+      "titleLine2": "transition carbone.",
+      "titleLine3": "Créez de la valeur.",
       "titlePart1": "La décarbonation est un ",
       "titleHighlight": "levier de compétitivité",
       "titlePart2": "",
-      "subtitle": "Plateforme conforme GHG Protocol et ISO 14064 pour mesurer, piloter et réduire vos émissions en toute sérénité.",
-      "ctaPrimary": "Réserver une démo",
-      "ctaSecondary": "Essayer le calculateur",
+      "subtitle": "Mesurez vos émissions, identifiez vos priorités et transformez vos données carbone en décisions concrètes.",
+      "ctaPrimary": "Commencer mon bilan",
+      "ctaSecondary": "Découvrir CarboScan",
+      "trust": {
+        "deploy": "Simple à déployer",
+        "compliant": "Conforme aux standards",
+        "africa": "Adapté à l’Afrique"
+      },
       "trustCount": "100+ entreprises",
       "trustText": "nous font confiance",
       "dashboardAlt": "Aperçu du tableau de bord CarboScan",

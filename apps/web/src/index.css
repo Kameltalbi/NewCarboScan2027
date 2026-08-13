@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -180,6 +180,15 @@
 }
 
 /* Accessibility: Reduced motion support */
+.font-hero-display {
+  font-family: "DM Serif Display", "Iowan Old Style", Georgia, serif;
+  font-weight: 400;
+}
+
+.hero-visual {
+  filter: drop-shadow(-16px 8px 36px rgba(7, 61, 48, 0.10));
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

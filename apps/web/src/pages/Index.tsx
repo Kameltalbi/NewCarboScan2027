@@ -1,6 +1,6 @@
 
 import React from "react";
-import { MainHeader } from "@/components/MainHeader";
+import { HomeHeader } from "@/components/HomeHeader";
 import { NewHeroSection } from "@/components/NewHeroSection";
 import { SuiteModulesSection } from "@/components/homepage/SuiteModulesSection";
 import { CarboScanWattBimToggleSection } from "@/components/homepage/CarboScanWattBimToggleSection";
@@ -14,7 +14,7 @@ import { NewFooter } from "@/components/NewFooter";
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <MainHeader />
+      <HomeHeader />
 
       <main id="main-content" className="flex-1">
         <NewHeroSection />

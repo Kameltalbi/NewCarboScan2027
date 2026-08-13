@@ -18,8 +18,6 @@ import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppData } from "@/contexts/AppDataContext";
-import carboScanLogo from "@/assets/carboscan-new-logo.png";
-import carboScanLogoWhite from "@/assets/carboscan-logo-white.png";
 
 export const MainHeader = () => {
   const navigate = useNavigate();
@@ -32,8 +30,12 @@ export const MainHeader = () => {
   const [scrolled, setScrolled] = useState(false);
 
   const isHome = location.pathname === "/";
-  const transparent = isHome && !scrolled;
-  const darkHeroHeaderClass = "bg-[#0B2E24] border-b border-white/10";
+  // Light homepage hero — never use the old dark transparent header on `/`
+  const transparent = false;
+  const homeOverHero = isHome && !scrolled;
+  const homeHeaderClass = homeOverHero
+    ? "bg-[#F7F8F6]/85 border-b border-transparent backdrop-blur-md"
+    : "bg-white border-b";
 
   useEffect(() => {
     if (!isHome) return;
@@ -75,12 +77,12 @@ export const MainHeader = () => {
   };
   if (isMobile) {
     return (
-      <header className={`sticky top-0 z-50 w-full transition-colors duration-300 ${transparent ? darkHeroHeaderClass : "border-b bg-white/95 backdrop-blur-lg"}`}>
+      <header className={`sticky top-0 z-50 w-full transition-colors duration-300 ${isHome ? homeHeaderClass : "border-b bg-white/95 backdrop-blur-lg"}`}>
         <div className="container flex h-24 items-center justify-between px-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 transition-transform hover:scale-105">
             <img 
-              src={transparent ? carboScanLogoWhite : "/logos/CarboScan-logo.png"}
+              src="/logos/CarboScan-logo.png"
               alt="CarboScan - Bilan Carbone"
               className="h-16 w-auto" 
             />
@@ -341,13 +343,13 @@ export const MainHeader = () => {
   }
 
   return (
-    <header className={`sticky top-0 z-50 w-full transition-colors duration-300 ${transparent ? darkHeroHeaderClass : "bg-white border-b"}`}>
+    <header className={`sticky top-0 z-50 w-full transition-colors duration-300 ${isHome ? homeHeaderClass : "bg-white border-b"}`}>
       <div className="container mx-auto px-6">
         <div className="flex h-24 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
             <img 
-              src={transparent ? carboScanLogoWhite : "/logos/CarboScan-logo.png"}
+              src="/logos/CarboScan-logo.png"
               alt="CarboScan - Bilan Carbone"
               className="h-16 w-auto" 
             />

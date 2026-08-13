@@ -5821,13 +5821,22 @@
   },
   "homepage": {
     "hero": {
+      "eyebrow": "Carbon & ESG Intelligence",
       "badge": "Carbon footprint · PCF · CBAM",
+      "titleLine1": "Steer your",
+      "titleLine2": "carbon transition.",
+      "titleLine3": "Create lasting value.",
       "titlePart1": "Decarbonization is a ",
       "titleHighlight": "competitive lever",
       "titlePart2": "",
-      "subtitle": "A GHG Protocol and ISO 14064-compliant platform to measure, manage, and reduce your emissions with confidence.",
-      "ctaPrimary": "Book a demo",
-      "ctaSecondary": "Try the calculator",
+      "subtitle": "Measure your emissions, identify priorities, and turn carbon data into concrete decisions.",
+      "ctaPrimary": "Start my footprint",
+      "ctaSecondary": "Discover CarboScan",
+      "trust": {
+        "deploy": "Simple to deploy",
+        "compliant": "Standards-compliant",
+        "africa": "Built for Africa"
+      },
       "trustCount": "100+ companies",
       "trustText": "trust us",
       "dashboardAlt": "CarboScan dashboard preview",
