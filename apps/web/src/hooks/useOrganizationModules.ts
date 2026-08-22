@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from './useAuth';
 import { logger } from '@/utils/logger';
 
@@ -32,51 +32,15 @@ export const useOrganizationModules = () => {
       try {
         setLoading(true);
         setError(null);
-
-        let organizationId: string | null = null;
-
-        // 1. D'abord chercher si l'utilisateur est propriétaire d'une organisation
-        const { data: ownedOrg, error: ownedOrgError } = await supabase
-          .from('organizations')
-          .select('id')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (ownedOrg) {
-          organizationId = ownedOrg.id;
-          logger.debug('🏢 User is organization owner:', organizationId);
-        } else {
-          // 2. Sinon chercher si l'utilisateur est membre d'une organisation
-          const { data: orgMember, error: orgError } = await supabase
-            .from('organization_members')
-            .select('organization_id')
-            .eq('user_id', user.id)
-            .maybeSingle();
-
-          if (orgMember) {
-            organizationId = orgMember.organization_id;
-            logger.debug('👥 User is organization member:', organizationId);
-          }
-        }
-
-        if (!organizationId) {
-          logger.warn('No organization found for user');
-          setModules([]);
-          setLoading(false);
-          return;
-        }
-
-        // Appeler la fonction RPC pour récupérer les modules actifs
-        const { data, error: rpcError } = await supabase
-          .rpc('get_organization_modules', { p_org_id: organizationId });
-
-        if (rpcError) {
-          throw rpcError;
-        }
-
-        setModules(data || []);
+        const { items } = await api.listOrgModules();
+        setModules(
+          (items || []).map((m) => ({
+            ...m,
+            route: m.route || `/${m.slug}`,
+          })),
+        );
       } catch (err) {
-        console.error('Error fetching organization modules:', err);
+        logger.error('Error fetching organization modules:', err);
         setError(err instanceof Error ? err : new Error('Unknown error'));
         setModules([]);
       } finally {
@@ -87,22 +51,9 @@ export const useOrganizationModules = () => {
     fetchModules();
   }, [user]);
 
-  // Fonction pour vérifier si un module est actif
-  const hasModule = (slug: string): boolean => {
-    return modules.some(m => m.slug === slug);
-  };
+  const hasModule = (slug: string): boolean => modules.some(m => m.slug === slug);
+  const getModule = (slug: string): OrganizationModule | undefined =>
+    modules.find(m => m.slug === slug);
 
-  // Fonction pour obtenir un module par son slug
-  const getModule = (slug: string): OrganizationModule | undefined => {
-    return modules.find(m => m.slug === slug);
-  };
-
-  return {
-    modules,
-    loading,
-    error,
-    hasModule,
-    getModule,
-  };
+  return { modules, loading, error, hasModule, getModule };
 };
-

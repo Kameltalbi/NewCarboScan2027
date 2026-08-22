@@ -1,5 +1,5 @@
-# Local only — exposes Postgres on host :5432
+# Local only — exposes Postgres on host :5435 (5432 is used by other projects)
 services:
   postgres:
     ports:
-      - "5432:5432"
+      - "5435:5432"

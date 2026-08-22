@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Clock, BookOpen, Target, ArrowLeft, Play } from 'lucide-react';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { Loader2 } from 'lucide-react';
 import { Lesson } from '@/components/academy/LessonStepSidebar';
 
@@ -80,7 +80,7 @@ const CourseDetailPage: React.FC = () => {
       if (lessonsError) throw lessonsError;
 
       // Fetch user progress to mark completed lessons
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (user) {
         const { data: progressData } = await (supabase
           .from('user_progress' as any)

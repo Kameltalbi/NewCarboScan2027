@@ -15,11 +15,12 @@ import {
 } from '@/components/ui/select';
 import { Loader2, KeyRound, Plus, Copy, Trash2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from '@/hooks/useAuth';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+const API_URL =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? "http://localhost:8080" : "");
 
 const AVAILABLE_SCOPES = [
   { id: 'read:activity', label: 'read:activity', desc: 'Lire les données de collecte' },
@@ -39,63 +40,37 @@ type ApiKeyRow = {
   created_at: string;
 };
 
-async function callApi(path: string, method: string, body?: unknown) {
-  const { data: sess } = await supabase.auth.getSession();
-  const token = sess.session?.access_token;
-  const res = await fetch(`${SUPABASE_URL}/functions/v1/api-keys${path}`, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: ANON_KEY,
-      Authorization: `Bearer ${token}`,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json?.error ?? `HTTP ${res.status}`);
-  return json;
-}
-
 export const ParametresApiKeys: React.FC = () => {
   const { user } = useAuth();
   const qc = useQueryClient();
 
-  const { data: organization } = useQuery({
-    queryKey: ['user-organization-for-apikeys', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      const { data: owned } = await supabase
-        .from('organizations').select('id, name').eq('user_id', user.id).maybeSingle();
-      if (owned) return owned;
-      const { data: mem } = await supabase
-        .from('organization_members')
-        .select('organizations(id, name)').eq('user_id', user.id).maybeSingle();
-      return (mem?.organizations as any) ?? null;
-    },
-    enabled: !!user?.id,
-  });
-
   const { data: keys = [], isLoading } = useQuery({
-    queryKey: ['api-keys', organization?.id],
-    enabled: !!organization?.id,
+    queryKey: ['api-keys', user?.id],
+    enabled: !!user?.id,
     queryFn: async () => {
-      const r = await callApi(`?organization_id=${organization!.id}`, 'GET');
-      return (r.data ?? []) as ApiKeyRow[];
+      const { items } = await api.listApiKeys();
+      return (items || []).map((row) => ({
+        id: String(row.id),
+        app_name: String(row.app_name ?? row.name ?? ''),
+        key_prefix: String(row.key_prefix ?? ''),
+        scopes: (row.scopes as string[]) ?? [],
+        env: ((row.env as 'live' | 'test') ?? 'live'),
+        is_active: row.is_active !== false,
+        revoked_at: (row.revoked_at as string | null) ?? null,
+        expires_at: (row.expires_at as string | null) ?? null,
+        last_used_at: (row.last_used_at as string | null) ?? null,
+        created_at: String(row.created_at ?? ''),
+      })) as ApiKeyRow[];
     },
   });
 
   const { data: recentLogs = [] } = useQuery({
-    queryKey: ['api-request-logs', organization?.id],
-    enabled: !!organization?.id,
+    queryKey: ['api-request-logs', user?.id],
+    enabled: !!user?.id,
     refetchInterval: 30000,
     queryFn: async () => {
-      const { data } = await supabase
-        .from('api_request_logs')
-        .select('id, endpoint, method, status, duration_ms, created_at, api_key_id')
-        .eq('organization_id', organization!.id)
-        .order('created_at', { ascending: false })
-        .limit(20);
-      return data ?? [];
+      const { items } = await api.listApiLogs();
+      return items ?? [];
     },
   });
 
@@ -107,16 +82,15 @@ export const ParametresApiKeys: React.FC = () => {
 
   const createMut = useMutation({
     mutationFn: async () => {
-      if (!organization?.id) throw new Error('Organisation introuvable');
-      return callApi('', 'POST', {
-        organization_id: organization.id,
-        app_name: appName,
+      const r = await api.createApiKey({
+        appName: appName,
         env,
         scopes: selectedScopes,
       });
+      return r;
     },
     onSuccess: (r) => {
-      setCreatedKey(r.data.key);
+      setCreatedKey(r.key);
       setAppName('');
       setSelectedScopes(['read:activity']);
       qc.invalidateQueries({ queryKey: ['api-keys'] });
@@ -126,7 +100,7 @@ export const ParametresApiKeys: React.FC = () => {
   });
 
   const revokeMut = useMutation({
-    mutationFn: async (id: string) => callApi(`/${id}`, 'DELETE'),
+    mutationFn: async (id: string) => api.revokeApiKey(id),
     onSuccess: () => {
       toast.success('Clé révoquée');
       qc.invalidateQueries({ queryKey: ['api-keys'] });
@@ -214,9 +188,8 @@ export const ParametresApiKeys: React.FC = () => {
         <CardContent className="text-sm space-y-2">
           <p>Envoie la clé dans l'en-tête <code className="bg-muted px-1 rounded">x-api-key</code> :</p>
           <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
-{`curl "${SUPABASE_URL}/functions/v1/collect-api" \\
-  -H "apikey: ${ANON_KEY}" \\
-  -H "x-api-key: sk_live_…"`}
+{`curl "${API_URL}/v1/collect/activity-data" \\
+  -H "x-api-key: ncs_…"`}
           </pre>
           <p className="text-xs text-muted-foreground">
             Documentation interactive : <a href="/developers" className="underline">/developers</a>

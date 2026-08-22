@@ -1,8 +1,5 @@
-// Hook pour récupérer les données complètes de l'organisation
-// Inclut reference_year, country, currency, unités par défaut, etc.
-
 import { useAuth } from './useAuth';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useQuery } from '@tanstack/react-query';
 
 export interface OrganizationData {
@@ -32,60 +29,42 @@ export const useOrganizationData = () => {
     queryKey: ['organization-data', user?.id],
     queryFn: async (): Promise<OrganizationData | null> => {
       if (!user?.id) return null;
-
-      // 1. D'abord chercher si l'utilisateur est propriétaire d'une organisation
-      const { data: ownedOrg, error: ownedOrgError } = await supabase
-        .from('organizations')
-        .select('id, name, country, sector, reference_year, currency, energy_unit, mass_unit, distance_unit, logo_url, pilot_name, legal_name, annual_revenue, employees, total_surface')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (ownedOrgError) {
-        throw ownedOrgError;
+      try {
+        const { organization: org } = await api.getOrganization();
+        if (!org) return null;
+        return {
+          id: org.id,
+          name: org.name,
+          country: org.country,
+          sector: org.sector,
+          reference_year: org.referenceYear,
+          currency: org.currency,
+          energy_unit: org.energyUnit,
+          mass_unit: org.massUnit,
+          distance_unit: org.distanceUnit,
+          logo_url: org.logoUrl,
+          pilot_name: org.pilotName,
+          legal_name: org.legalName,
+          annual_revenue: org.annualRevenue ?? null,
+          employees: org.employees ?? null,
+          total_surface: org.totalSurface ?? null,
+          created_at: org.createdAt,
+          updated_at: org.updatedAt,
+        };
+      } catch {
+        return null;
       }
-
-      if (ownedOrg) {
-        return ownedOrg as OrganizationData;
-      }
-
-      // 2. Sinon chercher si l'utilisateur est membre d'une organisation
-      const { data: orgMember, error: orgError } = await supabase
-        .from('organization_members')
-        .select('organization_id')
-        .eq('user_id', user.id)
-        .limit(1)
-        .maybeSingle();
-
-      if (orgError) {
-        throw orgError;
-      }
-
-      if (orgMember?.organization_id) {
-        const { data: org, error: fetchError } = await supabase
-          .from('organizations')
-          .select('id, name, country, sector, reference_year, currency, energy_unit, mass_unit, distance_unit, logo_url, pilot_name, legal_name, annual_revenue, employees, total_surface')
-          .eq('id', orgMember.organization_id)
-          .single();
-
-        if (fetchError) {
-          throw fetchError;
-        }
-
-        return org as OrganizationData;
-      }
-
-      return null;
     },
     enabled: !!user?.id,
-    staleTime: 5 * 60 * 1000, // Cache pendant 5 minutes
-    gcTime: 10 * 60 * 1000, // Garder en cache 10 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
-  return { 
+  return {
     organization: organization ?? null,
     organizationId: organization?.id ?? null,
     referenceYear: organization?.reference_year ?? new Date().getFullYear(),
-    loading, 
-    error: error as Error | null 
+    loading,
+    error: error as Error | null
   };
 };

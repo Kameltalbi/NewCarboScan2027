@@ -45,7 +45,7 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { cn } from '@/lib/utils';
 import { MonetaryFactorPresets, isMonetaryUnit } from './MonetaryFactorPresets';
 import { FlightFactorPresets, isFlightContext, type FlightFactorPreset } from './FlightFactorPresets';
@@ -126,21 +126,16 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
       try {
         setLoading(true);
         
-        // Utiliser la RPC qui contourne les RLS
-        const { data, error } = await supabase.rpc('get_base_emission_factors');
+        const { items } = await api.listFactors();
         
-        if (error) {
-          console.error('Error loading emission factors via RPC:', error);
-          setAllFactors([]);
-          return;
-        }
-        
-        const factorsList: BaseEmissionFactor[] = (data || []).map((f: any) => ({
-          slug: f.slug || '',
-          factor_name: f.factor_name || '',
-          emission_factor: f.emission_factor || 0,
-          unit: f.unit || 'kgCO₂e',
-          subcategory: f.subcategory || '',
+        const factorsList: BaseEmissionFactor[] = (items || []).map((f) => ({
+          slug: String(f.category ?? f.name ?? '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '_'),
+          factor_name: String(f.name ?? ''),
+          emission_factor: Number(f.value ?? 0),
+          unit: [f.unit_numerator, f.unit_denominator].filter(Boolean).join('/') || 'kgCO₂e',
+          subcategory: String(f.category ?? ''),
         }));
         
         setAllFactors(factorsList);

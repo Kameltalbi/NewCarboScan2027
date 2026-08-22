@@ -1,9 +1,47 @@
 import type { FastifyInstance } from "fastify";
 import bcrypt from "bcryptjs";
 import { pool } from "../db.js";
-import { loginSchema } from "../schemas/index.js";
+import { changePasswordSchema, loginSchema, patchProfileSchema } from "../schemas/index.js";
 import { registerSchema } from "../schemas/public.js";
 import { signToken } from "../plugins/auth.js";
+
+type MembershipRow = {
+  organization_id: string;
+  role: string;
+  name?: string;
+  sector?: string | null;
+  country?: string | null;
+  status?: string;
+};
+
+async function loadAuthContext(userId: string) {
+  const [platform, memberships] = await Promise.all([
+    pool.query(`SELECT role FROM user_roles WHERE user_id = $1`, [userId]),
+    pool.query(
+      `SELECT om.organization_id, om.role::text AS role,
+              o.name, o.sector, o.country, o.status
+       FROM organization_members om
+       JOIN organizations o ON o.id = om.organization_id
+       WHERE om.user_id = $1
+       ORDER BY om.created_at`,
+      [userId],
+    ),
+  ]);
+  const isSuperAdmin = platform.rows.some(
+    (r: { role: string }) => r.role === "superadmin",
+  );
+  const platformRole = isSuperAdmin
+    ? "superadmin"
+    : (platform.rows[0] as { role: string } | undefined)?.role;
+  const jwtRole = isSuperAdmin
+    ? "superadmin"
+    : (memberships.rows[0] as MembershipRow | undefined)?.role;
+  return {
+    platformRole,
+    jwtRole,
+    memberships: memberships.rows as MembershipRow[],
+  };
+}
 
 function slugify(input: string): string {
   return input
@@ -124,28 +162,124 @@ export async function registerAuthRoutes(app: FastifyInstance) {
       return reply.code(401).send({ error: "Invalid credentials" });
     }
 
-    const memberships = await pool.query(
-      `SELECT organization_id, role FROM organization_members WHERE user_id = $1`,
-      [user.id],
-    );
+    const ctx = await loadAuthContext(user.id);
 
     const token = signToken({
       id: user.id,
       email: user.email,
-      organizationId: memberships.rows[0]?.organization_id,
-      role: memberships.rows[0]?.role,
+      organizationId: ctx.memberships[0]?.organization_id,
+      role: ctx.jwtRole,
+      platformRole: ctx.platformRole,
     });
 
     return {
       token,
-      user: { id: user.id, email: user.email, fullName: user.full_name },
-      organizations: memberships.rows,
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.full_name,
+        role: ctx.jwtRole,
+        platformRole: ctx.platformRole,
+        organizationId: ctx.memberships[0]?.organization_id,
+      },
+      organizations: ctx.memberships,
     };
   });
 
   app.get(
     "/auth/me",
     { preHandler: [app.requireAuth] },
-    async (request) => ({ user: request.user }),
+    async (request) => {
+      const ctx = await loadAuthContext(request.user!.id);
+      const { rows } = await pool.query(
+        `SELECT full_name FROM users WHERE id = $1`,
+        [request.user!.id],
+      );
+      return {
+        user: {
+          id: request.user!.id,
+          email: request.user!.email,
+          fullName: rows[0]?.full_name ?? null,
+          role: ctx.jwtRole,
+          platformRole: ctx.platformRole,
+          organizationId:
+            request.user!.organizationId ?? ctx.memberships[0]?.organization_id,
+        },
+        organizations: ctx.memberships,
+      };
+    },
+  );
+
+  app.patch(
+    "/auth/me",
+    { preHandler: [app.requireAuth] },
+    async (request, reply) => {
+      const parsed = patchProfileSchema.safeParse(request.body ?? {});
+      if (!parsed.success) {
+        return reply.code(400).send({ error: parsed.error.flatten() });
+      }
+      const userId = request.user!.id;
+      if (parsed.data.fullName) {
+        await pool.query(
+          `UPDATE users SET full_name = $2, updated_at = now() WHERE id = $1`,
+          [userId, parsed.data.fullName],
+        );
+      }
+      await pool.query(
+        `INSERT INTO profiles (user_id, full_name, company_name, phone, sector)
+         VALUES ($1,$2,$3,$4,$5)
+         ON CONFLICT (user_id) DO UPDATE SET
+           full_name = COALESCE(EXCLUDED.full_name, profiles.full_name),
+           company_name = COALESCE(EXCLUDED.company_name, profiles.company_name),
+           phone = COALESCE(EXCLUDED.phone, profiles.phone),
+           sector = COALESCE(EXCLUDED.sector, profiles.sector),
+           updated_at = now()`,
+        [
+          userId,
+          parsed.data.fullName ?? null,
+          parsed.data.companyName ?? null,
+          parsed.data.phone ?? null,
+          parsed.data.sector ?? null,
+        ],
+      );
+      const { rows } = await pool.query(
+        `SELECT u.id, u.email, u.full_name,
+                p.company_name, p.phone, p.sector
+         FROM users u
+         LEFT JOIN profiles p ON p.user_id = u.id
+         WHERE u.id = $1`,
+        [userId],
+      );
+      return { user: rows[0] };
+    },
+  );
+
+  app.post(
+    "/auth/password",
+    { preHandler: [app.requireAuth] },
+    async (request, reply) => {
+      const parsed = changePasswordSchema.safeParse(request.body ?? {});
+      if (!parsed.success) {
+        return reply.code(400).send({ error: parsed.error.flatten() });
+      }
+      const { rows } = await pool.query(
+        `SELECT password_hash FROM users WHERE id = $1`,
+        [request.user!.id],
+      );
+      const ok =
+        rows[0] &&
+        (await bcrypt.compare(parsed.data.currentPassword, rows[0].password_hash));
+      if (!ok) {
+        return reply.code(400).send({ error: "Mot de passe actuel incorrect" });
+      }
+      const hash = await bcrypt.hash(parsed.data.newPassword, 12);
+      await pool.query(
+        `UPDATE users
+         SET password_hash = $2, must_reset_password = false, updated_at = now()
+         WHERE id = $1`,
+        [request.user!.id, hash],
+      );
+      return { ok: true };
+    },
   );
 }

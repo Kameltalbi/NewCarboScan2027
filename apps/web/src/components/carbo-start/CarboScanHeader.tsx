@@ -84,7 +84,9 @@ export const CarboScanHeader: React.FC<CarboScanHeaderProps> = ({ user, usage, h
           
           {/* Logo entreprise - temporaire */}
           <div className="h-10 px-3 py-1 flex items-center justify-center bg-primary/10 rounded border">
-            <span className="text-sm font-medium text-primary">Mon Entreprise</span>
+            <span className="text-sm font-medium text-primary">
+              {user?.name || "Organisation"}
+            </span>
           </div>
           
           {/* Badge plan */}

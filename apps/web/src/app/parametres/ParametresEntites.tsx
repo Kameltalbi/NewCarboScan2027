@@ -25,7 +25,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from '@/hooks/useAuth';
 import { useAppData } from '@/contexts/AppDataContext';
 import { useQueryClient } from '@tanstack/react-query';
@@ -45,19 +45,7 @@ export const ParametresEntites: React.FC = () => {
 
     setCreating(true);
     try {
-      const { data: newOrg, error: orgError } = await supabase
-        .from('organizations')
-        .insert({ name: newOrgName.trim(), user_id: user.id })
-        .select('id')
-        .single();
-
-      if (orgError) throw orgError;
-
-      // Auto-create linked company
-      await supabase
-        .from('companies')
-        .insert({ nom_entreprise: newOrgName.trim(), user_id: user.id });
-
+      const { organization: newOrg } = await api.createOrganization({ name: newOrgName.trim() });
       await queryClient.invalidateQueries({ queryKey: ['allOrganizations'] });
       switchOrganization(newOrg.id);
       toast.success(`Entité "${newOrgName.trim()}" créée`);
@@ -73,12 +61,7 @@ export const ParametresEntites: React.FC = () => {
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
-      const { error } = await supabase
-        .from('organizations')
-        .delete()
-        .eq('id', deleteTarget.id);
-
-      if (error) throw error;
+      await api.deleteMyOrganization(deleteTarget.id);
 
       await queryClient.invalidateQueries({ queryKey: ['allOrganizations'] });
       if (currentOrganization?.id === deleteTarget.id) {

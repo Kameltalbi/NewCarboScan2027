@@ -45,7 +45,7 @@ import {
 } from '@/components/ui/dialog';
 import { useCollectSites, type CollectSite, type CreateSiteInput } from '@/hooks/useCollectSites';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
@@ -79,48 +79,15 @@ export const ParametresSites: React.FC = () => {
   const { data: company, isLoading: companyLoading } = useQuery({
     queryKey: ['user-company-for-sites', user?.id],
     queryFn: async () => {
-      if (!user?.id) return null;
-      
-      // D'abord, essayer de récupérer une company existante
-      const { data: existingCompany } = await supabase
-        .from('companies')
-        .select('id, nom_entreprise')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      if (existingCompany) return existingCompany;
-      
-      // Sinon, récupérer l'organization et créer une company
-      const { data: org } = await supabase
-        .from('organizations')
-        .select('id, name')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      if (org) {
-        // Créer une company depuis l'organization
-        const { data: newCompany, error } = await supabase
-          .from('companies')
-          .insert({
-            user_id: user.id,
-            nom_entreprise: org.name,
-          })
-          .select('id, nom_entreprise')
-          .single();
-        
-        if (error) {
-          console.error('Error creating company:', error);
-          return null;
-        }
-        return newCompany;
-      }
-      
-      return null;
+      const { items } = await api.listEntities();
+      const first = items?.[0] as { id?: string; name?: string; nom_entreprise?: string } | undefined;
+      if (!first?.id) return null;
+      return { id: first.id, nom_entreprise: first.name || first.nom_entreprise || '' };
     },
     enabled: !!user?.id,
   });
 
-  const { sites, isLoading, createSite, updateSite, deleteSite } = useCollectSites(company?.id);
+  const { sites, isLoading, createSite, updateSite, deleteSite } = useCollectSites();
 
   // Formulaire
   const [formData, setFormData] = useState({
@@ -179,10 +146,10 @@ export const ParametresSites: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!company?.id) return;
+    if (!formData.name.trim()) return;
 
     const siteData: CreateSiteInput = {
-      company_id: company.id,
+      company_id: company?.id || '',
       name: formData.name,
       code: formData.code || undefined,
       city: formData.city || undefined,

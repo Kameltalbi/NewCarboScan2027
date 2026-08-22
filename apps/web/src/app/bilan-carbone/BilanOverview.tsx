@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { supabase } from "@/integrations/api/client";
+import { api } from '@/integrations/api/client';
 import { BilanCarboneCalculator } from '@/lib/calculators/BilanCarboneCalculator';
 import { 
   Loader2, 
@@ -103,24 +103,19 @@ export const BilanOverview: React.FC = () => {
       }
 
       // Charger l'historique des snapshots (bilans figés)
-      const { data: bilans } = await supabase
-        .from('bilans_carbone')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false })
-        .limit(5);
+      const { items: bilans } = await api.listBilans();
 
       if (bilans && bilans.length > 0) {
-        setRecentBilans(bilans.map(b => ({
-          id: b.id,
-          year: new Date(b.date_bilan || b.created_at).getFullYear(),
+        setRecentBilans((bilans || []).slice(0, 5).map(b => ({
+          id: String(b.id),
+          year: Number(b.year) || new Date(String(b.date_bilan || b.created_at)).getFullYear(),
           status: 'verrouille' as BilanStatus,
-          totalEmissions: b.total_emission || 0,
-          scope1: b.scope1_emission || 0,
-          scope2: b.scope2_emission || 0,
-          scope3: b.scope3_emission || 0,
-          lastUpdated: b.updated_at,
-          calculatedAt: b.date_bilan,
+          totalEmissions: Number(b.total_emission ?? b.total_kgco2e ?? 0) || 0,
+          scope1: Number(b.scope1_emission ?? 0) || 0,
+          scope2: Number(b.scope2_emission ?? 0) || 0,
+          scope3: Number(b.scope3_emission ?? 0) || 0,
+          lastUpdated: String(b.updated_at ?? b.created_at ?? ''),
+          calculatedAt: String(b.date_bilan ?? b.created_at ?? ''),
         })));
       }
 
@@ -187,21 +182,16 @@ export const BilanOverview: React.FC = () => {
                     if (!user?.id || !currentBilan) return;
                     
                     try {
-                      const { error } = await supabase
-                        .from('bilans_carbone')
-                        .insert({
-                          user_id: user.id,
-                          date_bilan: new Date().toISOString(),
-                          total_emission: currentBilan.totalEmissions,
-                          scope1_emission: currentBilan.scope1,
-                          scope2_emission: currentBilan.scope2,
-                          scope3_emission: currentBilan.scope3,
-                        });
-                      
-                      if (!error) {
-                        alert('✅ Snapshot créé avec succès !');
-                        loadData(); // Recharger pour afficher le nouveau snapshot
-                      }
+                      await api.createBilan({
+                        dateBilan: new Date().toISOString(),
+                        year: new Date().getFullYear(),
+                        totalEmission: currentBilan.totalEmissions,
+                        scope1Emission: currentBilan.scope1,
+                        scope2Emission: currentBilan.scope2,
+                        scope3Emission: currentBilan.scope3,
+                      });
+                      alert('✅ Snapshot créé avec succès !');
+                      loadData();
                     } catch (err) {
                       console.error('Erreur création snapshot:', err);
                     }

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, KeyRound, Mail } from 'lucide-react';
 import { z } from 'zod';
@@ -37,18 +37,7 @@ export const ParametresMonCompte: React.FC = () => {
     setLoading(true);
     try {
       // Re-vérifier le mot de passe actuel
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: user.email,
-        password: current,
-      });
-      if (signInError) {
-        toast({ title: 'Mot de passe actuel incorrect', variant: 'destructive' });
-        setLoading(false);
-        return;
-      }
-      // Mettre à jour
-      const { error } = await supabase.auth.updateUser({ password: next });
-      if (error) throw error;
+      await api.changePassword(current, next);
       toast({ title: 'Mot de passe modifié', description: 'Votre nouveau mot de passe est actif.' });
       setCurrent(''); setNext(''); setConfirm('');
     } catch (err: any) {

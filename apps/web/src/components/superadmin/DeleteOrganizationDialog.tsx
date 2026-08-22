@@ -1,4 +1,3 @@
-// Suppression d'une organisation depuis l'espace SuperAdmin
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -13,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Trash2, AlertTriangle, Loader2 } from 'lucide-react';
-import { supabase } from "@/integrations/api/client";
+import { api } from '@/integrations/api/client';
 import { useToast } from '@/hooks/use-toast';
 import { logger } from '@/utils/logger';
 
@@ -37,48 +36,11 @@ export const DeleteOrganizationDialog: React.FC<DeleteOrganizationDialogProps> =
   const [deleting, setDeleting] = useState(false);
 
   const expected = organization.nom_entreprise || 'Organisation';
-  const isRealUser =
-    !!organization.user_id &&
-    !organization.user_id.startsWith('free_') &&
-    !organization.user_id.startsWith('cbam_') &&
-    !organization.user_id.startsWith('order_');
 
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      const source = organization.source;
-
-      if (source === 'gratuit' || source === 'cbam') {
-        const { error } = await supabase
-          .from('contact_requests')
-          .delete()
-          .eq('id', organization.id);
-        if (error) throw error;
-      } else if (source === 'commande') {
-        const { error } = await supabase.from('orders').delete().eq('id', organization.id);
-        if (error) throw error;
-      } else {
-        if (source === 'manuel') {
-          const { error } = await supabase.from('companies').delete().eq('id', organization.id);
-          if (error) throw error;
-        }
-
-        if (isRealUser) {
-          // Supprime les entités et entreprises rattachées à cet utilisateur
-          const { error: orgError } = await supabase
-            .from('organizations')
-            .delete()
-            .eq('user_id', organization.user_id);
-          if (orgError) throw orgError;
-
-          const { error: compError } = await supabase
-            .from('companies')
-            .delete()
-            .eq('user_id', organization.user_id);
-          if (compError) throw compError;
-        }
-      }
-
+      await api.adminDeleteOrganization(organization.id, expected);
       toast({
         title: 'Organisation supprimée',
         description: `« ${expected} » a été supprimée définitivement.`,
@@ -86,11 +48,11 @@ export const DeleteOrganizationDialog: React.FC<DeleteOrganizationDialogProps> =
       setOpen(false);
       setConfirmText('');
       onDeleted();
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error deleting organization:', error);
       toast({
         title: 'Erreur',
-        description: error?.message || "Impossible de supprimer l'organisation",
+        description: error instanceof Error ? error.message : "Impossible de supprimer l'organisation",
         variant: 'destructive',
       });
     } finally {
@@ -125,11 +87,8 @@ export const DeleteOrganizationDialog: React.FC<DeleteOrganizationDialogProps> =
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription className="text-sm">
-              {organization.source === 'gratuit' || organization.source === 'cbam'
-                ? "L'inscription au calculateur sera supprimée."
-                : organization.source === 'commande'
-                ? 'La commande liée sera supprimée.'
-                : "Les entités et entreprises rattachées à cet utilisateur seront supprimées, ainsi que les données liées (bilans, collectes, modules). Le compte utilisateur n'est pas supprimé."}
+              Toutes les données de l'organisation (membres, bilans, collectes, preuves) seront
+              supprimées. Les comptes utilisateurs ne sont pas supprimés.
             </AlertDescription>
           </Alert>
 

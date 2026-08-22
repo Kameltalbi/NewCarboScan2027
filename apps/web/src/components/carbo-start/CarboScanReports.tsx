@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -45,7 +45,7 @@ export const CarboScanReports: React.FC = () => {
 
   const fetchBilans = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       
       if (!user) {
         toast({

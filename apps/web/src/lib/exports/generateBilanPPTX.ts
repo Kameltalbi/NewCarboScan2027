@@ -81,7 +81,7 @@ export async function generateBilanPPTX(ctx: BilanExportContext): Promise<void> 
       s.addText(k.value, { x: x + 0.15, y: 4.8, w: 2.5, h: 0.9, fontSize: 22, color: WHITE, fontFace: 'Calibri', bold: true });
     });
 
-    s.addText('Conforme ISO 14064-1  •  GHG Protocol  •  Méthode ADEME', {
+    s.addText('Calcul interne CarboScan — non vérifié par un tiers', {
       x: 0.8, y: 6.4, w: 11, h: 0.3, fontSize: 11, color: '94A3B8', fontFace: 'Calibri',
     });
     s.addText('Édité par CarboScan', {
@@ -120,16 +120,16 @@ export async function generateBilanPPTX(ctx: BilanExportContext): Promise<void> 
   {
     const s = pptx.addSlide();
     addTitleBar(s, 'Périmètre', 'Cadre méthodologique du bilan',
-      `${ctx.organizationName} — Exercice ${ctx.year} — Approche contrôle opérationnel`);
+      `${ctx.organizationName} — Exercice ${ctx.year} — Périmètre déclaré (non audité)`);
     const rows: [string, string][] = [
       ['Organisation', ctx.organizationName],
       ['Secteur', ctx.sector || 'Non renseigné'],
       ['Effectif', ctx.employees != null ? `${ctx.employees} ETP` : 'n/a'],
       ['Année de reporting', String(ctx.year)],
-      ['Périmètre opérationnel', 'Scopes 1, 2 et 3 (catégories pertinentes GHG Protocol)'],
-      ['Méthodologie', 'GHG Protocol / ISO 14064-1 / Bilan Carbone® ADEME'],
-      ['Facteurs d\'émission', 'Base Empreinte ADEME + facteurs spécifiques organisation'],
-      ['Outil de calcul', 'CarboScan (calcul activity-based en temps réel)'],
+      ['Périmètre opérationnel', 'Scopes 1, 2 et 3 (couverture partielle, non auditée)'],
+      ['Méthodologie', 'Comptabilité carbone interne CarboScan'],
+      ['Facteurs d\'émission', 'Pack interne versionné — pas un pack ADEME officiel'],
+      ['Outil de calcul', 'CarboScan (calcul interne, non certifié)'],
     ];
     s.addTable(
       rows.map(([k, v]) => [
@@ -293,10 +293,10 @@ export async function generateBilanPPTX(ctx: BilanExportContext): Promise<void> 
   {
     const s = pptx.addSlide();
     addTitleBar(s, 'Trajectoire', `Décarbonation ${ctx.year}-2030`,
-      `Objectif aligné SBTi : -42% d'ici 2030 → cible ${formatT(data.totalT - data.reductionTarget2030T)}.`);
+      `Illustration interne (non validée) : −42 % d'ici 2030 → ${formatT(data.totalT - data.reductionTarget2030T)}.`);
     s.addChart(pptx.ChartType.line, [
       { name: 'Trajectoire BAU', labels: data.trajectory.map(t => String(t.year)), values: data.trajectory.map(t => t.bau) },
-      { name: 'Cible SBTi -42%', labels: data.trajectory.map(t => String(t.year)), values: data.trajectory.map(t => t.target) },
+      { name: 'Cible illustrative −42 %', labels: data.trajectory.map(t => String(t.year)), values: data.trajectory.map(t => t.target) },
     ], {
       x: 0.5, y: 2.3, w: 12.3, h: 4.6,
       chartColors: ['DC2626', GREEN],
@@ -355,7 +355,7 @@ export async function generateBilanPPTX(ctx: BilanExportContext): Promise<void> 
       x: 6.4, y: 2.4, w: 6.5, h: 4.0, fontSize: 13, color: DARK, fontFace: 'Calibri',
       paraSpaceAfter: 6,
     });
-    s.addText('Méthodologie : ISO 14064-1 §6.4  •  GHG Protocol Corporate Standard  •  ADEME Bilan Carbone® v8', {
+    s.addText('Méthodologie interne CarboScan — document non certifié, non opposable à un auditeur.', {
       x: 0.5, y: 6.7, w: 12.3, h: 0.3, fontSize: 10, color: GRAY, italic: true, fontFace: 'Calibri',
     });
     addFooter(s, 12, TOTAL);

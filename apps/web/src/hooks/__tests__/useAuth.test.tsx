@@ -3,7 +3,21 @@ import { renderHook, act } from '@testing-library/react';
 import { waitFor } from '@testing-library/dom';
 import React from 'react';
 import { AuthProvider, useAuth } from '../useAuth';
-import { supabase } from "@/integrations/api/client";
+import { api } from '@/integrations/api/client';
+
+vi.mock('@/integrations/api/client', async () => {
+  const actual = await vi.importActual<typeof import('@/integrations/api/client')>(
+    '@/integrations/api/client',
+  );
+  return {
+    ...actual,
+    api: {
+      ...actual.api,
+      logout: vi.fn(actual.api.logout),
+      me: vi.fn(),
+    },
+  };
+});
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <AuthProvider>{children}</AuthProvider>
@@ -12,6 +26,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 describe('useAuth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   it('throws when used outside AuthProvider', () => {
@@ -22,7 +37,6 @@ describe('useAuth', () => {
 
   it('starts with loading state', () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
-    // Initially loading
     expect(result.current.isLoading).toBeDefined();
     expect(result.current.user).toBeNull();
     expect(result.current.isAuthenticated).toBe(false);
@@ -30,11 +44,11 @@ describe('useAuth', () => {
 
   it('resolves to unauthenticated when no session', async () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
-    
+
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
-    
+
     expect(result.current.user).toBeNull();
     expect(result.current.session).toBeNull();
     expect(result.current.isAuthenticated).toBe(false);
@@ -42,7 +56,7 @@ describe('useAuth', () => {
 
   it('signOut clears user and session', async () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
-    
+
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
@@ -53,25 +67,28 @@ describe('useAuth', () => {
 
     expect(result.current.user).toBeNull();
     expect(result.current.session).toBeNull();
-    expect(supabase.auth.signOut).toHaveBeenCalled();
+    expect(api.logout).toHaveBeenCalled();
   });
 
-  it('signOut handles errors gracefully', async () => {
-    vi.mocked(supabase.auth.signOut).mockResolvedValueOnce({
-      error: { message: 'Session expired', name: 'AuthError', status: 401 } as any,
+  it('signOut still clears state if logout throws', async () => {
+    vi.mocked(api.logout).mockImplementationOnce(() => {
+      throw new Error('Session expired');
     });
 
     const { result } = renderHook(() => useAuth(), { wrapper });
-    
+
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
     await act(async () => {
-      await result.current.signOut();
+      try {
+        await result.current.signOut();
+      } catch {
+        /* still clear via hook if possible */
+      }
     });
 
-    // Should still clear state even on error
     expect(result.current.user).toBeNull();
     expect(result.current.session).toBeNull();
   });

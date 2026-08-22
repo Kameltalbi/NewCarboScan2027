@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Check, X, RotateCcw } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { toast } from 'sonner';
 import { OrganizationMember, roleConfig } from './types';
 import { 
@@ -80,14 +80,12 @@ export const UserPermissionsModal: React.FC<UserPermissionsModalProps> = ({
     queryFn: async (): Promise<PermissionOverride[]> => {
       if (!organizationId || !member?.user_id) return [];
       
-      const { data, error } = await supabase
-        .from('user_permission_overrides')
-        .select('id, permission_key, granted')
-        .eq('organization_id', organizationId)
-        .eq('user_id', member.user_id);
-      
-      if (error) throw error;
-      return data || [];
+      const { items } = await api.listMemberPermissions(member.user_id);
+      return (items || []).map((row) => ({
+        id: row.id,
+        permission_key: row.permission_key,
+        granted: row.granted ?? row.allowed,
+      }));
     },
     enabled: open && !!organizationId && !!member?.user_id,
   });
@@ -97,36 +95,7 @@ export const UserPermissionsModal: React.FC<UserPermissionsModalProps> = ({
     mutationFn: async ({ action, newValue }: { action: OrgAction; newValue: boolean | null }) => {
       if (!organizationId || !member?.user_id) throw new Error('Missing data');
 
-      const existingOverride = overrides.find(o => o.permission_key === action);
-
-      if (newValue === null) {
-        // Remove override (reset to role default)
-        if (existingOverride) {
-          const { error } = await supabase
-            .from('user_permission_overrides')
-            .delete()
-            .eq('id', existingOverride.id);
-          if (error) throw error;
-        }
-      } else if (existingOverride) {
-        // Update existing override
-        const { error } = await supabase
-          .from('user_permission_overrides')
-          .update({ granted: newValue, updated_at: new Date().toISOString() })
-          .eq('id', existingOverride.id);
-        if (error) throw error;
-      } else {
-        // Create new override
-        const { error } = await supabase
-          .from('user_permission_overrides')
-          .insert({
-            organization_id: organizationId,
-            user_id: member.user_id,
-            permission_key: action,
-            granted: newValue,
-          });
-        if (error) throw error;
-      }
+      await api.setMemberPermission(member.user_id, action, newValue);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ 

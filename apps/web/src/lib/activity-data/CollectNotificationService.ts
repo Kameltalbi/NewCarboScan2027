@@ -1,6 +1,6 @@
 // Service pour gérer les notifications du module Collect
 
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 
 export type NotificationType =
   | 'data_validation_required'
@@ -82,7 +82,7 @@ export class CollectNotificationService {
       .from('collect_notifications')
       .select('*')
       .eq('organization_id', organizationId)
-      .or(`user_id.is.null,user_id.eq.${(await supabase.auth.getUser()).data.user?.id}`)
+      .or(`user_id.is.null,user_id.eq.${(await sessionAuth.getUser()).data.user?.id}`)
       .order('created_at', { ascending: false });
 
     if (options?.unreadOnly) {
@@ -127,7 +127,7 @@ export class CollectNotificationService {
    * Marquer toutes les notifications comme lues
    */
   static async markAllAsRead(organizationId: string): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await sessionAuth.getUser();
     if (!user) return;
 
     const { error } = await supabase
@@ -149,7 +149,7 @@ export class CollectNotificationService {
    * Obtenir le nombre de notifications non lues
    */
   static async getUnreadCount(organizationId: string): Promise<number> {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await sessionAuth.getUser();
     if (!user) return 0;
 
     const { count, error } = await supabase

@@ -1,6 +1,6 @@
 // Hook pour l'historique des versions PCF
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { toast } from 'sonner';
 
 export interface PCFVersionSnapshot {
@@ -18,13 +18,8 @@ export function usePCFVersions(studyId?: string) {
     queryKey: ['pcf-versions', studyId],
     enabled: !!studyId,
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from('pcf_versions')
-        .select('*')
-        .eq('study_id', studyId)
-        .order('version_number', { ascending: false });
-      if (error) throw error;
-      return data as PCFVersionSnapshot[];
+      const { items } = await api.listPcfVersions(studyId!);
+      return (items || []) as unknown as PCFVersionSnapshot[];
     },
   });
 }
@@ -42,39 +37,8 @@ export function useCreatePCFVersion() {
       snapshot: Record<string, unknown>;
       comment?: string;
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      // Get next version number
-      const { data: existing } = await (supabase as any)
-        .from('pcf_versions')
-        .select('version_number')
-        .eq('study_id', studyId)
-        .order('version_number', { ascending: false })
-        .limit(1);
-
-      const nextVersion = (existing?.[0]?.version_number || 0) + 1;
-
-      const { data, error } = await (supabase as any)
-        .from('pcf_versions')
-        .insert({
-          study_id: studyId,
-          version_number: nextVersion,
-          snapshot,
-          comment: comment || `Calcul v${nextVersion}`,
-          created_by: user?.id || null,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Update study version
-      await (supabase as any)
-        .from('pcf_studies')
-        .update({ version: nextVersion })
-        .eq('id', studyId);
-
-      return data as PCFVersionSnapshot;
+      const { item } = await api.createPcfVersion({ studyId, snapshot, comment });
+      return item as unknown as PCFVersionSnapshot;
     },
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ['pcf-versions', vars.studyId] });

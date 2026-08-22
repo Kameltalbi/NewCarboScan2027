@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { LessonContent, LessonResource } from '@/components/academy/LessonContent';
 import { LessonStepSidebar, Lesson as LessonType } from '@/components/academy/LessonStepSidebar';
 import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -62,7 +62,7 @@ const LessonPage: React.FC = () => {
       if (allLessonsError) throw allLessonsError;
 
       // Fetch user progress
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (user) {
         const { data: progressData } = await supabase
           .from('user_progress')
@@ -120,7 +120,7 @@ const LessonPage: React.FC = () => {
     if (!courseId || !lessonId) return;
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!user) {
         toast({
           title: 'Erreur',

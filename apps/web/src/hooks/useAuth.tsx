@@ -69,9 +69,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const signOut = async () => {
-    api.logout();
-    setUser(null);
-    setSession(null);
+    try {
+      api.logout();
+    } finally {
+      setUser(null);
+      setSession(null);
+    }
   };
 
   return (

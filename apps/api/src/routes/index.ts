@@ -4,11 +4,21 @@ import { registerCalculateRoutes } from "./calculate.js";
 import { registerEvidenceRoutes } from "./evidence.js";
 import { registerReportRoutes } from "./reports.js";
 import { registerLegacyFunctionStubs } from "./legacy-functions.js";
+import { registerAdminRoutes } from "./admin.js";
+import { registerAdminContentRoutes } from "./adminContent.js";
+import { registerOrgRoutes } from "./org.js";
+import { registerOrgSettingsRoutes } from "./orgSettings.js";
+import { registerCollectRoutes } from "./collect.js";
+import { registerBilanRoutes } from "./bilans.js";
 import { registerAuditRoutes } from "./audit.js";
 import { registerPublicRoutes } from "./public.js";
 import { registerImportRoutes } from "./import.js";
 import { registerFactorRoutes } from "./factors.js";
 import { registerRunRoutes } from "./runs.js";
+import { registerCbamRoutes } from "./cbam.js";
+import { registerAcvRoutes } from "./acv.js";
+import { registerClimateRoutes } from "./climate.js";
+import { registerPcfRoutes } from "./pcf.js";
 
 export async function registerRoutes(app: FastifyInstance) {
   await registerAuthRoutes(app);
@@ -20,5 +30,15 @@ export async function registerRoutes(app: FastifyInstance) {
   await registerRunRoutes(app);
   await registerReportRoutes(app);
   await registerAuditRoutes(app);
+  await registerAdminRoutes(app);
+  await registerAdminContentRoutes(app);
+  await registerOrgRoutes(app);
+  await registerOrgSettingsRoutes(app);
+  await registerCollectRoutes(app);
+  await registerBilanRoutes(app);
+  await registerCbamRoutes(app);
+  await registerPcfRoutes(app);
+  await registerAcvRoutes(app);
+  await registerClimateRoutes(app);
   await registerLegacyFunctionStubs(app);
 }

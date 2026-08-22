@@ -7,7 +7,7 @@
  * - Contrôle des rôles
  */
 
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 
 export type ValidationStatus = 'draft' | 'pending_review' | 'validated' | 'rejected';
 export type ValidationRole = 'collector' | 'admin' | 'auditor';
@@ -43,7 +43,7 @@ export class DataValidationService {
    * Récupérer le rôle de validation de l'utilisateur connecté
    */
   static async getCurrentUserRole(): Promise<ValidationRole | null> {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await sessionAuth.getUser();
     if (!user) return null;
     
     const { data, error } = await supabase
@@ -103,7 +103,7 @@ export class DataValidationService {
     periodEnd: string,
     validationNotes?: string
   ): Promise<{ success: boolean; error?: string }> {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await sessionAuth.getUser();
     if (!user) {
       return { success: false, error: 'Utilisateur non connecté' };
     }
@@ -141,7 +141,7 @@ export class DataValidationService {
     periodStart: string,
     periodEnd: string
   ): Promise<{ success: boolean; error?: string }> {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await sessionAuth.getUser();
     if (!user) {
       return { success: false, error: 'Utilisateur non connecté' };
     }

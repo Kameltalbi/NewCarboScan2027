@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { api } from '@/integrations/api/client';
 import { useOrganizationId } from '@/hooks/useOrganizationId';
-import { ClimateScenario, ScenarioLever, ScenarioAssumption, ScenarioResult, ScenarioContribution, ScenarioDashboard } from '../types';
+import { ClimateScenario, ScenarioLever, ScenarioAssumption, ScenarioResult, ScenarioDashboard } from '../types';
 
 export function useScenarios() {
   const { organizationId, loading: orgLoading } = useOrganizationId();
@@ -11,13 +11,14 @@ export function useScenarios() {
   const fetchScenarios = useCallback(async () => {
     if (!organizationId) return;
     setLoading(true);
-    const { data } = await supabase
-      .from('climate_scenarios')
-      .select('*')
-      .eq('organization_id', organizationId)
-      .order('created_at', { ascending: false });
-    if (data) setScenarios(data as unknown as ClimateScenario[]);
-    setLoading(false);
+    try {
+      const { items } = await api.listClimateScenarios();
+      setScenarios((items || []) as unknown as ClimateScenario[]);
+    } catch {
+      setScenarios([]);
+    } finally {
+      setLoading(false);
+    }
   }, [organizationId]);
 
   useEffect(() => {
@@ -27,32 +28,39 @@ export function useScenarios() {
 
   const createScenario = async (scenario: Partial<ClimateScenario>) => {
     if (!organizationId) return null;
-    const { data: userData } = await supabase.auth.getUser();
-    const { data, error } = await supabase
-      .from('climate_scenarios')
-      .insert({ ...scenario, organization_id: organizationId, created_by: userData.user?.id } as any)
-      .select()
-      .single();
-    if (!error && data) { await fetchScenarios(); return data as unknown as ClimateScenario; }
-    return null;
+    try {
+      const { item } = await api.createClimateScenario(scenario as Record<string, unknown>);
+      await fetchScenarios();
+      return item as unknown as ClimateScenario;
+    } catch {
+      return null;
+    }
   };
 
   const updateScenario = async (id: string, updates: Partial<ClimateScenario>) => {
-    const { error } = await supabase.from('climate_scenarios').update(updates as any).eq('id', id);
-    if (!error) await fetchScenarios();
-    return !error;
+    try {
+      await api.patchClimateScenario(id, updates as Record<string, unknown>);
+      await fetchScenarios();
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const deleteScenario = async (id: string) => {
-    const { error } = await supabase.from('climate_scenarios').delete().eq('id', id);
-    if (!error) await fetchScenarios();
-    return !error;
+    try {
+      await api.deleteClimateScenario(id);
+      await fetchScenarios();
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const duplicateScenario = async (id: string, newName: string) => {
     const source = scenarios.find(s => s.id === id);
     if (!source) return null;
-    const { id: _, created_at, updated_at, ...rest } = source;
+    const { id: _id, created_at, updated_at, ...rest } = source;
     return createScenario({ ...rest, name: newName, status: 'draft' });
   };
 
@@ -66,38 +74,50 @@ export function useScenarioLevers(scenarioId: string | null) {
   const fetchLevers = useCallback(async () => {
     if (!scenarioId) return;
     setLoading(true);
-    const { data } = await supabase
-      .from('climate_scenario_levers')
-      .select('*')
-      .eq('scenario_id', scenarioId)
-      .order('category');
-    if (data) setLevers(data as unknown as ScenarioLever[]);
-    setLoading(false);
+    try {
+      const { items } = await api.listClimateScenarioLevers(scenarioId);
+      setLevers((items || []) as unknown as ScenarioLever[]);
+    } catch {
+      setLevers([]);
+    } finally {
+      setLoading(false);
+    }
   }, [scenarioId]);
 
   useEffect(() => { fetchLevers(); }, [fetchLevers]);
 
   const addLever = async (lever: Partial<ScenarioLever>) => {
     if (!scenarioId) return null;
-    const { data, error } = await supabase
-      .from('climate_scenario_levers')
-      .insert({ ...lever, scenario_id: scenarioId } as any)
-      .select()
-      .single();
-    if (!error && data) { await fetchLevers(); return data as unknown as ScenarioLever; }
-    return null;
+    try {
+      const { item } = await api.createClimateScenarioLever({
+        ...(lever as Record<string, unknown>),
+        scenario_id: scenarioId,
+      });
+      await fetchLevers();
+      return item as unknown as ScenarioLever;
+    } catch {
+      return null;
+    }
   };
 
   const updateLever = async (id: string, updates: Partial<ScenarioLever>) => {
-    const { error } = await supabase.from('climate_scenario_levers').update(updates as any).eq('id', id);
-    if (!error) await fetchLevers();
-    return !error;
+    try {
+      await api.patchClimateScenarioLever(id, updates as Record<string, unknown>);
+      await fetchLevers();
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const deleteLever = async (id: string) => {
-    const { error } = await supabase.from('climate_scenario_levers').delete().eq('id', id);
-    if (!error) await fetchLevers();
-    return !error;
+    try {
+      await api.deleteClimateScenarioLever(id);
+      await fetchLevers();
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   return { levers, loading, fetchLevers, addLever, updateLever, deleteLever };
@@ -108,12 +128,12 @@ export function useScenarioAssumptions(scenarioLeverId: string | null) {
 
   const fetchAssumption = useCallback(async () => {
     if (!scenarioLeverId) return;
-    const { data } = await supabase
-      .from('climate_scenario_assumptions')
-      .select('*')
-      .eq('scenario_lever_id', scenarioLeverId)
-      .maybeSingle();
-    if (data) setAssumption(data as unknown as ScenarioAssumption);
+    try {
+      const { items } = await api.listClimateScenarioAssumptions(scenarioLeverId);
+      setAssumption((items?.[0] as unknown as ScenarioAssumption) ?? null);
+    } catch {
+      setAssumption(null);
+    }
   }, [scenarioLeverId]);
 
   useEffect(() => { fetchAssumption(); }, [fetchAssumption]);
@@ -121,9 +141,12 @@ export function useScenarioAssumptions(scenarioLeverId: string | null) {
   const upsertAssumption = async (values: Partial<ScenarioAssumption>) => {
     if (!scenarioLeverId) return;
     if (assumption) {
-      await supabase.from('climate_scenario_assumptions').update(values as any).eq('id', assumption.id);
+      await api.patchClimateScenarioAssumption(assumption.id, values as Record<string, unknown>);
     } else {
-      await supabase.from('climate_scenario_assumptions').insert({ ...values, scenario_lever_id: scenarioLeverId } as any);
+      await api.createClimateScenarioAssumption({
+        ...(values as Record<string, unknown>),
+        scenario_lever_id: scenarioLeverId,
+      });
     }
     await fetchAssumption();
   };
@@ -131,7 +154,6 @@ export function useScenarioAssumptions(scenarioLeverId: string | null) {
   return { assumption, upsertAssumption };
 }
 
-// Trajectory computation engine — pure client-side
 export function computeTrajectory(
   baselineEmissions: number,
   baselineYear: number,

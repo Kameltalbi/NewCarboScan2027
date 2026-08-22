@@ -2,22 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { waitFor } from '@testing-library/dom';
 
-const { mockGetSession, mockOnAuthStateChange, mockRpc, mockFrom } = vi.hoisted(() => ({
-  mockGetSession: vi.fn(),
-  mockOnAuthStateChange: vi.fn(),
-  mockRpc: vi.fn(),
-  mockFrom: vi.fn(),
+const { mockMe } = vi.hoisted(() => ({
+  mockMe: vi.fn(),
 }));
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    auth: {
-      getSession: mockGetSession,
-      onAuthStateChange: mockOnAuthStateChange,
-    },
-    rpc: mockRpc,
-    from: mockFrom,
-  },
+vi.mock('@/integrations/api/client', () => ({
+  api: { me: mockMe },
 }));
 
 vi.mock('@/utils/logger', () => ({
@@ -30,13 +20,10 @@ import { useUserRole } from '../useUserRole';
 describe('useUserRole', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockOnAuthStateChange.mockReturnValue({
-      data: { subscription: { unsubscribe: vi.fn() } },
-    });
   });
 
   it('returns null role when no user', async () => {
-    mockGetSession.mockResolvedValue({ data: { session: null } });
+    mockMe.mockRejectedValue(new Error('Authentication required'));
 
     const { result } = renderHook(() => useUserRole());
 
@@ -48,24 +35,26 @@ describe('useUserRole', () => {
     expect(result.current.user).toBeNull();
   });
 
-  it('fetches role via RPC when user exists', async () => {
-    const mockUser = { id: 'user-123', email: 'test@test.com' };
-    mockGetSession.mockResolvedValue({ data: { session: { user: mockUser } } });
-    mockRpc.mockResolvedValue({ data: 'admin', error: null });
+  it('fetches role via /auth/me when user exists', async () => {
+    mockMe.mockResolvedValue({
+      user: { id: 'user-123', email: 'test@test.com', role: 'admin' },
+      organizations: [],
+    });
 
     const { result } = renderHook(() => useUserRole());
 
-    // Wait for role to be set (not just isLoading, since loading goes false before role fetch)
     await waitFor(() => {
       expect(result.current.userRole).toBe('admin');
     });
 
-    expect(mockRpc).toHaveBeenCalledWith('get_user_role', { _user_id: 'user-123' });
+    expect(mockMe).toHaveBeenCalled();
   });
 
   it('isSuperAdmin returns true for superadmin role', async () => {
-    mockGetSession.mockResolvedValue({ data: { session: { user: { id: '1' } } } });
-    mockRpc.mockResolvedValue({ data: 'superadmin', error: null });
+    mockMe.mockResolvedValue({
+      user: { id: '1', email: 'sa@test.com', role: 'superadmin', platformRole: 'superadmin' },
+      organizations: [],
+    });
 
     const { result } = renderHook(() => useUserRole());
 
@@ -79,8 +68,10 @@ describe('useUserRole', () => {
   });
 
   it('isAdmin returns true for admin, false for isSuperAdmin', async () => {
-    mockGetSession.mockResolvedValue({ data: { session: { user: { id: '1' } } } });
-    mockRpc.mockResolvedValue({ data: 'admin', error: null });
+    mockMe.mockResolvedValue({
+      user: { id: '1', email: 'admin@test.com', role: 'admin' },
+      organizations: [],
+    });
 
     const { result } = renderHook(() => useUserRole());
 
@@ -93,13 +84,10 @@ describe('useUserRole', () => {
     expect(result.current.hasRole('superadmin')).toBe(false);
   });
 
-  it('falls back to user role on RPC error', async () => {
-    mockGetSession.mockResolvedValue({ data: { session: { user: { id: '1' } } } });
-    mockRpc.mockResolvedValue({ data: null, error: { message: 'RPC failed' } });
-    mockFrom.mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockResolvedValue({ data: [], error: null }),
-      }),
+  it('falls back to user role on unknown role', async () => {
+    mockMe.mockResolvedValue({
+      user: { id: '1', email: 'u@test.com', role: 'viewer' },
+      organizations: [],
     });
 
     const { result } = renderHook(() => useUserRole());

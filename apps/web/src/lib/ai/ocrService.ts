@@ -1,5 +1,5 @@
 // Service IA pour OCR et extraction de données depuis factures
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 
 export interface OCRResult {
   success: boolean;
@@ -56,7 +56,7 @@ export class OCRService {
     }
   ): Promise<OCRResult> {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await sessionAuth.getSession();
       if (!session) {
         throw new Error('Non authentifié');
       }
@@ -107,7 +107,7 @@ export class OCRService {
       }
 
       // Appeler l'Edge Function pour l'OCR
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await sessionAuth.getSession();
       if (!session) {
         throw new Error('Non authentifié');
       }

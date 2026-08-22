@@ -18,6 +18,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { Eye, EyeOff, Mail, Lock, User, Building } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analytics } from "@/lib/analytics";
+import type { AuthUser } from "@/integrations/api/client";
+
+const postLoginPath = (user?: AuthUser | null) => {
+  const role = user?.role ?? user?.platformRole;
+  if (role === "superadmin" || role === "financeur") {
+    return "/superadmin/dashboard";
+  }
+  return "/app/dashboard";
+};
 
 const Auth: React.FC = () => {
   const { t } = useTranslation();
@@ -27,7 +36,7 @@ const Auth: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { isAuthenticated, refresh } = useAuth();
+  const { isAuthenticated, refresh, user } = useAuth();
 
   const [signInData, setSignInData] = useState({ email: "", password: "" });
   const [signUpData, setSignUpData] = useState({
@@ -41,19 +50,19 @@ const Auth: React.FC = () => {
   useEffect(() => {
     const fromLogout = (location.state as { loggedOut?: boolean } | null)?.loggedOut;
     if (isAuthenticated && !fromLogout) {
-      navigate("/app/dashboard");
+      navigate(postLoginPath(user), { replace: true });
     }
-  }, [isAuthenticated, location.state, navigate]);
+  }, [isAuthenticated, location.state, navigate, user]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await api.login(signInData.email, signInData.password);
+      const data = await api.login(signInData.email, signInData.password);
       await refresh();
       analytics.login();
       toast({ title: "Connexion réussie" });
-      navigate("/app/dashboard");
+      navigate(postLoginPath(data.user), { replace: true });
     } catch (error) {
       logger.error(error);
       toast({

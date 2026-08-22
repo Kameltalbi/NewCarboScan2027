@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getCacheStats, clearAllReportCache } from '@/lib/reportCache';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 
 interface CacheStats {
   count: number;
@@ -16,7 +16,7 @@ export const useCacheStats = () => {
 
   const refreshStats = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!user) return;
 
       const cacheStats = getCacheStats(user.id);
@@ -35,7 +35,7 @@ export const useCacheStats = () => {
 
   const clearCache = async (): Promise<boolean> => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!user) return false;
 
       clearAllReportCache(user.id);

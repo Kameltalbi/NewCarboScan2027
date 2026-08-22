@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppData } from "@/contexts/AppDataContext";
-import { supabase } from "@/integrations/api/client";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SimplifiedSidebar } from "@/components/layout/SimplifiedSidebar";
 import { ModuleHeader } from "./ModuleHeader";
@@ -16,56 +15,30 @@ export const ModuleLayout: React.FC<ModuleLayoutProps> = ({ children, moduleSlug
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { modules } = useAppData();
-  const [userProfile, setUserProfile] = useState({
-    fullName: 'Utilisateur',
-    companyName: 'Mon Entreprise'
-  });
+  const { modules, currentOrganization } = useAppData();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!user) {
-      navigate('/auth', { state: { from: location } });
-      return;
+      navigate("/auth", { state: { from: location } });
     }
-
-    const fetchUserProfile = async () => {
-      if (!user?.id) return;
-
-      try {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('company_name')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        const fullName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Utilisateur';
-        const companyName = profile?.company_name || 'Mon Entreprise';
-
-        setUserProfile({ fullName, companyName });
-      } catch (error) {
-        console.error('Erreur lors du chargement du profil:', error);
-      }
-    };
-
-    fetchUserProfile();
   }, [user, navigate, location]);
 
   if (!user) {
     return null;
   }
 
-  const currentModule = modules.find(m => m.slug === moduleSlug);
+  const currentModule = modules.find((m) => m.slug === moduleSlug);
 
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <SimplifiedSidebar />
         <div className="flex-1 min-w-0 flex flex-col">
-          <ModuleHeader 
+          <ModuleHeader
             user={{
-              name: userProfile.fullName,
-              email: user.email || '',
-              company: userProfile.companyName,
+              name: user.fullName?.trim() || user.email,
+              email: user.email,
+              company: currentOrganization?.name || "",
             }}
             currentModule={currentModule}
           />

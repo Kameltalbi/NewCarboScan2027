@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredUser } from "@/integrations/api/client";
 import { ACVProject } from '@/types/acv';
 import { useToast } from '@/hooks/use-toast';
 import { analytics } from '@/lib/analytics';
@@ -11,13 +11,8 @@ export const useACVProjects = () => {
 
   const fetchProjects = async () => {
     try {
-      const { data, error } = await supabase
-        .from('acv_projects')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setProjects(data || []);
+      const { items } = await api.listAcvProjects();
+      setProjects((items || []) as unknown as ACVProject[]);
     } catch (error) {
       console.error('Error fetching ACV projects:', error);
       toast({
@@ -32,16 +27,11 @@ export const useACVProjects = () => {
 
   const createProject = async (projectData: Omit<ACVProject, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = getStoredUser();
       if (!user) throw new Error('User not authenticated');
 
-      const { data, error } = await supabase
-        .from('acv_projects')
-        .insert([{ ...projectData, user_id: user.id }])
-        .select()
-        .single();
-
-      if (error) throw error;
+      const { item } = await api.createAcvProject({ ...projectData });
+      const data = item as unknown as ACVProject;
       
       analytics.createProject('acv');
       setProjects(prev => [data, ...prev]);
@@ -64,14 +54,8 @@ export const useACVProjects = () => {
 
   const updateProject = async (id: string, updates: Partial<ACVProject>) => {
     try {
-      const { data, error } = await supabase
-        .from('acv_projects')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
+      const { item } = await api.patchAcvProject(id, updates);
+      const data = item as unknown as ACVProject;
       
       setProjects(prev => prev.map(p => p.id === id ? data : p));
       toast({
@@ -93,12 +77,7 @@ export const useACVProjects = () => {
 
   const deleteProject = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('acv_projects')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      await api.deleteAcvProject(id);
       
       setProjects(prev => prev.filter(p => p.id !== id));
       toast({

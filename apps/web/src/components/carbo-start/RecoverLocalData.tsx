@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 
@@ -71,19 +71,14 @@ export const RecoverLocalData: React.FC = () => {
     try {
       const emissions = calculateEmissionsFromData(localData.questionnaire_data);
       
-      const { data, error } = await supabase.from('bilans_carbone').insert({
-        user_id: user.id,
-        scope1_emission: emissions.scope1,
-        scope2_emission: emissions.scope2,
-        scope3_emission: emissions.scope3,
-        total_emission: emissions.total,
-        questionnaire_data: localData.questionnaire_data,
-        date_bilan: new Date().toISOString()
-      }).select();
-
-      if (error) {
-        throw error;
-      }
+      await api.createBilan({
+        scope1Emission: emissions.scope1,
+        scope2Emission: emissions.scope2,
+        scope3Emission: emissions.scope3,
+        totalEmission: emissions.total,
+        questionnaireData: localData.questionnaire_data,
+        dateBilan: new Date().toISOString().slice(0, 10),
+      });
 
       toast({
         title: "Données récupérées !",

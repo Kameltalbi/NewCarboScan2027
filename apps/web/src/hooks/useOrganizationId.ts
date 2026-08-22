@@ -1,8 +1,5 @@
-// Hook pour récupérer l'organization_id de l'utilisateur connecté
-// Utilise React Query pour le caching et éviter les requêtes redondantes
-
 import { useAuth } from './useAuth';
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredOrgId } from "@/integrations/api/client";
 import { useQuery } from '@tanstack/react-query';
 
 export const useOrganizationId = () => {
@@ -12,44 +9,23 @@ export const useOrganizationId = () => {
     queryKey: ['organization-id', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-
-      // 1. D'abord chercher si l'utilisateur est propriétaire d'une organisation
-      const { data: ownedOrg, error: ownedOrgError } = await supabase
-        .from('organizations')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (ownedOrgError) {
-        throw ownedOrgError;
+      const stored = getStoredOrgId() || user.organizationId || null;
+      if (stored) return stored;
+      try {
+        const { organizations } = await api.me();
+        return organizations[0]?.organization_id ?? null;
+      } catch {
+        return null;
       }
-
-      if (ownedOrg?.id) {
-        return ownedOrg.id;
-      }
-
-      // 2. Sinon chercher si l'utilisateur est membre d'une organisation
-      const { data: orgMember, error: orgError } = await supabase
-        .from('organization_members')
-        .select('organization_id')
-        .eq('user_id', user.id)
-        .limit(1)
-        .maybeSingle();
-
-      if (orgError) {
-        throw orgError;
-      }
-
-      return orgMember?.organization_id || null;
     },
     enabled: !!user?.id,
-    staleTime: 5 * 60 * 1000, // Cache pendant 5 minutes
-    gcTime: 10 * 60 * 1000, // Garder en cache 10 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
-  return { 
-    organizationId: organizationId ?? null, 
-    loading, 
-    error: error as Error | null 
+  return {
+    organizationId: organizationId ?? null,
+    loading,
+    error: error as Error | null
   };
 };

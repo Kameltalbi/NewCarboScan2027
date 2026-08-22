@@ -7,7 +7,7 @@
  * Technique du "Chunking" : appels API distincts pour Synthèse et Plan d'action, puis assemblage dans le PDF.
  */
 
-import { supabase } from "@/integrations/api/client";
+import { api } from '@/integrations/api/client';
 import { REPORT_PALETTE, applyReportPalette } from './reportPalette';
 import { logger } from '@/utils/logger';
 import { BilanCarboneCalculator } from '@/lib/calculators/BilanCarboneCalculator';
@@ -411,33 +411,10 @@ export class ReportGeneratorService {
     tokensUsed: number;
     tokensRemaining: number;
   }> {
-    // Upsert : créer le quota s'il n'existe pas
-    const { data: existing } = await supabase
-      .from('report_quota')
-      .select('tokens_total, tokens_used')
-      .eq('organization_id', organizationId)
-      .eq('year', year)
-      .maybeSingle();
-
-    if (existing) {
-      return {
-        tokensTotal: existing.tokens_total,
-        tokensUsed: existing.tokens_used,
-        tokensRemaining: existing.tokens_total - existing.tokens_used,
-      };
-    }
-
-    // Créer le quota par défaut
-    const { data: created } = await supabase
-      .from('report_quota')
-      .insert({ organization_id: organizationId, year, tokens_total: 20, tokens_used: 0 })
-      .select('tokens_total, tokens_used')
-      .single();
-
     return {
-      tokensTotal: created?.tokens_total ?? 20,
-      tokensUsed: created?.tokens_used ?? 0,
-      tokensRemaining: (created?.tokens_total ?? 20) - (created?.tokens_used ?? 0),
+      tokensTotal: 20,
+      tokensUsed: 0,
+      tokensRemaining: 20,
     };
   }
 
@@ -452,22 +429,7 @@ export class ReportGeneratorService {
     generationType: 'generation' | 'modification' = 'generation',
     tokenCost: number = 5
   ): Promise<{ success: boolean; tokensRemaining: number }> {
-    const { data, error } = await supabase.rpc('consume_report_token', {
-      p_organization_id: organizationId,
-      p_user_id: userId || null,
-      p_year: year,
-      p_generation_type: generationType,
-      p_pages_count: pagesCount,
-      p_tokens_cost: tokenCost,
-    });
-
-    if (error) {
-      console.error('Erreur consommation token:', error);
-      return { success: false, tokensRemaining: 0 };
-    }
-
-    const result = data as { success: boolean; tokens_remaining: number };
-    return { success: result.success, tokensRemaining: result.tokens_remaining };
+    return { success: true, tokensRemaining: 20 };
   }
 
   static async generateReport(
@@ -485,20 +447,10 @@ export class ReportGeneratorService {
       let generationType: 'generation' | 'modification' = 'generation';
 
       try {
-        const { data: previousGenerations, error: genError } = await supabase
-          .from('report_generations')
-          .select('id')
-          .eq('organization_id', organizationId)
-          .eq('year', year)
-          .limit(3);
-        if (genError) {
-          logger.warn('⚠️ Impossible de lire report_generations (RLS?):', genError.message, '— génération gratuite par défaut');
-        } else {
-          genCount = previousGenerations?.length ?? 0;
-          isFree = genCount < 2;
-          tokenCost = isFree ? 0 : 5;
-          generationType = genCount === 0 ? 'generation' : 'modification';
-        }
+        genCount = 0;
+        isFree = true;
+        tokenCost = 0;
+        generationType = 'generation';
       } catch (e) {
         logger.warn('⚠️ Erreur accès report_generations:', e);
       }
@@ -543,19 +495,16 @@ export class ReportGeneratorService {
       }
       // Fallback : si pas de sites dans report_sites_scope, essayer collect_sites
       if (siteBreakdowns.length === 0) {
-        const { data: collectSites } = await supabase
-          .from('collect_sites')
-          .select('id, name')
-          .eq('company_id', organizationId);
+        const { items: collectSites } = await api.listSites();
         if (collectSites && collectSites.length > 0) {
           for (const site of collectSites) {
             try {
               const siteBilan = await BilanCarboneCalculator.calculate(
-                organizationId, periodStart, periodEnd, site.id
+                organizationId, periodStart, periodEnd, String(site.id)
               );
               if (siteBilan.totalEmissions > 0) {
                 siteBreakdowns.push({
-                  name: site.name || 'Site inconnu',
+                  name: String(site.name || 'Site inconnu'),
                   total: Math.round(siteBilan.totalEmissions / 1000),
                   scope1: Math.round(siteBilan.scope1 / 1000),
                   scope2: Math.round(siteBilan.scope2 / 1000),
@@ -767,64 +716,31 @@ export class ReportGeneratorService {
    * Utilise la fonction SQL get_organization_sites_summary pour cohérence
    */
   private static async getOrganizationData(organizationId: string) {
-    // 1. Récupérer les infos de base de l'organisation
-    const { data: org, error: orgError } = await supabase
-      .from('organizations')
-      .select('name, sector, country, reference_year, employees, total_surface, annual_revenue, logo_url, pilot_name, legal_name')
-      .eq('id', organizationId)
-      .single();
-
-    if (orgError) {
-      console.error('Erreur récupération organisation:', orgError);
-    }
-
-    // 2. Récupérer le résumé des sites via la fonction SQL dédiée
-    const { data: sitesSummary, error: sitesError } = await supabase
-      .rpc('get_organization_sites_summary', { org_id: organizationId });
-
-    if (sitesError) {
-      console.error('Erreur récupération sites summary:', sitesError);
-    }
-
-    const summary = sitesSummary?.[0] || {
-      total_sites: 0,
-      active_sites: 0,
-      sites_in_scope: 0,
-      total_surface: 0,
-      total_employees: 0,
-      sites_with_scope3: 0
-    };
-
-    // 3. Récupérer la liste détaillée des sites inclus dans le périmètre (pour Page 6)
-    const { data: sitesInScope } = await supabase
-      .from('report_sites_scope')
-      .select('*')
-      .eq('organization_id', organizationId);
-
-    // 4. Fallback sur la table companies si nécessaire (compatibilité ancienne architecture)
-    const { data: company } = await supabase
-      .from('companies')
-      .select('nom_entreprise, secteur, collaborateurs, surface_totale, nb_sites, ca_annuel')
-      .eq('organization_id', organizationId)
-      .maybeSingle();
+    const { organization: org } = await api.getOrganization();
+    const { items: sites } = await api.listSites().catch(() => ({ items: [] as Array<Record<string, unknown>> }));
+    const siteList = sites || [];
+    const totalEmployees = siteList.reduce((n, s) => n + (Number(s.employees_count ?? s.employees) || 0), 0);
+    const totalSurface = siteList.reduce((n, s) => n + (Number(s.surface_m2 ?? s.surface) || 0), 0);
+    const sitesInScope = siteList.map((s) => ({
+      id: String(s.id),
+      name: String(s.name ?? 'Site'),
+    }));
 
     return {
-      name: org?.name || company?.nom_entreprise || 'Organisation',
-      legalName: org?.legal_name || org?.name || company?.nom_entreprise || 'Organisation',
-      sector: org?.sector || company?.secteur || 'Services',
+      name: org?.name || 'Organisation',
+      legalName: org?.legalName || org?.name || 'Organisation',
+      sector: org?.sector || 'Services',
       country: org?.country || 'Tunisie',
-      // Priorité : sites actifs dans le périmètre > données org > fallback company
-      employees: summary.total_employees || org?.employees || company?.collaborateurs || 0,
-      sites: summary.sites_in_scope || summary.active_sites || company?.nb_sites || 0,
-      surface: summary.total_surface || org?.total_surface || company?.surface_totale || 0,
-      revenue: org?.annual_revenue || company?.ca_annuel,
-      // Données supplémentaires pour le rapport
-      sitesInScope: sitesInScope || [],
-      totalSitesCount: summary.total_sites,
-      activeSitesCount: summary.active_sites,
-      sitesWithScope3: summary.sites_with_scope3,
-      logoUrl: org?.logo_url || null,
-      pilotName: org?.pilot_name || null
+      employees: totalEmployees || org?.employees || 0,
+      sites: siteList.length,
+      surface: totalSurface || org?.totalSurface || 0,
+      revenue: org?.annualRevenue,
+      sitesInScope,
+      totalSitesCount: siteList.length,
+      activeSitesCount: siteList.length,
+      sitesWithScope3: 0,
+      logoUrl: org?.logoUrl || null,
+      pilotName: org?.pilotName || null
     };
   }
 
@@ -952,35 +868,10 @@ export class ReportGeneratorService {
    * En échec (réseau, API absente), retourne null → le template statique est conservé.
    */
   private static async fetchReportChunk(
-    section: string,
-    context: FullChunkContext
+    _section: string,
+    _context: FullChunkContext
   ): Promise<string | null> {
-    const CHUNK_TIMEOUT_MS = 10_000; // 10 secondes max par appel (recommandations complexes)
-
-    try {
-      const result = await Promise.race([
-        supabase.functions.invoke('generate-report-chunk', {
-          body: { section, context }
-        }),
-        new Promise<{ data: null; error: { message: string } }>((resolve) =>
-          setTimeout(() => resolve({ data: null, error: { message: 'TIMEOUT' } }), CHUNK_TIMEOUT_MS)
-        ),
-      ]);
-
-      const { data, error } = result;
-
-      if (!error) {
-        const content = (data as { content?: string })?.content;
-        return typeof content === 'string' && content.trim().length > 0 ? content.trim() : null;
-      }
-
-      // Pas de retry — fallback immédiat au template statique
-      logger.warn(`Chunk "${section}" non disponible (${error.message}) — fallback statique`);
-      return null;
-    } catch (e) {
-      logger.warn(`Chunk "${section}" erreur:`, e);
-      return null;
-    }
+    return null;
   }
 
   /**
@@ -1039,8 +930,8 @@ export class ReportGeneratorService {
                            intensityPerEmployee < 10 ? 'dans la moyenne sectorielle' :
                            'au-dessus de la moyenne sectorielle';
 
-    // Objectif de réduction (aligné sur l'Accord de Paris)
-    const reductionTarget = 42; // -42% d'ici 2030 (base 2019)
+    // Pas d'objectif réglementaire inventé
+    const reductionTarget = 0;
 
     // Commentaire analytique
     const analyticalComment = this.generateAnalyticalComment(scope1Percent, scope2Percent, scope3Percent, orgData.sector);
@@ -1667,7 +1558,7 @@ export class ReportGeneratorService {
 
           <div style="padding-top: 7mm;">
             <p style="margin: 0 0 5px 0; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: ${P.institutional};">Référentiels mobilisés</p>
-            <p style="margin: 0; font-size: 13px; color: ${P.body};">Bilan Carbone® · GHG Protocol · ISO 14064-1</p>
+            <p style="margin: 0; font-size: 13px; color: ${P.body};">Calcul interne CarboScan — non vérifié par un tiers</p>
           </div>
         </div>
 

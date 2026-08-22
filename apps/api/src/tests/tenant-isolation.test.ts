@@ -37,6 +37,18 @@ describe("tenant isolation & P0 security contracts", () => {
     assert.ok(legacySrc.includes("legacy.critical_blocked"));
   });
 
+  it("does not expose a generic table gateway", () => {
+    const orgSrc = readFileSync(join(here, "../routes/org.ts"), "utf8");
+    const indexSrc = readFileSync(join(here, "../routes/index.ts"), "utf8");
+    assert.equal(indexSrc.includes("registerDataRoutes"), false);
+    assert.equal(indexSrc.includes("/v1/data"), false);
+    assert.ok(orgSrc.includes('"/v1/org/members"'));
+    assert.ok(indexSrc.includes("registerCbamRoutes"));
+    assert.ok(indexSrc.includes("registerAcvRoutes"));
+    assert.ok(indexSrc.includes("registerClimateRoutes"));
+    assert.ok(indexSrc.includes("registerPcfRoutes"));
+  });
+
   it("does not leave verify_jwt=false semantics in API", () => {
     assert.equal(legacySrc.includes("verifyJwtFalse: false"), true);
     assert.equal(legacySrc.includes("verify_jwt = false"), false);

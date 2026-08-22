@@ -31,3 +31,5 @@ dist-ssr
 .env.local
 apps/api/dist
 **/node_modules
+dumps/*.json
+!dumps/.gitkeep

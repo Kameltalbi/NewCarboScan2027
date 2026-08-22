@@ -1,9 +1,9 @@
 // Centralized App Data Context
 // Uses React Query for caching to prevent duplicate API calls across components
 
-import React, { createContext, useContext, ReactNode, useMemo, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, ReactNode, useMemo, useState, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from '@/hooks/useAuth';
 
 // Types
@@ -61,94 +61,53 @@ const AppDataContext = createContext<AppDataContextValue | null>(null);
 
 const SELECTED_ORG_KEY = 'carboscan_selected_org';
 
-// Fetch ALL organizations for the user (owned + member)
-const fetchAllOrganizations = async (userId: string): Promise<OrganizationInfo[]> => {
-  const orgs: OrganizationInfo[] = [];
-
-  // 1. Owned organizations
-  const { data: ownedOrgs } = await supabase
-    .from('organizations')
-    .select('id, name, sector, country')
-    .eq('user_id', userId);
-
-  if (ownedOrgs) {
-    for (const o of ownedOrgs) {
-      orgs.push({ id: o.id, name: o.name, sector: o.sector, country: o.country, isOwner: true });
-    }
-  }
-
-  // 2. Member organizations
-  const { data: memberships } = await supabase
-    .from('organization_members')
-    .select('organization_id, organizations(id, name, sector, country)')
-    .eq('user_id', userId);
-
-  if (memberships) {
-    for (const m of memberships) {
-      const org = m.organizations as any;
-      if (org && !orgs.some(o => o.id === org.id)) {
-        orgs.push({ id: org.id, name: org.name, sector: org.sector, country: org.country, isOwner: false });
-      }
-    }
-  }
-
-  return orgs;
-};
-
-// Fetch user role
-const fetchUserRole = async (userId: string): Promise<UserRole> => {
-  const { data, error } = await supabase
-    .rpc('get_user_role', { _user_id: userId });
-
-  if (!error && data) {
-    return data as UserRole;
-  }
+const mapApiRole = (role?: string | null): UserRole => {
+  if (role === 'superadmin') return 'superadmin';
+  if (role === 'financeur') return 'financeur';
+  if (role === 'admin' || role === 'owner') return 'admin';
   return 'user';
 };
 
-// Fetch organization modules
-const fetchOrganizationModules = async (orgId: string): Promise<OrganizationModule[]> => {
-  const { data, error } = await supabase
-    .rpc('get_organization_modules', { p_org_id: orgId });
-
-  if (error) {
-    console.error('Error fetching modules:', error);
-    return [];
-  }
-  return data || [];
+const fetchAllOrganizations = async (): Promise<OrganizationInfo[]> => {
+  const { organizations } = await api.me();
+  return organizations.map((m) => ({
+    id: m.organization_id,
+    name: m.name || 'Organisation',
+    sector: m.sector ?? null,
+    country: m.country ?? null,
+    isOwner: m.role === 'owner',
+  }));
 };
 
-// Fetch subscription status
-const fetchSubscriptionStatus = async (userId: string): Promise<boolean> => {
-  const { data: validatedOrders, error: ordersError } = await supabase
-    .from('orders')
-    .select('status')
-    .eq('user_id', userId)
-    .eq('status', 'validated')
-    .limit(1);
+const fetchUserRole = async (): Promise<UserRole> => {
+  const { user } = await api.me();
+  return mapApiRole(user.role ?? user.platformRole);
+};
 
-  if (ordersError) {
-    console.error('Error fetching validated orders:', ordersError);
+const fetchOrganizationModules = async (_orgId: string): Promise<OrganizationModule[]> => {
+  const { items } = await api.listOrgModules();
+  return (items || []).map((m) => ({
+    module_id: m.module_id,
+    slug: m.slug,
+    name: m.name,
+    description: m.description,
+    icon: m.icon,
+    route: m.route || `/${m.slug}`,
+    category: m.category,
+    started_at: m.started_at,
+    expires_at: m.expires_at,
+  }));
+};
+
+const fetchSubscriptionStatus = async (): Promise<boolean> => {
+  const { user } = await api.me();
+  if (user.role === 'superadmin' || user.platformRole === 'superadmin') return true;
+  try {
+    const sub = await api.getSubscription();
+    return sub.hasActiveSubscription;
+  } catch {
+    return false;
   }
-
-  if ((validatedOrders?.length || 0) > 0) {
-    return true;
-  }
-
-  const now = new Date().toISOString();
-  const { data: activeSubscriptions, error: subsError } = await supabase
-    .from('user_subscriptions')
-    .select('id')
-    .eq('user_id', userId)
-    .eq('status', 'active')
-    .gt('expires_at', now)
-    .limit(1);
-
-  if (subsError) {
-    console.error('Error fetching active subscriptions:', subsError);
-  }
-
-  return (activeSubscriptions?.length || 0) > 0;
 };
 
 export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -164,7 +123,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Query: All organizations
   const { data: allOrganizations = [], isLoading: orgsLoading } = useQuery({
     queryKey: ['allOrganizations', userId],
-    queryFn: () => fetchAllOrganizations(userId!),
+    queryFn: () => fetchAllOrganizations(),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
@@ -188,7 +147,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Switch organization
   const switchOrganization = useCallback((orgId: string) => {
     setSelectedOrgId(orgId);
-    try { localStorage.setItem(SELECTED_ORG_KEY, orgId); } catch {}
+    try { localStorage.setItem(SELECTED_ORG_KEY, orgId); localStorage.setItem('ncs_org_id', orgId); } catch {}
     // Invalidate org-dependent queries
     queryClient.invalidateQueries({ queryKey: ['organizationModules'] });
     queryClient.invalidateQueries({ queryKey: ['organization-data'] });
@@ -197,7 +156,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Query: User Role
   const { data: userRole, isLoading: roleQueryLoading } = useQuery({
     queryKey: ['userRole', userId],
-    queryFn: () => fetchUserRole(userId!),
+    queryFn: () => fetchUserRole(),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
@@ -215,7 +174,7 @@ export const AppDataProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Query: Subscription Status
   const { data: hasActiveSubscription = false, isLoading: subscriptionQueryLoading } = useQuery({
     queryKey: ['subscriptionStatus', userId],
-    queryFn: () => fetchSubscriptionStatus(userId!),
+    queryFn: () => fetchSubscriptionStatus(),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,

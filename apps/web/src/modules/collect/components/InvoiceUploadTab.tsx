@@ -7,8 +7,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useOrganizationId } from '@/hooks/useOrganizationId';
 import { ActivityDataService } from '@/lib/activity-data/ActivityDataService';
 import { ActivityDataInput, ActivityType, ActivityCategory, DataQuality } from '@/lib/activity-data/types';
-import { OCRService, OCRResult } from '@/lib/ai/ocrService';
-import { supabase } from "@/integrations/api/client";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,7 +32,7 @@ export const InvoiceUploadTab: React.FC = () => {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [fileId, setFileId] = useState<string | null>(null);
   const [invoiceType, setInvoiceType] = useState<InvoiceType>('facture_electricite');
-  const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
+  const [ocrResult, setOcrResult] = useState<{ success: boolean; confidence: number } | null>(null);
   
   // Formulaire de données
   const [formData, setFormData] = useState({
@@ -76,90 +74,12 @@ export const InvoiceUploadTab: React.FC = () => {
     setIsUploading(true);
 
     try {
-      // Upload vers Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user?.id}/${Date.now()}.${fileExt}`;
-
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('collect-files')
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      // Obtenir l'URL publique
-      const { data: urlData } = supabase.storage
-        .from('collect-files')
-        .getPublicUrl(fileName);
-
-      setFileUrl(urlData.publicUrl);
-
-      // Lancer l'extraction OCR automatique directement depuis Storage.
-      // (Plus robuste : ne dépend pas de l'insertion dans la table collect_files)
-      setIsExtracting(true);
-      try {
-        const ocr = await OCRService.extractFromStorage({
-          filePath: fileName,
-          bucket: 'collect-files',
-          category: invoiceType,
-        });
-        setOcrResult(ocr);
-
-        if (ocr.success && ocr.extractedFields) {
-          const fields = ocr.extractedFields;
-
-          const quantityField = getQuantityFieldKey(invoiceType);
-          if (fields[quantityField]) {
-            setFormData(prev => ({
-              ...prev,
-              consumption: fields[quantityField].value.toString(),
-            }));
-          }
-
-          if (fields.fournisseur) {
-            setFormData(prev => ({
-              ...prev,
-              supplier: fields.fournisseur.value.toString(),
-            }));
-          }
-
-          if (fields.montant) {
-            setFormData(prev => ({
-              ...prev,
-              amount: fields.montant.value.toString(),
-            }));
-          }
-
-          if (fields.periode) {
-            const period = parsePeriod(fields.periode.value.toString());
-            if (period.start) setFormData(prev => ({ ...prev, period_start: period.start }));
-            if (period.end) setFormData(prev => ({ ...prev, period_end: period.end }));
-          }
-
-          toast({
-            title: 'Extraction réussie',
-            description: `Données extraites avec ${Math.round(ocr.confidence * 100)}% de confiance. Vérifiez et corrigez si nécessaire.`,
-          });
-        } else {
-          toast({
-            title: 'Extraction partielle',
-            description: 'Certaines données n\'ont pas pu être extraites. Veuillez les renseigner manuellement.',
-            variant: 'default',
-          });
-        }
-      } catch (ocrError: any) {
-        console.error('Erreur OCR:', ocrError);
-        toast({
-          title: 'Extraction non disponible',
-          description: 'L\'extraction automatique n\'a pas fonctionné. Veuillez renseigner les informations manuellement.',
-          variant: 'default',
-        });
-      } finally {
-        setIsExtracting(false);
-      }
-
+      const localUrl = URL.createObjectURL(file);
+      setFileUrl(localUrl);
+      setFileId(null);
       toast({
-        title: 'Facture téléversée',
-        description: 'Votre facture a été téléversée avec succès.',
+        title: 'Fichier retenu localement',
+        description: 'OCR et stockage cloud ne sont pas disponibles. Saisissez les champs manuellement puis enregistrez la donnée d’activité.',
       });
     } catch (error: any) {
       toast({

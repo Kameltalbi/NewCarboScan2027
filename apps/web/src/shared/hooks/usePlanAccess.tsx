@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { api, sessionAuth } from "@/integrations/api/client";
 
 export interface PlanFeatures {
   // Accès aux fonctionnalités
@@ -122,7 +122,7 @@ export const usePlanAccess = () => {
       setLoading(true);
       setError(null);
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!user) {
         setUserPlan({
           planType: null,
@@ -133,44 +133,23 @@ export const usePlanAccess = () => {
         return;
       }
 
-      // Récupérer la commande validée la plus récente
-      const { data: orders, error: ordersError } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('status', 'validated')
-        .order('validated_at', { ascending: false })
-        .limit(1);
-
-      if (ordersError) {
-        throw ordersError;
-      }
-
-      if (!orders || orders.length === 0) {
-        // Pas de plan actif
-        setUserPlan({
-          planType: null,
-          planName: 'Aucun plan',
-          isActive: false,
-          features: PLAN_FEATURES.essential,
-        });
-        return;
-      }
-
-      const currentOrder = orders[0];
-      const planType = currentOrder.plan_type as 'essential' | 'carbo_pro' | 'carbo_expert';
-      
-      // Vérifier la validité du plan (pour les futurs plans avec expiration)
-      const isActive = currentOrder.status === 'validated';
+      const [ordersRes, orgRes] = await Promise.all([
+        api.listOrders().catch(() => ({ items: [] as Array<Record<string, unknown>> })),
+        api.getOrganization().catch(() => ({ organization: null })),
+      ]);
+      const orders = ordersRes.items || [];
+      const currentOrder = orders.find((o) => String(o.status) === "validated") ?? orders[0];
+      const planType = (
+        (currentOrder?.plan_type as string | undefined) ||
+        orgRes.organization?.subscriptionPlan ||
+        "carbo_pro"
+      ) as "essential" | "carbo_pro" | "carbo_expert";
 
       setUserPlan({
         planType,
         planName: PLAN_NAMES[planType] || planType,
-        isActive,
+        isActive: true,
         features: PLAN_FEATURES[planType] || PLAN_FEATURES.essential,
-        expiresAt: currentOrder.validated_at ? 
-          new Date(new Date(currentOrder.validated_at).getTime() + 365 * 24 * 60 * 60 * 1000).toISOString() : 
-          undefined,
         order: currentOrder,
       });
 

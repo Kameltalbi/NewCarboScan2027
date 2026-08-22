@@ -7,6 +7,7 @@ export type AuthUser = {
   email: string;
   organizationId?: string;
   role?: string;
+  platformRole?: string;
 };
 
 declare module "fastify" {
@@ -16,6 +17,14 @@ declare module "fastify" {
       reply: FastifyReply,
     ) => Promise<void>;
     requireOrgMember: (
+      request: FastifyRequest,
+      reply: FastifyReply,
+    ) => Promise<void>;
+    requireSuperAdmin: (
+      request: FastifyRequest,
+      reply: FastifyReply,
+    ) => Promise<void>;
+    requireOrgAdmin: (
       request: FastifyRequest,
       reply: FastifyReply,
     ) => Promise<void>;
@@ -65,6 +74,23 @@ export const authPlugin: FastifyPluginAsync = async (app) => {
   );
 
   app.decorate(
+    "requireSuperAdmin",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      await app.requireAuth(request, reply);
+      if (reply.sent) return;
+      const { rows } = await pool.query(
+        `SELECT 1 FROM user_roles WHERE user_id = $1 AND role = 'superadmin'`,
+        [request.user!.id],
+      );
+      if (!rows[0]) {
+        return reply.code(403).send({ error: "Superadmin required" });
+      }
+      request.user!.platformRole = "superadmin";
+      request.user!.role = "superadmin";
+    },
+  );
+
+  app.decorate(
     "requireOrgMember",
     async (request: FastifyRequest, reply: FastifyReply) => {
       await app.requireAuth(request, reply);
@@ -76,6 +102,27 @@ export const authPlugin: FastifyPluginAsync = async (app) => {
 
       if (!orgId || !request.user) {
         return reply.code(403).send({ error: "Organization required" });
+      }
+
+      const sa = await pool.query(
+        `SELECT 1 FROM user_roles WHERE user_id = $1 AND role = 'superadmin'`,
+        [request.user.id],
+      );
+      const org = await pool.query(
+        `SELECT status FROM organizations WHERE id = $1`,
+        [orgId],
+      );
+      if (!org.rows[0]) {
+        return reply.code(404).send({ error: "Organization not found" });
+      }
+      if (org.rows[0].status === "suspended" && !sa.rows[0]) {
+        return reply.code(403).send({ error: "Organisation suspendue" });
+      }
+      if (sa.rows[0]) {
+        request.user.organizationId = orgId;
+        request.user.role = "superadmin";
+        request.user.platformRole = "superadmin";
+        return;
       }
 
       const { rows } = await pool.query(
@@ -90,6 +137,19 @@ export const authPlugin: FastifyPluginAsync = async (app) => {
       }
       request.user.organizationId = orgId;
       request.user.role = rows[0].role;
+    },
+  );
+
+  app.decorate(
+    "requireOrgAdmin",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      await app.requireOrgMember(request, reply);
+      if (reply.sent) return;
+      const role = request.user?.role;
+      if (role === "superadmin" || role === "owner" || role === "admin") {
+        return;
+      }
+      return reply.code(403).send({ error: "Organization admin required" });
     },
   );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppData } from "@/contexts/AppDataContext";
 import { Button } from "@/components/ui/button";
@@ -21,27 +21,15 @@ const AdminBlog: React.FC = () => {
   const [roleChecked, setRoleChecked] = useState(false);
 
   useEffect(() => {
-    const check = async () => {
-      if (!user) { setRoleChecked(true); return; }
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
-      const roles = (data ?? []).map(r => r.role);
-      setIsBlogEditor(roles.includes("blog_editor" as any) || roles.includes("superadmin" as any));
-      setRoleChecked(true);
-    };
-    check();
-  }, [user]);
+    if (!user) { setRoleChecked(true); return; }
+    setIsBlogEditor(isSuperAdmin);
+    setRoleChecked(true);
+  }, [user, isSuperAdmin]);
 
   const loadPosts = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("blog_posts")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) toast.error("Erreur chargement: " + error.message);
-    setPosts((data as any) ?? []);
+    const { items } = await api.adminListBlog();
+    setPosts((items as unknown as BlogPostRow[]) ?? []);
     setLoading(false);
   };
 
@@ -78,16 +66,24 @@ const AdminBlog: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Supprimer cet article ?")) return;
-    const { error } = await supabase.from("blog_posts").delete().eq("id", id);
-    if (error) toast.error(error.message); else { toast.success("Supprimé"); loadPosts(); }
+    try {
+      await api.adminDeleteBlog(id);
+      toast.success("Supprimé");
+      loadPosts();
+    } catch (e: any) {
+      toast.error(e.message);
+    }
   };
 
   const togglePublish = async (post: BlogPostRow) => {
     const newStatus = post.status === "published" ? "draft" : "published";
-    const patch: any = { status: newStatus };
-    if (newStatus === "published" && !post.published_at) patch.published_at = new Date().toISOString();
-    const { error } = await supabase.from("blog_posts").update(patch).eq("id", post.id);
-    if (error) toast.error(error.message); else { toast.success(newStatus === "published" ? "Publié" : "Dépublié"); loadPosts(); }
+    try {
+      await api.adminPatchBlog(post.id, { status: newStatus });
+      toast.success(newStatus === "published" ? "Publié" : "Dépublié");
+      loadPosts();
+    } catch (e: any) {
+      toast.error(e.message);
+    }
   };
 
   return (

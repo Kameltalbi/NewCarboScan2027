@@ -34,7 +34,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useSupplierLabels } from '@/hooks/useSupplierLabels';
 
 interface ModuleItem {
@@ -113,6 +113,7 @@ const sidebarGroups: SidebarGroup[] = [
         label: 'WattBim',
         path: '/app/wattbim',
         icon: Zap,
+        comingSoon: true,
       },
     ],
   },
@@ -173,31 +174,8 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
     const loadOrgLogo = async () => {
       if (!user?.id) return;
       try {
-        const { data: org } = await supabase
-          .from('organizations')
-          .select('id, logo_url')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (org?.logo_url) {
-          setOrgLogoUrl(org.logo_url);
-          return;
-        }
-
-        const { data, error } = await supabase.storage
-          .from('organization-logos')
-          .list(user.id, {
-            limit: 1,
-            sortBy: { column: 'created_at', order: 'desc' }
-          });
-        if (!error && data && data.length > 0) {
-          const { data: urlData } = supabase.storage
-            .from('organization-logos')
-            .getPublicUrl(`${user.id}/${data[0].name}`);
-          setOrgLogoUrl(urlData.publicUrl);
-          return;
-        }
-        setOrgLogoUrl(null);
+        const { organization } = await api.getOrganization();
+        setOrgLogoUrl(organization?.logoUrl ?? null);
       } catch (error) {
         logger.error('Error loading org logo:', error);
       }

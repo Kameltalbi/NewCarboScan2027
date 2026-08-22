@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, ArrowRight, Check, Sparkles, Clock, DollarSign, ShieldCheck } from 'lucide-react';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { toast } from 'sonner';
 import { RecommendedAction } from '@/lib/recommendedActions';
 import { CircleGauge } from './CircleGauge';
@@ -81,7 +81,7 @@ export const ActionDetailPopup: React.FC<ActionDetailPopupProps> = ({ action, pe
     setEstimating(true);
     try {
       const functionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/estimate-action-impact`;
-      const { data: sessionData } = await supabase.auth.getSession();
+      const { data: sessionData } = await sessionAuth.getSession();
       const response = await fetch(functionUrl, {
         method: 'POST',
         headers: {

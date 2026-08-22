@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, RotateCcw, Plus, Minus, Coins } from "lucide-react";
 
@@ -38,14 +38,8 @@ export const TokenQuotaManager: React.FC<TokenQuotaManagerProps> = ({
   const fetchQuotas = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('report_quota')
-        .select('id, tokens_total, tokens_used, year')
-        .eq('organization_id', organizationId)
-        .order('year', { ascending: false });
-
-      if (error) throw error;
-      setQuotas(data || []);
+      const { items } = await api.adminListQuota(organizationId);
+      setQuotas(items || []);
     } catch (error) {
       console.error('Error fetching quotas:', error);
     } finally {
@@ -56,13 +50,7 @@ export const TokenQuotaManager: React.FC<TokenQuotaManagerProps> = ({
   const resetTokens = async (year: number) => {
     setIsSaving(true);
     try {
-      const { error } = await supabase
-        .from('report_quota')
-        .update({ tokens_used: 0, updated_at: new Date().toISOString() })
-        .eq('organization_id', organizationId)
-        .eq('year', year);
-
-      if (error) throw error;
+      await api.adminPatchQuota(organizationId, { year, resetUsed: true });
 
       toast({
         title: "Tokens réinitialisés",
@@ -84,19 +72,7 @@ export const TokenQuotaManager: React.FC<TokenQuotaManagerProps> = ({
   const setTokenTotal = async (year: number, newTotal: number) => {
     setIsSaving(true);
     try {
-      const existing = quotas.find(q => q.year === year);
-      if (existing) {
-        const { error } = await supabase
-          .from('report_quota')
-          .update({ tokens_total: newTotal, updated_at: new Date().toISOString() })
-          .eq('id', existing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('report_quota')
-          .insert({ organization_id: organizationId, year, tokens_total: newTotal, tokens_used: 0 });
-        if (error) throw error;
-      }
+      await api.adminPatchQuota(organizationId, { year, tokensTotal: newTotal });
 
       toast({
         title: "Quota mis à jour",
@@ -122,12 +98,7 @@ export const TokenQuotaManager: React.FC<TokenQuotaManagerProps> = ({
     
     setIsSaving(true);
     try {
-      const { error } = await supabase
-        .from('report_quota')
-        .update({ tokens_used: newUsed, updated_at: new Date().toISOString() })
-        .eq('id', quota.id);
-
-      if (error) throw error;
+      await api.adminPatchQuota(organizationId, { year, tokensUsed: newUsed });
       fetchQuotas();
     } catch (error) {
       console.error('Error adjusting tokens:', error);
@@ -151,11 +122,7 @@ export const TokenQuotaManager: React.FC<TokenQuotaManagerProps> = ({
         return;
       }
 
-      const { error } = await supabase
-        .from('report_quota')
-        .insert({ organization_id: organizationId, year: currentYear, tokens_total: customTokens, tokens_used: 0 });
-
-      if (error) throw error;
+      await api.adminPatchQuota(organizationId, { year: currentYear, tokensTotal: customTokens });
 
       toast({
         title: "Quota créé",

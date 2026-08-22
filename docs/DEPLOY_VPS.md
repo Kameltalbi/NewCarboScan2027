@@ -54,3 +54,7 @@ cd /opt/newcarboscan-2027 && docker-compose down
 # volume DB conservé : ncs_pg_data
 # nginx Ciblix : restaurer depuis /etc/nginx/sites-backup/ puis reload
 ```
+
+## 4. Backup / restore
+
+Voir `docs/RUNBOOK_RESTORE.md` et `docs/THREAT_MODEL.md`. Dump avant chaque déploiement.

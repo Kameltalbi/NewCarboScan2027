@@ -13,7 +13,7 @@ import { BilanCarboneCalculator } from '@/lib/calculators/BilanCarboneCalculator
 import { Loader2 } from 'lucide-react';
 import { useBilanReport } from '@/hooks/useBilanReport';
 import { BilanReportViewer } from '@/components/bilan-carbone/BilanReportViewer';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { ReportGeneratorService } from '@/lib/services/ReportGeneratorService';
 import {
   DropdownMenu,
@@ -78,17 +78,13 @@ export const BilanCarboneHome: React.FC = () => {
         setBilanData(result);
 
         // Charger les méta-données de l'organisation pour les exports
-        const { data: orgData } = await supabase
-          .from('organizations')
-          .select('*')
-          .eq('id', organizationId)
-          .maybeSingle();
+        const { organization: orgData } = await api.getOrganization();
         const og: any = orgData || {};
         setOrgMeta({
           name: og.name || 'Mon Organisation',
           employees: og.employees ?? null,
           sector: og.sector ?? undefined,
-          revenue: og.annual_revenue ?? og.revenue ?? null,
+          revenue: og.annualRevenue ?? og.revenue ?? null,
           currency: og.currency || 'TND',
         });
         
@@ -110,29 +106,22 @@ export const BilanCarboneHome: React.FC = () => {
   const saveBilanToHistory = async (bilanData: any, orgId: string, year: number) => {
     try {
       // Vérifier si un bilan existe déjà pour cette année
-      const { data: existing } = await supabase
-        .from('bilans_carbone')
-        .select('id, status')
-        .eq('organization_id', orgId)
-        .eq('reference_year', year)
-        .maybeSingle();
+      const { items } = await api.listBilans();
+      const existing = (items || []).find((b: any) => Number(b.year) === year) as any;
 
-      // Ne pas écraser un bilan soumis ou validé
       if (existing && (existing.status === 'submitted' || existing.status === 'validated')) {
         return;
       }
 
       const bilanRecord = {
-        user_id: user?.id,
-        organization_id: orgId,
-        total_emission: bilanData.totalEmissions / 1000,
-        scope1_emission: bilanData.scope1 / 1000,
-        scope2_emission: bilanData.scope2 / 1000,
-        scope3_emission: bilanData.scope3 / 1000,
-        date_bilan: `${year}-12-31`,
-        reference_year: year,
+        year,
         status: existing ? existing.status : 'draft',
-        questionnaire_data: {
+        totalEmission: bilanData.totalEmissions / 1000,
+        scope1Emission: bilanData.scope1 / 1000,
+        scope2Emission: bilanData.scope2 / 1000,
+        scope3Emission: bilanData.scope3 / 1000,
+        dateBilan: `${year}-12-31`,
+        questionnaireData: {
           year,
           calculatedFrom: 'activity_data',
           timestamp: new Date().toISOString()
@@ -140,16 +129,9 @@ export const BilanCarboneHome: React.FC = () => {
       };
 
       if (existing) {
-        // Mettre à jour le bilan existant (draft ou revision uniquement)
-        await supabase
-          .from('bilans_carbone')
-          .update(bilanRecord)
-          .eq('id', existing.id);
+        await api.patchBilan(existing.id, bilanRecord);
       } else {
-        // Créer un nouveau bilan
-        await supabase
-          .from('bilans_carbone')
-          .insert(bilanRecord);
+        await api.createBilan(bilanRecord);
       }
     } catch (error) {
       console.error('Erreur sauvegarde bilan historique:', error);

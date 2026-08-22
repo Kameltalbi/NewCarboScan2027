@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Upload, Building2, MapPin, Mail, Phone, FileText, Check, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 export const OrganizationSettings: React.FC = () => {
@@ -64,7 +64,7 @@ export const OrganizationSettings: React.FC = () => {
   const loadOrganizationData = async () => {
     try {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       
       if (!user) {
         console.error('No user found');
@@ -117,7 +117,7 @@ export const OrganizationSettings: React.FC = () => {
 
   const loadLogo = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!user) return;
 
       const { data, error } = await supabase.storage
@@ -146,7 +146,7 @@ export const OrganizationSettings: React.FC = () => {
 
   const uploadLogo = async (file: File) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!user) throw new Error('No user found');
 
       // Supprimer l'ancien logo s'il existe
@@ -204,7 +204,7 @@ export const OrganizationSettings: React.FC = () => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       
       if (!user) {
         throw new Error('Utilisateur non connecté');

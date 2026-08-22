@@ -49,35 +49,36 @@ docker compose exec -T postgres psql -U newcarboscan -d newcarboscan < db/migrat
 docker compose exec -T postgres psql -U newcarboscan -d newcarboscan < db/migrations/005_client_domain_importable.sql
 ```
 
-## Export depuis Supabase (exemple)
+## Export depuis Supabase
 
-Pour chaque table client, exporter en JSON array :
+URI Postgres (pas l’URL HTTP) : Dashboard Supabase → Settings → Database → Connection string.
+
+```bash
+# Toutes les orgs + data tenant
+SUPABASE_DB_URL='postgresql://postgres.[ref]:[pwd]@db.[ref].supabase.co:5432/postgres' \
+  npm run db:export-supabase
+
+# Un seul tenant
+SUPABASE_DB_URL='...' npm run db:export-supabase -- --org <ORG_UUID> --out dumps/acme.json
+```
+
+Le script :
+
+- lit `auth.users` (emails / ids, **sans mot de passe**)
+- exporte les tables métier dans l’ordre du catalogue
+- synthétise un `organization_members.role=owner` si l’org a un `user_id` sans membership
+- écrit `dumps/supabase-export.json`
+
+Les utilisateurs importés ont un mot de passe temporaire et `must_reset_password=true`.
+
+Dump manuel (exemple une table) :
 
 ```sql
--- Exemple activity_data d'une org
 copy (
   select row_to_json(t) from (
     select * from activity_data where organization_id = '<ORG_UUID>'
   ) t
 ) to stdout;
-```
-
-Ou via l’API Supabase / `pg_dump --data-only` puis conversion JSON.
-
-Assembler un dump :
-
-```json
-{
-  "label": "acme-2026-08",
-  "entities": {
-    "users": [ { "id": "...", "email": "..." } ],
-    "organizations": [ { "id": "...", "name": "ACME" } ],
-    "organization_members": [ { "organization_id": "...", "user_id": "...", "role": "owner" } ],
-    "activity_data": [ { "id": "...", "organization_id": "...", "quantity": 12, "unit": "kWh" } ],
-    "bilans_carbone": [ ... ],
-    "collect_sessions": [ ... ]
-  }
-}
 ```
 
 ## Import via API
@@ -107,12 +108,19 @@ curl -X POST -H "Authorization: Bearer $JWT" \
 ## Import via CLI
 
 ```bash
+npm run db:up
+npm run db:migrate
+npm run dev:api   # :8080
+
 export IMPORT_ADMIN_TOKEN="change-me-import-token"   # même valeur que .env API
 export API_URL=http://localhost:8080
-node scripts/import-client-dump.mjs ./dumps/acme.json
+npm run db:import-dump -- ./dumps/supabase-export.json
 ```
 
 Le header `X-Import-Token` suffit (pas besoin de JWT) pour les routes `/v1/import/*`.
+
+Les UUID source sont conservés. Relancer le même dump est idempotent (hash de payload + `ON CONFLICT`).
+Les lignes en erreur restent dans `import_staging` (`status=error`) — rejouables après correction.
 
 ## Vérification
 

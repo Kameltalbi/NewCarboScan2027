@@ -5,27 +5,27 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useToast } from '@/hooks/use-toast';
-import { CalendarPlus, Trash2, Plus } from 'lucide-react';
+import { CalendarPlus, Trash2 } from 'lucide-react';
 
 interface OrganizationYear {
   id: string;
   year: number;
   is_included: boolean;
-  granted_at: string;
+  created_at?: string;
 }
 
 interface OrganizationYearsManagerProps {
-  userId: string; // The user_id who owns the organization
+  organizationId: string;
   organizationName: string;
+  userId?: string;
 }
 
 export const OrganizationYearsManager: React.FC<OrganizationYearsManagerProps> = ({
-  userId,
+  organizationId,
   organizationName,
 }) => {
-  const [orgId, setOrgId] = useState<string | null>(null);
   const [years, setYears] = useState<OrganizationYear[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState<string>('');
@@ -35,34 +35,11 @@ export const OrganizationYearsManager: React.FC<OrganizationYearsManagerProps> =
   const currentYear = new Date().getFullYear();
   const possibleYears = Array.from({ length: currentYear - 2021 }, (_, i) => 2022 + i);
 
-  // Resolve the real organization ID from user_id
-  useEffect(() => {
-    const resolveOrgId = async () => {
-      const { data, error } = await supabase
-        .from('organizations')
-        .select('id')
-        .eq('user_id', userId)
-        .limit(1)
-        .maybeSingle();
-
-      if (!error && data) {
-        setOrgId(data.id);
-      }
-    };
-    if (userId) resolveOrgId();
-  }, [userId]);
-
   const fetchYears = async () => {
-    if (!orgId) return;
+    if (!organizationId) return;
     try {
-      const { data, error } = await supabase
-        .from('organization_years')
-        .select('*')
-        .eq('organization_id', orgId)
-        .order('year', { ascending: true });
-
-      if (error) throw error;
-      setYears((data as OrganizationYear[]) || []);
+      const { items } = await api.adminListOrgYears(organizationId);
+      setYears(items || []);
     } catch (error) {
       console.error('Error fetching organization years:', error);
     } finally {
@@ -71,26 +48,14 @@ export const OrganizationYearsManager: React.FC<OrganizationYearsManagerProps> =
   };
 
   useEffect(() => {
-    if (orgId) fetchYears();
-  }, [orgId]);
+    fetchYears();
+  }, [organizationId]);
 
   const addYear = async () => {
     if (!selectedYear) return;
     const yearNum = parseInt(selectedYear);
-
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from('organization_years')
-        .insert({
-          organization_id: orgId!,
-          year: yearNum,
-          is_included: isIncluded,
-          granted_by: user?.id,
-        });
-
-      if (error) throw error;
-
+      await api.adminAddOrgYear(organizationId, yearNum, isIncluded);
       toast({
         title: 'Année ajoutée',
         description: `L'année ${yearNum} a été accordée à ${organizationName}`,
@@ -100,7 +65,7 @@ export const OrganizationYearsManager: React.FC<OrganizationYearsManagerProps> =
     } catch (error: any) {
       toast({
         title: 'Erreur',
-        description: error.message?.includes('duplicate') 
+        description: error.message?.includes('duplicate')
           ? 'Cette année est déjà configurée'
           : 'Impossible d\'ajouter l\'année',
         variant: 'destructive',
@@ -110,19 +75,13 @@ export const OrganizationYearsManager: React.FC<OrganizationYearsManagerProps> =
 
   const removeYear = async (yearId: string, year: number) => {
     try {
-      const { error } = await supabase
-        .from('organization_years')
-        .delete()
-        .eq('id', yearId);
-
-      if (error) throw error;
-
+      await api.adminDeleteOrgYear(organizationId, yearId);
       toast({
         title: 'Année supprimée',
         description: `L'année ${year} a été retirée`,
       });
       fetchYears();
-    } catch (error) {
+    } catch {
       toast({
         title: 'Erreur',
         description: 'Impossible de supprimer l\'année',
@@ -133,14 +92,9 @@ export const OrganizationYearsManager: React.FC<OrganizationYearsManagerProps> =
 
   const toggleIncluded = async (yearId: string, newValue: boolean) => {
     try {
-      const { error } = await supabase
-        .from('organization_years')
-        .update({ is_included: newValue })
-        .eq('id', yearId);
-
-      if (error) throw error;
+      await api.adminPatchOrgYear(organizationId, yearId, newValue);
       fetchYears();
-    } catch (error) {
+    } catch {
       toast({
         title: 'Erreur',
         description: 'Impossible de mettre à jour',
@@ -161,69 +115,55 @@ export const OrganizationYearsManager: React.FC<OrganizationYearsManagerProps> =
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Current years */}
         {isLoading ? (
-          <p className="text-muted-foreground text-sm">Chargement...</p>
-        ) : years.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            Aucune année configurée. L'organisation n'a accès à aucune année.
-          </p>
+          <p className="text-sm text-muted-foreground">Chargement…</p>
         ) : (
-          <div className="space-y-2">
-            {years.map((y) => (
-              <div key={y.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/30">
-                <div className="flex items-center gap-3">
-                  <span className="font-semibold text-foreground">{y.year}</span>
-                  <Badge variant={y.is_included ? 'default' : 'secondary'}>
-                    {y.is_included ? 'Incluse (gratuite)' : 'Payante'}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-3">
+          <>
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="space-y-1">
+                <Label>Année</Label>
+                <Select value={selectedYear} onValueChange={setSelectedYear}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Choisir" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableToAdd.map((y) => (
+                      <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center gap-2 pb-2">
+                <Switch checked={isIncluded} onCheckedChange={setIsIncluded} />
+                <Label>Incluse</Label>
+              </div>
+              <Button size="sm" onClick={addYear} disabled={!selectedYear}>Ajouter</Button>
+            </div>
+            <div className="space-y-2">
+              {years.map((y) => (
+                <div key={y.id} className="flex items-center justify-between border rounded-md px-3 py-2">
                   <div className="flex items-center gap-2">
-                    <Label className="text-xs text-muted-foreground">Incluse</Label>
+                    <span className="font-medium">{y.year}</span>
+                    <Badge variant={y.is_included ? "default" : "secondary"}>
+                      {y.is_included ? "Incluse" : "Exclue"}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
                     <Switch
                       checked={y.is_included}
-                      onCheckedChange={(val) => toggleIncluded(y.id, val)}
+                      onCheckedChange={(v) => toggleIncluded(y.id, v)}
                     />
+                    <Button variant="ghost" size="icon" onClick={() => removeYear(y.id, y.year)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-destructive hover:text-destructive"
-                    onClick={() => removeYear(y.id, y.year)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Add year */}
-        {availableToAdd.length > 0 && (
-          <div className="flex items-center gap-3 pt-2 border-t border-border">
-            <Select value={selectedYear} onValueChange={setSelectedYear}>
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Année" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableToAdd.map((y) => (
-                  <SelectItem key={y} value={y.toString()}>
-                    {y}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="flex items-center gap-2">
-              <Label className="text-xs text-muted-foreground">Incluse</Label>
-              <Switch checked={isIncluded} onCheckedChange={setIsIncluded} />
+              ))}
+              {years.length === 0 && (
+                <p className="text-sm text-muted-foreground">Aucune année configurée.</p>
+              )}
             </div>
-            <Button size="sm" onClick={addYear} disabled={!selectedYear}>
-              <Plus className="h-4 w-4 mr-1" />
-              Ajouter
-            </Button>
-          </div>
+          </>
         )}
       </CardContent>
     </Card>

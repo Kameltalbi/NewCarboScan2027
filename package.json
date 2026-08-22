@@ -24,8 +24,10 @@
     "lint:claims": "bash scripts/lint-invented-claims.sh",
     "lint:web-legacy": "npm run lint -w @newcarboscan/web",
     "db:up": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres",
-    "db:migrate": "bash scripts/migrate.sh",
+    "db:migrate": "bash scripts/migrate-docker.sh",
     "db:down": "docker compose down",
+    "db:export-supabase": "node scripts/export-supabase-dump.mjs",
+    "db:import-dump": "node scripts/import-client-dump.mjs",
     "deploy:up": "docker compose up -d --build",
     "deploy:down": "docker compose down"
   },

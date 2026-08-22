@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useOrganizationId } from '@/hooks/useOrganizationId';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,32 +51,13 @@ export const CollectTeamManagement: React.FC = () => {
 
   const loadCurrentUserRole = async () => {
     if (!organizationId || !user) return;
-
     try {
-      // Vérifier si l'utilisateur est owner
-      const { data: org } = await supabase
-        .from('organizations')
-        .select('user_id')
-        .eq('id', organizationId)
-        .eq('user_id', user.id)
-        .single();
-
-      if (org) {
-        setCurrentUserRole('owner');
-        return;
-      }
-
-      // Vérifier le rôle dans organization_members
-      const { data: member } = await supabase
-        .from('organization_members')
-        .select('role')
-        .eq('organization_id', organizationId)
-        .eq('user_id', user.id)
-        .single();
-
-      if (member) {
-        setCurrentUserRole(member.role as 'admin' | 'member');
-      }
+      const { items } = await api.listOrgMembers();
+      const me = items.find((m) => m.user_id === user.id);
+      if (!me) return;
+      if (me.role === 'owner') setCurrentUserRole('owner');
+      else if (me.role === 'admin') setCurrentUserRole('admin');
+      else setCurrentUserRole('member');
     } catch (error) {
       console.error('Erreur chargement rôle:', error);
     }
@@ -84,69 +65,22 @@ export const CollectTeamManagement: React.FC = () => {
 
   const loadMembers = async () => {
     if (!organizationId) return;
-
     setLoading(true);
     try {
-      // Récupérer le owner
-      const { data: org } = await supabase
-        .from('organizations')
-        .select('user_id, id')
-        .eq('id', organizationId)
-        .single();
-
-      // Récupérer les membres
-      const { data: membersData, error } = await supabase
-        .from('organization_members')
-        .select('*')
-        .eq('organization_id', organizationId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Construire la liste complète avec owner + membres
-      const allMembers: TeamMember[] = [];
-
-      // Ajouter le owner
-      if (org) {
-        const { data: ownerProfile } = await supabase
-          .from('profiles')
-          .select('email, full_name')
-          .eq('id', org.user_id)
-          .single();
-
-        allMembers.push({
-          id: `owner-${org.user_id}`,
-          user_id: org.user_id,
+      const { items } = await api.listOrgMembers();
+      setMembers(
+        (items || []).map((m) => ({
+          id: m.user_id,
+          user_id: m.user_id,
           organization_id: organizationId,
-          role: 'owner',
-          created_at: new Date().toISOString(),
-          profile: ownerProfile ? {
-            email: ownerProfile.email || '',
-            full_name: ownerProfile.full_name,
-          } : undefined,
-        });
-      }
-
-      // Ajouter les membres avec leurs profils
-      if (membersData) {
-        for (const member of membersData) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('email, full_name')
-            .eq('id', member.user_id)
-            .single();
-
-          allMembers.push({
-            ...member,
-            profile: profile ? {
-              email: profile.email || '',
-              full_name: profile.full_name,
-            } : undefined,
-          });
-        }
-      }
-
-      setMembers(allMembers);
+          role: (m.role === 'editor' ? 'member' : m.role) as TeamMember['role'],
+          created_at: m.created_at,
+          profile: {
+            email: m.email,
+            full_name: m.full_name,
+          },
+        })),
+      );
     } catch (error: any) {
       toast({
         title: 'Erreur',
@@ -163,51 +97,10 @@ export const CollectTeamManagement: React.FC = () => {
 
     setIsInviting(true);
     try {
-      // Vérifier si l'utilisateur existe
-      const { data: existingUser } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', inviteEmail)
-        .single();
-
-      if (!existingUser) {
-        toast({
-          title: 'Utilisateur introuvable',
-          description: 'Cet email n\'est pas enregistré dans CarboScan. L\'utilisateur doit d\'abord créer un compte.',
-          variant: 'destructive',
-        });
-        setIsInviting(false);
-        return;
-      }
-
-      // Vérifier si déjà membre
-      const { data: existingMember } = await supabase
-        .from('organization_members')
-        .select('id')
-        .eq('organization_id', organizationId)
-        .eq('user_id', existingUser.id)
-        .single();
-
-      if (existingMember) {
-        toast({
-          title: 'Déjà membre',
-          description: 'Cet utilisateur est déjà membre de l\'organisation.',
-          variant: 'destructive',
-        });
-        setIsInviting(false);
-        return;
-      }
-
-      // Ajouter le membre
-      const { error } = await supabase
-        .from('organization_members')
-        .insert({
-          organization_id: organizationId,
-          user_id: existingUser.id,
-          role: inviteRole,
-        });
-
-      if (error) throw error;
+      await api.inviteOrgMember({
+        email: inviteEmail,
+        role: inviteRole === 'member' ? 'editor' : inviteRole,
+      });
 
       toast({
         title: 'Membre ajouté',
@@ -233,18 +126,11 @@ export const CollectTeamManagement: React.FC = () => {
     if (!showRemoveDialog || !organizationId) return;
 
     try {
-      const { error } = await supabase
-        .from('organization_members')
-        .delete()
-        .eq('id', showRemoveDialog.id);
-
-      if (error) throw error;
-
+      await api.removeOrgMember(showRemoveDialog.user_id);
       toast({
         title: 'Membre retiré',
         description: 'Le membre a été retiré de l\'équipe.',
       });
-
       setShowRemoveDialog(null);
       loadMembers();
     } catch (error: any) {
@@ -267,18 +153,11 @@ export const CollectTeamManagement: React.FC = () => {
     }
 
     try {
-      const { error } = await supabase
-        .from('organization_members')
-        .update({ role: newRole })
-        .eq('id', member.id);
-
-      if (error) throw error;
-
+      await api.patchOrgMember(member.user_id, newRole === 'member' ? 'editor' : 'admin');
       toast({
         title: 'Rôle modifié',
         description: `Le rôle a été modifié en ${newRole}.`,
       });
-
       loadMembers();
     } catch (error: any) {
       toast({

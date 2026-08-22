@@ -13,7 +13,7 @@ import type { PCFStudy } from '../../types';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
   AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
@@ -72,7 +72,7 @@ const PCFResults: React.FC<{ studyId: string; study: PCFStudy }> = ({ studyId, s
   const callPcfCalculate = async (isScenario = false, overrides?: Record<string, any>) => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await sessionAuth.getSession();
 
     const res = await fetch(`${supabaseUrl}/functions/v1/pcf-calculate`, {
       method: 'POST',
@@ -125,7 +125,7 @@ const PCFResults: React.FC<{ studyId: string; study: PCFStudy }> = ({ studyId, s
   const handleLock = async () => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await sessionAuth.getSession();
     await fetch(`${supabaseUrl}/rest/v1/pcf_studies?id=eq.${studyId}`, {
       method: 'PATCH',
       headers: {

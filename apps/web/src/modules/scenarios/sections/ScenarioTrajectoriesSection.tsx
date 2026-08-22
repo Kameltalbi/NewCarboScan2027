@@ -5,7 +5,7 @@ import { TrendingDown, BarChart3 } from 'lucide-react';
 import { ClimateScenario, ScenarioResult, SCENARIO_TYPE_LABELS, SCENARIO_TYPE_COLORS } from '../types';
 import { useOrganizationData } from '@/hooks/useOrganizationData';
 import { useScenarioLevers, computeTrajectory } from '../hooks/useScenarios';
-import { supabase } from "@/integrations/api/client";
+import { api } from '@/integrations/api/client';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 interface Props {
@@ -25,8 +25,8 @@ export const ScenarioTrajectoriesSection: React.FC<Props> = ({ scenario, scenari
     const fetchAll = async () => {
       const map = new Map();
       for (const l of levers) {
-        const { data } = await supabase.from('climate_scenario_assumptions').select('*').eq('scenario_lever_id', l.id).maybeSingle();
-        if (data) map.set(l.id, data);
+        const { items } = await api.listClimateScenarioAssumptions(l.id);
+        if (items?.[0]) map.set(l.id, items[0]);
       }
       setAssumptions(map);
     };

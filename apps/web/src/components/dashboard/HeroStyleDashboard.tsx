@@ -20,8 +20,6 @@ import {
   Factory,
   Truck,
   Sparkles,
-  Check,
-  Clock,
   Globe,
   ShieldCheck,
   FileText,
@@ -34,6 +32,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAppData } from '@/contexts/AppDataContext';
 import { useOrganizationData } from '@/hooks/useOrganizationData';
 import { useOrganizationSites } from '@/hooks/useOrganizationSites';
+import { useOrganizationYears } from '@/hooks/useOrganizationYears';
+import { api } from '@/integrations/api/client';
 
 import aiInsightAvatar from '@/assets/ai-insight-avatar.png';
 import {
@@ -67,13 +67,26 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
   const { user } = useAuth();
   const { organizationId, organizationLoading } = useAppData();
   const { referenceYear, organization } = useOrganizationData();
-  const activeYear = selectedYear ?? referenceYear;
+  const { defaultYear } = useOrganizationYears(organizationId);
+  const [headerYear, setHeaderYear] = useState<number | null>(null);
+  const activeYear = selectedYear ?? headerYear ?? defaultYear ?? referenceYear;
   const { sites } = useOrganizationSites(organizationId ?? undefined);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const year = (event as CustomEvent<number>).detail;
+      if (typeof year === 'number' && Number.isFinite(year)) {
+        setHeaderYear(year);
+      }
+    };
+    window.addEventListener('dashboardYearChange', handler);
+    return () => window.removeEventListener('dashboardYearChange', handler);
+  }, []);
 
 
 
   const [data, setData] = useState<DashboardAggregatedData | null>(null);
-  const [prevData, setPrevData] = useState<DashboardAggregatedData | null>(null);
+  const [yearlyTotals, setYearlyTotals] = useState<Array<{ year: number; value: number }>>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -88,14 +101,26 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         );
         setData(cur);
         try {
-          const p = await DashboardAggregator.aggregate(
-            organizationId,
-            `${activeYear - 1}-01-01`,
-            `${activeYear - 1}-12-31`,
+          const { items } = await api.listBilans();
+          const byYear = new Map<number, number>();
+          for (const row of items || []) {
+            const y = Number(row.year);
+            const year = Number.isInteger(y) && y >= 2000
+              ? y
+              : row.date_bilan
+                ? new Date(String(row.date_bilan)).getFullYear()
+                : null;
+            if (year == null || !Number.isInteger(year)) continue;
+            const tonnes = Number(row.total_emission ?? row.total_kgco2e ?? 0) || 0;
+            byYear.set(year, Math.max(byYear.get(year) ?? 0, tonnes));
+          }
+          setYearlyTotals(
+            [...byYear.entries()]
+              .sort((a, b) => a[0] - b[0])
+              .map(([year, value]) => ({ year, value })),
           );
-          setPrevData(p);
         } catch {
-          setPrevData(null);
+          setYearlyTotals([]);
         }
       } finally {
         setLoading(false);
@@ -114,11 +139,14 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
       const s2 = toT(data.bilanCarbone.scope2);
       const s3 = toT(data.bilanCarbone.scope3);
       const s12 = s1 + s2;
-      const prev = toT(prevData?.bilanCarbone.totalEmissions || 0);
-      const evo = prev > 0 ? ((total - prev) / prev) * 100 : 0;
+      const prevYearTotal = yearlyTotals.find((y) => y.year === activeYear - 1)?.value ?? 0;
+      const evo =
+        prevYearTotal > 0 && total > 0
+          ? ((total - prevYearTotal) / prevYearTotal) * 100
+          : null;
       return {
         total,
-        intensity: Math.round(total * 0.02),
+        intensity: null as number | null,
         s12,
         s3,
         evo,
@@ -127,15 +155,15 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
       };
     }
     return {
-      total: 12458,
-      intensity: 245,
-      s12: 7126,
-      s3: 5332,
-      evo: -8.6,
-      s12Pct: 57,
-      s3Pct: 43,
+      total: 0,
+      intensity: null as number | null,
+      s12: 0,
+      s3: 0,
+      evo: null as number | null,
+      s12Pct: 0,
+      s3Pct: 0,
     };
-  }, [hasReal, data, prevData]);
+  }, [hasReal, data, yearlyTotals, activeYear]);
 
   // Agrégats sites (fallback quand l'organisation n'a pas ces champs renseignés)
   const siteTotals = useMemo(() => {
@@ -201,28 +229,25 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
   }, [hasReal, data]);
 
   const evolution = useMemo(() => {
-    // 5 last years; use current & prev when available, synthesise a smooth decline for the rest
-    const y = activeYear;
+    const byYear = new Map(yearlyTotals.map((row) => [row.year, row.value]));
     if (hasReal && data) {
-      const cur = toT(data.bilanCarbone.totalEmissions);
-      const prev = toT(prevData?.bilanCarbone.totalEmissions || data.bilanCarbone.totalEmissions * 1.08);
-      const step = (prev - cur) * 1.1;
-      return [
-        { year: y - 4, value: Math.round(cur + step * 3) },
-        { year: y - 3, value: Math.round(cur + step * 2.2) },
-        { year: y - 2, value: Math.round(cur + step * 1.5) },
-        { year: y - 1, value: Math.round(prev) },
-        { year: y, value: Math.round(cur) },
-      ];
+      const current = toT(data.bilanCarbone.totalEmissions);
+      if (current > 0 && (byYear.get(activeYear) ?? 0) <= 0) {
+        byYear.set(activeYear, current);
+      }
     }
-    return [
-      { year: y - 4, value: 15120 },
-      { year: y - 3, value: 14580 },
-      { year: y - 2, value: 13860 },
-      { year: y - 1, value: 13620 },
-      { year: y, value: 12458 },
-    ];
-  }, [activeYear, hasReal, data, prevData]);
+    const baselineYear = byYear.has(2025)
+      ? 2025
+      : [...byYear.entries()].filter(([, v]) => v > 0).sort((a, b) => b[0] - a[0])[0]?.[0];
+    const baseline = baselineYear != null ? byYear.get(baselineYear) ?? 0 : 0;
+    if (baseline <= 0) return [];
+    const start = activeYear - 4;
+    return Array.from({ length: 5 }, (_, i) => {
+      const year = start + i;
+      const real = byYear.get(year) ?? 0;
+      return { year, value: Math.round(real > 0 ? real : baseline) };
+    });
+  }, [yearlyTotals, hasReal, data, activeYear]);
 
   const topCategories = useMemo(() => {
     if (hasReal && data && data.bilanCarbone.breakdown.length > 0) {
@@ -292,8 +317,8 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           label="ÉMISSIONS TOTALES"
           value={fmt(kpis.total)}
           unit="tCO₂e"
-          delta={kpis.evo}
-          deltaLabel={`vs ${activeYear - 1}`}
+          delta={kpis.evo ?? undefined}
+          deltaLabel={kpis.evo == null ? undefined : `vs ${activeYear - 1}`}
         />
         <KpiCard
           icon={<TrendingDown className="h-6 w-6 text-sky-600" />}
@@ -389,6 +414,12 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
               Annuel
             </span>
           </div>
+          {evolution.length === 0 ? (
+            <p className="h-56 flex items-center justify-center text-sm text-muted-foreground">
+              Aucun bilan annuel à tracer.
+            </p>
+          ) : (
+          <>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={evolution} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
@@ -403,7 +434,12 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
                 <YAxis
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(v) => `${Math.round(v / 1000)}k`}
+                  domain={[0, (max: number) => (max > 0 ? max * 1.15 : 1)]}
+                  tickFormatter={(v) =>
+                    v >= 1000
+                      ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v / 1000)}k`
+                      : fmt(v)
+                  }
                   className="text-xs"
                 />
                 <Tooltip
@@ -425,6 +461,13 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
               </AreaChart>
             </ResponsiveContainer>
           </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Années sans bilan : mêmes émissions que{' '}
+              {yearlyTotals.some((row) => row.year === 2025 && row.value > 0) ? '2025' : 'l’exercice disponible'}
+              {' '}(pas d’évolution).
+            </p>
+          </>
+          )}
         </div>
       </div>
 
@@ -462,36 +505,14 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         {/* Actions */}
         <div className="bg-card rounded-2xl border border-border p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">Actions en cours</h3>
-          <ul className="space-y-3 text-sm">
-            {[
-              { label: 'Optimisation énergétique', status: 'En cours', color: 'emerald' },
-              { label: 'Transition flotte véhicules', status: 'En cours', color: 'emerald' },
-              { label: 'Réduction des déchets', status: 'En attente', color: 'amber' },
-              { label: 'Sensibilisation collaborateurs', status: 'En cours', color: 'emerald' },
-            ].map((a) => (
-              <li key={a.label} className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-foreground">
-                  {a.color === 'emerald' ? (
-                    <Check className="h-4 w-4 text-emerald-600" />
-                  ) : (
-                    <Clock className="h-4 w-4 text-amber-600" />
-                  )}
-                  {a.label}
-                </div>
-                <span
-                  className={
-                    a.color === 'emerald'
-                      ? 'text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700'
-                      : 'text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700'
-                  }
-                >
-                  {a.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <button className="mt-4 text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1">
-            Voir toutes les actions <ArrowRight className="h-3.5 w-3.5" />
+          <p className="text-sm text-muted-foreground">
+            Aucune action de réduction n'est affichée ici tant qu'elle n'est pas enregistrée dans le plan d'actions.
+          </p>
+          <button
+            className="mt-4 text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1"
+            onClick={() => navigate('/app/net-zero')}
+          >
+            Ouvrir le plan d'actions <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>
 
@@ -502,10 +523,19 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
             <h3 className="text-lg font-semibold text-foreground">Insight IA</h3>
           </div>
           <p className="text-sm text-foreground leading-relaxed">
-            Vos émissions ont{' '}
-            {kpis.evo < 0 ? 'diminué' : 'augmenté'} de{' '}
-            <span className="font-semibold">{Math.abs(kpis.evo).toFixed(1)}%</span> par rapport à{' '}
-            {activeYear - 1}. {kpis.evo < 0 ? 'Bonne dynamique !' : 'Restez vigilant.'}
+            {kpis.evo == null ? (
+              <>
+                Pas de comparaison possible avec {activeYear - 1} : aucun bilan enregistré pour cette année.
+                Les années vides du graphique réutilisent l'exercice disponible, sans inventer d'évolution.
+              </>
+            ) : (
+              <>
+                Vos émissions ont{' '}
+                {kpis.evo < 0 ? 'diminué' : 'augmenté'} de{' '}
+                <span className="font-semibold">{Math.abs(kpis.evo).toFixed(1)}%</span> par rapport à{' '}
+                {activeYear - 1}.
+              </>
+            )}
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed mt-3">
             La catégorie «&nbsp;<span className="text-foreground">{topCategories[0]?.label}</span>&nbsp;» représente{' '}
@@ -531,9 +561,9 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
       {/* COMPLIANCE FOOTER */}
       <div className="bg-card rounded-2xl border border-border px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex flex-wrap items-center gap-6">
-          <ComplianceBadge icon={<Globe className="h-4 w-4" />} label="Conforme GHG Protocol" />
-          <ComplianceBadge icon={<ShieldCheck className="h-4 w-4" />} label="Conforme ISO 14064-1" />
-          <ComplianceBadge icon={<FileText className="h-4 w-4" />} label="Conforme CBAM" />
+          <ComplianceBadge icon={<Globe className="h-4 w-4" />} label="Calcul interne" />
+          <ComplianceBadge icon={<ShieldCheck className="h-4 w-4" />} label="Non vérifié par un tiers" />
+          <ComplianceBadge icon={<FileText className="h-4 w-4" />} label="Couverture partielle" />
         </div>
         <div className="text-xs text-muted-foreground">
           Dernière mise à jour :{' '}

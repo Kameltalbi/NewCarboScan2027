@@ -97,7 +97,7 @@ function drawFooter(doc: jsPDF, W: number, H: number, m: number, page: number, t
   // Left: contact
   doc.text("CarboScan  ·  contact@carboscan.io  ·  +216 55 053 505  ·  www.carboscan.io", m, H - 20);
   // Left: methodology
-  doc.text("Méthodologie : Facteurs d'émission Base Carbone ADEME — Conforme ISO 14064-1", m, H - 15);
+  doc.text("Méthodologie interne CarboScan — estimation indicative, non certifiée", m, H - 15);
 
   // Right: page
   doc.text(`${page} / ${total}`, W - m, H - 20, { align: "right" });
@@ -212,7 +212,7 @@ export async function generateResultsPdf(
   // Conforme text
   txt(doc, [148, 163, 184]);
   doc.setFontSize(8);
-  doc.text("Conforme ISO 14064-1  ·  Base Carbone ADEME", W / 2, H - 12, { align: "center" });
+  doc.text("Estimation interne  ·  non vérifiée par un tiers", W / 2, H - 12, { align: "center" });
 
   // ─────────────────────────────────────────────
   // PAGE 2: SYNTHESIS
@@ -490,7 +490,7 @@ export async function generateResultsPdf(
 
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
-  doc.text("Obtenez un bilan carbone complet, certifié ISO 14064-1, avec un", W / 2, y + 23, { align: "center" });
+  doc.text("Obtenez un bilan carbone complet, avec un", W / 2, y + 23, { align: "center" });
   doc.text("accompagnement expert et un plan de réduction personnalisé.", W / 2, y + 29, { align: "center" });
 
   // CTA button

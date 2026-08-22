@@ -11,6 +11,10 @@ TARGETS=(
   "$ROOT/apps/web/src/integrations/api"
   "$ROOT/apps/web/src/modules/bilan-carbone"
   "$ROOT/apps/web/src/components/proof"
+  "$ROOT/apps/web/src/lib/exports"
+  "$ROOT/apps/web/src/lib/generateResultsPdf.ts"
+  "$ROOT/apps/web/src/lib/services/ReportGeneratorService.ts"
+  "$ROOT/apps/web/src/components/dashboard/HeroStyleDashboard.tsx"
 )
 
 PATTERNS=(
@@ -18,13 +22,19 @@ PATTERNS=(
   'ROI\s*inférieur\s*à\s*24'
   '±\s*15\s*%'
   'potentiel technique de réduction est évalué entre'
+  'Conforme ISO 14064'
+  'certifié ISO 14064'
+  'Objectif aligné SBTi'
+  'Cible SBTi'
+  'Objectif SBTi'
+  'reductionTarget = 42'
 )
 
-for dir in "${TARGETS[@]}"; do
-  [ -d "$dir" ] || continue
+for target in "${TARGETS[@]}"; do
+  [ -e "$target" ] || continue
   for pat in "${PATTERNS[@]}"; do
-    if grep -RInE --exclude='*.test.ts' --exclude='*.md' --exclude='*commentary.ts' "$pat" "$dir" 2>/dev/null; then
-      echo "FAIL invented-claim pattern /$pat/ in $dir" >&2
+    if grep -RInE --exclude='*.test.ts' --exclude='*.md' --exclude='*commentary.ts' "$pat" "$target" 2>/dev/null; then
+      echo "FAIL invented-claim pattern /$pat/ in $target" >&2
       FAIL=1
     fi
   done

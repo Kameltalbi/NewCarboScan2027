@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import html2pdf from 'html2pdf.js';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { useToast } from '@/components/ui/use-toast';
 
 interface QuestionnaireResponse {
@@ -829,7 +829,7 @@ export const DatabaseCarboScanQuestionnaire = () => {
       setShowResults(true);
 
       // Sauvegarder le bilan dans la base de données
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (user) {
         try {
           const { error: bilanError } = await supabase

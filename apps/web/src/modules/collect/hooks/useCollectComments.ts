@@ -1,6 +1,6 @@
 // Hook pour les commentaires du module Collect
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredUser } from "@/integrations/api/client";
 import { toast } from 'sonner';
 
 export interface CollectComment {
@@ -25,41 +25,26 @@ export function useCollectComments(sessionId: string | undefined, targetKey?: st
     queryKey,
     enabled: !!sessionId,
     queryFn: async () => {
-      let q = (supabase as any)
-        .from('collect_comments')
-        .select('*')
-        .eq('session_id', sessionId)
-        .order('created_at', { ascending: true });
-
-      if (targetKey) {
-        q = q.eq('target_key', targetKey);
-      }
-
-      const { data, error } = await q;
-      if (error) throw error;
-      return data as CollectComment[];
+      const { items } = await api.listCollectComments({
+        sessionId,
+        targetKey,
+      });
+      return (items || []) as unknown as CollectComment[];
     },
   });
 
   const addComment = useMutation({
     mutationFn: async (input: { content: string; targetKey?: string; targetType?: string; parentId?: string }) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = getStoredUser();
       if (!user) throw new Error('Non authentifié');
-
-      const { data, error } = await (supabase as any)
-        .from('collect_comments')
-        .insert({
-          session_id: sessionId,
-          user_id: user.id,
-          target_type: input.targetType || 'question',
-          target_key: input.targetKey || targetKey,
-          content: input.content,
-          parent_comment_id: input.parentId || null,
-        })
-        .select()
-        .single();
-      if (error) throw error;
-      return data;
+      const { item } = await api.createCollectComment({
+        sessionId,
+        targetType: input.targetType || 'question',
+        targetKey: input.targetKey || targetKey,
+        content: input.content,
+        parentId: input.parentId || null,
+      });
+      return item;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey });
@@ -70,11 +55,7 @@ export function useCollectComments(sessionId: string | undefined, targetKey?: st
 
   const resolveComment = useMutation({
     mutationFn: async (commentId: string) => {
-      const { error } = await (supabase as any)
-        .from('collect_comments')
-        .update({ is_resolved: true, resolved_at: new Date().toISOString() })
-        .eq('id', commentId);
-      if (error) throw error;
+      await api.patchCollectComment(commentId, { isResolved: true });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey });
@@ -85,11 +66,7 @@ export function useCollectComments(sessionId: string | undefined, targetKey?: st
 
   const deleteComment = useMutation({
     mutationFn: async (commentId: string) => {
-      const { error } = await (supabase as any)
-        .from('collect_comments')
-        .delete()
-        .eq('id', commentId);
-      if (error) throw error;
+      await api.deleteCollectComment(commentId);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey });

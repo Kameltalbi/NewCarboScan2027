@@ -109,6 +109,7 @@ export const mapDbRoleToOrgRole = (dbRole: string): OrgMemberRole => {
     admin: 'admin',
     member: 'contributor',
     contributor: 'contributor',
+    editor: 'contributor',
     viewer: 'viewer',
   };
   return mapping[dbRole] || 'viewer';
@@ -118,7 +119,7 @@ export const mapDbRoleToOrgRole = (dbRole: string): OrgMemberRole => {
 export const mapOrgRoleToDbRole = (orgRole: OrgMemberRole): string => {
   const mapping: Record<OrgMemberRole, string> = {
     admin: 'admin',
-    contributor: 'member',
+    contributor: 'editor',
     viewer: 'viewer',
   };
   return mapping[orgRole];

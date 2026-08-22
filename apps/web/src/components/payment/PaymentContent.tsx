@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/api/client";
+import { api, sessionAuth } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 import { usePricingPlans } from "@/components/pricing/PricingData";
 
@@ -92,7 +92,7 @@ export const PaymentContent: React.FC = () => {
 
   const handleCardPayment = async () => {
     // Vérifier qu'un utilisateur est connecté
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await sessionAuth.getUser();
     if (!user) {
       toast({
         title: "Erreur",
@@ -105,42 +105,26 @@ export const PaymentContent: React.FC = () => {
 
     try {
       // Enregistrer la commande en base de données pour le paiement par carte
-      const { error } = await supabase
-        .from('orders')
-        .insert({
-          user_id: user.id,
-          plan_type: planKey,
-          payment_method: 'carte',
-          amount: planPrice,
-          currency: currency === 'DT' ? 'TND' : 'USD',
-          status: 'validated', // Statut validé pour le paiement par carte
-          validated_at: new Date().toISOString(),
-          user_data: {
-            name: user.user_metadata?.full_name || user.email,
-            email: user.email,
-            phone: formData.phone || "",
-            address: formData.address || "",
-            notes: formData.notes || "",
-            organization: formData.organization || "",
-            password: formData.password || "",
-            plan_details: {
-              plan_name: currentPlan?.name,
-              plan_description: currentPlan?.description
-            }
-          }
-        });
+      await api.createOrder({
+        amount: planPrice,
+        currency: currency === 'DT' ? 'TND' : 'USD',
+        status: 'validated',
+        user_data: {
+          name: user.fullName || user.email,
+          email: user.email,
+          phone: formData.phone || "",
+          address: formData.address || "",
+          notes: formData.notes || "",
+          organization: formData.organization || "",
+          plan_details: {
+            plan_name: currentPlan?.name,
+            plan_description: currentPlan?.description,
+            plan_type: planKey,
+            payment_method: 'carte',
+          },
+        },
+      });
 
-      if (error) {
-        console.error('Erreur lors de la création de la commande:', error);
-        toast({
-          title: "Erreur",
-          description: t("checkout.messages.orderCreationError"),
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Rediriger vers le lien de paiement
       const paymentUrl = "https://knct.me/4X3yuWlur";
       window.open(paymentUrl, '_blank');
       
@@ -162,7 +146,7 @@ export const PaymentContent: React.FC = () => {
 
     try {
       // Vérifier si un utilisateur est connecté
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
 
       // Validation des champs requis
       if (!formData.name || !formData.email || !formData.phone) {
@@ -196,39 +180,25 @@ export const PaymentContent: React.FC = () => {
       }
 
       // Enregistrer la commande en base de données
-      const { error } = await supabase
-        .from('orders')
-        .insert({
-          user_id: user?.id ?? null, // Explicitement null pour les demandes Pro sans connexion
-          plan_type: planKey,
-          payment_method: otherPaymentMethod,
-          amount: planPrice,
-          currency: currency === 'DT' ? 'TND' : 'USD',
-          status: 'pending',
-          user_data: {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            address: formData.address,
-            notes: formData.notes,
-            organization: formData.organization,
-            password: formData.password,
-            plan_details: {
-              plan_name: currentPlan?.name,
-              plan_description: currentPlan?.description
-            }
-          }
-        });
-
-      if (error) {
-        console.error('Erreur lors de la création de la commande:', error);
-        toast({
-          title: "Erreur",
-          description: t("checkout.messages.orderCreationError"),
-          variant: "destructive",
-        });
-        return;
-      }
+      await api.createOrder({
+        amount: planPrice,
+        currency: currency === 'DT' ? 'TND' : 'USD',
+        status: 'pending',
+        user_data: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          notes: formData.notes,
+          organization: formData.organization,
+          plan_details: {
+            plan_name: currentPlan?.name,
+            plan_description: currentPlan?.description,
+            plan_type: planKey,
+            payment_method: otherPaymentMethod,
+          },
+        },
+      });
 
       setShowSuccess(true);
     } catch (error) {

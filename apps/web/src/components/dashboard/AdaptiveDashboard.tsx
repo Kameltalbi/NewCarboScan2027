@@ -12,7 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useOrganizationData } from '@/hooks/useOrganizationData';
 import { useOrganizationId } from '@/hooks/useOrganizationId';
 import { useOrganizationModules } from '@/hooks/useOrganizationModules';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { toast } from 'sonner';
 import { WattBimExecutiveDashboard } from '@/modules/wattbim/WattBimExecutiveDashboard';
 
@@ -34,41 +34,21 @@ export const AdaptiveDashboard: React.FC = () => {
     const fetchLastBilanYear = async () => {
       if (!user) return;
 
-      // Priorité 1 : année de référence du dernier bilan carbone (par organisation)
-      let bilanQuery = supabase
-        .from('bilans_carbone')
-        .select('reference_year, date_bilan')
-        .order('created_at', { ascending: false })
-        .limit(1);
-      if (organizationId) {
-        bilanQuery = bilanQuery.eq('organization_id', organizationId);
-      } else {
-        bilanQuery = bilanQuery.eq('user_id', user.id);
-      }
-      const { data: bilanData } = await bilanQuery.maybeSingle();
-
-      if (bilanData) {
-        const year = bilanData.reference_year || (bilanData.date_bilan ? new Date(bilanData.date_bilan).getFullYear() : null);
-        if (year) {
-          setLastBilanYear(year);
-          setSelectedYear(year);
-          return;
-        }
-      }
-
-      // Fallback : dernière période avec des données d'activité (par organisation)
-      let activityQuery = supabase
-        .from('activity_data')
-        .select('period_start')
-        .order('period_start', { ascending: false })
-        .limit(1);
-      if (organizationId) {
-        activityQuery = activityQuery.eq('organization_id', organizationId);
-      }
-      const { data: actData } = await activityQuery.maybeSingle();
-
-      if (actData?.period_start) {
-        const year = new Date(actData.period_start).getFullYear();
+      const { items } = await api.listBilans();
+      const rows = items || [];
+      const withYear = rows
+        .map((row) => {
+          const y = Number(row.year);
+          const year = Number.isInteger(y) && y >= 2000
+            ? y
+            : row.date_bilan
+              ? new Date(String(row.date_bilan)).getFullYear()
+              : null;
+          return year;
+        })
+        .filter((y): y is number => y != null);
+      if (withYear.length > 0) {
+        const year = Math.max(...withYear);
         setLastBilanYear(year);
         setSelectedYear(year);
       }
@@ -99,15 +79,9 @@ export const AdaptiveDashboard: React.FC = () => {
       if (!user) return;
       
       try {
-        const { data } = await supabase
-          .from('companies')
-          .select('nom_entreprise')
-          .eq('user_id', user.id)
-          .limit(1)
-          .single();
-        
-        if (data) {
-          setCompanyData(data);
+        const { organization } = await api.getOrganization();
+        if (organization?.name) {
+          setCompanyData({ nom_entreprise: organization.name });
         }
       } catch (error) {
         console.error('Erreur récupération entreprise:', error);

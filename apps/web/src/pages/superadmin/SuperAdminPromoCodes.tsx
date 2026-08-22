@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -71,13 +71,8 @@ export default function SuperAdminPromoCodes() {
   const fetchPromoCodes = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('promo_codes')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setPromoCodes(data as PromoCode[] || []);
+      const { items } = await api.adminListPromoCodes();
+      setPromoCodes((items as unknown as PromoCode[]) || []);
     } catch (error) {
       console.error('Error fetching promo codes:', error);
       toast({
@@ -104,20 +99,20 @@ export default function SuperAdminPromoCodes() {
     
     try {
       const dataToSubmit = {
-        ...formData,
-        max_uses: formData.max_uses === 0 ? null : formData.max_uses,
-        valid_until: formData.valid_until || null,
-        valid_from: formData.valid_from || new Date().toISOString().split('T')[0]
+        code: formData.code,
+        description: formData.description,
+        discountType: formData.discount_type,
+        discountValue: formData.discount_value,
+        minimumAmount: formData.minimum_amount,
+        maxUses: formData.max_uses === 0 ? null : formData.max_uses,
+        validUntil: formData.valid_until || null,
+        validFrom: formData.valid_from || new Date().toISOString().split('T')[0],
+        isActive: formData.is_active,
+        applicablePlans: formData.applicable_plans,
       };
 
       if (selectedCode) {
-        // Update existing code
-        const { error } = await supabase
-          .from('promo_codes')
-          .update(dataToSubmit)
-          .eq('id', selectedCode.id);
-        
-        if (error) throw error;
+        await api.adminPatchPromoCode(selectedCode.id, dataToSubmit);
         
         toast({
           title: "Succès",
@@ -126,11 +121,7 @@ export default function SuperAdminPromoCodes() {
         setShowEditModal(false);
       } else {
         // Create new code
-        const { error } = await supabase
-          .from('promo_codes')
-          .insert([dataToSubmit]);
-        
-        if (error) throw error;
+        await api.adminCreatePromoCode(dataToSubmit);
         
         toast({
           title: "Succès",
@@ -190,12 +181,7 @@ export default function SuperAdminPromoCodes() {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce code promo ?')) return;
 
     try {
-      const { error } = await supabase
-        .from('promo_codes')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      await api.adminDeletePromoCode(id);
 
       toast({
         title: "Succès",
@@ -215,12 +201,7 @@ export default function SuperAdminPromoCodes() {
 
   const toggleActive = async (id: string, currentStatus: boolean) => {
     try {
-      const { error } = await supabase
-        .from('promo_codes')
-        .update({ is_active: !currentStatus })
-        .eq('id', id);
-
-      if (error) throw error;
+      await api.adminPatchPromoCode(id, { isActive: !currentStatus });
 
       toast({
         title: "Succès",

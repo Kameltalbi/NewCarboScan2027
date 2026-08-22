@@ -27,7 +27,7 @@ import { useAppData } from "@/contexts/AppDataContext";
 import { useTranslation } from "react-i18next";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import {
   Sidebar,
   SidebarContent,
@@ -118,19 +118,8 @@ export const ModernCarboScanSidebar: React.FC = () => {
   useEffect(() => {
     const loadOrgLogo = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data } = await supabase.storage
-          .from('organization-logos')
-          .list(`${user.id}/`, { limit: 1, sortBy: { column: 'created_at', order: 'desc' } });
-
-        if (data && data.length > 0) {
-          const { data: urlData } = supabase.storage
-            .from('organization-logos')
-            .getPublicUrl(`${user.id}/${data[0].name}`);
-          setOrgLogoUrl(urlData.publicUrl);
-        }
+        const { organization } = await api.getOrganization();
+        setOrgLogoUrl(organization?.logoUrl ?? null);
       } catch (error) {
         console.error('Error loading org logo:', error);
       }

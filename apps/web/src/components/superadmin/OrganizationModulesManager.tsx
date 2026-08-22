@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Package, BarChart3, Leaf, Database, Zap, Shield, Target, Users } from "lucide-react";
 
@@ -19,8 +18,9 @@ interface Module {
 }
 
 interface OrganizationModulesManagerProps {
-  userId: string;
+  organizationId: string;
   organizationName: string;
+  userId?: string;
   onClose?: () => void;
 }
 
@@ -36,84 +36,37 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 export const OrganizationModulesManager: React.FC<OrganizationModulesManagerProps> = ({
-  userId,
+  organizationId,
   organizationName,
   onClose
 }) => {
   const [modules, setModules] = useState<Module[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState<string | null>(null);
-  const [organizationId, setOrganizationId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchModulesAndStatus();
-  }, [userId]);
+  }, [organizationId]);
 
   const fetchModulesAndStatus = async () => {
+    if (!organizationId) return;
     try {
       setIsLoading(true);
-      
-      // Récupérer TOUS les modules actifs (pas seulement core) pour le superadmin
-      const { data: allModules, error: modulesError } = await supabase
-        .from('modules')
-        .select('*')
-        .eq('is_active', true)
-        .order('category', { ascending: true })
-        .order('name', { ascending: true });
-
-      if (modulesError) throw modulesError;
-
-      // Récupérer ou créer l'organisation de l'utilisateur
-      let { data: orgData, error: orgError } = await supabase
-        .from('organizations')
-        .select('id')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (orgError && orgError.code !== 'PGRST116') throw orgError;
-
-      // Si pas d'organisation, en créer une
-      if (!orgData) {
-        const { data: newOrg, error: createOrgError } = await supabase
-          .from('organizations')
-          .insert({ user_id: userId, name: organizationName })
-          .select('id')
-          .single();
-
-        if (createOrgError) throw createOrgError;
-        orgData = newOrg;
-      }
-
-      setOrganizationId(orgData?.id || null);
-
-      // Récupérer les modules activés pour cette organisation
-      let activeModuleIds: string[] = [];
-      if (orgData?.id) {
-        const { data: orgModules, error: orgModulesError } = await supabase
-          .from('organization_modules')
-          .select('module_id')
-          .eq('org_id', orgData.id)
-          .eq('active', true);
-
-        if (orgModulesError) throw orgModulesError;
-        activeModuleIds = orgModules?.map(m => m.module_id) || [];
-      }
-
-      // Combiner les données
-      const modulesWithStatus = allModules?.map(mod => ({
-        id: mod.id,
-        slug: mod.slug,
-        name: mod.name,
-        description: mod.description || '',
-        icon: mod.icon || 'Package',
-        category: mod.category || 'core',
-        isActive: activeModuleIds.includes(mod.id)
-      })) || [];
-
-      setModules(modulesWithStatus);
+      const { items } = await api.adminListOrgModules(organizationId);
+      setModules(
+        (items || []).map((mod) => ({
+          id: mod.module_id,
+          slug: mod.slug,
+          name: mod.name,
+          description: mod.description || "",
+          icon: "Package",
+          category: "core",
+          isActive: !!mod.enabled,
+        })),
+      );
     } catch (error) {
-      console.error('Error fetching modules:', error);
+      console.error("Error fetching modules:", error);
       toast({
         title: "Erreur",
         description: "Impossible de charger les modules",
@@ -125,48 +78,19 @@ export const OrganizationModulesManager: React.FC<OrganizationModulesManagerProp
   };
 
   const toggleModule = async (moduleSlug: string, isActive: boolean) => {
-    if (!organizationId) {
-      toast({
-        title: "Erreur",
-        description: "Organisation non trouvée",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsSaving(moduleSlug);
     try {
-      if (isActive) {
-        // Activer le module
-        const { error } = await supabase.rpc('activate_module_for_organization', {
-          p_org_id: organizationId,
-          p_module_slug: moduleSlug
-        });
-
-        if (error) throw error;
-      } else {
-        // Désactiver le module
-        const { error } = await supabase.rpc('deactivate_module_for_organization', {
-          p_org_id: organizationId,
-          p_module_slug: moduleSlug
-        });
-
-        if (error) throw error;
-      }
-
-      // Mettre à jour l'état local
-      setModules(prev => prev.map(mod => 
-        mod.slug === moduleSlug ? { ...mod, isActive } : mod
-      ));
-
+      await api.adminToggleOrgModule(organizationId, moduleSlug, isActive);
+      setModules((prev) =>
+        prev.map((mod) => (mod.slug === moduleSlug ? { ...mod, isActive } : mod)),
+      );
       toast({
         title: "Succès",
-        description: isActive 
-          ? `Module "${moduleSlug}" activé` 
+        description: isActive
+          ? `Module "${moduleSlug}" activé`
           : `Module "${moduleSlug}" désactivé`,
       });
-    } catch (error) {
-      console.error('Error toggling module:', error);
+    } catch (error: any) {
       toast({
         title: "Erreur",
         description: `Impossible de modifier le module: ${error.message}`,
@@ -178,27 +102,19 @@ export const OrganizationModulesManager: React.FC<OrganizationModulesManagerProp
   };
 
   const activateAllModules = async () => {
-    if (!organizationId) return;
-
-    setIsSaving('all');
+    setIsSaving("all");
     try {
       for (const mod of modules) {
         if (!mod.isActive) {
-          await supabase.rpc('activate_module_for_organization', {
-            p_org_id: organizationId,
-            p_module_slug: mod.slug
-          });
+          await api.adminToggleOrgModule(organizationId, mod.slug, true);
         }
       }
-
-      setModules(prev => prev.map(mod => ({ ...mod, isActive: true })));
-
+      setModules((prev) => prev.map((mod) => ({ ...mod, isActive: true })));
       toast({
         title: "Succès",
         description: "Tous les modules ont été activés",
       });
     } catch (error) {
-      console.error('Error activating all modules:', error);
       toast({
         title: "Erreur",
         description: "Impossible d'activer tous les modules",
@@ -211,83 +127,52 @@ export const OrganizationModulesManager: React.FC<OrganizationModulesManagerProp
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-6 w-6 animate-spin" />
       </div>
     );
   }
 
-  const activeCount = modules.filter(m => m.isActive).length;
-
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Gestion des modules</CardTitle>
-            <CardDescription>
-              {activeCount}/{modules.length} module(s) activé(s) pour {organizationName}
-            </CardDescription>
-          </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={activateAllModules}
-            disabled={isSaving === 'all' || activeCount === modules.length}
-          >
-            {isSaving === 'all' ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : null}
-            Activer tous
-          </Button>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          <Package className="h-5 w-5" />
+          Modules — {organizationName}
+        </CardTitle>
+        <CardDescription>Activer ou désactiver les modules de cette organisation</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {modules.map((mod) => (
-          <div 
-            key={mod.id} 
-            className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-2 rounded-md bg-primary/10 text-primary">
+        <Button variant="outline" size="sm" onClick={activateAllModules} disabled={isSaving === "all"}>
+          {isSaving === "all" && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          Tout activer
+        </Button>
+        <div className="space-y-3">
+          {modules.map((mod) => (
+            <div key={mod.id} className="flex items-center justify-between gap-3 border rounded-lg p-3">
+              <div className="flex items-center gap-3">
                 {iconMap[mod.icon] || <Package className="h-5 w-5" />}
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor={mod.slug} className="font-medium cursor-pointer">
-                    {mod.name}
-                  </Label>
-                  {mod.category && (
-                    <Badge variant="outline" className="text-xs">
-                      {mod.category === 'core' ? 'Core' : 
-                       mod.category === 'addon' ? 'Addon' :
-                       mod.category === 'landing' ? 'Landing' :
-                       mod.category === 'technical' ? 'Technique' :
-                       mod.category}
-                    </Badge>
-                  )}
-                  {mod.isActive && (
-                    <Badge variant="default" className="text-xs">Actif</Badge>
-                  )}
+                <div>
+                  <div className="font-medium">{mod.name}</div>
+                  <div className="text-xs text-muted-foreground">{mod.description}</div>
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-1">
-                  {mod.description}
-                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant={mod.isActive ? "default" : "secondary"}>
+                  {mod.isActive ? "Actif" : "Off"}
+                </Badge>
+                <Switch
+                  checked={mod.isActive}
+                  disabled={isSaving === mod.slug}
+                  onCheckedChange={(checked) => toggleModule(mod.slug, checked)}
+                />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {isSaving === mod.slug && (
-                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-              )}
-              <Switch
-                id={mod.slug}
-                checked={mod.isActive}
-                onCheckedChange={(checked) => toggleModule(mod.slug, checked)}
-                disabled={isSaving !== null}
-              />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        {onClose && (
+          <Button variant="outline" onClick={onClose}>Fermer</Button>
+        )}
       </CardContent>
     </Card>
   );

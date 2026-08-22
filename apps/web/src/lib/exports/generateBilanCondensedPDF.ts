@@ -72,7 +72,7 @@ export async function generateBilanCondensedPDF(ctx: BilanExportContext): Promis
   });
 
   setText([148, 163, 184]); pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9);
-  pdf.text('Conforme ISO 14064-1  •  GHG Protocol  •  Méthode ADEME', M, H - 28);
+  pdf.text('Calcul interne CarboScan — non vérifié par un tiers', M, H - 28);
   setText([100, 116, 139]); pdf.setFont('helvetica', 'italic');
   pdf.text('Édité par CarboScan', M, H - 22);
 
@@ -104,8 +104,8 @@ export async function generateBilanCondensedPDF(ctx: BilanExportContext): Promis
     ['Effectif', ctx.employees != null ? `${ctx.employees} ETP` : 'n/a'],
     ['Année', String(ctx.year)],
     ['Périmètre', 'Scopes 1, 2 et 3 (catégories pertinentes GHG Protocol)'],
-    ['Méthodologie', 'GHG Protocol / ISO 14064-1 / Bilan Carbone® ADEME'],
-    ['Facteurs', 'Base Empreinte ADEME + facteurs organisation'],
+    ['Méthodologie', 'Comptabilité carbone interne (couverture partielle)'],
+    ['Facteurs', 'Pack interne versionné — pas un pack ADEME officiel'],
     ['Outil', 'CarboScan (calcul activity-based)'],
   ];
   let y = M + 35;
@@ -256,7 +256,7 @@ export async function generateBilanCondensedPDF(ctx: BilanExportContext): Promis
   // ===== Page 10 — Trajectoire =====
   pdf.addPage();
   pageHeader('Trajectoire', `Décarbonation ${ctx.year}-2030`,
-    `Objectif SBTi : -42% d'ici 2030 → cible ${formatT(data.totalT - data.reductionTarget2030T)}.`);
+    `Illustration interne (non validée) : −42 % d'ici 2030 → ${formatT(data.totalT - data.reductionTarget2030T)}.`);
   // Mini chart: trajectory line
   const chartX = M, chartY = M + 40, chartW = W - 2 * M, chartH = 110;
   setFill([255, 255, 255]); setDraw([229, 231, 235]); pdf.setLineWidth(0.3);
@@ -302,7 +302,7 @@ export async function generateBilanCondensedPDF(ctx: BilanExportContext): Promis
   setText(DARK); pdf.setFontSize(9);
   pdf.text('Trajectoire BAU', M + 7, chartY + chartH + 16);
   setFill(GREEN); pdf.rect(M + 50, chartY + chartH + 12, 4, 4, 'F');
-  pdf.text('Cible SBTi -42%', M + 57, chartY + chartH + 16);
+  pdf.text('Cible illustrative −42 %', M + 57, chartY + chartH + 16);
   footer(10);
 
   // ===== Page 11 — Plan d'action =====
@@ -379,7 +379,7 @@ export async function generateBilanCondensedPDF(ctx: BilanExportContext): Promis
     W - 2 * M), M, ly + 16);
 
   setText(GRAY); pdf.setFont('helvetica', 'italic'); pdf.setFontSize(8);
-  pdf.text('Méthodologie : ISO 14064-1 §6.4 • GHG Protocol Corporate Standard • ADEME Bilan Carbone® v8',
+  pdf.text('Méthodologie interne CarboScan — document non certifié, non opposable à un auditeur.',
     M, H - 18);
   footer(12);
 

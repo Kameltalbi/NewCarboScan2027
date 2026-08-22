@@ -1,12 +1,10 @@
 // Hook CRUD pour les études PCF
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredUser } from "@/integrations/api/client";
 import { useOrganizationId } from '@/hooks/useOrganizationId';
 import { toast } from 'sonner';
 import type { PCFStudy, CreateStudyForm } from '../types';
-
-const TABLE = 'pcf_studies';
 
 export function usePCFStudies() {
   const { organizationId } = useOrganizationId();
@@ -15,13 +13,8 @@ export function usePCFStudies() {
     queryKey: ['pcf-studies', organizationId],
     enabled: !!organizationId,
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from(TABLE)
-        .select('*')
-        .eq('organization_id', organizationId)
-        .order('updated_at', { ascending: false });
-      if (error) throw error;
-      return data as PCFStudy[];
+      const { items } = await api.listPcfStudies();
+      return (items || []) as unknown as PCFStudy[];
     },
   });
 }
@@ -31,13 +24,8 @@ export function usePCFStudy(studyId: string | undefined) {
     queryKey: ['pcf-study', studyId],
     enabled: !!studyId,
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from(TABLE)
-        .select('*')
-        .eq('id', studyId)
-        .single();
-      if (error) throw error;
-      return data as PCFStudy;
+      const { item } = await api.getPcfStudy(studyId!);
+      return item as unknown as PCFStudy;
     },
   });
 }
@@ -48,20 +36,10 @@ export function useCreatePCFStudy() {
 
   return useMutation({
     mutationFn: async (form: CreateStudyForm) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = getStoredUser();
       if (!user || !organizationId) throw new Error('Non authentifié');
-
-      const { data, error } = await (supabase as any)
-        .from(TABLE)
-        .insert({
-          ...form,
-          organization_id: organizationId,
-          created_by: user.id,
-        })
-        .select()
-        .single();
-      if (error) throw error;
-      return data as PCFStudy;
+      const { item } = await api.createPcfStudy(form as unknown as Record<string, unknown>);
+      return item as unknown as PCFStudy;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pcf-studies'] });
@@ -76,14 +54,8 @@ export function useUpdatePCFStudy() {
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<PCFStudy> & { id: string }) => {
-      const { data, error } = await (supabase as any)
-        .from(TABLE)
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
-      if (error) throw error;
-      return data as PCFStudy;
+      const { item } = await api.patchPcfStudy(id, updates as Record<string, unknown>);
+      return item as unknown as PCFStudy;
     },
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['pcf-studies'] });
@@ -98,8 +70,7 @@ export function useDeletePCFStudy() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from(TABLE).delete().eq('id', id);
-      if (error) throw error;
+      await api.deletePcfStudy(id);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pcf-studies'] });

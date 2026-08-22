@@ -1,7 +1,7 @@
 // Calcul automatique du bilan carbone depuis activity_data (module Collecte)
 // Les questionnaires ne sont plus utilisés — tout passe par activity_data.
 
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { BilanCarboneCalculator } from './calculators/BilanCarboneCalculator';
 import { logger } from '@/utils/logger';
 
@@ -60,7 +60,7 @@ export async function automatedBilanCalculation(
   collectedData: CollectedData
 ): Promise<BilanResult> {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await sessionAuth.getUser();
     if (!user) throw new Error('Utilisateur non authentifié');
 
     const organizationId = await resolveOrganizationId(collectedData.user_id);

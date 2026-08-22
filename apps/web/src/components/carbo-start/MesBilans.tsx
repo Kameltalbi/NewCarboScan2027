@@ -4,14 +4,14 @@ import { logger } from '@/utils/logger';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { FileText, Calendar, Zap, Building, Car } from "lucide-react";
 import { BilanStatusBadge, BilanWorkflowActions } from '@/components/bilan-carbone/BilanStatusBadge';
-import { BilanWorkflowService, BilanWorkflowInfo, BilanStatus } from '@/lib/services/BilanWorkflowService';
+import { BilanWorkflowInfo, BilanStatus } from '@/lib/services/BilanWorkflowService';
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 
@@ -47,23 +47,33 @@ export const MesBilans: React.FC = () => {
 
   const fetchBilans = async () => {
     try {
-      const { data, error } = await supabase
-        .from('bilans_carbone')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('date_creation', { ascending: false });
+      const { items } = await api.listBilans();
+      const data = (items || []).map((row) => ({
+        id: String(row.id),
+        total_emission: Number(row.total_emission ?? row.total_kgco2e ?? 0),
+        scope1_emission: Number(row.scope1_emission ?? row.scope1_kgco2e ?? 0),
+        scope2_emission: Number(row.scope2_emission ?? row.scope2_kgco2e ?? 0),
+        scope3_emission: Number(row.scope3_emission ?? row.scope3_kgco2e ?? 0),
+        date_creation: String(row.created_at ?? row.date_bilan ?? ''),
+        questionnaire_data: row.questionnaire_data,
+        status: (row.status as BilanStatus) || 'draft',
+        reference_year: row.year != null ? Number(row.year) : undefined,
+      }));
 
-      // Fetch workflow info for each bilan
-      if (data) {
-        const infos: Record<string, BilanWorkflowInfo> = {};
-        for (const bilan of data) {
-          infos[bilan.id] = await BilanWorkflowService.getWorkflowStatus(bilan.id);
-        }
-        setWorkflowInfos(infos);
+      const infos: Record<string, BilanWorkflowInfo> = {};
+      for (const bilan of data) {
+        infos[bilan.id] = {
+          found: true,
+          id: bilan.id,
+          status: bilan.status,
+          can_edit: bilan.status === 'draft' || bilan.status === 'revision',
+          can_submit: bilan.status === 'draft',
+          can_request_revision: bilan.status === 'validated',
+          reference_year: bilan.reference_year,
+        };
       }
-
-      if (error) throw error;
-      setBilans(data || []);
+      setWorkflowInfos(infos);
+      setBilans(data);
     } catch (error) {
       console.error('Erreur lors du chargement des bilans:', error);
       toast({

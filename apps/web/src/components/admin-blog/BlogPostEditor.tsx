@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,45 +56,46 @@ export const BlogPostEditor: React.FC<Props> = ({ post, userId, userEmail, onClo
 
   const uploadImage = async (file: File, insertInContent = false) => {
     setUploading(true);
-    const path = `${userId}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
-    const { error } = await supabase.storage.from("blog-images").upload(path, file, { upsert: false });
-    if (error) { toast.error(error.message); setUploading(false); return null; }
-    const { data } = supabase.storage.from("blog-images").getPublicUrl(path);
+    const url = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
     setUploading(false);
     if (insertInContent) {
-      setContent(c => c + `\n<img src="${data.publicUrl}" alt="${file.name}" />\n`);
+      setContent(c => c + `\n<img src="${url}" alt="${file.name}" />\n`);
     }
-    return data.publicUrl;
+    return url;
   };
 
   const save = async () => {
     if (!title.trim()) { toast.error("Titre requis"); return; }
     const finalSlug = slug.trim() || slugify(title);
     setSaving(true);
-    const payload: any = {
+    const payload = {
       title: title.trim(),
       slug: finalSlug,
       excerpt: excerpt || null,
       content,
-      author_id: userId,
-      author_name: authorName || null,
-      featured_image_url: featuredImage || null,
+      authorName: authorName || null,
+      featuredImageUrl: featuredImage || null,
       status,
       language,
       tags: tags.split(",").map(t => t.trim()).filter(Boolean),
-      meta_title: metaTitle || null,
-      meta_description: metaDescription || null,
+      metaTitle: metaTitle || null,
+      metaDescription: metaDescription || null,
     };
-    if (status === "published" && !post?.published_at) {
-      payload.published_at = new Date().toISOString();
+    try {
+      if (post) await api.adminPatchBlog(post.id, payload);
+      else await api.adminCreateBlog(payload);
+      toast.success(post ? "Article mis à jour" : "Article créé");
+      onClose();
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setSaving(false);
     }
-    const { error } = post
-      ? await supabase.from("blog_posts").update(payload).eq("id", post.id)
-      : await supabase.from("blog_posts").insert(payload);
-    setSaving(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success(post ? "Article mis à jour" : "Article créé");
-    onClose();
   };
 
   return (

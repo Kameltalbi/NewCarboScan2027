@@ -17,6 +17,7 @@ async function main() {
   const app = Fastify({
     logger: true,
     bodyLimit: Number(process.env.BODY_LIMIT_BYTES ?? 1_000_000),
+    ignoreTrailingSlash: true,
   });
 
   await app.register(helmet, {
@@ -49,6 +50,22 @@ async function main() {
   // Auth decorators must live on the root instance (no encapsulation)
   await authPlugin(app, {});
   await registerRoutes(app);
+
+  const webOrigin =
+    process.env.WEB_ORIGIN ?? "http://localhost:5174";
+
+  app.get("/", async (request, reply) => {
+    const accept = String(request.headers.accept ?? "");
+    if (accept.includes("text/html")) {
+      return reply.redirect(webOrigin);
+    }
+    return {
+      ok: true,
+      service: "newcarboscan-api",
+      health: "/health",
+      web: webOrigin,
+    };
+  });
 
   app.get("/health", async (_request, reply) => {
     try {

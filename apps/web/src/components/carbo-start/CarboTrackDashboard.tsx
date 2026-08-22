@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { logger } from '@/utils/logger';
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredUser } from "@/integrations/api/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,24 +41,20 @@ export const CarboScanDashboard: React.FC = () => {
   useEffect(() => {
     const getUserAndProfile = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const user = getStoredUser();
         setUser(user);
         
         if (user) {
-          // Récupérer les informations de l'entreprise
-          const { data: company } = await supabase
-            .from('companies')
-            .select('nom_entreprise')
-            .eq('user_id', user.id)
-            .single();
-
-          // Récupérer les métadonnées utilisateur
-          const userMetadata = user.user_metadata || {};
-          
+          const [{ items: entities }, { organization }] = await Promise.all([
+            api.listEntities(),
+            api.getOrganization(),
+          ]);
+          const company = entities?.[0] as { nom_entreprise?: string; name?: string } | undefined;
+          const parts = (user.fullName || '').split(' ');
           setUserProfile({
-            firstName: userMetadata.first_name || '',
-            lastName: userMetadata.last_name || '',
-            company: company?.nom_entreprise || userMetadata.company || '',
+            firstName: parts[0] || '',
+            lastName: parts.slice(1).join(' ') || '',
+            company: company?.nom_entreprise || company?.name || organization?.name || '',
             email: user.email || ''
           });
         }
@@ -110,17 +106,7 @@ export const CarboScanDashboard: React.FC = () => {
 
       try {
         // Récupérer les bilans carbone de l'utilisateur
-        const { data: bilans, error } = await supabase
-          .from('bilans_carbone')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (error) {
-          console.error('Erreur lors du chargement des bilans:', error);
-          setLoading(false);
-          return;
-        }
+        const { items: bilans } = await api.listBilans();
 
         logger.debug('Bilans récupérés:', bilans?.length);
         const latestBilan = bilans?.[0];
@@ -185,30 +171,6 @@ export const CarboScanDashboard: React.FC = () => {
     };
 
     fetchRealData();
-
-    // Souscrire aux changements en temps réel de la table bilans_carbone
-    const channel = supabase
-      .channel('bilans_carbone_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'bilans_carbone',
-          filter: `user_id=eq.${user?.id}`,
-        },
-        (payload) => {
-          logger.debug('Changement détecté dans bilans_carbone');
-          // Rafraîchir les données quand il y a un changement
-          fetchRealData();
-        }
-      )
-      .subscribe();
-
-    // Nettoyer la souscription lors du démontage du composant
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, [user?.id]);
 
   // Utiliser les vraies données ou des données vides quand il n'y a pas de bilans

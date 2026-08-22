@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { api } from '@/integrations/api/client';
 
 interface CompanyLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -33,28 +33,8 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({ size = 'md' }) => {
 
   const loadLogo = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase.storage
-        .from('company-logos')
-        .list(`${user.id}/`, {
-          limit: 1,
-          sortBy: { column: 'created_at', order: 'desc' }
-        });
-
-      if (error) {
-        console.error('Error loading logo:', error);
-        return;
-      }
-
-      if (data && data.length > 0) {
-        const { data: urlData } = supabase.storage
-          .from('company-logos')
-          .getPublicUrl(`${user.id}/${data[0].name}`);
-        
-        setLogoUrl(urlData.publicUrl);
-      }
+      const { organization } = await api.getOrganization();
+      if (organization?.logoUrl) setLogoUrl(organization.logoUrl);
     } catch (error) {
       console.error('Error in loadLogo:', error);
     }

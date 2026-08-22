@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { FileText, Download, Sparkles, Building2, Globe2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useOrganizationId } from '@/hooks/useOrganizationId';
 import { useOrganizationYears } from '@/hooks/useOrganizationYears';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
@@ -53,7 +53,7 @@ export const ProReportsHome: React.FC = () => {
     if (!organizationId || !year) return;
     setGenerating(true);
     try {
-      const { data: session } = await supabase.auth.getSession();
+      const { data: session } = await sessionAuth.getSession();
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const url = `https://${projectId}.supabase.co/functions/v1/generate-report-pro`;

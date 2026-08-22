@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredUser } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -42,26 +42,11 @@ export const BilanHistory: React.FC = () => {
 
   const fetchBilans = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = getStoredUser();
       if (!user) return;
 
-      const { data, error } = await supabase
-        .from('bilans_carbone')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Erreur lors du chargement des bilans:', error);
-        toast({
-          title: t("assessment.messages.error"),
-          description: t("assessment.messages.loadError"),
-          variant: "destructive"
-        });
-        return;
-      }
-
-      setBilans(data || []);
+      const { items } = await api.listBilans();
+      setBilans((items || []) as unknown as BilanData[]);
     } catch (error) {
       console.error('Erreur:', error);
     } finally {

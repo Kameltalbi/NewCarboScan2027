@@ -1,7 +1,7 @@
 // Service de gestion de la bibliothèque de paragraphes pour reporting
 // Permet de récupérer, filtrer et assembler les paragraphes pour génération de rapports
 
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 
 export interface ReportParagraph {
   paragraph_id: string;
@@ -277,7 +277,7 @@ export class ReportParagraphService {
       .from('generated_reports')
       .insert({
         ...report,
-        generated_by: (await supabase.auth.getUser()).data.user?.id,
+        generated_by: (await sessionAuth.getUser()).data.user?.id,
       })
       .select('report_id')
       .single();

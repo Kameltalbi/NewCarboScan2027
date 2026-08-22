@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Plus } from 'lucide-react';
-import { supabase } from "@/integrations/api/client";
+import { api } from '@/integrations/api/client';
 import { toast } from 'sonner';
 
 interface CreateActionDialogProps {
@@ -27,16 +27,16 @@ export const CreateActionDialog: React.FC<CreateActionDialogProps> = ({ open, on
 
   const handleCreate = async () => {
     try {
-      const { error } = await supabase.from('actions_recommandees').insert({
-        titre: form.titre.trim(),
+      await api.createRecommendedAction({
+        title: form.titre.trim(),
         description: form.description.trim() || form.titre.trim(),
-        categorie: form.categorie,
-        scope_cible: form.scope_cible,
-        priorite: form.priorite,
-        impact_estime_pourcent: form.impact_estime_pourcent,
-        seuil_emission_kgco2e: 0,
+        payload: {
+          categorie: form.categorie,
+          scope_cible: form.scope_cible,
+          priorite: form.priorite,
+          impact_estime_pourcent: form.impact_estime_pourcent,
+        },
       });
-      if (error) throw error;
       toast.success('Action créée avec succès !');
       setForm(INITIAL_STATE);
       onOpenChange(false);

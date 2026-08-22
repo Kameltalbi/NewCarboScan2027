@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { Lesson } from '@/components/academy/LessonStepSidebar';
 
 interface Course {
@@ -70,7 +70,7 @@ export const useAcademyCourse = (courseId: string | undefined) => {
       if (lessonsError) throw lessonsError;
 
       // Fetch user progress
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (user) {
         const { data: progressData } = await (supabase
           .from('user_progress' as any)

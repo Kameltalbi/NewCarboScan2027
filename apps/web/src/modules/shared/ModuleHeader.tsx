@@ -298,7 +298,9 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
                 />
               </div>
               <div className="text-left hidden sm:block min-w-0">
-                <p className="text-sm font-medium truncate">{user.name}</p>
+                <p className="text-sm font-medium truncate">
+                  {user.company || user.name}
+                </p>
                 <p
                   className={
                     isBilanCarboneDashboard
@@ -306,7 +308,7 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
                       : "text-xs text-muted-foreground truncate"
                   }
                 >
-                  {user.company}
+                  {user.email}
                 </p>
               </div>
             </Button>

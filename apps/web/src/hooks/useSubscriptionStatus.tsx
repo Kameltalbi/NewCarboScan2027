@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredUser } from "@/integrations/api/client";
 
 interface SubscriptionStatus {
   hasActiveSubscription: boolean;
@@ -19,8 +19,7 @@ export const useSubscriptionStatus = () => {
   const checkSubscriptionStatus = async () => {
     try {
       setStatus(prev => ({ ...prev, loading: true, error: null }));
-      
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = getStoredUser();
       if (!user) {
         setStatus({
           hasActiveSubscription: false,
@@ -31,30 +30,10 @@ export const useSubscriptionStatus = () => {
         return;
       }
 
-      // Récupérer les commandes de l'utilisateur
-      const { data: orders, error } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Erreur lors de la récupération des commandes:', error);
-        setStatus({
-          hasActiveSubscription: false,
-          orders: [],
-          loading: false,
-          error: error.message
-        });
-        return;
-      }
-
-      // Vérifier s'il y a une commande validée
-      const hasValidatedOrder = orders?.some(order => order.status === 'validated');
-
+      const data = await api.getSubscription();
       setStatus({
-        hasActiveSubscription: hasValidatedOrder || false,
-        orders: orders || [],
+        hasActiveSubscription: data.hasActiveSubscription,
+        orders: data.orders || [],
         loading: false,
         error: null
       });

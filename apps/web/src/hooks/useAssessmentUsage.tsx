@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { logger } from '@/utils/logger';
 import { analytics } from '@/lib/analytics';
 
@@ -29,7 +29,7 @@ export const useAssessmentUsage = (): UseAssessmentUsageReturn => {
       setLoading(true);
       setError(null);
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!user) {
         setError('Utilisateur non connecté');
         setLoading(false);
@@ -64,7 +64,7 @@ export const useAssessmentUsage = (): UseAssessmentUsageReturn => {
 
   const incrementUsage = async (): Promise<boolean> => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!user) {
         setError('Utilisateur non connecté');
         return false;

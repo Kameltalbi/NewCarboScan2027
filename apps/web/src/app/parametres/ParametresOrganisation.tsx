@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Building2, Save, Upload, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from '@/hooks/useAuth';
 import { useQueryClient } from '@tanstack/react-query';
 import { getPresetCodeForSector, applyPresetForOrganization } from '@/lib/scope3/sector-preset-service';
@@ -88,13 +88,7 @@ export const ParametresOrganisation: React.FC = () => {
 
       try {
         // Charger l'organisation
-        const { data: org, error } = await supabase
-          .from('organizations')
-          .select('*')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (error) throw error;
+        const { organization: org } = await api.getOrganization();
 
         if (org) {
           setOrgId(org.id);
@@ -102,28 +96,16 @@ export const ParametresOrganisation: React.FC = () => {
             organizationName: org.name || '',
             country: org.country || 'Tunisie',
             sector: org.sector || '',
-            referenceYear: org.reference_year?.toString() || new Date().getFullYear().toString(),
+            referenceYear: org.referenceYear?.toString() || new Date().getFullYear().toString(),
             currency: org.currency || 'TND',
-            energyUnit: org.energy_unit || 'kWh',
-            massUnit: org.mass_unit || 'kg',
-            distanceUnit: org.distance_unit || 'km',
+            energyUnit: org.energyUnit || 'kWh',
+            massUnit: org.massUnit || 'kg',
+            distanceUnit: org.distanceUnit || 'km',
           });
           
-          if (org.logo_url) {
-            setLogoUrl(org.logo_url);
+          if (org.logoUrl) {
+            setLogoUrl(org.logoUrl);
           }
-        }
-
-        // Charger le logo depuis storage
-        const { data: files } = await supabase.storage
-          .from('organization-logos')
-          .list(`${user.id}/`, { limit: 1, sortBy: { column: 'created_at', order: 'desc' } });
-
-        if (files && files.length > 0) {
-          const { data: urlData } = supabase.storage
-            .from('organization-logos')
-            .getPublicUrl(`${user.id}/${files[0].name}`);
-          setLogoUrl(urlData.publicUrl);
         }
       } catch (error) {
         console.error('Error loading organization:', error);
@@ -140,43 +122,18 @@ export const ParametresOrganisation: React.FC = () => {
 
     setIsSaving(true);
     try {
-      const orgData = {
+      await api.patchOrganization({
         name: formData.organizationName,
         country: formData.country,
         sector: formData.sector || null,
-        reference_year: parseInt(formData.referenceYear),
+        referenceYear: parseInt(formData.referenceYear),
         currency: formData.currency,
-        energy_unit: formData.energyUnit,
-        mass_unit: formData.massUnit,
-        distance_unit: formData.distanceUnit,
-        logo_url: logoUrl,
-        user_id: user.id,
-        updated_at: new Date().toISOString(),
-      };
-
-      let savedOrgId: string | null = orgId;
-      if (orgId) {
-        // Mettre à jour
-        const { error } = await supabase
-          .from('organizations')
-          .update(orgData)
-          .eq('id', orgId);
-
-        if (error) throw error;
-      } else {
-        // Créer une nouvelle organisation
-        const { data, error } = await supabase
-          .from('organizations')
-          .insert(orgData)
-          .select()
-          .single();
-
-        if (error) throw error;
-        if (data) {
-          setOrgId(data.id);
-          savedOrgId = data.id;
-        }
-      }
+        energyUnit: formData.energyUnit,
+        massUnit: formData.massUnit,
+        distanceUnit: formData.distanceUnit,
+        logoUrl,
+      });
+      const savedOrgId = orgId;
 
       const finalOrgId = savedOrgId;
       if (finalOrgId) {
@@ -215,37 +172,22 @@ export const ParametresOrganisation: React.FC = () => {
     }
 
     // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('L\'image ne doit pas dépasser 2 Mo');
+    if (file.size > 400 * 1024) {
+      toast.error('L\'image ne doit pas dépasser 400 Ko');
       return;
     }
 
     setIsUploading(true);
 
     try {
-      // Create file path: user_id/logo.extension
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/logo.${fileExt}`;
-
-      // Delete existing logo if any
-      await supabase.storage
-        .from('organization-logos')
-        .remove([filePath]);
-
-      // Upload new logo
-      const { error: uploadError } = await supabase.storage
-        .from('organization-logos')
-        .upload(filePath, file, { upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('organization-logos')
-        .getPublicUrl(filePath);
-
-      const newLogoUrl = urlData.publicUrl + '?t=' + Date.now();
-      setLogoUrl(newLogoUrl);
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      setLogoUrl(dataUrl);
+      await api.patchOrganization({ logoUrl: dataUrl });
       window.dispatchEvent(new CustomEvent('orgLogoUpdated'));
       toast.success('Logo téléchargé avec succès');
     } catch (error) {
@@ -261,18 +203,7 @@ export const ParametresOrganisation: React.FC = () => {
 
     setIsUploading(true);
     try {
-      // List and remove all files in user's folder
-      const { data: files } = await supabase.storage
-        .from('organization-logos')
-        .list(user.id);
-
-      if (files && files.length > 0) {
-        const filesToRemove = files.map(f => `${user.id}/${f.name}`);
-        await supabase.storage
-          .from('organization-logos')
-          .remove(filesToRemove);
-      }
-
+      await api.patchOrganization({ logoUrl: null });
       setLogoUrl(null);
       window.dispatchEvent(new CustomEvent('orgLogoUpdated'));
       toast.success('Logo supprimé');

@@ -47,14 +47,14 @@ describe('ModuleHeader', () => {
     expect(header).toHaveAttribute('aria-label', 'En-tête du module');
   });
 
-  it('displays user name and company', () => {
+  it('displays tenant name and email', () => {
     render(
       <MemoryRouter initialEntries={['/app/dashboard']}>
         <ModuleHeader user={defaultUser} />
       </MemoryRouter>
     );
-    expect(screen.getByText('Jean Dupont')).toBeInTheDocument();
     expect(screen.getByText('TestCorp')).toBeInTheDocument();
+    expect(screen.getByText('jean@test.com')).toBeInTheDocument();
   });
 
   it('shows "Tableau de bord" on dashboard route', () => {

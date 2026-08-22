@@ -1,8 +1,5 @@
-// Hook pour récupérer les sites liés à l'utilisateur via sa company
-// collect_sites utilise company_id, donc on récupère d'abord la company de l'utilisateur
-
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from './useAuth';
 import { useEffect } from 'react';
 
@@ -20,17 +17,14 @@ export interface OrganizationSite {
   surface_m2?: number;
 }
 
-export const useOrganizationSites = (organizationId?: string) => {
+export const useOrganizationSites = (_organizationId?: string) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Quand l'organisation vient d'être créée/sauvegardée ou quand un site est modifié,
-  // on invalide le cache pour que la liste se mette à jour sans refresh.
   useEffect(() => {
     const handleRefresh = () => {
       queryClient.invalidateQueries({ queryKey: ['organization-sites'] });
     };
-
     window.addEventListener('organizationSaved', handleRefresh);
     window.addEventListener('sitesUpdated', handleRefresh);
     return () => {
@@ -40,55 +34,25 @@ export const useOrganizationSites = (organizationId?: string) => {
   }, [queryClient]);
 
   const { data: sites = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['organization-sites', user?.id, organizationId],
+    queryKey: ['organization-sites', user?.id, _organizationId],
     queryFn: async () => {
       if (!user?.id) return [];
-
-      let companyId: string | null = null;
-
-      if (organizationId) {
-        // Résoudre la company via l'organisation (multi-tenant safe)
-        const { data: org, error: orgError } = await supabase
-          .from('organizations')
-          .select('user_id')
-          .eq('id', organizationId)
-          .maybeSingle();
-
-        if (orgError) throw orgError;
-        if (!org) return [];
-
-        const { data: company, error: companyError } = await supabase
-          .from('companies')
-          .select('id')
-          .eq('user_id', org.user_id)
-          .maybeSingle();
-
-        if (companyError) throw companyError;
-        companyId = company?.id || null;
-      } else {
-        // Fallback: company de l'utilisateur connecté
-        const { data: company, error: companyError } = await supabase
-          .from('companies')
-          .select('id')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (companyError) throw companyError;
-        companyId = company?.id || null;
-      }
-
-      if (!companyId) return [];
-
-      // Récupérer les sites de cette company
-      const { data, error } = await supabase
-        .from('collect_sites')
-        .select('id, name, code, address, city, country, site_type, is_active, company_id, employees_count, surface_m2')
-        .eq('company_id', companyId)
-        .eq('is_active', true)
-        .order('name', { ascending: true });
-
-      if (error) throw error;
-      return (data || []) as OrganizationSite[];
+      const { items } = await api.listSites();
+      return (items || [])
+        .filter((s: any) => s.is_active !== false)
+        .map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          code: s.code,
+          address: s.address,
+          city: s.city,
+          country: s.country,
+          site_type: s.site_type,
+          is_active: s.is_active,
+          company_id: s.company_id,
+          employees_count: s.employees_count,
+          surface_m2: s.surface_m2,
+        })) as OrganizationSite[];
     },
     enabled: !!user,
   });

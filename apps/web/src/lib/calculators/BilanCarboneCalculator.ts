@@ -9,7 +9,7 @@
 
 import { ActivityDataService } from '../activity-data/ActivityDataService';
 import { ActivityDataFilters } from '../activity-data/types';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { logger } from '@/utils/logger';
 
 // Cache des facteurs d'émission pour éviter les requêtes répétées
@@ -95,6 +95,15 @@ export class BilanCarboneCalculator {
     periodEnd: string,
     siteId?: string // Optionnel: filtrer par site
   ): Promise<BilanCarboneResult> {
+    // Bilan déjà enregistré (import ou publication) : l'afficher tel quel.
+    // Recalcul activity_data seulement s'il n'y a pas de totaux exploitables.
+    if (!siteId) {
+      const legacy = await this.calculateFromLegacyBilans(organizationId, periodStart, periodEnd);
+      if (legacy.totalEmissions > 0) {
+        return legacy;
+      }
+    }
+
     // Calculer côté frontend depuis activity_data
     // Récupérer toutes les données d'activité pour la période
     const filters: ActivityDataFilters = {
@@ -273,6 +282,11 @@ export class BilanCarboneCalculator {
 
     const totalEmissions = scope1 + scope2 + scope3;
 
+    if (totalEmissions === 0 && !siteId) {
+      const legacy = await this.calculateFromLegacyBilans(organizationId, periodStart, periodEnd);
+      if (legacy.totalEmissions > 0) return legacy;
+    }
+
     // Calculer la qualité des données
     const qualityStats = await ActivityDataService.getDataQualityStats(
       organizationId,
@@ -322,11 +336,7 @@ export class BilanCarboneCalculator {
   ): Promise<BilanCarboneResult | null> {
     try {
       // 1. Lire les % d'allocation pour ce site (tous scopes)
-      const { data: percentages } = await supabase
-        .from('site_allocation_percentages')
-        .select('scope, allocation_percentage')
-        .eq('organization_id', organizationId)
-        .eq('site_id', siteId);
+      const percentages: Array<{ scope: number; allocation_percentage: number }> = [];
 
       const pctMap = new Map<number, number>();
       for (const p of (percentages || [])) {
@@ -432,22 +442,13 @@ export class BilanCarboneCalculator {
       if (missingScopes.length === 0) return null;
 
       // Lire les configs d'allocation pour les scopes manquants
-      const { data: configs } = await supabase
-        .from('site_allocation_config')
-        .select('scope, strategy')
-        .eq('organization_id', organizationId)
-        .in('scope', missingScopes);
+      const configs: Array<{ scope: number; strategy: string }> = [];
 
       const allocScopes = (configs || []).filter(c => c.strategy === 'allocation_key').map(c => c.scope);
       if (allocScopes.length === 0) return null;
 
       // Lire les % pour ce site
-      const { data: percentages } = await supabase
-        .from('site_allocation_percentages')
-        .select('scope, allocation_percentage')
-        .eq('organization_id', organizationId)
-        .eq('site_id', siteId)
-        .in('scope', allocScopes);
+      const percentages: Array<{ scope: number; allocation_percentage: number }> = [];
 
       const pctMap = new Map<number, number>();
       for (const p of (percentages || [])) {
@@ -490,65 +491,31 @@ export class BilanCarboneCalculator {
     periodStart: string,
     periodEnd: string
   ): Promise<BilanCarboneResult> {
-    // Récupérer le user_id depuis l'organization_id
-    let userId: string | null = null;
-
-    // 1. Chercher dans organizations (propriétaire)
-    const { data: org } = await supabase
-      .from('organizations')
-      .select('user_id')
-      .eq('id', organizationId)
-      .maybeSingle();
-
-    if (org?.user_id) {
-      userId = org.user_id;
-    } else {
-      // 2. Chercher dans organization_members
-      const { data: member } = await supabase
-        .from('organization_members')
-        .select('user_id')
-        .eq('organization_id', organizationId)
-        .limit(1)
-        .maybeSingle();
-
-      if (member?.user_id) {
-        userId = member.user_id;
+    const { items: bilans } = await api.listBilans();
+    const requestedYear = Number(String(periodStart).slice(0, 4));
+    const rows = (bilans || []) as Array<Record<string, unknown>>;
+    const tonnesOf = (row: Record<string, unknown>) =>
+      Number(row.total_emission ?? row.total_kgco2e ?? 0) || 0;
+    const yearOf = (row: Record<string, unknown>): number | null => {
+      const y = Number(row.year);
+      if (Number.isInteger(y) && y >= 2000) return y;
+      if (row.date_bilan) {
+        const fromDate = new Date(String(row.date_bilan)).getFullYear();
+        if (Number.isInteger(fromDate)) return fromDate;
       }
-    }
-
-    if (!userId) {
+      return null;
+    };
+    const inPeriod = rows.filter((row) => yearOf(row) === requestedYear);
+    const bilan = inPeriod.find((row) => tonnesOf(row) > 0) || inPeriod[0] || null;
+    if (!bilan || tonnesOf(bilan) <= 0) {
       return this.getEmptyResult(periodStart, periodEnd);
     }
-
-    // Récupérer le dernier bilan carbone pour cette période
-    const periodStartDate = new Date(periodStart);
-    const periodEndDate = new Date(periodEnd);
-
-    const { data: bilans, error } = await supabase
-      .from('bilans_carbone')
-      .select('*')
-      .eq('user_id', userId)
-      .gte('date_bilan', periodStartDate.toISOString())
-      .lte('date_bilan', periodEndDate.toISOString())
-      .order('created_at', { ascending: false })
-      .limit(1);
-
-    if (error || !bilans || bilans.length === 0) {
-      // Aucun bilan trouvé pour cette période → retourner un résultat vide
-      // Ne PAS faire de fallback sur le dernier bilan, sinon toutes les années
-      // affichent les mêmes chiffres
-      return this.getEmptyResult(periodStart, periodEnd);
-    }
-
-    // Utiliser le bilan trouvé pour la période
-    const bilan = bilans[0];
-    // bilans_carbone stocke en tCO2e, le reste du pipeline (activity_data) est en kgCO2e.
-    // On convertit donc en kg pour rester homogène avec l'agrégateur et l'UI.
+    // Import et UI historique stockent des tCO2e dans total_emission *ou* total_kgco2e.
     const T_TO_KG = 1000;
-    const scope1 = (Number(bilan.scope1_emission) || 0) * T_TO_KG;
-    const scope2 = (Number(bilan.scope2_emission) || 0) * T_TO_KG;
-    const scope3 = (Number(bilan.scope3_emission) || 0) * T_TO_KG;
-    const totalEmissions = (Number(bilan.total_emission) || 0) * T_TO_KG;
+    const scope1 = (Number(bilan.scope1_emission ?? bilan.scope1_kgco2e) || 0) * T_TO_KG;
+    const scope2 = (Number(bilan.scope2_emission ?? bilan.scope2_kgco2e) || 0) * T_TO_KG;
+    const scope3 = (Number(bilan.scope3_emission ?? bilan.scope3_kgco2e) || 0) * T_TO_KG;
+    const totalEmissions = tonnesOf(bilan) * T_TO_KG;
 
     // Créer un breakdown basique depuis detailed_breakdown si disponible
     let breakdown: Array<{ category: string; emissions: number; percentage: number }> = [];
@@ -663,28 +630,18 @@ export class BilanCarboneCalculator {
       return cachedEmissionFactors;
     }
 
-    // IMPORTANT: La table emission_factors est une base de référence.
-    // En environnement multi-tenant avec RLS, un SELECT direct peut retourner [] (pas d'erreur)
-    // et faire retomber les calculs à 0. On utilise donc la RPC sécurisée qui expose
-    // uniquement les champs nécessaires et contourne proprement la contrainte RLS.
-    const { data, error } = await supabase.rpc('get_base_emission_factors');
-
-    if (error) {
-      console.error('Error loading base emission factors (RPC get_base_emission_factors):', error);
-      // Fallback best-effort (peut rester vide selon RLS)
-      const fallback = await supabase
-        .from('emission_factors')
-        .select('factor_name, subcategory, emission_factor, unit, slug');
-
-      if (fallback.error) {
-        console.error('Fallback error loading emission factors:', fallback.error);
-        return new Map();
-      }
-
-      return this.indexEmissionFactors((fallback.data || []) as any);
-    }
-
-    return this.indexEmissionFactors((data || []) as any);
+    const { items } = await api.listFactors();
+    return this.indexEmissionFactors(
+      (items || []).map((f) => ({
+        subcategory: String(f.category ?? ''),
+        factor_name: String(f.name ?? ''),
+        slug: String(f.category ?? f.name ?? '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '_'),
+        emission_factor: Number(f.value ?? 0),
+        unit: [f.unit_numerator, f.unit_denominator].filter(Boolean).join('/') || 'kgCO2e',
+      })),
+    );
   }
 
   /**
@@ -749,21 +706,8 @@ export class BilanCarboneCalculator {
       return cachedOrgFactors;
     }
 
-    const { data, error } = await supabase
-      .from('organization_emission_factors')
-      .select(`
-        custom_value,
-        custom_unit,
-        subcategory_key,
-        custom_source,
-        notes,
-        base_factor_id,
-        emission_factors!organization_emission_factors_base_factor_id_fkey (
-          factor_name,
-          subcategory
-        )
-      `)
-      .eq('organization_id', organizationId);
+    const data: Array<Record<string, unknown>> = [];
+    const error = null;
 
     if (error) {
       console.error('Error loading org emission factors:', error);

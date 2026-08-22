@@ -2,7 +2,7 @@ import React from "react";
 import { logger } from '@/utils/logger';
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Building, 
@@ -50,26 +50,15 @@ export const SuperAdminLayout = ({ children }: { children: React.ReactNode }) =>
   const handleLogout = async () => {
     logger.debug('Déconnexion SuperAdmin...');
     try {
-      // scope 'local' évite l'échec si la session côté serveur est déjà invalide
-      const { error } = await supabase.auth.signOut({ scope: 'local' });
-      if (error) {
-        logger.warn('signOut warning (session probablement déjà invalide):', error.message);
-      }
+      api.logout();
     } catch (error) {
-      console.error('💥 Erreur inattendue lors de la déconnexion:', error);
+      logger.warn('logout warning:', error);
     } finally {
-      // Toujours nettoyer le storage local et rediriger, même si signOut échoue
-      try {
-        Object.keys(localStorage)
-          .filter((k) => k.startsWith('sb-') || k.includes('supabase'))
-          .forEach((k) => localStorage.removeItem(k));
-      } catch {}
       toast({
         title: "Déconnexion réussie",
         description: "Vous avez été déconnecté avec succès",
       });
-      // Hard redirect pour vider tout l'état React/cache
-      window.location.href = '/';
+      window.location.href = '/auth';
     }
   };
 

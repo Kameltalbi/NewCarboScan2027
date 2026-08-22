@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/api/client";
+import { api, sessionAuth } from "@/integrations/api/client";
 import { Loader2, ShieldCheck, Tag, Building2, Package } from "lucide-react";
 import { analytics } from "@/lib/analytics";
 
@@ -94,7 +94,7 @@ export const CheckoutContent: React.FC = () => {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!mounted) return;
       if (!user) {
         setAuthReady(true);
@@ -102,18 +102,13 @@ export const CheckoutContent: React.FC = () => {
       }
       setUserId(user.id);
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("company_name, phone")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
+      const me = await api.me().catch(() => null);
+      const org = await api.getOrganization().catch(() => null);
       setBilling((b) => ({
         ...b,
-        fullName: (user.user_metadata as any)?.full_name || b.fullName,
-        email: user.email || b.email,
-        phone: profile?.phone || (user.user_metadata as any)?.phone || b.phone,
-        company: profile?.company_name || (user.user_metadata as any)?.company || b.company,
+        fullName: me?.user.fullName || b.fullName,
+        email: user.email || me?.user.email || b.email,
+        company: org?.organization?.name || b.company,
       }));
       setAuthReady(true);
     })();
@@ -161,14 +156,9 @@ export const CheckoutContent: React.FC = () => {
     if (!code) return;
     setPromoLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("promo_codes")
-        .select("id, code, discount_type, discount_value, minimum_amount, is_active, valid_until, max_uses, current_uses")
-        .eq("code", code)
-        .eq("is_active", true)
-        .maybeSingle();
+      const { promo: data } = await api.lookupPromoCode(code);
 
-      if (error || !data) {
+      if (!data) {
         toast({ title: "Code promo invalide", variant: "destructive" });
         setPromoApplied(null);
         return;
@@ -192,6 +182,9 @@ export const CheckoutContent: React.FC = () => {
         discount_value: Number(data.discount_value),
       });
       toast({ title: "Code appliqué", description: `Réduction ${data.code}` });
+    } catch {
+      toast({ title: "Code promo invalide", variant: "destructive" });
+      setPromoApplied(null);
     } finally {
       setPromoLoading(false);
     }
@@ -214,13 +207,11 @@ export const CheckoutContent: React.FC = () => {
     setIsPaying(true);
     try {
       // Empêcher les doublons de commande
-      const { data: existing } = await supabase
-        .from("orders")
-        .select("id")
-        .eq("user_id", userId)
-        .in("status", ["pending", "validated"])
-        .limit(1);
-      if (existing && existing.length > 0) {
+      const existing = await api.listOrders().catch(() => ({ items: [] as Array<Record<string, unknown>> }));
+      const open = (existing.items || []).find((o) =>
+        ["pending", "validated"].includes(String(o.status ?? "")),
+      );
+      if (open) {
         toast({ title: "Commande existante", description: "Une commande est déjà en cours. Contactez le support.", variant: "destructive" });
         return;
       }
@@ -235,38 +226,35 @@ export const CheckoutContent: React.FC = () => {
         },
       };
 
-      const { error } = await supabase.from("orders").insert({
-        user_id: userId,
-        plan_type: "carbo_pro",
-        payment_method: "carte",
+      await api.createOrder({
         amount: breakdown.totalHT,
         currency: "TND",
         status: "validated",
-        validated_at: new Date().toISOString(),
         user_data: {
           billing,
           pricing_config: finalConfig,
           promo: promoApplied ? { code: promoApplied.code, discount: breakdown.discount } : null,
         },
       });
-      if (error) {
-        console.error("Erreur création commande:", error);
-        toast({ title: "Erreur", description: "Impossible de créer la commande.", variant: "destructive" });
-        return;
-      }
 
       analytics.purchase(breakdown.totalHT, "TND");
 
-      // Sync profil (raison sociale, tel)
-      await supabase.from("profiles").update({
-        company_name: billing.company,
+      await api.patchProfile({
+        companyName: billing.company,
         phone: billing.phone,
-      }).eq("user_id", userId);
+        fullName: billing.fullName,
+      }).catch(() => undefined);
 
       try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
 
       window.open("https://knct.me/4X3yuWlur", "_blank");
       toast({ title: "Paiement", description: "Le paiement s'ouvre dans un nouvel onglet." });
+    } catch (e) {
+      toast({
+        title: "Erreur",
+        description: e instanceof Error ? e.message : "Impossible de créer la commande.",
+        variant: "destructive",
+      });
     } finally {
       setIsPaying(false);
     }

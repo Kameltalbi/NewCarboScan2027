@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Edit, Trash2, Eye } from "lucide-react";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface BlogPost {
@@ -57,13 +57,8 @@ const SuperAdminBlog = () => {
 
   const fetchPosts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setPosts(data || []);
+      const { items } = await api.adminListBlog();
+      setPosts((items as unknown as BlogPost[]) || []);
     } catch (error) {
       toast({
         title: "Erreur",
@@ -102,48 +97,36 @@ const SuperAdminBlog = () => {
       
       // Upload new image if selected
       if (selectedImage) {
-        const fileExt = selectedImage.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('blog-images')
-          .upload(fileName, selectedImage);
-          
-        if (uploadError) throw uploadError;
-        
-        const { data: urlData } = supabase.storage
-          .from('blog-images')
-          .getPublicUrl(fileName);
-          
-        featured_image_url = urlData.publicUrl;
+        featured_image_url = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = reject;
+          reader.readAsDataURL(selectedImage);
+        });
       }
       
       const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
       const slug = formData.slug || generateSlug(formData.title);
       
       const postData = {
-        ...formData,
+        title: formData.title,
         slug,
-        featured_image_url,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        authorName: formData.author_name,
+        featuredImageUrl: featured_image_url,
+        status: formData.status as "draft" | "published",
         tags: tagsArray,
-        language: formData.language || 'fr', // S'assurer que la langue est définie
-        published_at: formData.status === 'published' ? new Date().toISOString() : null
+        metaTitle: formData.meta_title,
+        metaDescription: formData.meta_description,
+        language: formData.language || 'fr',
       };
 
       if (editingPost) {
-        const { error } = await supabase
-          .from('blog_posts')
-          .update(postData)
-          .eq('id', editingPost.id);
-        
-        if (error) throw error;
+        await api.adminPatchBlog(editingPost.id, postData);
         toast({ title: "Article mis à jour avec succès" });
       } else {
-        const { error } = await supabase
-          .from('blog_posts')
-          .insert([postData]);
-        
-        if (error) throw error;
+        await api.adminCreateBlog(postData);
         toast({ title: "Article créé avec succès" });
       }
 
@@ -183,12 +166,7 @@ const SuperAdminBlog = () => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cet article ?")) return;
     
     try {
-      const { error } = await supabase
-        .from('blog_posts')
-        .delete()
-        .eq('id', id);
-      
-      if (error) throw error;
+      await api.adminDeleteBlog(id);
       toast({ title: "Article supprimé avec succès" });
       fetchPosts();
     } catch (error: any) {

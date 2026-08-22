@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredUser } from "@/integrations/api/client";
 import { useOrganizationId } from '@/hooks/useOrganizationId';
 import { ClimateRoadmap, ClimateLever, ClimateAction, ClimateActionMilestone, ClimatePriorityScore, ClimateKPI, RoadmapDashboard, DashboardAlert } from '../types';
 
@@ -11,12 +11,8 @@ export function useClimateRoadmaps() {
   const fetchRoadmaps = useCallback(async () => {
     if (!organizationId) return;
     setLoading(true);
-    const { data, error } = await supabase
-      .from('climate_roadmaps')
-      .select('*')
-      .eq('organization_id', organizationId)
-      .order('created_at', { ascending: false });
-    if (!error && data) setRoadmaps(data as unknown as ClimateRoadmap[]);
+    const { items } = await api.listClimateRoadmaps();
+    setRoadmaps((items || []) as unknown as ClimateRoadmap[]);
     setLoading(false);
   }, [organizationId]);
 
@@ -26,26 +22,22 @@ export function useClimateRoadmaps() {
 
   const createRoadmap = async (roadmap: Partial<ClimateRoadmap>) => {
     if (!organizationId) return null;
-    const { data: userData } = await supabase.auth.getUser();
-    const { data, error } = await supabase
-      .from('climate_roadmaps')
-      .insert({ ...roadmap, organization_id: organizationId, created_by: userData.user?.id } as any)
-      .select()
-      .single();
-    if (!error && data) {
+    const user = getStoredUser();
+    const { item } = await api.createClimateRoadmap({
+      ...roadmap,
+      created_by: user?.id,
+    });
+    if (item) {
       await fetchRoadmaps();
-      return data as unknown as ClimateRoadmap;
+      return item as unknown as ClimateRoadmap;
     }
     return null;
   };
 
   const updateRoadmap = async (id: string, updates: Partial<ClimateRoadmap>) => {
-    const { error } = await supabase
-      .from('climate_roadmaps')
-      .update(updates as any)
-      .eq('id', id);
-    if (!error) await fetchRoadmaps();
-    return !error;
+    await api.patchClimateRoadmap(id, updates as Record<string, unknown>);
+    await fetchRoadmaps();
+    return true;
   };
 
   return { roadmaps, loading: loading || orgLoading, createRoadmap, updateRoadmap, refetch: fetchRoadmaps };
@@ -58,12 +50,8 @@ export function useClimateLevers(roadmapId: string | null) {
   const fetchLevers = useCallback(async () => {
     if (!roadmapId) { setLevers([]); setLoading(false); return; }
     setLoading(true);
-    const { data, error } = await supabase
-      .from('climate_levers')
-      .select('*')
-      .eq('roadmap_id', roadmapId)
-      .order('created_at', { ascending: false });
-    if (!error && data) setLevers(data as unknown as ClimateLever[]);
+    const { items } = await api.listClimateLevers(roadmapId);
+    setLevers((items || []) as unknown as ClimateLever[]);
     setLoading(false);
   }, [roadmapId]);
 
@@ -71,28 +59,21 @@ export function useClimateLevers(roadmapId: string | null) {
 
   const createLever = async (lever: Partial<ClimateLever>) => {
     if (!roadmapId) return null;
-    const { data, error } = await supabase
-      .from('climate_levers')
-      .insert({ ...lever, roadmap_id: roadmapId } as any)
-      .select()
-      .single();
-    if (!error) await fetchLevers();
-    return !error ? (data as unknown as ClimateLever) : null;
+    const { item } = await api.createClimateLever({ ...lever, roadmap_id: roadmapId });
+    await fetchLevers();
+    return item ? (item as unknown as ClimateLever) : null;
   };
 
   const updateLever = async (id: string, updates: Partial<ClimateLever>) => {
-    const { error } = await supabase
-      .from('climate_levers')
-      .update(updates as any)
-      .eq('id', id);
-    if (!error) await fetchLevers();
-    return !error;
+    await api.patchClimateLever(id, updates as Record<string, unknown>);
+    await fetchLevers();
+    return true;
   };
 
   const deleteLever = async (id: string) => {
-    const { error } = await supabase.from('climate_levers').delete().eq('id', id);
-    if (!error) await fetchLevers();
-    return !error;
+    await api.deleteClimateLever(id);
+    await fetchLevers();
+    return true;
   };
 
   return { levers, loading, createLever, updateLever, deleteLever, refetch: fetchLevers };
@@ -105,16 +86,13 @@ export function useClimateActions(roadmapId: string | null, filters?: { leverId?
   const fetchActions = useCallback(async () => {
     if (!roadmapId) { setActions([]); setLoading(false); return; }
     setLoading(true);
-    let query = supabase
-      .from('climate_actions')
-      .select('*')
-      .eq('roadmap_id', roadmapId)
-      .order('created_at', { ascending: false });
-    if (filters?.leverId) query = query.eq('lever_id', filters.leverId);
-    if (filters?.status) query = query.eq('status', filters.status);
-    if (filters?.priority) query = query.eq('priority', filters.priority);
-    const { data, error } = await query;
-    if (!error && data) setActions(data as unknown as ClimateAction[]);
+    const { items } = await api.listClimateActions({
+      roadmapId,
+      leverId: filters?.leverId,
+      status: filters?.status,
+      priority: filters?.priority,
+    });
+    setActions((items || []) as unknown as ClimateAction[]);
     setLoading(false);
   }, [roadmapId, filters?.leverId, filters?.status, filters?.priority]);
 
@@ -122,28 +100,21 @@ export function useClimateActions(roadmapId: string | null, filters?: { leverId?
 
   const createAction = async (action: Partial<ClimateAction>) => {
     if (!roadmapId) return null;
-    const { data, error } = await supabase
-      .from('climate_actions')
-      .insert({ ...action, roadmap_id: roadmapId } as any)
-      .select()
-      .single();
-    if (!error) await fetchActions();
-    return !error ? (data as unknown as ClimateAction) : null;
+    const { item } = await api.createClimateAction({ ...action, roadmap_id: roadmapId });
+    await fetchActions();
+    return item ? (item as unknown as ClimateAction) : null;
   };
 
   const updateAction = async (id: string, updates: Partial<ClimateAction>) => {
-    const { error } = await supabase
-      .from('climate_actions')
-      .update(updates as any)
-      .eq('id', id);
-    if (!error) await fetchActions();
-    return !error;
+    await api.patchClimateAction(id, updates as Record<string, unknown>);
+    await fetchActions();
+    return true;
   };
 
   const deleteAction = async (id: string) => {
-    const { error } = await supabase.from('climate_actions').delete().eq('id', id);
-    if (!error) await fetchActions();
-    return !error;
+    await api.deleteClimateAction(id);
+    await fetchActions();
+    return true;
   };
 
   return { actions, loading, createAction, updateAction, deleteAction, refetch: fetchActions };
@@ -159,16 +130,16 @@ export function useRoadmapDashboard(roadmapId: string | null) {
     const compute = async () => {
       setLoading(true);
       const [roadmapRes, leversRes, actionsRes] = await Promise.all([
-        supabase.from('climate_roadmaps').select('*').eq('id', roadmapId).single(),
-        supabase.from('climate_levers').select('*').eq('roadmap_id', roadmapId),
-        supabase.from('climate_actions').select('*').eq('roadmap_id', roadmapId),
+        api.getClimateRoadmap(roadmapId),
+        api.listClimateLevers(roadmapId),
+        api.listClimateActions({ roadmapId }),
       ]);
 
-      if (roadmapRes.error || !roadmapRes.data) { setLoading(false); return; }
+      if (!roadmapRes.item) { setLoading(false); return; }
 
-      const roadmap = roadmapRes.data as unknown as ClimateRoadmap;
-      const actions = (actionsRes.data || []) as unknown as ClimateAction[];
-      const levers = (leversRes.data || []) as unknown as ClimateLever[];
+      const roadmap = roadmapRes.item as unknown as ClimateRoadmap;
+      const actions = (actionsRes.items || []) as unknown as ClimateAction[];
+      const levers = (leversRes.items || []) as unknown as ClimateLever[];
 
       const now = new Date();
       const alerts: DashboardAlert[] = [];

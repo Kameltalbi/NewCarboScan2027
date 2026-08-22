@@ -106,7 +106,10 @@ export async function registerImportRoutes(app: FastifyInstance) {
         (request.body as { limitPerEntity?: number } | undefined)
           ?.limitPerEntity ?? 5000,
       );
-      return processImportBatch(batchId, limit);
+      const retryErrors = Boolean(
+        (request.body as { retryErrors?: boolean } | undefined)?.retryErrors,
+      );
+      return processImportBatch(batchId, limit, retryErrors);
     },
   );
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useToast } from '@/hooks/use-toast';
 
 export interface InventoryItem {
@@ -45,14 +45,8 @@ export const useACVInventory = (projectId?: string) => {
     if (!projectId) return;
     
     try {
-      const { data, error } = await supabase
-        .from('acv_inventory')
-        .select('*')
-        .eq('project_id', projectId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setInventory((data || []) as InventoryItem[]);
+      const { items } = await api.listAcvInventory(projectId);
+      setInventory((items || []) as unknown as InventoryItem[]);
     } catch (error) {
       console.error('Error fetching inventory:', error);
       toast({
@@ -65,13 +59,8 @@ export const useACVInventory = (projectId?: string) => {
 
   const addInventoryItem = async (item: Omit<InventoryItem, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      const { data, error } = await supabase
-        .from('acv_inventory')
-        .insert(item)
-        .select()
-        .single();
-
-      if (error) throw error;
+      const { item: created } = await api.createAcvInventory(item);
+      const data = created as unknown as InventoryItem;
       
       setInventory(prev => [data as InventoryItem, ...prev]);
       toast({
@@ -92,14 +81,8 @@ export const useACVInventory = (projectId?: string) => {
 
   const updateInventoryItem = async (id: string, updates: Partial<InventoryItem>) => {
     try {
-      const { data, error } = await supabase
-        .from('acv_inventory')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
+      const { item } = await api.patchAcvInventory(id, updates);
+      const data = item as unknown as InventoryItem;
       
       setInventory(prev => prev.map(item => item.id === id ? data as InventoryItem : item));
       toast({
@@ -118,12 +101,7 @@ export const useACVInventory = (projectId?: string) => {
 
   const deleteInventoryItem = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('acv_inventory')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      await api.deleteAcvInventory(id);
       
       setInventory(prev => prev.filter(item => item.id !== id));
       toast({
@@ -153,14 +131,8 @@ export const useACVInventory = (projectId?: string) => {
         ...newSettings,
       };
 
-      const { data, error } = await supabase
-        .from('acv_inventory_settings')
-        .upsert(settingsData)
-        .select()
-        .single();
-
-      if (error) throw error;
-      setSettings(data);
+      const { item } = await api.putAcvInventorySettings(settingsData);
+      setSettings(item as unknown as InventorySettings);
       
       toast({
         title: "Succès",

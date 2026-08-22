@@ -42,7 +42,8 @@ apps/api/legacy-edge-functions-ref  Référence Deno (non déployée)
 
 ```bash
 cp .env.example .env
-docker compose up -d postgres
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres
+# Postgres exposé sur le host :5435 (évite le conflit avec d'autres projets sur :5432)
 # appliquer le schéma
 docker compose exec -T postgres psql -U newcarboscan -d newcarboscan < db/migrations/001_trust_core.sql
 
@@ -77,6 +78,9 @@ Priorité : brancher d’abord collect → calculate → reports sur le ledger, 
 - Auth : JWT applicatif (pas Supabase Auth)
 
 ## Portage tables
+
+Schéma consolidé : `db/migrations/001`–`013`. Inventaire : `docs/TABLE_PORT_STATUS.md`.
+Import clients (Supabase → Postgres) : `docs/IMPORT_CLIENT_DATA.md`.
 
 Voir [docs/TABLE_PORT_STATUS.md](docs/TABLE_PORT_STATUS.md).
 

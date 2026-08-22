@@ -10,10 +10,8 @@ import {
   Users,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
-import { countMergedOrganizations } from "@/lib/superadmin/organizationCounting";
-import { MANAGED_CLIENT_ACCOUNTS } from "@/lib/superadmin/managedClients";
 import { useUserRoleCached } from "@/contexts/AppDataContext";
 
 interface DashboardStats {
@@ -39,47 +37,11 @@ const SuperAdminDashboard = () => {
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
-        const [
-          companiesResult,
-          profilesResult,
-          validatedOrdersResult,
-          calculatorResult,
-          pendingOrdersResult,
-          usersResult,
-        ] = await Promise.all([
-          supabase.from('companies').select('user_id, nom_entreprise'),
-          supabase.from('profiles').select('user_id, company_name'),
-          supabase.from('orders').select('id').eq('status', 'validated'),
-          supabase.from('contact_requests').select('id').in('request_type', ['free_calculator', 'cbam_calculator']),
-          supabase.from('orders').select('id').eq('status', 'pending'),
-          supabase.functions.invoke('get-users'),
-        ]);
-
-        const databaseError = [
-          companiesResult.error,
-          profilesResult.error,
-          validatedOrdersResult.error,
-          calculatorResult.error,
-          pendingOrdersResult.error,
-        ].find(Boolean);
-
-        if (databaseError) throw databaseError;
-        if (usersResult.error) throw usersResult.error;
-
-        const companies = companiesResult.data || [];
-        const profiles = profilesResult.data || [];
-        const validatedOrders = validatedOrdersResult.data || [];
-        const calculatorRegistrations = calculatorResult.data || [];
-        const mergedOrganizations = countMergedOrganizations({
-          profiles,
-          companies,
-          validatedOrders,
-          calculatorRegistrations,
-        });
+        const { items } = await api.adminListOrganizations();
         setStats({
-          totalOrganizations: mergedOrganizations + MANAGED_CLIENT_ACCOUNTS.length,
-          totalUsers: (usersResult.data?.users?.length || 0) + MANAGED_CLIENT_ACCOUNTS.length,
-          pendingOrders: pendingOrdersResult.data?.length || 0,
+          totalOrganizations: items.length,
+          totalUsers: items.reduce((sum, org) => sum + (org.memberCount || 0), 0),
+          pendingOrders: 0,
         });
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);

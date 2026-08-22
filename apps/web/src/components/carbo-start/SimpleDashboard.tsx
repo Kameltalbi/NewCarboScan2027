@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredUser } from "@/integrations/api/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@ export const SimpleDashboard: React.FC = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = getStoredUser();
       setUser(user);
     };
     getUser();
@@ -40,31 +40,12 @@ export const SimpleDashboard: React.FC = () => {
       if (!user?.id) return;
 
       try {
-        // Récupérer le dernier bilan
-        const { data: bilans, error: bilansError } = await supabase
-          .from('bilans_carbone')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(1);
-
-        if (bilansError) {
-          console.error('Erreur lors du chargement des bilans:', bilansError);
-        }
-
-        // Récupérer les données de l'entreprise
-        const { data: company, error: companyError } = await supabase
-          .from('companies')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-
-        if (companyError) {
-          console.error('Erreur lors du chargement de l\'entreprise:', companyError);
-        }
-
-        setLatestBilan(bilans?.[0] || null);
-        setCompanyData(company || null);
+        const [{ items }, { items: entities }] = await Promise.all([
+          api.listBilans(),
+          api.listEntities(),
+        ]);
+        setLatestBilan(items?.[0] || null);
+        setCompanyData(entities?.[0] || null);
       } catch (error) {
         console.error('Erreur:', error);
       } finally {

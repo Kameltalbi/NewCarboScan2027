@@ -23,7 +23,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { toast } from "sonner";
 
 interface UserData {
@@ -63,7 +63,7 @@ export const UserManagement: React.FC = () => {
 
   const loadOrganization = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sessionAuth.getUser();
       if (!user) {
         setIsLoading(false);
         return;

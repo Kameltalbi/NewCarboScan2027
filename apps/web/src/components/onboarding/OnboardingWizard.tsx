@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from "@/integrations/api/client";
+import { api } from '@/integrations/api/client';
 import { Building2, Users, Target, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,24 +58,14 @@ export const OnboardingWizard: React.FC = () => {
     setLoading(true);
 
     try {
-      const { data: existingOrg } = await supabase
-        .from('organizations')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (existingOrg) {
-        await supabase.from('organizations').update({
-          name: data.companyName,
-          sector: data.sector,
-          country: data.country,
-        }).eq('id', existingOrg.id);
-      }
-
-      await supabase.from('profiles').upsert({
-        user_id: user.id,
-        company_name: data.companyName,
-      }, { onConflict: 'user_id' });
+      await api.patchOrganization({
+        name: data.companyName,
+        sector: data.sector,
+        country: data.country,
+      });
+      await api.patchProfile({
+        companyName: data.companyName,
+      });
 
       localStorage.setItem(ONBOARDING_KEY, 'true');
       toast.success(t('onboarding.messages.success'));
@@ -249,18 +239,16 @@ export const useNeedsOnboarding = () => {
     if (!user) { setNeeds(false); return; }
     const completed = localStorage.getItem(ONBOARDING_KEY);
     if (completed) { setNeeds(false); return; }
-    supabase.from('organizations')
-      .select('id, name, sector')
-      .eq('user_id', user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (!data || !data.sector) {
+    api.getOrganization()
+      .then(({ organization }) => {
+        if (!organization || !organization.sector) {
           setNeeds(true);
         } else {
           localStorage.setItem(ONBOARDING_KEY, 'true');
           setNeeds(false);
         }
-      });
+      })
+      .catch(() => setNeeds(true));
   }, [user]);
 
   return needs;

@@ -52,7 +52,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { supabase } from "@/integrations/api/client";
+import { supabase, sessionAuth} from "@/integrations/api/client";
 import { useAuth } from '@/hooks/useAuth';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { useCollectSites, type CollectSite, type CreateSiteInput } from '@/hooks/useCollectSites';
@@ -361,7 +361,7 @@ export const ParametresOrganisationPro: React.FC = () => {
 
     try {
       // Vérifie le token auprès de Supabase et évite d'utiliser un état local stale.
-      const { data: authData, error: authError } = await supabase.auth.getUser();
+      const { data: authData, error: authError } = await sessionAuth.getUser();
       if (authError) throw authError;
       const authedUserId = authData.user?.id;
       if (!authedUserId) {
@@ -438,7 +438,7 @@ export const ParametresOrganisationPro: React.FC = () => {
 
     setIsUploading(true);
     try {
-      const { data: authData, error: authError } = await supabase.auth.getUser();
+      const { data: authData, error: authError } = await sessionAuth.getUser();
       if (authError) throw authError;
       const authedUserId = authData.user?.id;
       if (!authedUserId) {

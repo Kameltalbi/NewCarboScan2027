@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Lint trust + invented claims
+        run: npm run lint
+      - name: Typecheck API + engine
+        run: npm run typecheck
+      - name: Tests engine + API
+        run: npm test
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: ""

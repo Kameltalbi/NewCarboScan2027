@@ -1,7 +1,9 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { HeroStyleDashboard } from '@/components/dashboard/HeroStyleDashboard';
+import { useAppData } from '@/contexts/AppDataContext';
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -50,6 +52,13 @@ class ErrorBoundary extends React.Component<
 }
 
 export const DashboardOverview: React.FC = () => {
+  const { isSuperAdmin, roleLoading } = useAppData();
+  if (roleLoading) {
+    return null;
+  }
+  if (isSuperAdmin) {
+    return <Navigate to="/superadmin/dashboard" replace />;
+  }
   return (
     <ErrorBoundary>
       <div className="w-full">

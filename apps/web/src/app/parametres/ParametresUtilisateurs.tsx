@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Users, UserPlus, Loader2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { mapOrgRoleToDbRole } from '@/hooks/useOrgMemberPermissions';
@@ -40,25 +40,9 @@ export const ParametresUtilisateurs: React.FC = () => {
     queryFn: async () => {
       if (!user?.id) return null;
       
-      const { data: ownedOrg } = await supabase
-        .from('organizations')
-        .select('id, name')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      if (ownedOrg) return ownedOrg;
-      
-      const { data: membership } = await supabase
-        .from('organization_members')
-        .select('organization_id, organizations(id, name)')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      if (membership?.organizations) {
-        return membership.organizations as unknown as { id: string; name: string };
-      }
-      
-      return null;
+      const { organization } = await api.getOrganization();
+      if (!organization) return null;
+      return { id: organization.id, name: organization.name };
     },
     enabled: !!user?.id,
   });
@@ -69,70 +53,21 @@ export const ParametresUtilisateurs: React.FC = () => {
     queryFn: async (): Promise<OrganizationMember[]> => {
       if (!organization?.id) return [];
       
-      // Get organization owner
-      const { data: orgData } = await supabase
-        .from('organizations')
-        .select('user_id')
-        .eq('id', organization.id)
-        .single();
-      
-      // Get all members from organization_members table
-      const { data: membersData } = await supabase
-        .from('organization_members')
-        .select('id, user_id, role, created_at')
-        .eq('organization_id', organization.id);
-      
-      // Get profiles for all member user_ids
-      const userIds = new Set<string>();
-      if (orgData?.user_id) userIds.add(orgData.user_id);
-      membersData?.forEach(m => userIds.add(m.user_id));
-      
-      const { data: profilesData } = await supabase
-        .from('profiles')
-        .select('user_id, first_name, last_name, email')
-        .in('user_id', Array.from(userIds));
-      
-      const profilesMap = new Map(profilesData?.map(p => [p.user_id, p]) || []);
-      
+      const { items } = await api.listOrgMembers();
       const { mapDbRoleToOrgRole } = await import('@/hooks/useOrgMemberPermissions');
-      const allMembers: OrganizationMember[] = [];
-      
-      // Add organization owner as admin (if not already in members)
-      if (orgData?.user_id) {
-        const ownerInMembers = membersData?.find(m => m.user_id === orgData.user_id);
-        if (!ownerInMembers) {
-          const ownerProfile = profilesMap.get(orgData.user_id);
-          allMembers.push({
-            id: `owner-${orgData.user_id}`,
-            user_id: orgData.user_id,
-            role: 'admin',
-            status: 'active',
-            created_at: new Date().toISOString(),
-            email: ownerProfile?.email || (user?.id === orgData.user_id ? user?.email : undefined),
-            first_name: ownerProfile?.first_name,
-            last_name: ownerProfile?.last_name,
-          });
-        }
-      }
-      
-      // Add other members with their roles and profile info
-      if (membersData) {
-        membersData.forEach((m) => {
-          const profile = profilesMap.get(m.user_id);
-          allMembers.push({
-            id: m.id,
-            user_id: m.user_id,
-            role: mapDbRoleToOrgRole(m.role),
-            status: 'active',
-            created_at: m.created_at,
-            email: profile?.email,
-            first_name: profile?.first_name,
-            last_name: profile?.last_name,
-          });
-        });
-      }
-      
-      return allMembers;
+      return (items || []).map((m) => {
+        const parts = (m.full_name || '').split(' ');
+        return {
+          id: m.user_id,
+          user_id: m.user_id,
+          role: mapDbRoleToOrgRole(m.role),
+          status: m.is_active === false ? 'disabled' : 'active',
+          created_at: m.created_at,
+          email: m.email,
+          first_name: parts[0],
+          last_name: parts.slice(1).join(' ') || undefined,
+        } as OrganizationMember;
+      });
     },
     enabled: !!organization?.id,
   });
@@ -147,27 +82,13 @@ export const ParametresUtilisateurs: React.FC = () => {
       role: string;
     }) => {
       if (!organization?.id) throw new Error('Organisation non trouvée');
-      
-      const { data, error } = await supabase.functions.invoke('create-org-user', {
-        body: {
-          email,
-          password,
-          firstName,
-          lastName,
-          role,
-          organizationId: organization.id,
-        },
+      return api.inviteOrgMember({
+        email,
+        password,
+        firstName,
+        lastName,
+        role: mapOrgRoleToDbRole(role as 'admin' | 'contributor' | 'viewer'),
       });
-      
-      if (error) {
-        throw new Error(error.message || 'Erreur lors de la création');
-      }
-      
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-      
-      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organization-members', organization?.id] });
@@ -187,14 +108,8 @@ export const ParametresUtilisateurs: React.FC = () => {
   // Mutation to update user role
   const updateRoleMutation = useMutation({
     mutationFn: async ({ memberId, newRole }: { memberId: string; newRole: string }) => {
-      const dbRole = mapOrgRoleToDbRole(newRole as any);
-      
-      const { error } = await supabase
-        .from('organization_members')
-        .update({ role: dbRole as any })
-        .eq('id', memberId);
-      
-      if (error) throw error;
+      const dbRole = mapOrgRoleToDbRole(newRole as 'admin' | 'contributor' | 'viewer');
+      await api.patchOrgMember(memberId, dbRole);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organization-members', organization?.id] });

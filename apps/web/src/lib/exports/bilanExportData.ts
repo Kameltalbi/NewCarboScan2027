@@ -53,7 +53,7 @@ export function computeExport(ctx: BilanExportContext): ExportComputed {
   const defaultPct = (dq.default / dqTotal) * 100;
   const confidenceScore = Math.round(realPct * 1 + estimatedPct * 0.6 + defaultPct * 0.3);
 
-  // SBTi-aligned 2030 trajectory (-42%)
+  // Hypothèse interne illustrative (−42 % / 2030), non validée par un tiers
   const reductionTarget2030T = totalT * 0.42;
   const trajectory: { year: number; bau: number; target: number }[] = [];
   const startYear = year;

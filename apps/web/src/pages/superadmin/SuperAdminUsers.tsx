@@ -7,10 +7,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Settings, Lock, Unlock, Trash2, Mail, Key } from "lucide-react";
-import { MANAGED_CLIENT_ACCOUNTS } from "@/lib/superadmin/managedClients";
 import { useUserRoleCached } from "@/contexts/AppDataContext";
 
 interface UserWithRole {
@@ -63,64 +62,24 @@ export const SuperAdminUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      // Call our edge function to get real user data
-      const { data, error } = await supabase.functions.invoke('get-users');
-      
-      if (error) {
-        throw new Error(error.message);
-      }
-      
-      if (data?.users) {
-        // Enrich users with plan information
-        const enrichedUsers = await Promise.all(
-          data.users.map(async (user: any) => {
-            // Get latest order for this user
-            const { data: orders } = await supabase
-              .from('orders')
-              .select('plan_type, status, amount, validated_at')
-              .eq('user_id', user.id)
-              .order('created_at', { ascending: false })
-              .limit(1);
-
-            // Get subscription info
-            const { data: subscriptions } = await supabase
-              .from('user_subscriptions')
-              .select('status, assessments_used, assessments_limit')
-              .eq('user_id', user.id)
-              .eq('status', 'active')
-              .limit(1);
-
-            return {
-              ...user,
-              plan: orders?.[0] || null,
-              subscription: subscriptions?.[0] || null
-            };
-          })
-        );
-        
-        const managedClientUsers: UserWithRole[] = MANAGED_CLIENT_ACCOUNTS.map(client => ({
-          id: client.id,
-          email: client.email,
+      const { items } = await api.adminListUsers();
+      setUsers(
+        items.map((user) => ({
+          id: user.id,
+          email: user.email,
           user_metadata: {
-            full_name: client.name,
-            phone: client.phone,
-            address: client.address,
+            full_name: user.fullName,
+            organization: user.organizationName,
           },
-          created_at: '2026-08-12T00:00:00.000Z',
-          role: 'user',
-          status: 'active',
-          isManagedClient: true,
-          plan: {
-            plan_type: 'essentiel',
-            status: 'validated',
-          },
-        }));
-
-        setUsers([...enrichedUsers, ...managedClientUsers]);
-      } else {
-        throw new Error('No users data received');
-      }
-      
+          created_at: user.createdAt,
+          last_sign_in_at: user.lastSignInAt || undefined,
+          role: user.role,
+          status: user.status,
+          plan: user.subscriptionPlan
+            ? { plan_type: user.subscriptionPlan, status: "validated" }
+            : undefined,
+        })),
+      );
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -135,97 +94,66 @@ export const SuperAdminUsers = () => {
 
   const handleInviteUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    try {
-      // In a real app, this would send an invitation email
-      // For now, we'll just show a success message
-      toast({
-        title: "Invitation envoyée",
-        description: `Une invitation a été envoyée à ${inviteData.email}`,
-      });
-
-      setInviteData({ email: '', role: 'user', name: '' });
-      setIsInviteDialogOpen(false);
-    } catch (error) {
-      console.error('Error inviting user:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'envoyer l'invitation",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Non disponible",
+      description: "L'invitation par email n'est pas encore branchée. Créez le compte ou définissez le mot de passe depuis cette page.",
+    });
   };
 
   const changeUserRole = async (userId: string, newRole: string) => {
     try {
-      // Remove existing roles
-      await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId);
-
-      // Add new role
-      const { error } = await supabase
-        .from('user_roles')
-        .insert({ 
-          user_id: userId, 
-          role: newRole as 'user' | 'admin' | 'superadmin' 
-        });
-
-      if (error) throw error;
-
+      await api.adminPatchUser(userId, {
+        role: newRole as "user" | "admin" | "superadmin" | "financeur",
+      });
       toast({
         title: "Succès",
         description: "Rôle utilisateur mis à jour",
       });
-
       fetchUsers();
     } catch (error) {
       console.error('Error changing user role:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de changer le rôle",
+        description: error instanceof Error ? error.message : "Impossible de changer le rôle",
         variant: "destructive",
       });
     }
   };
 
   const toggleUserStatus = async (userId: string, currentStatus: 'active' | 'blocked') => {
-    // In a real app, this would update user status in auth
     const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
-    
-    // Update local state for demo
-    setUsers(prev => prev.map(user => 
-      user.id === userId ? { ...user, status: newStatus } : user
-    ));
-
-    toast({
-      title: "Succès",
-      description: `Utilisateur ${newStatus === 'active' ? 'activé' : 'bloqué'}`,
-    });
+    try {
+      await api.adminPatchUser(userId, { isActive: newStatus === 'active' });
+      setUsers(prev => prev.map(user =>
+        user.id === userId ? { ...user, status: newStatus } : user
+      ));
+      toast({
+        title: "Succès",
+        description: `Utilisateur ${newStatus === 'active' ? 'activé' : 'bloqué'}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: error instanceof Error ? error.message : "Impossible de changer le statut",
+        variant: "destructive",
+      });
+    }
   };
 
   const deleteUser = async (userId: string) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
       try {
-        const { error } = await supabase
-          .from('user_roles')
-          .delete()
-          .eq('user_id', userId);
-
-        if (error) throw error;
-
+        await api.adminDeleteUser(userId);
         toast({
           title: "Succès",
           description: "Utilisateur supprimé",
         });
-
         fetchUsers();
       } catch (error) {
         console.error('Error deleting user:', error);
         toast({
           title: "Erreur",
-          description: "Impossible de supprimer l'utilisateur",
+          description: error instanceof Error ? error.message : "Impossible de supprimer l'utilisateur",
           variant: "destructive",
         });
       }
@@ -244,10 +172,10 @@ export const SuperAdminUsers = () => {
 
     if (!selectedUserForPassword) return;
 
-    if (newPassword.length < 6) {
+    if (newPassword.length < 8) {
       toast({
         title: "Erreur",
-        description: "Le mot de passe doit contenir au moins 6 caractères",
+        description: "Le mot de passe doit contenir au moins 8 caractères",
         variant: "destructive",
       });
       return;
@@ -265,34 +193,7 @@ export const SuperAdminUsers = () => {
     setIsChangingPassword(true);
 
     try {
-      const session = await supabase.auth.getSession();
-      const accessToken = session.data.session?.access_token;
-
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-user-password`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '',
-          },
-          body: JSON.stringify({
-            userId: selectedUserForPassword.id,
-            password: newPassword,
-          }),
-        }
-      );
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data.error || `Erreur ${response.status}`);
-      }
-
-      if (data?.error) {
-        throw new Error(data.error);
-      }
+      await api.adminSetUserPassword(selectedUserForPassword.id, newPassword);
 
       toast({
         title: "Succès",
@@ -666,7 +567,7 @@ export const SuperAdminUsers = () => {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Minimum 6 caractères"
+                placeholder="Minimum 8 caractères"
                 required
               />
             </div>

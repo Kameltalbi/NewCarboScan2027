@@ -198,19 +198,66 @@ const importers: Record<string, Importer> = {
     const name = String(payload.name ?? payload.nom_entreprise ?? "Organisation importée");
     const slugBase = slugify(name);
     const slug = `${slugBase}-${id.slice(0, 8)}`;
+    let ownerId: string | null = null;
+    if (payload.user_id) {
+      const mapped = await resolveId(client, "users", String(payload.user_id));
+      if (mapped) {
+        const exists = await client.query(`SELECT 1 FROM users WHERE id = $1`, [mapped]);
+        if (exists.rowCount) ownerId = mapped;
+      }
+    }
     await client.query(
       `INSERT INTO organizations
-        (id, name, slug, legacy_source, legacy_id, import_batch_id, imported_at, raw_legacy)
-       VALUES ($1,$2,$3,$4,$5,$6,now(),$7)
+        (id, name, slug, user_id, country, sector, reference_year, currency,
+         energy_unit, mass_unit, distance_unit, logo_url, pilot_name, legal_name,
+         subscription_plan, subscription_status, max_users,
+         legacy_source, legacy_id, import_batch_id, imported_at, raw_legacy)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,now(),$21)
        ON CONFLICT (id) DO UPDATE SET
          name = EXCLUDED.name,
+         user_id = COALESCE(EXCLUDED.user_id, organizations.user_id),
+         country = COALESCE(EXCLUDED.country, organizations.country),
+         sector = COALESCE(EXCLUDED.sector, organizations.sector),
+         reference_year = COALESCE(EXCLUDED.reference_year, organizations.reference_year),
+         currency = COALESCE(EXCLUDED.currency, organizations.currency),
+         energy_unit = COALESCE(EXCLUDED.energy_unit, organizations.energy_unit),
+         mass_unit = COALESCE(EXCLUDED.mass_unit, organizations.mass_unit),
+         distance_unit = COALESCE(EXCLUDED.distance_unit, organizations.distance_unit),
+         logo_url = COALESCE(EXCLUDED.logo_url, organizations.logo_url),
+         pilot_name = COALESCE(EXCLUDED.pilot_name, organizations.pilot_name),
+         legal_name = COALESCE(EXCLUDED.legal_name, organizations.legal_name),
+         subscription_plan = COALESCE(EXCLUDED.subscription_plan, organizations.subscription_plan),
+         subscription_status = COALESCE(EXCLUDED.subscription_status, organizations.subscription_status),
+         max_users = COALESCE(EXCLUDED.max_users, organizations.max_users),
          legacy_source = EXCLUDED.legacy_source,
          legacy_id = EXCLUDED.legacy_id,
          import_batch_id = EXCLUDED.import_batch_id,
          imported_at = now(),
          raw_legacy = EXCLUDED.raw_legacy,
          updated_at = now()`,
-      [id, name, slug, LEGACY_SOURCE, legacyId ?? id, batchId, JSON.stringify(payload)],
+      [
+        id,
+        name,
+        slug,
+        ownerId,
+        payload.country ?? null,
+        payload.sector ?? null,
+        payload.reference_year ?? null,
+        payload.currency ?? null,
+        payload.energy_unit ?? null,
+        payload.mass_unit ?? null,
+        payload.distance_unit ?? null,
+        payload.logo_url ?? null,
+        payload.pilot_name ?? null,
+        payload.legal_name ?? null,
+        payload.subscription_plan ?? payload.plan_type ?? null,
+        payload.subscription_status ?? null,
+        payload.max_users ?? null,
+        LEGACY_SOURCE,
+        legacyId ?? id,
+        batchId,
+        JSON.stringify(payload),
+      ],
     );
     await mapId(client, "organizations", legacyId ?? id, id, id, batchId);
     return id;
@@ -227,8 +274,16 @@ const importers: Record<string, Importer> = {
       throw new Error("organization_members: org/user unresolved");
     }
     const role = String(payload.role ?? "viewer");
-    const allowed = ["owner", "admin", "editor", "viewer", "financeur", "auditor"];
-    const safeRole = allowed.includes(role) ? role : "viewer";
+    const roleMap: Record<string, string> = {
+      owner: "owner",
+      admin: "admin",
+      editor: "editor",
+      viewer: "viewer",
+      financeur: "financeur",
+      auditor: "auditor",
+      member: "viewer", // enum legacy org_member_role
+    };
+    const safeRole = roleMap[role] ?? "viewer";
     await client.query(
       `INSERT INTO organization_members (organization_id, user_id, role)
        VALUES ($1,$2,$3::org_role)
@@ -348,31 +403,44 @@ const importers: Record<string, Importer> = {
       orgId = rows[0]?.organization_id ?? null;
     }
     if (!orgId) throw new Error("bilans_carbone: organization unresolved");
+    const year = Number(payload.year ?? payload.reference_year ?? new Date().getFullYear());
+    const total = payload.total_kgco2e ?? payload.total_emission ?? null;
+    const s1 = payload.scope1_kgco2e ?? payload.scope1_emission ?? null;
+    const s2 = payload.scope2_kgco2e ?? payload.scope2_emission ?? null;
+    const s3 = payload.scope3_kgco2e ?? payload.scope3_emission ?? null;
+    const dateBilan = payload.date_bilan ?? `${year}-12-31`;
     await client.query(
       `INSERT INTO bilans_carbone
         (id, organization_id, name, year, status,
          total_kgco2e, scope1_kgco2e, scope2_kgco2e, scope3_kgco2e,
-         analyse_commentaire, questionnaire_data,
+         total_emission, scope1_emission, scope2_emission, scope3_emission,
+         date_bilan, analyse_commentaire, questionnaire_data,
          legacy_source, legacy_id, import_batch_id, imported_at, raw_legacy)
-       VALUES ($1,$2,$3,$4,COALESCE($5,'imported'),$6,$7,$8,$9,$10,$11,$12,$13,$14,now(),$15)
+       VALUES ($1,$2,$3,$4,COALESCE($5,'imported'),$6,$7,$8,$9,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,now(),$16)
        ON CONFLICT (id) DO UPDATE SET
          total_kgco2e = EXCLUDED.total_kgco2e,
          scope1_kgco2e = EXCLUDED.scope1_kgco2e,
          scope2_kgco2e = EXCLUDED.scope2_kgco2e,
          scope3_kgco2e = EXCLUDED.scope3_kgco2e,
+         total_emission = EXCLUDED.total_emission,
+         scope1_emission = EXCLUDED.scope1_emission,
+         scope2_emission = EXCLUDED.scope2_emission,
+         scope3_emission = EXCLUDED.scope3_emission,
+         date_bilan = COALESCE(EXCLUDED.date_bilan, bilans_carbone.date_bilan),
          raw_legacy = EXCLUDED.raw_legacy,
          imported_at = now(),
          updated_at = now()`,
       [
         id,
         orgId,
-        payload.name ?? `Bilan ${payload.year ?? ""}`,
-        Number(payload.year ?? new Date().getFullYear()),
+        payload.name ?? `Bilan ${payload.year ?? year}`,
+        year,
         payload.status ?? "imported",
-        payload.total_kgco2e ?? payload.total_emission ?? null,
-        payload.scope1_kgco2e ?? payload.scope1_emission ?? null,
-        payload.scope2_kgco2e ?? payload.scope2_emission ?? null,
-        payload.scope3_kgco2e ?? payload.scope3_emission ?? null,
+        total,
+        s1,
+        s2,
+        s3,
+        dateBilan,
         payload.analyse_commentaire ?? null,
         payload.questionnaire_data ? JSON.stringify(payload.questionnaire_data) : null,
         LEGACY_SOURCE,
@@ -623,6 +691,225 @@ function cryptoRandomUuid(): string {
   );
 }
 
+const DEDICATED_IMPORTERS = new Set([
+  "users",
+  "organizations",
+  "organization_members",
+  "profiles",
+  "activity_data",
+  "bilans_carbone",
+  "emission_factors",
+]);
+
+const COLUMN_ALIASES: Record<string, Record<string, string>> = {
+  "*": { org_id: "organization_id" },
+  modules: { slug: "code" },
+  organization_modules: { org_id: "organization_id", active: "enabled" },
+  blog_posts: {
+    content: "body_html_sanitized",
+    body: "body_html_sanitized",
+    html: "body_html_sanitized",
+    body_html: "body_html_sanitized",
+  },
+  contact_requests: { type: "request_type", company: "company_name" },
+};
+
+type ColInfo = {
+  name: string;
+  isNullable: boolean;
+  dataType: string;
+  hasDefault: boolean;
+};
+
+const schemaCache = new Map<string, { columns: ColInfo[]; pk: string[] }>();
+
+async function loadTableSchema(client: PoolClient, table: string) {
+  const cached = schemaCache.get(table);
+  if (cached) return cached;
+  const { rows: colRows } = await client.query(
+    `SELECT column_name, is_nullable, data_type, column_default
+       FROM information_schema.columns
+      WHERE table_schema = 'public' AND table_name = $1`,
+    [table],
+  );
+  const columns: ColInfo[] = colRows.map((r) => ({
+    name: r.column_name as string,
+    isNullable: r.is_nullable === "YES",
+    dataType: r.data_type as string,
+    hasDefault: r.column_default != null,
+  }));
+  const { rows: pkRows } = await client.query(
+    `SELECT a.attname AS name
+       FROM pg_index i
+       JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
+      WHERE i.indrelid = $1::regclass AND i.indisprimary
+      ORDER BY array_position(i.indkey, a.attnum)`,
+    [table],
+  );
+  const schema = { columns, pk: pkRows.map((r) => r.name as string) };
+  schemaCache.set(table, schema);
+  return schema;
+}
+
+async function userExists(client: PoolClient, userId: string | null) {
+  if (!userId) return false;
+  const { rowCount } = await client.query(`SELECT 1 FROM users WHERE id = $1`, [
+    userId,
+  ]);
+  return Boolean(rowCount);
+}
+
+async function orgExists(client: PoolClient, orgId: string | null) {
+  if (!orgId) return false;
+  const { rowCount } = await client.query(
+    `SELECT 1 FROM organizations WHERE id = $1`,
+    [orgId],
+  );
+  return Boolean(rowCount);
+}
+
+async function resolveOrgFromPayload(
+  client: PoolClient,
+  payload: Record<string, unknown>,
+): Promise<string | null> {
+  for (const key of ["organization_id", "org_id"] as const) {
+    if (!payload[key]) continue;
+    const mapped = await resolveId(client, "organizations", String(payload[key]));
+    if (await orgExists(client, mapped)) return mapped;
+  }
+  if (payload.user_id) {
+    const uid = await resolveId(client, "users", String(payload.user_id));
+    if (uid) {
+      const members = await client.query(
+        `SELECT organization_id FROM organization_members WHERE user_id = $1 LIMIT 1`,
+        [uid],
+      );
+      if (members.rows[0]?.organization_id) {
+        return members.rows[0].organization_id as string;
+      }
+      const owned = await client.query(
+        `SELECT id FROM organizations WHERE user_id = $1 LIMIT 1`,
+        [uid],
+      );
+      if (owned.rows[0]?.id) return owned.rows[0].id as string;
+    }
+  }
+  if (payload.company_id) {
+    const viaCompany = await client.query(
+      `SELECT m.organization_id
+         FROM companies c
+         JOIN organization_members m ON m.user_id = c.user_id
+        WHERE c.id = $1
+        LIMIT 1`,
+      [payload.company_id],
+    );
+    if (viaCompany.rows[0]?.organization_id) {
+      return viaCompany.rows[0].organization_id as string;
+    }
+  }
+  return null;
+}
+
+function makeSchemaAwareImporter(entityType: string, table: string): Importer {
+  return async (client, batchId, _s, payload, legacyId) => {
+    const schema = await loadTableSchema(client, table);
+    if (schema.columns.length === 0) {
+      throw new Error(`${entityType}: table ${table} introuvable`);
+    }
+    const colByName = new Map(schema.columns.map((c) => [c.name, c]));
+    const aliases = {
+      ...(COLUMN_ALIASES["*"] ?? {}),
+      ...(COLUMN_ALIASES[entityType] ?? {}),
+    };
+
+    const values: Record<string, unknown> = {};
+    const assign = (col: string, value: unknown) => {
+      if (!colByName.has(col) || value === undefined) return;
+      const meta = colByName.get(col)!;
+      if (
+        (meta.dataType === "jsonb" || meta.dataType === "json") &&
+        value !== null &&
+        typeof value === "object"
+      ) {
+        values[col] = JSON.stringify(value);
+      } else {
+        values[col] = value;
+      }
+    };
+
+    for (const [key, raw] of Object.entries(payload)) {
+      const dest = aliases[key] ?? key;
+      if (dest === "id" && !colByName.has("id")) continue;
+      assign(dest, raw);
+    }
+
+    const orgId = await resolveOrgFromPayload(client, payload);
+    if (colByName.has("organization_id") && orgId) {
+      assign("organization_id", orgId);
+    }
+
+    if (colByName.has("user_id") && payload.user_id) {
+      const uid = await resolveId(client, "users", String(payload.user_id));
+      if (await userExists(client, uid)) assign("user_id", uid);
+      else delete values.user_id;
+    }
+
+    if (colByName.has("id")) {
+      const id = asUuid(payload.id) ?? asUuid(legacyId) ?? cryptoRandomUuid();
+      assign("id", id);
+    }
+    if (colByName.has("legacy_source")) assign("legacy_source", LEGACY_SOURCE);
+    if (colByName.has("legacy_id")) {
+      assign("legacy_id", legacyId ?? payload.id ?? null);
+    }
+    if (colByName.has("import_batch_id")) assign("import_batch_id", batchId);
+    if (colByName.has("raw_legacy")) assign("raw_legacy", JSON.stringify(payload));
+
+    const insertCols = Object.keys(values).filter((c) => colByName.has(c));
+    if (insertCols.length === 0) {
+      throw new Error(`${entityType}: aucune colonne mappable`);
+    }
+
+    const params = insertCols.map((c) => values[c]);
+    const placeholders = insertCols.map((c, i) => {
+      const meta = colByName.get(c)!;
+      if (meta.dataType === "jsonb" || meta.dataType === "json") {
+        return `$${i + 1}::jsonb`;
+      }
+      return `$${i + 1}`;
+    });
+
+    let sql = `INSERT INTO ${table} (${insertCols.join(", ")}) VALUES (${placeholders.join(", ")})`;
+    const pk = schema.pk.filter((c) => insertCols.includes(c));
+    if (pk.length > 0) {
+      const updates = insertCols
+        .filter((c) => !pk.includes(c) && c !== "imported_at")
+        .map((c) => `${c} = EXCLUDED.${c}`);
+      if (colByName.has("imported_at")) updates.push("imported_at = now()");
+      const updateSql =
+        updates.length > 0 ? updates.join(", ") : `${pk[0]} = EXCLUDED.${pk[0]}`;
+      sql += ` ON CONFLICT (${pk.join(", ")}) DO UPDATE SET ${updateSql}`;
+    }
+    const returning = colByName.has("id") ? "id" : pk[0] ?? insertCols[0];
+    sql += ` RETURNING ${returning}`;
+
+    const result = await client.query(sql, params);
+    const newId = String(
+      result.rows[0]?.id ?? result.rows[0]?.[returning] ?? payload.id ?? legacyId ?? "",
+    );
+    const mappedUuid = asUuid(newId) ?? cryptoRandomUuid();
+    await mapId(
+      client,
+      entityType,
+      String(legacyId ?? payload.id ?? newId),
+      mappedUuid,
+      orgId,
+      batchId,
+    );
+    return mappedUuid;
+  };
+}
+
 export async function listImportCatalog() {
   const { rows } = await pool.query(
     `SELECT entity_type, target_table, depends_on, sort_order, preserve_uuid, org_scoped, description, enabled
@@ -633,7 +920,11 @@ export async function listImportCatalog() {
   return rows;
 }
 
-export async function processImportBatch(batchId: string, limitPerEntity = 5000) {
+export async function processImportBatch(
+  batchId: string,
+  limitPerEntity = 5000,
+  retryErrors = false,
+) {
   const catalog = await listImportCatalog();
   const client = await pool.connect();
   const stats: Record<string, { ok: number; error: number; skipped: number }> = {};
@@ -643,15 +934,25 @@ export async function processImportBatch(batchId: string, limitPerEntity = 5000)
       `UPDATE import_batches SET status = 'importing', started_at = COALESCE(started_at, now()), updated_at = now() WHERE id = $1`,
       [batchId],
     );
+    if (retryErrors) {
+      await client.query(
+        `UPDATE import_staging
+            SET status = 'pending', error_message = NULL, processed_at = NULL
+          WHERE batch_id = $1 AND status = 'error'`,
+        [batchId],
+      );
+    }
 
     for (const entity of catalog) {
       const entityType = entity.entity_type as string;
-      const importer = importers[entityType];
-      stats[entityType] = { ok: 0, error: 0, skipped: 0 };
+      const importer = DEDICATED_IMPORTERS.has(entityType)
+        ? importers[entityType]
+        : makeSchemaAwareImporter(entityType, String(entity.target_table));
       if (!importer) {
-        stats[entityType].skipped += 1;
+        stats[entityType] = { ok: 0, error: 0, skipped: 1 };
         continue;
       }
+      stats[entityType] = { ok: 0, error: 0, skipped: 0 };
 
       const { rows: pending } = await client.query(
         `SELECT id, legacy_id, payload

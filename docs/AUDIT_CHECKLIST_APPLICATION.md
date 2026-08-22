@@ -18,10 +18,10 @@ Chaque item doit pointer vers un artefact (migration, package, route, test, doc)
 | P0-5 | CORS restrictif (pas de `*`) | DONE | config `CORS_ORIGINS` |
 | P0-6 | Journal d’audit des opérations sensibles | DONE | table `audit_events` |
 | P0-7 | Interdiction des chiffres climat inventés (fallback IA) | DONE | `packages/carbon-engine` + route reports |
-| P0-8 | CI bloque lint / tests / typecheck / audit critique | DONE | CI + `lint-invented-claims` + `npm audit --audit-level=high` |
+| P0-8 | CI bloque lint / tests / typecheck / audit critique | DONE | `.github/workflows/ci.yml` + `lint-invented-claims` |
 | P0-10 | 6 fonctions critiques verrouillées | DONE | `legacy-functions.ts` CRITICAL_LEGACY + audit |
 | P0-11 | Snapshot immuable à publication | DONE | migration `013` + `published_snapshot` |
-| P0-9 | Aucun appel client Supabase dans le frontend | DONE | `integrations/api` remplace Supabase |
+| P0-9 | Aucun appel client Supabase dans le frontend | PARTIAL | `api` + `sessionAuth` ; crash Proxy ; modules legacy encore à migrer |
 
 ## P1 — Chaîne de confiance & qualité
 
@@ -34,7 +34,7 @@ Chaque item doit pointer vers un artefact (migration, package, route, test, doc)
 | P1-5 | Séparer origine / validation / qualité données | PARTIAL | colonnes evidence `011` ; workflow validation API à compléter |
 | P1-6 | Sanitisation HTML blog + CSP | DONE | `BlogPost.tsx` + Helmet CSP API |
 | P1-7 | Schéma PostgreSQL consolidé (pas 241 migrations) | DONE | `db/migrations/001`–`011` |
-| P1-8 | Tests isolation multi-tenant négatifs | PARTIAL | contrat string ; pas encore DB live |
+| P1-8 | Tests isolation multi-tenant négatifs | DONE | contrat string + `tenant-isolation-live.test.ts` (skip si pas de `DATABASE_URL`) |
 | P1-9 | Cas de référence scientifiques | IN_PROGRESS | `packages/carbon-engine/src/reference/` (001–002) |
 | P1-10 | Panneau UI 6 questions / chiffre | DONE | `ProofPanel` + `GET /v1/ledger/:id/provenance` + `/app/bilan-carbone/preuve` |
 | P1-11 | Noyau 4 parcours vs modules adjacents | DONE | `product_module_class` + `docs/SYSTEME_DE_PREUVE.md` |
@@ -65,7 +65,7 @@ Voir `docs/AUDIT_INITIAL_CARBOSCAN_2026-08-11.md` section Priorités.
 | Done | Préparation déploiement VPS (Docker/nginx/CI/build) | DONE — docs/DEPLOY_VPS.md |
 | Next | Brancher Collecte legacy sur evidence (ActivityDataService REST) | PENDING |
 | Next | Seed facteurs officiels étendu + panneau sur totaux legacy | PENDING |
-| Next | Import dump client réel | PENDING |
+| Next | Import dump client réel | IN_PROGRESS | `scripts/export-supabase-dump.mjs` + `scripts/import-client-dump.mjs` — besoin de `SUPABASE_DB_URL` |
 | Next | Déployer sur VPS (secrets + TLS + smoke) | PENDING |
 
 ---

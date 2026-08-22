@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { logger } from '@/utils/logger';
-import { supabase } from "@/integrations/api/client";
+import { api, getStoredUser } from "@/integrations/api/client";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -110,22 +110,8 @@ export default function SuperAdminOrders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Erreur lors de la récupération des commandes:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les commandes",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const ordersData = (data || []) as Order[];
+      const { items } = await api.adminListOrders();
+      const ordersData = (items || []) as unknown as Order[];
       setOrders(ordersData);
 
       // Récupérer les modules pour chaque organisation
@@ -152,35 +138,21 @@ export default function SuperAdminOrders() {
       }
 
       try {
-        // Récupérer l'organisation de l'utilisateur
-        const { data: orgData } = await supabase
-          .from('organizations')
-          .select('id')
-          .eq('user_id', order.user_id)
-          .maybeSingle();
-
-        if (!orgData?.id) {
+        const orgId = (order as Order & { organization_id?: string }).organization_id;
+        if (!orgId) {
           modulesMap[order.id] = [];
           continue;
         }
-
-        // Récupérer les modules activés pour cette organisation
-        const { data: modulesData, error: modulesError } = await supabase
-          .rpc('get_organization_modules', { p_org_id: orgData.id });
-
-        if (modulesError) {
-          console.error(`Error fetching modules for order ${order.id}:`, modulesError);
-          modulesMap[order.id] = [];
-          continue;
-        }
-
-        modulesMap[order.id] = (modulesData || []).map((m: any) => ({
-          module_id: m.module_id,
-          slug: m.slug,
-          name: m.name,
-          description: m.description || '',
-          icon: m.icon || 'Package'
-        }));
+        const { items } = await api.adminListOrgModules(orgId);
+        modulesMap[order.id] = (items || [])
+          .filter((m) => m.enabled)
+          .map((m) => ({
+            module_id: m.module_id,
+            slug: m.slug,
+            name: m.name,
+            description: m.description || "",
+            icon: "Package",
+          }));
       } catch (error) {
         console.error(`Error processing modules for order ${order.id}:`, error);
         modulesMap[order.id] = [];
@@ -192,13 +164,8 @@ export default function SuperAdminOrders() {
 
   const updateOrderStatus = async (orderId: string, newStatus: 'validated' | 'rejected' | 'suspended' | 'cancelled') => {
     try {
-      logger.debug('Début de updateOrderStatus:', { orderId, newStatus });
-      
-      const { data: { user } } = await supabase.auth.getUser();
-      logger.debug('Utilisateur actuel:', user?.id);
-      
+      const user = getStoredUser();
       if (!user) {
-        console.error('❌ Aucun utilisateur authentifié');
         toast({
           title: "Erreur",
           description: "Vous devez être connecté pour effectuer cette action",
@@ -207,179 +174,38 @@ export default function SuperAdminOrders() {
         return;
       }
 
-      // Récupérer les détails de la commande AVANT la mise à jour
-      const { data: orderData, error: fetchError } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('id', orderId)
-        .single();
+      const orderData = orders.find((o) => o.id === orderId);
+      await api.adminPatchOrder(orderId, { status: newStatus });
 
-      if (fetchError || !orderData) {
-        console.error('❌ Erreur lors de la récupération de la commande:', fetchError);
-        toast({
-          title: "Erreur",
-          description: "Impossible de récupérer les détails de la commande",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const updateData: any = {
-        status: newStatus,
-        validated_by: user.id,
-        validated_at: new Date().toISOString()
-      };
-
-      logger.debug('Données à mettre à jour:', updateData);
-
-      const { error, data } = await supabase
-        .from('orders')
-        .update(updateData)
-        .eq('id', orderId)
-        .select();
-
-      logger.debug('Résultat de la mise à jour:', { error, data });
-
-      if (error) {
-        console.error('❌ Erreur lors de la mise à jour:', error);
-        toast({
-          title: "Erreur",
-          description: `Impossible de mettre à jour la commande: ${error.message}`,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Ne pas dépendre uniquement du trigger SQL : certaines installations
-      // peuvent ne pas l'avoir encore appliqué et une revalidation d'une
-      // commande déjà validée ne le déclenche pas. La validation SuperAdmin
-      // doit toujours réparer/activer l'abonnement lié à l'utilisateur.
-      if (newStatus === 'validated' && orderData.user_id) {
-        const validatedAt = updateData.validated_at as string;
-        const expiresAt = new Date(
-          new Date(validatedAt).getTime() + 365 * 24 * 60 * 60 * 1000
-        ).toISOString();
-        const assessmentsLimit =
-          orderData.plan_type === 'carbo_pro' ? 50 :
-          orderData.plan_type === 'carbo_plus' ? 10 : 3;
-
-        const { data: existingSubscription, error: subscriptionFetchError } = await supabase
-          .from('user_subscriptions')
-          .select('id')
-          .eq('user_id', orderData.user_id)
-          .eq('plan_type', orderData.plan_type)
-          .limit(1)
-          .maybeSingle();
-
-        if (subscriptionFetchError) throw subscriptionFetchError;
-
-        const subscriptionPayload = {
-          plan_type: orderData.plan_type,
-          status: 'active',
-          started_at: validatedAt,
-          expires_at: expiresAt,
-          assessments_limit: assessmentsLimit,
-        };
-
-        const { error: subscriptionError } = existingSubscription
-          ? await supabase
-              .from('user_subscriptions')
-              .update(subscriptionPayload)
-              .eq('id', existingSubscription.id)
-          : await supabase
-              .from('user_subscriptions')
-              .insert({
-                ...subscriptionPayload,
-                user_id: orderData.user_id,
-                assessments_used: 0,
-              });
-
-        if (subscriptionError) throw subscriptionError;
-      }
-
-      // Si c'est une validation d'une commande Pro sans user_id, créer l'utilisateur
-      if (newStatus === 'validated' && orderData.plan_type === 'pro' && !orderData.user_id) {
-        logger.debug('Commande Pro sans utilisateur détectée, création du compte...');
-        
+      if (newStatus === 'validated' && orderData?.plan_type === 'pro' && !orderData.user_id) {
         const userData = orderData.user_data as UserData;
-        if (!userData?.email || !userData?.password || !userData?.organization) {
-          toast({
-            title: "Erreur",
-            description: "Données manquantes pour créer le compte (email, mot de passe ou organisation)",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        try {
-          const { data: functionData, error: functionError } = await supabase.functions.invoke(
-            'create-organization-admin',
-            {
-              body: {
-                email: userData.email,
-                password: userData.password,
-                organizationData: {
-                  nom_entreprise: userData.organization,
-                  secteur: userData.sector || 'Non spécifié',
-                  collaborateurs: userData.company_size || '1-10',
-                  ca_annuel: 0,
-                  phone: userData.phone || ''
-                },
-                planType: 'pro',
-                amount: orderData.amount
-              }
-            }
-          );
-
-          if (functionError) {
-            console.error('❌ Erreur lors de la création du compte:', functionError);
-            toast({
-              title: "Commande validée mais erreur lors de la création du compte",
-              description: functionError.message || "Veuillez créer le compte manuellement",
-              variant: "destructive",
-            });
-            return;
-          }
-
-          logger.debug('Compte créé avec succès:', functionData);
-          
-          // Mettre à jour la commande avec le user_id nouvellement créé
-          const { error: updateUserIdError } = await supabase
-            .from('orders')
-            .update({ user_id: functionData.user.id })
-            .eq('id', orderId);
-
-          if (updateUserIdError) {
-            console.error('❌ Erreur lors de la mise à jour du user_id:', updateUserIdError);
-          }
-
+        if (userData?.email && userData?.password && userData?.organization) {
+          const created = await api.adminCreateOrganization({
+            name: userData.organization,
+            email: userData.email,
+            password: userData.password,
+            fullName: userData.name || userData.email,
+            phone: userData.phone,
+            sector: userData.sector,
+            plan: 'pro',
+          }) as { user: { id: string } };
+          await api.adminPatchOrder(orderId, { userId: created.user.id });
           toast({
             title: "Succès complet !",
             description: `Commande validée et compte créé pour ${userData.email}`,
           });
-        } catch (createError) {
-          console.error('❌ Erreur lors de l\'appel de la fonction:', createError);
-          toast({
-            title: "Commande validée mais erreur lors de la création du compte",
-            description: "Veuillez créer le compte manuellement",
-            variant: "destructive",
-          });
+          fetchOrders();
+          return;
         }
-      } else {
-        let message = 'Commande mise à jour avec succès';
-        switch (newStatus) {
-          case 'validated': message = 'Commande validée avec succès'; break;
-          case 'rejected': message = 'Commande rejetée avec succès'; break;
-          case 'suspended': message = 'Commande suspendue avec succès'; break;
-          case 'cancelled': message = 'Abonnement abrogé avec succès'; break;
-        }
-
-        toast({
-          title: "Succès",
-          description: message,
-        });
       }
 
+      const messages: Record<string, string> = {
+        validated: 'Commande validée avec succès',
+        rejected: 'Commande rejetée avec succès',
+        suspended: 'Commande suspendue avec succès',
+        cancelled: 'Abonnement abrogé avec succès',
+      };
+      toast({ title: "Succès", description: messages[newStatus] || 'Commande mise à jour avec succès' });
       fetchOrders();
     } catch (error) {
       console.error('Erreur:', error);
@@ -413,44 +239,17 @@ export default function SuperAdminOrders() {
         return;
       }
 
-      const { data: functionData, error: functionError } = await supabase.functions.invoke(
-        'create-organization-admin',
-        {
-          body: {
-            email: userData.email,
-            password: userData.password,
-            organizationData: {
-              nom_entreprise: userData.organization,
-              secteur: userData.sector || 'Non spécifié',
-              collaborateurs: userData.company_size || '1-10',
-              ca_annuel: 0,
-              phone: userData.phone || ''
-            },
-            planType: order.plan_type,
-            amount: order.amount
-          }
-        }
-      );
+      const created = await api.adminCreateOrganization({
+        name: userData.organization,
+        email: userData.email,
+        password: userData.password,
+        fullName: userData.name || userData.email,
+        phone: userData.phone,
+        sector: userData.sector,
+        plan: order.plan_type,
+      }) as { user: { id: string } };
 
-      if (functionError) {
-        console.error('Erreur lors de la création du compte:', functionError);
-        toast({
-          title: "Erreur",
-          description: functionError.message || "Impossible de créer le compte",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Mettre à jour la commande avec le user_id
-      const { error: updateError } = await supabase
-        .from('orders')
-        .update({ user_id: functionData.user.id })
-        .eq('id', orderId);
-
-      if (updateError) {
-        console.error('Erreur lors de la mise à jour du user_id:', updateError);
-      }
+      await api.adminPatchOrder(orderId, { userId: created.user.id });
 
       toast({
         title: "Compte créé avec succès !",
@@ -560,13 +359,7 @@ export default function SuperAdminOrders() {
       }
       
       if (newPlan) {
-        const { error } = await supabase
-          .from('orders')
-          .update({ plan_type: newPlan })
-          .eq('id', orderId);
-
-        if (error) throw error;
-
+        await api.adminPatchOrder(orderId, { planType: newPlan });
         toast({
           title: "Plan amélioré",
           description: `Le plan a été mis à niveau vers ${newPlan}`,
@@ -594,12 +387,7 @@ export default function SuperAdminOrders() {
       }
       
       if (newPlan) {
-        const { error } = await supabase
-          .from('orders')
-          .update({ plan_type: newPlan })
-          .eq('id', orderId);
-
-        if (error) throw error;
+        await api.adminPatchOrder(orderId, { planType: newPlan });
 
         toast({
           title: "Plan rétrogradé",
@@ -622,12 +410,7 @@ export default function SuperAdminOrders() {
     }
     
     try {
-      const { error } = await supabase
-        .from('orders')
-        .delete()
-        .eq('id', orderId);
-
-      if (error) throw error;
+      await api.adminDeleteOrder(orderId);
 
       toast({
         title: "Organisation supprimée",
@@ -655,15 +438,10 @@ export default function SuperAdminOrders() {
         phone: editFormData.phone
       };
 
-      const { error } = await supabase
-        .from('orders')
-        .update({ 
-          user_data: updatedUserData,
-          plan_type: editFormData.plan
-        })
-        .eq('id', selectedOrderForAction.id);
-
-      if (error) throw error;
+      await api.adminPatchOrder(selectedOrderForAction.id, {
+        userData: updatedUserData,
+        planType: editFormData.plan,
+      });
 
       toast({
         title: "Organisation modifiée",
@@ -685,15 +463,10 @@ export default function SuperAdminOrders() {
     if (!selectedOrderForAction) return;
     
     try {
-      const { error } = await supabase
-        .from('orders')
-        .update({ 
-          created_at: dateFormData.startDate + 'T00:00:00Z',
-          validated_at: dateFormData.endDate ? new Date(dateFormData.endDate).toISOString() : null
-        })
-        .eq('id', selectedOrderForAction.id);
-
-      if (error) throw error;
+      await api.adminPatchOrder(selectedOrderForAction.id, {
+        startDate: dateFormData.startDate,
+        endDate: dateFormData.endDate || undefined,
+      });
 
       toast({
         title: "Dates modifiées",
@@ -734,35 +507,14 @@ export default function SuperAdminOrders() {
 
       const amount = planPrices[newOrganization.plan] || 1300;
 
-      // Appeler l'edge function pour créer l'organisation complète
-      const { data: functionData, error: functionError } = await supabase.functions.invoke(
-        'create-organization-admin',
-        {
-          body: {
-            email: newOrganization.email,
-            password: newOrganization.password,
-            organizationData: {
-              nom_entreprise: newOrganization.name,
-              secteur: 'Non spécifié',
-              collaborateurs: '1-10',
-              ca_annuel: 0,
-              phone: newOrganization.phone || ''
-            },
-            planType: newOrganization.plan,
-            amount: amount
-          }
-        }
-      );
-
-      if (functionError) {
-        console.error('Erreur lors de la création de l\'organisation:', functionError);
-        toast({
-          title: "Erreur",
-          description: functionError.message || "Impossible de créer l'organisation",
-          variant: "destructive",
-        });
-        return;
-      }
+      await api.adminCreateOrganization({
+        name: newOrganization.name,
+        email: newOrganization.email,
+        password: newOrganization.password,
+        fullName: newOrganization.adminName || newOrganization.name,
+        phone: newOrganization.phone,
+        plan: newOrganization.plan,
+      });
 
       toast({
         title: "Organisation créée avec succès !",
@@ -1428,7 +1180,7 @@ export default function SuperAdminOrders() {
           </DialogHeader>
           {selectedOrderForAction && selectedOrderForAction.user_id && (
             <OrganizationModulesManager 
-              userId={selectedOrderForAction.user_id}
+              organizationId={(selectedOrderForAction as Order & { organization_id?: string }).organization_id || ''}
               organizationName={selectedOrderForAction.user_data?.company_name || selectedOrderForAction.user_data?.name || 'Organisation'}
             />
           )}

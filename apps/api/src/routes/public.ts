@@ -180,4 +180,43 @@ export async function registerPublicRoutes(app: FastifyInstance) {
         "Estimation indicative basée sur un pack de facteurs public versionné. Ce n'est pas un bilan certifié. Aucune trajectoire climatique ni ROI n'est affirmé.",
     };
   });
+
+  app.get("/v1/public/promo-codes/:code", async (request, reply) => {
+    const params = request.params as { code?: string };
+    const code = String(params.code ?? "").trim().toUpperCase();
+    if (!code) return reply.code(400).send({ error: "code requis" });
+    const { rows } = await pool.query(
+      `SELECT id, code, discount_percent, active, payload
+       FROM promo_codes WHERE upper(code) = $1 LIMIT 1`,
+      [code],
+    );
+    const row = rows[0] as
+      | {
+          id: string;
+          code: string;
+          discount_percent: number | null;
+          active: boolean;
+          payload: Record<string, unknown> | null;
+        }
+      | undefined;
+    if (!row || row.active === false) {
+      return reply.code(404).send({ error: "Code promo invalide" });
+    }
+    const payload = row.payload ?? {};
+    const rawType = String(payload.discount_type ?? "percentage");
+    const discountType = rawType === "fixed" ? "fixed" : "percent";
+    return {
+      promo: {
+        id: row.id,
+        code: row.code,
+        discount_type: discountType,
+        discount_value: Number(payload.discount_value ?? row.discount_percent ?? 0),
+        minimum_amount: Number(payload.minimum_amount ?? 0),
+        max_uses: payload.max_uses ?? null,
+        current_uses: Number(payload.current_uses ?? 0),
+        valid_until: payload.valid_until ?? null,
+        is_active: true,
+      },
+    };
+  });
 }
