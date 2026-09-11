@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import pg from "pg";
 import { buildTestApp } from "./helpers/buildTestApp.js";
 import { signToken } from "../plugins/auth.js";
-import { UNAVAILABLE_EMISSION_FACTOR_ERROR } from "../routes/calculate.js";
+import { DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR } from "../routes/calculate.js";
 import { UK_DATASET_VERSION, UK_SOURCE_KEY } from "../importers/ukGovGhg/types.js";
 
 const DATABASE_URL = process.env.DATABASE_URL_FRESH || process.env.DATABASE_URL;
@@ -36,8 +36,8 @@ describe("uk gov ghg 2026 bootstrap (live)", { skip: !DATABASE_URL }, () => {
       }
       assert.equal(gov.rows[0].status, "draft");
       assert.equal(gov.rows[0].catalog_status, "hidden");
-      assert.equal(gov.rows[0].calculation_status, "disabled");
-      assert.equal(gov.rows[0].resolver_status, "disabled");
+      assert.equal(gov.rows[0].calculation_status, "enabled");
+      assert.equal(gov.rows[0].resolver_status, "enabled");
 
       const visible = await pool.query(
         `SELECT COUNT(*)::int AS n FROM emission_factors f
@@ -85,8 +85,8 @@ describe("uk gov ghg 2026 bootstrap (live)", { skip: !DATABASE_URL }, () => {
       assert.equal(ademe.rows[0].n, 7394);
       assert.equal(ademe.rows[0].status, "approved");
       assert.equal(ademe.rows[0].catalog_status, "visible");
-      assert.equal(ademe.rows[0].calculation_status, "disabled");
-      assert.equal(ademe.rows[0].resolver_status, "disabled");
+      assert.equal(ademe.rows[0].calculation_status, "enabled");
+      assert.equal(ademe.rows[0].resolver_status, "enabled");
 
       const core = await pool.query(
         `SELECT COUNT(f.id)::int AS n, v.status, v.catalog_status, v.calculation_status, v.resolver_status
@@ -99,7 +99,7 @@ describe("uk gov ghg 2026 bootstrap (live)", { skip: !DATABASE_URL }, () => {
       assert.equal(core.rows[0].status, "approved");
       assert.equal(core.rows[0].catalog_status, "visible");
       assert.equal(core.rows[0].calculation_status, "enabled");
-      assert.equal(core.rows[0].resolver_status, "disabled");
+      assert.equal(core.rows[0].resolver_status, "enabled");
 
       const calcEligible = await pool.query(
         `SELECT COUNT(*)::int AS n FROM emission_factors f
@@ -180,7 +180,7 @@ describe("uk gov ghg 2026 bootstrap (live)", { skip: !DATABASE_URL }, () => {
         },
       });
       assert.equal(calc.statusCode, 400);
-      assert.equal(calc.json().error, UNAVAILABLE_EMISSION_FACTOR_ERROR);
+      assert.equal(calc.json().error, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
 
       const factors = await app.inject({
         method: "GET",

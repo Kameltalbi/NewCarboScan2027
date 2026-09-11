@@ -49,12 +49,12 @@ describe("factor resolver live matrix", { skip: !DATABASE_URL }, () => {
        GROUP BY 1,2,3 ORDER BY 1`,
     );
     const by = Object.fromEntries(gov.rows.map((r) => [r.source_key, r]));
-    assert.equal(by.ademe.calculation_status, "disabled");
-    assert.equal(by.ademe.resolver_status, "disabled");
-    assert.equal(by.uk_gov_ghg.calculation_status, "disabled");
-    assert.equal(by.uk_gov_ghg.resolver_status, "disabled");
+    assert.equal(by.ademe.calculation_status, "enabled");
+    assert.equal(by.ademe.resolver_status, "enabled");
+    assert.equal(by.uk_gov_ghg.calculation_status, "enabled");
+    assert.equal(by.uk_gov_ghg.resolver_status, "enabled");
     assert.equal(by.internal.calculation_status, "enabled");
-    assert.equal(by.internal.resolver_status, "disabled");
+    assert.equal(by.internal.resolver_status, "enabled");
   });
 
   it("matrix A–AF core cases", async () => {

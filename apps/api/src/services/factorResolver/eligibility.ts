@@ -2,6 +2,7 @@ import { evaluateEnergyBasis } from "./energyBasisPolicy.js";
 import { evaluateGeography } from "./geographyPolicy.js";
 import { evaluateGwp } from "./gwpPolicy.js";
 import { evaluateLifecycle } from "./lifecyclePolicy.js";
+import { isProductionSafeCandidate } from "./productionSafeSubset.js";
 import type { FactorCandidate, ResolveFactorInput } from "./types.js";
 import {
   compareUnits,
@@ -107,6 +108,12 @@ export function applyHardFilters(
     // Production mode already filtered in SQL; belt-and-suspenders:
     if (input.mode === "production" && c.resolverStatus !== "enabled") {
       rejected.push({ candidate: c, reasonCode: "RESOLVER_DISABLED" });
+      continue;
+    }
+
+    // FE V1: version flags may enable whole ADEME/UK versions — only safe subset auto-resolves.
+    if (input.mode === "production" && !isProductionSafeCandidate(c)) {
+      rejected.push({ candidate: c, reasonCode: "OUTSIDE_PRODUCTION_SAFE_SUBSET" });
       continue;
     }
 

@@ -61,6 +61,10 @@ export const CoreProofWorkspace: React.FC = () => {
   const [sourceFilename, setSourceFilename] = useState("facture-steg.pdf");
   const [factorId, setFactorId] = useState("");
   const [scope, setScope] = useState<"1" | "2" | "3">("2");
+  const [activity, setActivity] = useState("electricity");
+  const [country, setCountry] = useState("TN");
+  const [calcMode, setCalcMode] = useState<"resolver" | "pin">("resolver");
+  const [lastResolution, setLastResolution] = useState<Record<string, unknown> | null>(null);
 
   const [activeEvidenceId, setActiveEvidenceId] = useState<string | null>(null);
   const [runId, setRunId] = useState<string | null>(null);
@@ -158,30 +162,81 @@ export const CoreProofWorkspace: React.FC = () => {
     }
   };
 
+  const applyFactorTemplate = (id: string) => {
+    setFactorId(id);
+    const f = factors.find((x) => x.id === id);
+    if (!f) return;
+    setUnit(f.unit_denominator);
+    const map: Record<string, { activity: string; country: string; scope: "1" | "2" | "3" }> = {
+      electricity_kwh: { activity: "electricity", country: "TN", scope: "2" },
+      heat_kwh: { activity: "heat", country: "TN", scope: "2" },
+      gas_m3: { activity: "natural gas", country: "TN", scope: "1" },
+      fuel_liters: { activity: "fuel oil", country: "TN", scope: "1" },
+      fleet_diesel: { activity: "diesel", country: "TN", scope: "1" },
+      fleet_essence: { activity: "essence", country: "TN", scope: "1" },
+      refrigerant_kg: { activity: "refrigerant", country: "TN", scope: "1" },
+      purchases_dt: { activity: "purchases", country: "TN", scope: "3" },
+    };
+    const t = map[f.stable_factor_id];
+    if (t) {
+      setActivity(t.activity);
+      setCountry(t.country);
+      setScope(t.scope);
+    }
+  };
+
   const runCalculate = async () => {
-    if (!factorId) return;
     setBusy(true);
     setProvenance(null);
     setReportId(null);
+    setLastResolution(null);
     try {
-      const calc = (await api.calculate({
-        method: "bilan_carbone",
-        periodStart: `${new Date().getFullYear()}-01-01`,
-        periodEnd: `${new Date().getFullYear()}-12-31`,
-        lines: [
-          {
-            lineKey: selectedFactor?.stable_factor_id ?? "line-1",
-            scope: Number(scope) as 1 | 2 | 3,
-            evidenceId: activeEvidenceId ?? undefined,
-            factorId,
-            activityQuantity: quantity,
-            activityUnit: unit,
-          },
-        ],
-      })) as {
+      const year = new Date().getFullYear();
+      let calc: {
         runId: string;
         totals: Record<string, string>;
+        resolution?: Record<string, unknown>;
       };
+
+      if (calcMode === "resolver") {
+        calc = await api.resolveAndCalculate({
+          method: "bilan_carbone",
+          periodStart: `${year}-01-01`,
+          periodEnd: `${year}-12-31`,
+          lineKey: activity.replace(/\s+/g, "_") || "line-1",
+          scope: Number(scope) as 1 | 2 | 3,
+          evidenceId: activeEvidenceId ?? undefined,
+          activity,
+          quantity,
+          unit,
+          country: country || undefined,
+        });
+        setLastResolution(calc.resolution ?? null);
+      } else {
+        if (!factorId) {
+          toast({
+            title: "Facteur requis",
+            description: "Mode pin Core TN : choisissez un facteur registre.",
+            variant: "destructive",
+          });
+          return;
+        }
+        calc = (await api.calculate({
+          method: "bilan_carbone",
+          periodStart: `${year}-01-01`,
+          periodEnd: `${year}-12-31`,
+          lines: [
+            {
+              lineKey: selectedFactor?.stable_factor_id ?? "line-1",
+              scope: Number(scope) as 1 | 2 | 3,
+              evidenceId: activeEvidenceId ?? undefined,
+              factorId,
+              activityQuantity: quantity,
+              activityUnit: unit,
+            },
+          ],
+        })) as { runId: string; totals: Record<string, string> };
+      }
 
       setRunId(calc.runId);
       setRunTotals(calc.totals);
@@ -351,20 +406,63 @@ export const CoreProofWorkspace: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="space-y-1">
-              <Label>Facteur (registre)</Label>
-              <Select value={factorId} onValueChange={setFactorId}>
+              <Label>Mode de calcul</Label>
+              <Select
+                value={calcMode}
+                onValueChange={(v) => setCalcMode(v as "resolver" | "pin")}
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder="Choisir un facteur" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {factors.map((f) => (
-                    <SelectItem key={f.id} value={f.id}>
-                      {f.name} — {f.value} {f.unit_numerator}/{f.unit_denominator}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="resolver">Factor Resolver (recommandé)</SelectItem>
+                  <SelectItem value="pin">Pin Core TN (/v1/calculate)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+            {calcMode === "resolver" ? (
+              <>
+                <div className="space-y-1">
+                  <Label>Activité</Label>
+                  <Input value={activity} onChange={(e) => setActivity(e.target.value)} />
+                </div>
+                <div className="space-y-1">
+                  <Label>Pays (ISO)</Label>
+                  <Input value={country} onChange={(e) => setCountry(e.target.value.toUpperCase())} />
+                </div>
+                <div className="space-y-1">
+                  <Label>Modèle Core TN (optionnel)</Label>
+                  <Select value={factorId} onValueChange={applyFactorTemplate}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Préremplir depuis Core TN" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {factors.map((f) => (
+                        <SelectItem key={f.id} value={f.id}>
+                          {f.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            ) : (
+              <div className="space-y-1">
+                <Label>Facteur (registre Core TN)</Label>
+                <Select value={factorId} onValueChange={setFactorId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir un facteur" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {factors.map((f) => (
+                      <SelectItem key={f.id} value={f.id}>
+                        {f.name} — {f.value} {f.unit_numerator}/{f.unit_denominator}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div className="space-y-1">
               <Label>Scope</Label>
               <Select value={scope} onValueChange={(v) => setScope(v as "1" | "2" | "3")}>
@@ -378,9 +476,20 @@ export const CoreProofWorkspace: React.FC = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={runCalculate} disabled={busy || !factorId}>
-              Calculer via carbon-engine
+            <Button
+              onClick={runCalculate}
+              disabled={busy || (calcMode === "pin" && !factorId) || (calcMode === "resolver" && !activity)}
+            >
+              {calcMode === "resolver" ? "Calculer via Resolver" : "Calculer via carbon-engine"}
             </Button>
+            {lastResolution && (
+              <p className="text-xs text-muted-foreground">
+                Resolver: {String(lastResolution.status)}
+                {lastResolution.selectedFactor
+                  ? ` → ${(lastResolution.selectedFactor as { stableFactorId?: string; source?: { key?: string } }).stableFactorId} (${(lastResolution.selectedFactor as { source?: { key?: string } }).source?.key})`
+                  : ""}
+              </p>
+            )}
             {runTotals && (
               <p className="text-sm">
                 Total run : <strong>{runTotals.total} kgCO₂e</strong>

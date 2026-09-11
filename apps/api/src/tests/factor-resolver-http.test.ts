@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import pg from "pg";
 import { buildTestApp } from "./helpers/buildTestApp.js";
 import { signToken } from "../plugins/auth.js";
-import { UNAVAILABLE_EMISSION_FACTOR_ERROR } from "../routes/calculate.js";
+import { DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR } from "../routes/calculate.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -60,7 +60,7 @@ describe("factor resolver HTTP shadow", { skip: !DATABASE_URL }, () => {
       const body = res.json() as { status: string; resolverVersion: string; rulesetVersion: string };
       assert.ok(body.status);
       assert.equal(body.resolverVersion, "1");
-      assert.equal(body.rulesetVersion, "2026-09-v1");
+      assert.equal(body.rulesetVersion, "2026-09-v2");
 
       const ledgerAfter = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
       assert.equal(ledgerAfter.rows[0].n, ledgerBefore.rows[0].n);
@@ -106,7 +106,7 @@ describe("factor resolver HTTP shadow", { skip: !DATABASE_URL }, () => {
         },
       });
       assert.equal(calc.statusCode, 400);
-      assert.equal(calc.json().error, UNAVAILABLE_EMISSION_FACTOR_ERROR);
+      assert.equal(calc.json().error, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
     } finally {
       await app.close();
       await pool.end();

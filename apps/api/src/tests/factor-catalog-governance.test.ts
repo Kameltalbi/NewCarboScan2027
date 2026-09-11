@@ -94,7 +94,7 @@ describe("factor catalog governance 019", () => {
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(Number(catalogCount.rows[0].n), 7402);
+      assert.equal(Number(catalogCount.rows[0].n), 10024);
 
       const approvedHidden = await searchFactors(pool, {
         status: "approved",
@@ -145,7 +145,7 @@ describe("factor catalog governance 019", () => {
       assert.equal(detail!.governance.versionDataStatus, "approved");
       assert.equal(detail!.governance.catalogStatus, "visible");
       assert.equal(detail!.governance.calculationStatus, "enabled");
-      assert.equal(detail!.governance.resolverStatus, "disabled");
+      assert.equal(detail!.governance.resolverStatus, "enabled");
     } finally {
       await pool.end();
     }
@@ -176,7 +176,8 @@ describe("factor catalog governance 019", () => {
       assert.ok(visible.items.some((i) => i.id === rows[0].id));
       const detail = await getFactorById(pool, rows[0].id, false);
       assert.equal(detail!.units.normalizationStatus, "review_required");
-      assert.equal(detail!.governance.calculationStatus, "disabled");
+      // Version-level calc may be enabled (024); review_required still never auto-resolves.
+      assert.equal(detail!.governance.calculationStatus, "enabled");
       assert.equal(await legacyFactorCount(pool), 8);
     } finally {
       await pool.end();
@@ -197,7 +198,7 @@ describe("factor catalog governance 019", () => {
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(Number(countRes.rows[0].n), 7402);
+      assert.equal(Number(countRes.rows[0].n), 10024);
 
       const ademeState = await pool.query<{
         status: string;
@@ -210,14 +211,14 @@ describe("factor catalog governance 019", () => {
       );
       assert.equal(ademeState.rows[0]?.status, "approved");
       assert.equal(ademeState.rows[0]?.catalog_status, "visible");
-      assert.equal(ademeState.rows[0]?.calculation_status, "disabled");
-      assert.equal(ademeState.rows[0]?.resolver_status, "disabled");
+      assert.equal(ademeState.rows[0]?.calculation_status, "enabled");
+      assert.equal(ademeState.rows[0]?.resolver_status, "enabled");
     } finally {
       await pool.end();
     }
   });
 
-  it("resolver_status filter has no calculation effect (019)", async (t) => {
+  it("resolver_status filter reflects FE V1 enablement (024)", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
@@ -229,14 +230,14 @@ describe("factor catalog governance 019", () => {
         resolver_status: "enabled",
         limit: 5,
       });
-      assert.equal(enabled.items.length, 0);
+      assert.equal(enabled.items.length, 5);
 
       const disabled = await searchFactors(pool, {
         status: "approved",
         resolver_status: "disabled",
         limit: 100,
       });
-      assert.equal(disabled.items.length, 100);
+      assert.equal(disabled.items.length, 0);
     } finally {
       await pool.end();
     }

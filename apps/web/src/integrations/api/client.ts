@@ -129,6 +129,137 @@ export type LeadInput = {
   payload?: Record<string, unknown>;
 };
 
+export type FactorCatalogSearchParams = {
+  q?: string;
+  source?: string;
+  dataset_version?: string;
+  factor_type?: string;
+  internal_category?: string;
+  internal_subcategory?: string;
+  country_code?: string;
+  region?: string;
+  unit_numerator?: string;
+  unit_denominator?: string;
+  factor_year?: number;
+  status?: "approved" | "draft" | "deprecated";
+  limit?: number;
+  cursor?: string;
+};
+
+export type FactorCatalogFacetsParams = Omit<FactorCatalogSearchParams, "limit" | "cursor">;
+
+export type FactorCatalogSearchItem = {
+  id: string;
+  stableFactorId: string;
+  externalCode: string | null;
+  name: string;
+  value: number;
+  unitNumerator: string;
+  unitDenominator: string;
+  factorType: string;
+  source: { key: string | null; name: string };
+  datasetVersion: string | null;
+  sourceCategory: string | null;
+  sourceSubcategory: string | null;
+  internalCategory: string | null;
+  internalSubcategory: string | null;
+  countryCode: string | null;
+  region: string | null;
+  factorYear: number | null;
+  status: string;
+  normalizationStatus: string | null;
+};
+
+export type FactorCatalogSearchResponse = {
+  items: FactorCatalogSearchItem[];
+  nextCursor: string | null;
+  hasMore: boolean;
+  /** Exact match count for the same q + filters as the search (cursor-independent). */
+  total: number;
+};
+
+export type FactorCatalogFacetBucket = { value: string; count: number };
+
+export type FactorCatalogFacetsResponse = {
+  cacheKey: string;
+  sources: FactorCatalogFacetBucket[];
+  factorTypes: FactorCatalogFacetBucket[];
+  internalCategories: FactorCatalogFacetBucket[];
+  countryCodes: FactorCatalogFacetBucket[];
+  unitDenominators: FactorCatalogFacetBucket[];
+  factorYears: FactorCatalogFacetBucket[];
+};
+
+export type FactorCatalogDetail = {
+  id: string;
+  stableFactorId: string;
+  versionNumber: number;
+  externalCode: string | null;
+  name: string;
+  value: number;
+  unitNumerator: string;
+  unitDenominator: string;
+  factorType: string;
+  source: {
+    key: string | null;
+    name: string;
+    license: string | null;
+    homepage: string | null;
+  };
+  version: {
+    id: string;
+    label: string;
+    datasetVersion: string | null;
+    gwpSet: string | null;
+    sourceUrl: string | null;
+    status: string;
+  };
+  sourceCategory: string | null;
+  sourceSubcategory: string | null;
+  internalCategory: string | null;
+  internalSubcategory: string | null;
+  countryCode: string | null;
+  region: string | null;
+  factorYear: number | null;
+  geography: string | null;
+  status: string;
+  governance: {
+    dataStatus: string;
+    versionDataStatus: string;
+    catalogStatus: string;
+    calculationStatus: string;
+    resolverStatus: string;
+  };
+  provenance: {
+    sourceOriginal: string | null;
+    legacyId: string | null;
+    legacyRowId: string | null;
+    legacySlug: string | null;
+    originalName: string | null;
+    originalValue: string | null;
+    originalUnit: string | null;
+    legacyYear: number | null;
+    transformations: unknown[];
+  };
+  units: {
+    originalUnit: string | null;
+    qualifiers: string | null;
+    normalizationStatus: string | null;
+  };
+};
+
+function buildFactorCatalogQuery(
+  params: FactorCatalogSearchParams | FactorCatalogFacetsParams,
+): string {
+  const sp = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === "") continue;
+    sp.set(key, String(value));
+  }
+  const qs = sp.toString();
+  return qs ? `?${qs}` : "";
+}
+
 export const api = {
   health: () => request<{ ok: boolean }>("/health", {}, { auth: false }),
 
@@ -261,6 +392,68 @@ export const api = {
       body: JSON.stringify(payload),
     }),
 
+  /** Shadow Factor Resolver — diagnostic only, no ledger write. */
+  resolveFactor: (payload: {
+    activity: string;
+    unit: string;
+    quantity?: string;
+    country?: string;
+    region?: string;
+    reportingYear?: number;
+    internalCategory?: string;
+    internalSubcategory?: string;
+    lifecycleBoundary?: string;
+    energyBasis?: "gross_cv" | "net_cv";
+    gwpBasis?: string;
+    preferredSource?: string;
+    factorTypeHint?: "physical" | "monetary";
+    mode?: "shadow";
+  }) =>
+    request<Record<string, unknown>>("/v1/factors/resolve", {
+      method: "POST",
+      body: JSON.stringify({ ...payload, mode: "shadow" }),
+    }),
+
+  /**
+   * Production resolve-and-calculate.
+   * Server resolves factor; client must not send factorId/value/conversion.
+   * Gated by FACTOR_RESOLVER_CALCULATION_ENABLED.
+   */
+  resolveAndCalculate: (payload: {
+    method: "ghg_protocol" | "bilan_carbone" | "cbam" | "pcf";
+    periodStart?: string;
+    periodEnd?: string;
+    lineKey: string;
+    scope: 1 | 2 | 3;
+    evidenceId?: string;
+    activity: string;
+    quantity: string;
+    unit: string;
+    country?: string;
+    region?: string;
+    reportingYear?: number;
+    internalCategory?: string;
+    internalSubcategory?: string;
+    lifecycleBoundary?: string;
+    energyBasis?: "gross_cv" | "net_cv";
+    gwpBasis?: string;
+    preferredSource?: string;
+    factorTypeHint?: "physical" | "monetary";
+  }) =>
+    request<{
+      runId: string;
+      totals: Record<string, string>;
+      resolution: Record<string, unknown>;
+      normalizedQuantity: string;
+      normalizedUnit: string;
+      originalQuantity: string;
+      originalUnit: string;
+      lines: Array<Record<string, unknown>>;
+    }>("/v1/factors/resolve-and-calculate", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
   createEvidence: (payload: unknown) =>
     request<{ evidence: Record<string, unknown> }>("/v1/evidence", {
       method: "POST",
@@ -278,6 +471,20 @@ export const api = {
 
   listFactors: () =>
     request<{ items: Array<Record<string, unknown>>; total: number }>("/v1/factors"),
+
+  /** Registry catalog search (server-side). Do not use for legacy GET /v1/factors. */
+  searchEmissionFactors: (params: FactorCatalogSearchParams = {}) => {
+    const qs = buildFactorCatalogQuery(params);
+    return request<FactorCatalogSearchResponse>(`/v1/factors/search${qs}`);
+  },
+
+  getEmissionFactorFacets: (params: FactorCatalogFacetsParams = {}) => {
+    const qs = buildFactorCatalogQuery(params);
+    return request<FactorCatalogFacetsResponse>(`/v1/factors/facets${qs}`);
+  },
+
+  getEmissionFactor: (id: string) =>
+    request<FactorCatalogDetail>(`/v1/factors/${id}`),
 
   listRuns: () =>
     request<{ items: Array<Record<string, unknown>> }>("/v1/runs"),

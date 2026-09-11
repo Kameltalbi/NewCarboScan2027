@@ -312,6 +312,7 @@ describe("factor search live DB", () => {
     try {
       const allIds: string[] = [];
       let cursor: string | null | undefined;
+      let expectedTotal: number | undefined;
 
       for (let page = 0; page < 3; page++) {
         const result = await searchFactors(
@@ -320,6 +321,10 @@ describe("factor search live DB", () => {
           cursor ? decodeSearchCursor(cursor) : undefined,
         );
         assert.ok(result.items.length > 0, `page ${page + 1} empty`);
+        assert.equal(typeof result.total, "number");
+        assert.ok(result.total >= result.items.length);
+        if (expectedTotal === undefined) expectedTotal = result.total;
+        else assert.equal(result.total, expectedTotal, "total stable across pages");
         for (const item of result.items) {
           assert.ok(!allIds.includes(item.id), `duplicate id on page ${page + 1}`);
           allIds.push(item.id);
@@ -329,6 +334,54 @@ describe("factor search live DB", () => {
         assert.ok(cursor);
       }
       assert.ok(allIds.length >= 10);
+    } finally {
+      await pool.end();
+    }
+  });
+
+  it("search total matches q + filters and is 0 when empty", async (t) => {
+    if (!DATABASE_URL) {
+      t.skip("DATABASE_URL unset");
+      return;
+    }
+    const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
+    try {
+      const all = await searchFactors(pool, { status: "approved", limit: 20 });
+      assert.equal(all.total, 10024);
+      assert.equal(all.items.length, 20);
+      assert.equal(all.hasMore, true);
+
+      const code = await searchFactors(pool, { status: "approved", q: "26815", limit: 20 });
+      assert.equal(code.total, 1);
+      assert.equal(code.hasMore, false);
+      assert.equal(code.nextCursor, null);
+
+      const empty = await searchFactors(pool, {
+        status: "approved",
+        q: "zzzxxyyzz_no_match_999",
+        limit: 20,
+      });
+      assert.equal(empty.total, 0);
+      assert.equal(empty.items.length, 0);
+      assert.equal(empty.hasMore, false);
+      assert.equal(empty.nextCursor, null);
+
+      const filtered = await searchFactors(pool, {
+        status: "approved",
+        source: "internal",
+        limit: 20,
+      });
+      assert.equal(filtered.total, 8);
+      assert.equal(filtered.hasMore, false);
+
+      const tomate = await searchFactors(pool, {
+        status: "approved",
+        q: "tomate concentree",
+        limit: 20,
+      });
+      assert.ok(tomate.total > 0);
+      assert.ok(tomate.total < 10024);
+      assert.ok(tomate.total >= tomate.items.length);
     } finally {
       await pool.end();
     }
@@ -530,7 +583,7 @@ describe("factor search live DB", () => {
       });
       const detail = await getFactorById(pool, list.items[0].id, false);
       assert.ok(detail);
-      assert.equal(detail!.governance.calculationStatus, "disabled");
+      assert.equal(detail!.governance.calculationStatus, "enabled");
     } finally {
       await pool.end();
     }

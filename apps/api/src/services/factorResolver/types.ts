@@ -1,7 +1,8 @@
 /** Factor Resolver V1 — shared types, versions, reason codes. */
 
 export const RESOLVER_VERSION = "1";
-export const RULESET_VERSION = "2026-09-v1";
+/** Bumped when production safe-subset allowlist is enforced (FE V1). */
+export const RULESET_VERSION = "2026-09-v2";
 
 export type ResolveMode = "shadow" | "production";
 

@@ -19,6 +19,11 @@ const ACTIVITY_SYNONYMS: Record<string, string[]> = {
   gazole: ["diesel", "gazole"],
   petrol: ["petrol", "essence", "gasoline"],
   essence: ["petrol", "essence", "gasoline"],
+  // Exact FR/EN labels for Core TN heat — no fuzzy matching.
+  heat: ["heat", "chaleur", "vapeur", "heat_kwh", "district heating"],
+  "district heating": ["heat", "chaleur", "vapeur", "heat_kwh", "district heating"],
+  chaleur: ["heat", "chaleur", "vapeur", "heat_kwh"],
+  vapeur: ["heat", "chaleur", "vapeur", "heat_kwh"],
   flight: ["flight", "avion", "air passenger", "passenger"],
   avion: ["flight", "avion", "air"],
   freight: ["freight", "fret", "tonne.km", "tkm"],

@@ -46,8 +46,8 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
       );
       assert.equal(gov.rows[0].status, "draft");
       assert.equal(gov.rows[0].catalog_status, "hidden");
-      assert.equal(gov.rows[0].calculation_status, "disabled");
-      assert.equal(gov.rows[0].resolver_status, "disabled");
+      assert.equal(gov.rows[0].calculation_status, "enabled");
+      assert.equal(gov.rows[0].resolver_status, "enabled");
 
       const ademeGov = await pool.query(
         `SELECT v.status, v.catalog_status, v.calculation_status, v.resolver_status
@@ -57,8 +57,8 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
       );
       assert.equal(ademeGov.rows[0].status, "approved");
       assert.equal(ademeGov.rows[0].catalog_status, "visible");
-      assert.equal(ademeGov.rows[0].calculation_status, "disabled");
-      assert.equal(ademeGov.rows[0].resolver_status, "disabled");
+      assert.equal(ademeGov.rows[0].calculation_status, "enabled");
+      assert.equal(ademeGov.rows[0].resolver_status, "enabled");
 
       const coreGov = await pool.query(
         `SELECT v.status, v.catalog_status, v.calculation_status, v.resolver_status
@@ -69,7 +69,7 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
       assert.equal(coreGov.rows[0].status, "approved");
       assert.equal(coreGov.rows[0].catalog_status, "visible");
       assert.equal(coreGov.rows[0].calculation_status, "enabled");
-      assert.equal(coreGov.rows[0].resolver_status, "disabled");
+      assert.equal(coreGov.rows[0].resolver_status, "enabled");
 
       const visible = await pool.query(
         `SELECT COUNT(*)::int AS n FROM emission_factors f
@@ -221,7 +221,7 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
       );
       assert.equal(kinds.rows[0].n, 2622);
 
-      // UK not calculation-eligible
+      // FE V1 (024): UK version calc+resolver enabled; auto-resolve limited by safe subset ruleset
       const calc = await pool.query(
         `SELECT COUNT(*)::int AS n FROM emission_factors f
          JOIN emission_factor_versions v ON v.id = f.version_id
@@ -231,9 +231,8 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
            AND v.calculation_status = 'enabled'`,
         [UK_SOURCE_KEY, UK_DATASET_VERSION],
       );
-      assert.equal(calc.rows[0].n, 0);
+      assert.equal(calc.rows[0].n, 2622);
 
-      // resolver disabled
       const res = await pool.query(
         `SELECT COUNT(*)::int AS n FROM emission_factors f
          JOIN emission_factor_versions v ON v.id = f.version_id
@@ -242,7 +241,7 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
            AND v.resolver_status = 'enabled'`,
         [UK_SOURCE_KEY, UK_DATASET_VERSION],
       );
-      assert.equal(res.rows[0].n, 0);
+      assert.equal(res.rows[0].n, 2622);
     } finally {
       await pool.end();
     }

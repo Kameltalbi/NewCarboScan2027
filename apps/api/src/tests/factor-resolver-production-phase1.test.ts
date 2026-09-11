@@ -10,7 +10,6 @@ import { signToken } from "../plugins/auth.js";
 import {
   DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR,
   REGISTRY_FACTOR_OVERRIDE_ERROR,
-  UNAVAILABLE_EMISSION_FACTOR_ERROR,
 } from "../routes/calculate.js";
 import { RESOLVER_CALCULATION_DISABLED_ERROR } from "../services/factorResolver/featureFlags.js";
 import {
@@ -117,12 +116,13 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
        GROUP BY 1,2,3`,
     );
     const by = Object.fromEntries(gov.rows.map((r) => [r.source_key, r]));
-    assert.equal(by.ademe.calculation_status, "disabled");
-    assert.equal(by.ademe.resolver_status, "disabled");
-    assert.equal(by.uk_gov_ghg.calculation_status, "disabled");
-    assert.equal(by.uk_gov_ghg.resolver_status, "disabled");
+    // FE V1 migration 024: version-level calc+resolver enabled; safe subset in ruleset
+    assert.equal(by.ademe.calculation_status, "enabled");
+    assert.equal(by.ademe.resolver_status, "enabled");
+    assert.equal(by.uk_gov_ghg.calculation_status, "enabled");
+    assert.equal(by.uk_gov_ghg.resolver_status, "enabled");
     assert.equal(by.internal.calculation_status, "enabled");
-    assert.equal(by.internal.resolver_status, "disabled");
+    assert.equal(by.internal.resolver_status, "enabled");
     assert.equal(by.internal.n, EXPECTED_SUBSET_COUNTS.coreTn);
 
     const ademeSafe = await pool.query(
@@ -180,13 +180,9 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
         ],
       },
     });
-    // Currently calculation_status disabled → UNAVAILABLE; policy also blocks non-internal
+    // FE V1: ADEME calc may be enabled at version level — direct UUID still blocked
     assert.equal(ademe.statusCode, 400);
-    assert.ok(
-      [UNAVAILABLE_EMISSION_FACTOR_ERROR, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR].includes(
-        ademe.json().error,
-      ),
-    );
+    assert.equal(ademe.json().error, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
 
     const uk = await app.inject({
       method: "POST",
@@ -206,47 +202,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       },
     });
     assert.equal(uk.statusCode, 400);
-    assert.ok(
-      [UNAVAILABLE_EMISSION_FACTOR_ERROR, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR].includes(
-        uk.json().error,
-      ),
-    );
-
-    // Even if ADEME calculation_status were enabled, direct UUID must still be blocked
-    await pool.query(
-      `UPDATE emission_factor_versions v
-       SET calculation_status = 'enabled'
-       FROM factor_sources s
-       WHERE s.id = v.source_id AND s.source_key = 'ademe'`,
-    );
-    try {
-      const ademeEnabled = await app.inject({
-        method: "POST",
-        url: "/v1/calculate",
-        headers: authHeaders(),
-        payload: {
-          method: "bilan_carbone",
-          lines: [
-            {
-              lineKey: "ademe-enabled-bypass",
-              scope: 1,
-              factorId: ademeId,
-              activityQuantity: "1",
-              activityUnit: "kWh",
-            },
-          ],
-        },
-      });
-      assert.equal(ademeEnabled.statusCode, 400);
-      assert.equal(ademeEnabled.json().error, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
-    } finally {
-      await pool.query(
-        `UPDATE emission_factor_versions v
-         SET calculation_status = 'disabled'
-         FROM factor_sources s
-         WHERE s.id = v.source_id AND s.source_key = 'ademe'`,
-      );
-    }
+    assert.equal(uk.json().error, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
 
     const override = await app.inject({
       method: "POST",
@@ -331,27 +287,9 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
     assert.equal(ledgerAfter.rows[0].n, ledgerBefore.rows[0].n);
   });
 
-  it("flag ON but ADEME/UK resolver disabled: no production calc; fake payload rejected", async () => {
+  it("flag ON: fake payload rejected; non-RESOLVED writes nothing", async () => {
     process.env.FACTOR_RESOLVER_CALCULATION_ENABLED = "true";
     const ledgerBefore = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
-
-    const ademeResolve = await app.inject({
-      method: "POST",
-      url: "/v1/factors/resolve-and-calculate",
-      headers: authHeaders(),
-      payload: {
-        method: "bilan_carbone",
-        lineKey: "ademe-flag-on",
-        scope: 1,
-        activity: "electricity",
-        quantity: "10",
-        unit: "kWh",
-        country: "FR",
-      },
-    });
-    // production mode finds no resolver-enabled candidates → NOT RESOLVED
-    assert.ok([404, 422].includes(ademeResolve.statusCode));
-    assert.equal(ademeResolve.json().error, "FACTOR_NOT_RESOLVED");
 
     const fakeBody = await app.inject({
       method: "POST",
@@ -372,32 +310,30 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
     });
     assert.equal(fakeBody.statusCode, 400);
 
+    const noMatch = await app.inject({
+      method: "POST",
+      url: "/v1/factors/resolve-and-calculate",
+      headers: authHeaders(),
+      payload: {
+        method: "bilan_carbone",
+        lineKey: "nomatch",
+        scope: 2,
+        activity: "zzzxxyyzz_no_factor",
+        quantity: "10",
+        unit: "kWh",
+        country: "FR",
+      },
+    });
+    assert.ok([404, 422].includes(noMatch.statusCode));
+    assert.equal(noMatch.json().error, "FACTOR_NOT_RESOLVED");
+
     const ledgerAfter = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
     assert.equal(ledgerAfter.rows[0].n, ledgerBefore.rows[0].n);
     delete process.env.FACTOR_RESOLVER_CALCULATION_ENABLED;
   });
 
-  it("E2E Core TN: temporary resolver_status enable in txn → calculate + ledger + rollback leave", async () => {
+  it("E2E Core TN resolve-and-calculate + ledger provenance", async () => {
     process.env.FACTOR_RESOLVER_CALCULATION_ENABLED = "true";
-    const client = await pool.connect();
-    try {
-      await client.query("BEGIN");
-      await client.query(
-        `UPDATE emission_factor_versions v
-         SET resolver_status = 'enabled'
-         FROM factor_sources s
-         WHERE s.id = v.source_id AND s.source_key = 'internal'`,
-      );
-
-      // Use dedicated pool query against same DB — but uncommitted txn not visible to other connections!
-      // So run resolveAndCalculate using this client by temporarily swapping... 
-      // Instead: call resolveFactor + engine path via HTTP won't see uncommitted data.
-      // Use resolveAndCalculate(pool) only after COMMIT of enable, then disable after test.
-      await client.query("COMMIT");
-    } finally {
-      client.release();
-    }
-
     const ledgerBefore = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
 
     try {
@@ -427,7 +363,6 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       assert.equal(body.resolution.selectedFactor.stableFactorId, "electricity_kwh");
       assert.equal(body.resolution.selectedFactor.source.key, "internal");
       assert.equal(body.normalizedQuantity, "1000");
-      // 1000 * 0.523 = 523
       assert.equal(Number(body.lines[0].resultKgCo2e), 523);
 
       const led = await pool.query(
@@ -439,7 +374,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       const prov = led.rows[0].provenance;
       assert.equal(prov.source, "api/v1/factors/resolve-and-calculate");
       assert.equal(prov.resolverVersion, "1");
-      assert.equal(prov.rulesetVersion, "2026-09-v1");
+      assert.equal(prov.rulesetVersion, "2026-09-v2");
       assert.equal(prov.stableFactorId, "electricity_kwh");
       assert.equal(prov.sourceKey, "internal");
       assert.equal(prov.originalQuantity, "1000");
@@ -452,46 +387,8 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       const ledgerAfter = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
       assert.equal(ledgerAfter.rows[0].n, ledgerBefore.rows[0].n + 1);
     } finally {
-      // Restore Core TN resolver disabled — Phase 1 must not leave activation
-      await pool.query(
-        `UPDATE emission_factor_versions v
-         SET resolver_status = 'disabled'
-         FROM factor_sources s
-         WHERE s.id = v.source_id AND s.source_key = 'internal'`,
-      );
       delete process.env.FACTOR_RESOLVER_CALCULATION_ENABLED;
-
-      const gov = await pool.query(
-        `SELECT v.resolver_status FROM emission_factor_versions v
-         JOIN factor_sources s ON s.id = v.source_id WHERE s.source_key = 'internal'`,
-      );
-      assert.equal(gov.rows[0].resolver_status, "disabled");
     }
-  });
-
-  it("non-RESOLVED statuses produce no ledger (ambiguous FR electricity with flag on + temp internal only)", async () => {
-    process.env.FACTOR_RESOLVER_CALCULATION_ENABLED = "true";
-    // Ensure internal resolver disabled so production won't pick Core; FR electricity → AMBIGUOUS/REQUIRES in shadow terms
-    // With production mode and no resolver-enabled sources, NO_MATCH / FACTOR_NOT_RESOLVED
-    const before = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
-    const res = await app.inject({
-      method: "POST",
-      url: "/v1/factors/resolve-and-calculate",
-      headers: authHeaders(),
-      payload: {
-        method: "bilan_carbone",
-        lineKey: "fr-amb",
-        scope: 2,
-        activity: "electricity",
-        quantity: "10",
-        unit: "kWh",
-        country: "FR",
-      },
-    });
-    assert.ok([404, 422].includes(res.statusCode));
-    const after = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
-    assert.equal(after.rows[0].n, before.rows[0].n);
-    delete process.env.FACTOR_RESOLVER_CALCULATION_ENABLED;
   });
 
   it("shadow matrix statuses still work without calculation", async () => {

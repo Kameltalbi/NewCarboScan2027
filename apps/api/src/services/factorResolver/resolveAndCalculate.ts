@@ -11,6 +11,7 @@ import {
   isResolverCalculationEnabled,
   RESOLVER_CALCULATION_DISABLED_ERROR,
 } from "./featureFlags.js";
+import { PRODUCTION_SAFE_FACTOR_SQL } from "./productionSafeSubset.js";
 import type { ResolveFactorInput, ResolveFactorResult, UnitConversionResult } from "./types.js";
 import { applyQuantityConversion, normalizeResolverUnit } from "./unitCompatibility.js";
 
@@ -131,7 +132,8 @@ export async function resolveAndCalculate(
        AND f.status = 'approved'
        AND v.status = 'approved'
        AND v.calculation_status = 'enabled'
-       AND v.resolver_status = 'enabled'`,
+       AND v.resolver_status = 'enabled'
+       AND ${PRODUCTION_SAFE_FACTOR_SQL}`,
     [selectedId],
   );
 
