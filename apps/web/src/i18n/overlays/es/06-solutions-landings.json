@@ -1,0 +1,1332 @@
+{
+  "solutions": {
+    "home": {
+      "hero": {
+        "title": "Reduzca sus emisiones. Acelere su rendimiento.",
+        "subtitle": "DecarboTech® transforma sus huellas de carbono en acciones concretas y medibles. Acompañamos a empresas del Magreb y África en la implementación de planes de descarbonización adaptados a su realidad.",
+        "discoverButton": "Descubra nuestras soluciones",
+        "contactButton": "Solicitar un diagnóstico gratuito"
+      },
+      "mission": {
+        "quote": "Medir sus emisiones es un primer paso. Reducirlas es nuestro trabajo.",
+        "description": "DecarboTech® ayuda a las organizaciones a identificar sus palancas prioritarias, implementar los proyectos más rentables y seguir su progreso real en tCO₂e, kWh y ROI."
+      },
+      "axes": {
+        "title": "Nuestros 4 ejes de acción",
+        "energy": {
+          "title": "Energía y eficiencia",
+          "description": "Auditoría energética, LED, solar, recuperación de calor, optimización de procesos"
+        },
+        "mobility": {
+          "title": "Movilidad y transporte",
+          "description": "Eco-conducción, flota híbrida/eléctrica, plan de movilidad, optimización logística"
+        },
+        "production": {
+          "title": "Producción y compras",
+          "description": "Materiales bajos en carbono, abastecimiento local, reducción de materiales, economía circular"
+        },
+        "culture": {
+          "title": "Cultura y gobernanza",
+          "description": "Formación interna, gestión del carbono, sensibilización de empleados, informes CSR"
+        }
+      },
+      "iot": {
+        "title": "Solución IoT en desarrollo",
+        "description": "Estamos desarrollando una solución basada en IoT que permitirá a nuestros clientes seguir sus emisiones Scope 1 y 2 en tiempo real.",
+        "contactButton": "Contáctenos para más información"
+      },
+      "whyUs": {
+        "title": "Por qué elegirnos",
+        "point1": "Experiencia del Carbon Footprint® ADEME",
+        "point2": "Metodología conforme al GHG Protocol e ISO 14064",
+        "point3": "Soluciones realistas, medibles y económicas",
+        "point4": "Red de socios técnicos certificados"
+      },
+      "cta": {
+        "title": "Pase de la medición a la acción",
+        "button": "Descubra nuestras soluciones"
+      }
+    },
+    "catalog": {
+      "hero": {
+        "title": "Nuestras soluciones",
+        "subtitle": "Descubra nuestro catálogo completo de soluciones de reducción por Scope"
+      },
+      "intro": {
+        "text1": "Los \"Scopes\" definen las categorías de emisiones según el protocolo GHG internacional:",
+        "scope1": "Scope 1: emisiones directas (combustión, procesos, vehículos)",
+        "scope2": "Scope 2: emisiones indirectas (electricidad y calor comprados)",
+        "scope3": "Scope 3: emisiones de la cadena de valor (compras, transporte, residuos, uso)"
+      },
+      "scope1": {
+        "title": "Scope 1 — Emisiones directas",
+        "subtitle": "Controle sus emisiones internas",
+        "combustion": {
+          "title": "Combustión y procesos",
+          "description": "Conversión fuel → gas/biomasa, recuperación de calor, calderas eficientes"
+        },
+        "cooling": {
+          "title": "Refrigeración y climatización",
+          "description": "Reducción de fugas HFC, sustitución por CO₂ o R290"
+        },
+        "fleet": {
+          "title": "Flota y movilidad",
+          "description": "Eco-conducción, seguimiento de combustible, flota híbrida o eléctrica"
+        },
+        "reduction": "💡 Reducción potencial: 10 a 40 %"
+      },
+      "scope2": {
+        "title": "Scope 2 — Electricidad y energía comprada",
+        "subtitle": "Optimice su consumo energético",
+        "optimization": {
+          "title": "Optimización energética",
+          "description": "LED, sensores, variadores de velocidad, aislamiento térmico"
+        },
+        "renewable": {
+          "title": "Energías renovables",
+          "description": "Paneles solares, autoconsumo, almacenamiento de energía"
+        },
+        "monitoring": {
+          "title": "Gestión energética",
+          "description": "Panel mensual, indicadores kWh/unidad producida, monitorización en tiempo real"
+        },
+        "reduction": "💡 Reducción potencial: hasta 50 %"
+      },
+      "scope3": {
+        "title": "Scope 3 — Cadena de valor ampliada",
+        "subtitle": "Transforme su ecosistema",
+        "purchasing": {
+          "title": "Compras responsables",
+          "description": "Materiales reciclados, proveedores bajos en carbono, abastecimiento local"
+        },
+        "waste": {
+          "title": "Residuos y economía circular",
+          "description": "Clasificación selectiva, reutilización, valorización, reducción en origen"
+        },
+        "transport": {
+          "title": "Transporte y logística",
+          "description": "Optimización de rutas, movilidad suave, teletrabajo"
+        },
+        "awareness": {
+          "title": "Sensibilización y cultura",
+          "description": "Formación, compromiso de empleados, informes CSR"
+        },
+        "reduction": "💡 Reducción potencial: 10 a 30 %"
+      },
+      "cta": {
+        "title": "Construya su plan de reducción personalizado",
+        "subtitle": "Nuestros expertos le guían paso a paso",
+        "button": "Quiero mi plan de descarbonización"
+      }
+    },
+    "support": {
+      "hero": {
+        "title": "De la medición a la transformación: acompañamiento basado en soluciones concretas",
+        "subtitle": "En DecarboTech®, creemos que la transición baja en carbono se basa en acciones medibles y realistas, adaptadas a cada empresa. Nuestro papel no se detiene en el diagnóstico: le acompañamos en la implementación de soluciones técnicas, organizativas y de comportamiento que reducen sus emisiones en origen, mejorando al mismo tiempo su rendimiento operativo."
+      },
+      "approach": {
+        "title": "Nuestro enfoque de acompañamiento",
+        "step1": {
+          "title": "1. Análisis específico de las palancas de reducción",
+          "description": "A partir de la huella de carbono® establecida en CarboScan, identificamos los postes de emisión prioritarios según tres criterios:",
+          "point1": "Impacto de carbono potencial (tCO₂e evitables)",
+          "point2": "Viabilidad técnica y económica",
+          "point3": "Rapidez de implementación",
+          "conclusion": "Este primer paso permite construir un plan de acción priorizado, basado en indicadores medibles."
+        },
+        "step2": {
+          "title": "2. Co-construcción del plan de descarbonización",
+          "description": "Trabajamos con sus equipos técnicos, socios y proveedores para:",
+          "point1": "Definir objetivos de reducción a corto, medio y largo plazo",
+          "point2": "Seleccionar las acciones más relevantes según sus restricciones industriales y logísticas",
+          "point3": "Integrar las ganancias esperadas (energía, costes, imagen, conformidad regulatoria)",
+          "conclusion": "Cada empresa dispone así de una hoja de ruta baja en carbono personalizada, validada por la dirección y alineada con su estrategia CSR."
+        },
+        "step3": {
+          "title": "3. Implementación operativa",
+          "description": "Nuestros expertos y socios técnicos intervienen en las principales palancas de reducción:",
+          "levers": {
+            "energy": {
+              "title": "Energía y procesos",
+              "point1": "Auditoría energética y plan de eficiencia energética",
+              "point2": "Conversión de sistemas térmicos a gas, biomasa o electricidad",
+              "point3": "Recuperación de calor residual y mejora de la eficiencia",
+              "point4": "Instalación de sensores y sistemas de monitorización energética"
+            },
+            "mobility": {
+              "title": "Movilidad y transporte",
+              "point1": "Optimización de rutas y plan de movilidad",
+              "point2": "Formación en eco-conducción",
+              "point3": "Gestión de flota y transición a vehículos híbridos o eléctricos",
+              "point4": "Promoción del carpooling y la movilidad suave"
+            },
+            "purchases": {
+              "title": "Compras y producción",
+              "point1": "Selección de materiales de baja huella de carbono",
+              "point2": "Optimización de volúmenes y flujos logísticos",
+              "point3": "Desarrollo de cadenas de suministro locales y circulares",
+              "point4": "Mejora de la durabilidad del producto"
+            },
+            "waste": {
+              "title": "Residuos y economía circular",
+              "point1": "Reducción en origen y clasificación selectiva",
+              "point2": "Reutilización, valorización energética y reciclaje",
+              "point3": "Optimización de embalajes y eliminación del plástico de un solo uso",
+              "point4": "Alianzas con canales locales de valorización"
+            },
+            "culture": {
+              "title": "Cultura y gobernanza",
+              "point1": "Formación y sensibilización de los empleados",
+              "point2": "Integración de indicadores de carbono en las decisiones internas",
+              "point3": "Comunicación CSR e informes internos/externos",
+              "point4": "Creación de una comunidad de embajadores climáticos"
+            }
+          }
+        },
+        "step4": {
+          "title": "4. Seguimiento y evaluación del progreso",
+          "description": "Cada acción implementada se sigue en el tiempo mediante:",
+          "point1": "Indicadores de rendimiento de carbono (tCO₂e evitadas, % de reducción, ROI energético)",
+          "point2": "Un panel simplificado integrado en DecarboTech® Solutions",
+          "point3": "Informes trimestrales o anuales para ajustar la trayectoria",
+          "conclusion": "Este paso garantiza la medición real de los resultados y la sostenibilidad del enfoque."
+        },
+        "step5": {
+          "title": "5. Innovación y mejora continua",
+          "description": "DecarboTech permanece en alerta permanente sobre:",
+          "point1": "Tecnologías bajas en carbono (sensores IoT, eficiencia energética, movilidad eléctrica, valorización de residuos)",
+          "point2": "Nuevas regulaciones (CSRD, CBAM, taxonomía verde)",
+          "point3": "Soluciones digitales para la gestión y optimización ambiental",
+          "conclusion": "Actualizamos regularmente nuestras herramientas y metodologías para ofrecer soluciones de vanguardia."
+        }
+      },
+      "finalCta": {
+        "quote": "Reducir sus emisiones es invertir en el futuro de su empresa.",
+        "description": "Con DecarboTech®, la descarbonización se convierte en un proyecto global, medible y generador de valor. Le acompañamos paso a paso, del diagnóstico a la implementación.",
+        "button": "Contáctenos para construir su plan de acción baja en carbono"
+      }
+    }
+  },
+  "bilanCarboneLanding": {
+    "hero": {
+      "title": "Realice su huella de carbono™ de forma simple y en plena conformidad.",
+      "subtitle": "CarboScan le ayuda a medir las emisiones de su empresa en los Scopes 1, 2 y 3, con un informe claro, estructurado y conforme.",
+      "cta": "Solicite su huella de carbono™"
+    },
+    "why": {
+      "title": "¿Por qué hacer una huella de carbono™?",
+      "text": "Comprender sus emisiones es el primer paso para actuar.\n\nLa huella de carbono™ ayuda a identificar las fuentes de emisión más importantes, controlar el consumo energético, cumplir los requisitos de clientes y preparar su trayectoria de reducción."
+    },
+    "benefits": {
+      "title": "Lo que CarboScan le aporta",
+      "items": [
+        "Análisis completo Scopes 1, 2 y 3",
+        "Recopilación de datos simplificada",
+        "Factores de emisión Base Carbone",
+        "Tablas y gráficos claros",
+        "Recomendaciones bajas en carbono",
+        "Informe PDF estructurado"
+      ]
+    },
+    "methodology": {
+      "title": "Metodología utilizada",
+      "description": "CarboScan aplica la metodología de huella de carbono™, referencia en Europa, y utiliza factores oficiales de ADEME.",
+      "points": [
+        {
+          "icon": "FileText",
+          "title": "Enfoque organizacional"
+        },
+        {
+          "icon": "BarChart3",
+          "title": "Segmentación por fuentes de emisión"
+        },
+        {
+          "icon": "Building2",
+          "title": "Consolidación multi-sitio"
+        },
+        {
+          "icon": "Eye",
+          "title": "Transparencia sobre supuestos y FE"
+        },
+        {
+          "icon": "Shield",
+          "title": "GHG Protocol"
+        },
+        {
+          "icon": "Award",
+          "title": "ISO 14064"
+        }
+      ]
+    },
+    "results": {
+      "title": "Resultados que obtiene",
+      "items": [
+        {
+          "icon": "TrendingDown",
+          "title": "Emisiones totales (tCO₂e)"
+        },
+        {
+          "icon": "PieChart",
+          "title": "Desglose por scopes"
+        },
+        {
+          "icon": "BarChart",
+          "title": "Desglose por fuentes"
+        },
+        {
+          "icon": "Target",
+          "title": "Análisis de hotspots"
+        },
+        {
+          "icon": "Lightbulb",
+          "title": "Estrategia de descarbonización"
+        },
+        {
+          "icon": "FileDown",
+          "title": "Informe exportable PDF / Excel"
+        }
+      ]
+    },
+    "industries": {
+      "title": "Empresas concernidas",
+      "items": [
+        {
+          "icon": "Factory",
+          "name": "Industria"
+        },
+        {
+          "icon": "Building2",
+          "name": "Construcción"
+        },
+        {
+          "icon": "ShoppingCart",
+          "name": "Retail"
+        },
+        {
+          "icon": "Briefcase",
+          "name": "Servicios"
+        },
+        {
+          "icon": "Truck",
+          "name": "Transporte"
+        },
+        {
+          "icon": "Wheat",
+          "name": "Alimentación y agricultura"
+        }
+      ]
+    },
+    "contact": {
+      "title": "Solicitar una huella de carbono™",
+      "subtitle": "Nuestros expertos le contactarán en el día.",
+      "fields": {
+        "name": "Nombre",
+        "email": "Email",
+        "company": "Empresa",
+        "phone": "Teléfono",
+        "message": "Mensaje"
+      },
+      "placeholders": {
+        "name": "Su nombre",
+        "email": "your@email.com",
+        "company": "Nombre de su empresa",
+        "phone": "Su número de teléfono",
+        "message": "Su mensaje..."
+      },
+      "submitButton": "Enviar solicitud",
+      "successMessage": "Su solicitud se ha enviado correctamente. Nuestros expertos le contactarán en el día."
+    }
+  },
+  "empreinteProduitLanding": {
+    "hero": {
+      "title": "Mida la huella de carbono de sus productos de forma simple y precisa.",
+      "subtitle": "CarboScan analiza el impacto de carbono de sus productos — materias primas, fabricación, transporte, embalaje, uso y fin de vida — para cumplir las expectativas de sus clientes y los requisitos del mercado.",
+      "cta": "Solicitar un análisis de producto"
+    },
+    "why": {
+      "title": "¿Por qué realizar la huella de carbono de un producto?",
+      "text": "Una necesidad esencial para las empresas que quieren seguir siendo competitivas.",
+      "reasons": [
+        "responder a licitaciones nacionales e internacionales",
+        "convencer a clientes que exigen un enfoque sostenible",
+        "comparar escenarios de producción",
+        "mejorar el rendimiento ambiental",
+        "anticipar las regulaciones europeas (CBAM, eco-diseño, EPD…)"
+      ]
+    },
+    "benefits": {
+      "title": "Lo que CarboScan le ofrece",
+      "subtitle": "Un análisis claro, preciso e inmediatamente utilizable.",
+      "calculationsTitle": "CarboScan calcula:",
+      "calculations": [
+        {
+          "icon": "Calculator",
+          "text": "Impacto total de carbono (kg CO₂e)"
+        },
+        {
+          "icon": "TrendingDown",
+          "text": "Emisiones por etapa del ciclo de vida"
+        },
+        {
+          "icon": "Package",
+          "text": "Emisiones por material / proveedor"
+        },
+        {
+          "icon": "Truck",
+          "text": "Emisiones relacionadas con transporte y embalaje"
+        },
+        {
+          "icon": "Recycle",
+          "text": "Emisiones de fin de vida (reciclaje, valorización, residuos)"
+        }
+      ],
+      "advantagesTitle": "También se beneficia de:",
+      "advantages": [
+        "Factores de emisión oficiales",
+        "Metodología rigurosa",
+        "Recomendaciones de mejora",
+        "Informe PDF / Excel utilizable interna y externamente"
+      ]
+    },
+    "methodology": {
+      "title": "Metodología aplicada",
+      "subtitle": "Un enfoque conforme a las normas internacionales.",
+      "standardsTitle": "CarboScan aplica:",
+      "standards": [
+        {
+          "icon": "FileText",
+          "text": "Método ACV simplificado aplicado al producto"
+        },
+        {
+          "icon": "Award",
+          "text": "Normas ISO 14040 / ISO 14044"
+        },
+        {
+          "icon": "Database",
+          "text": "Factores de emisión oficiales (Base Carbone + bases internacionales)"
+        }
+      ],
+      "approachesTitle": "Un enfoque flexible:",
+      "approaches": [
+        "Cuna-a-Puerta",
+        "Cuna-a-Tumba (según necesidad)"
+      ]
+    },
+    "deliverables": {
+      "title": "Lo que recibirá",
+      "items": [
+        {
+          "icon": "FileText",
+          "title": "Huella de carbono total del producto (kg CO₂e)"
+        },
+        {
+          "icon": "BarChart",
+          "title": "Desglose detallado por etapas"
+        },
+        {
+          "icon": "Target",
+          "title": "Análisis de las fuentes más emisoras (hotspots)"
+        },
+        {
+          "icon": "Lightbulb",
+          "title": "Recomendaciones y estrategias de descarbonización"
+        },
+        {
+          "icon": "FileDown",
+          "title": "Informe PDF claro y estructurado, utilizable en licitaciones"
+        },
+        {
+          "icon": "Package",
+          "title": "Exportación Excel para archivo / informes internos"
+        }
+      ],
+      "breakdownTitle": "Desglose detallado por etapas:",
+      "breakdown": [
+        "extracción de materias primas",
+        "fabricación",
+        "embalaje",
+        "transporte",
+        "uso (si aplica)",
+        "fin de vida"
+      ]
+    },
+    "products": {
+      "title": "Productos concernidos",
+      "subtitle": "CarboScan analiza todo tipo de productos:",
+      "items": [
+        {
+          "icon": "Factory",
+          "name": "Productos industriales"
+        },
+        {
+          "icon": "Building2",
+          "name": "Productos y materiales de construcción (aluminio, PVC, madera, acero…)"
+        },
+        {
+          "icon": "Apple",
+          "name": "Productos alimentarios"
+        },
+        {
+          "icon": "Cpu",
+          "name": "Productos electrónicos"
+        },
+        {
+          "icon": "Box",
+          "name": "Embalaje"
+        },
+        {
+          "icon": "Wheat",
+          "name": "Productos agroalimentarios"
+        },
+        {
+          "icon": "Sofa",
+          "name": "Muebles, carpintería, puertas y ventanas"
+        }
+      ]
+    },
+    "whyCarboScan": {
+      "title": "¿Por qué CarboScan?",
+      "points": [
+        {
+          "icon": "Shield",
+          "text": "Metodología fiable y transparente"
+        },
+        {
+          "icon": "Zap",
+          "text": "Herramienta simple, adaptada a PYME y grandes grupos"
+        },
+        {
+          "icon": "Globe",
+          "text": "Experiencia local en carbono + normas internacionales"
+        },
+        {
+          "icon": "Target",
+          "text": "Posible integración con Decarbotech para implementar planes de reducción"
+        }
+      ]
+    },
+    "contact": {
+      "title": "Solicitar un análisis de huella de carbono de producto",
+      "subtitle": "Nuestros expertos le contactarán en 24 horas.",
+      "fields": {
+        "name": "Nombre",
+        "company": "Empresa",
+        "phone": "Teléfono",
+        "email": "Email",
+        "product": "Producto a analizar",
+        "message": "Mensaje"
+      },
+      "placeholders": {
+        "name": "Su nombre",
+        "company": "Nombre de su empresa",
+        "phone": "Su número de teléfono",
+        "email": "your@email.com",
+        "product": "Nombre del producto a analizar",
+        "message": "Su mensaje..."
+      },
+      "submitButton": "Enviar mi solicitud",
+      "successMessage": "Su solicitud se ha enviado correctamente. Nuestros expertos le contactarán en 24 horas."
+    }
+  },
+  "acvLanding": {
+    "hero": {
+      "title": "Análisis de Ciclo de Vida (ACV): evalúe el impacto ambiental completo de sus productos.",
+      "subtitle": "CarboScan realiza su ACV según las normas ISO 14040/44: materias primas, fabricación, transporte, uso y fin de vida.",
+      "cta": "Solicitar un ACV"
+    },
+    "why": {
+      "title": "¿Por qué realizar un ACV?",
+      "text": "El ACV se ha convertido en una herramienta esencial para las empresas innovadoras.",
+      "description": "El Análisis de Ciclo de Vida permite evaluar todos los impactos ambientales de un producto, no solo su huella de carbono.",
+      "reasons": [
+        "comprender mejor sus impactos",
+        "comparar sus escenarios de producción",
+        "mejorar el eco-diseño",
+        "cumplir requisitos de clientes y licitaciones",
+        "preparar una Declaración Ambiental de Producto (EPD / FDES)",
+        "anticipar las regulaciones europeas"
+      ]
+    },
+    "benefits": {
+      "title": "Lo que CarboScan le ofrece",
+      "subtitle": "Un ACV completo, preciso e inmediatamente aplicable.",
+      "analysesTitle": "CarboScan analiza:",
+      "analyses": [
+        {
+          "icon": "Package",
+          "text": "consumo de materiales y energía"
+        },
+        {
+          "icon": "Factory",
+          "text": "procesos de fabricación"
+        },
+        {
+          "icon": "Box",
+          "text": "embalaje"
+        },
+        {
+          "icon": "Truck",
+          "text": "transporte"
+        },
+        {
+          "icon": "Zap",
+          "text": "uso (si aplica)"
+        },
+        {
+          "icon": "Recycle",
+          "text": "fin de vida (reciclaje, valorización, residuos)"
+        }
+      ],
+      "resultsTitle": "Con resultados claros e interpretables:",
+      "results": [
+        {
+          "icon": "Target",
+          "text": "huella de carbono"
+        },
+        {
+          "icon": "Droplet",
+          "text": "impactos en el agua"
+        },
+        {
+          "icon": "Wind",
+          "text": "impactos en el aire"
+        },
+        {
+          "icon": "Database",
+          "text": "recursos consumidos"
+        },
+        {
+          "icon": "Trash2",
+          "text": "residuos producidos"
+        },
+        {
+          "icon": "Target",
+          "text": "análisis de los principales puntos de impacto"
+        }
+      ]
+    },
+    "methodology": {
+      "title": "Metodología aplicada",
+      "subtitle": "Normas internacionales para un análisis fiable.",
+      "standardsTitle": "CarboScan aplica las normas:",
+      "standards": [
+        {
+          "icon": "Award",
+          "text": "ISO 14040 (principios y marco general)"
+        },
+        {
+          "icon": "Award",
+          "text": "ISO 14044 (requisitos y directrices)"
+        }
+      ],
+      "approachesTitle": "Con un enfoque estructurado:",
+      "approaches": [
+        "Cuna-a-Puerta",
+        "Cuna-a-Tumba",
+        "Puerta-a-Puerta (para empresas industriales que quieren analizar un solo proceso)"
+      ],
+      "databasesNote": "Utilizamos bases de datos internacionales reconocidas para garantizar la fiabilidad de los resultados."
+    },
+    "deliverables": {
+      "title": "Entregables proporcionados",
+      "subtitle": "Recibe un análisis completo y un informe profesional.",
+      "items": [
+        {
+          "icon": "FileText",
+          "title": "ACV detallado del producto"
+        },
+        {
+          "icon": "BarChart",
+          "title": "Diagramas de impacto por etapa"
+        },
+        {
+          "icon": "Target",
+          "title": "Análisis de hotspots ambientales"
+        },
+        {
+          "icon": "Lightbulb",
+          "title": "Recomendaciones técnicas para el eco-diseño"
+        },
+        {
+          "icon": "FileDown",
+          "title": "Informe PDF estructurado"
+        },
+        {
+          "icon": "FileDown",
+          "title": "Exportación Excel de resultados"
+        },
+        {
+          "icon": "GitCompare",
+          "title": "Posible comparación entre varios escenarios"
+        },
+        {
+          "icon": "TrendingDown",
+          "title": "Estrategias de descarbonización y mejora ambiental"
+        }
+      ]
+    },
+    "products": {
+      "title": "¿Para qué tipos de productos?",
+      "subtitle": "CarboScan realiza ACV para:",
+      "items": [
+        {
+          "icon": "Building2",
+          "name": "Materiales de construcción (hormigón, aluminio, acero, vidrio…)"
+        },
+        {
+          "icon": "Factory",
+          "name": "Productos industriales"
+        },
+        {
+          "icon": "Apple",
+          "name": "Productos alimentarios"
+        },
+        {
+          "icon": "Box",
+          "name": "Embalaje"
+        },
+        {
+          "icon": "Wrench",
+          "name": "Equipos y maquinaria"
+        },
+        {
+          "icon": "Cpu",
+          "name": "Productos electrónicos"
+        },
+        {
+          "icon": "Hammer",
+          "name": "Productos artesanales o manufacturados"
+        }
+      ]
+    },
+    "whyCarboScan": {
+      "title": "¿Por qué elegir CarboScan?",
+      "points": [
+        {
+          "icon": "Shield",
+          "text": "Análisis conforme a las normas internacionales"
+        },
+        {
+          "icon": "FileText",
+          "text": "Informe claro, utilizable por sus clientes"
+        },
+        {
+          "icon": "Globe",
+          "text": "Experiencia local + enfoque internacional"
+        },
+        {
+          "icon": "Users",
+          "text": "Acompañamiento personalizado"
+        },
+        {
+          "icon": "Target",
+          "text": "Posible implementación vía Decarbotech (planes de reducción)"
+        }
+      ]
+    },
+    "contact": {
+      "title": "Solicitar un Análisis de Ciclo de Vida (ACV)",
+      "subtitle": "Nuestros expertos responderán en 24 horas.",
+      "fields": {
+        "name": "Nombre",
+        "company": "Empresa",
+        "email": "Email",
+        "phone": "Teléfono",
+        "product": "Producto a analizar",
+        "message": "Mensaje"
+      },
+      "placeholders": {
+        "name": "Su nombre",
+        "company": "Nombre de su empresa",
+        "email": "your@email.com",
+        "phone": "Su número de teléfono",
+        "product": "Nombre del producto a analizar",
+        "message": "Su mensaje..."
+      },
+      "submitButton": "Enviar mi solicitud",
+      "successMessage": "Su solicitud se ha enviado correctamente. Nuestros expertos responderán en 24 horas."
+    }
+  },
+  "collectLanding": {
+    "hero": {
+      "title": "Recopile sus datos de carbono de forma simple y sin complejidad.",
+      "subtitle": "CarboScan Collect centraliza todos sus datos ambientales: energía, materiales, desplazamientos, residuos, compras… Importe sus archivos o introduzca sus datos en minutos.",
+      "cta": "Empezar la recopilación"
+    },
+    "why": {
+      "title": "¿Por qué un módulo de recopilación?",
+      "intro": "La calidad de la huella de carbono depende de la calidad de los datos.",
+      "text": "La recopilación de datos suele ser la parte más complicada de una huella de carbono™. CarboScan Collect simplifica este paso con una interfaz intuitiva, importación Excel inteligente y una estructura clara por categorías.",
+      "benefit": "Con Collect, ahorra tiempo y reduce errores."
+    },
+    "benefits": {
+      "title": "Lo que CarboScan Collect permite",
+      "subtitle": "Recopilación centralizada, simple y fiable.",
+      "features": [
+        {
+          "icon": "Edit",
+          "text": "Introduzca sus datos manualmente (energía, materiales, transporte…)"
+        },
+        {
+          "icon": "FileSpreadsheet",
+          "text": "Importe sus archivos Excel o CSV"
+        },
+        {
+          "icon": "FolderTree",
+          "text": "Estructurar automáticamente los datos por categorías"
+        },
+        {
+          "icon": "ShieldCheck",
+          "text": "Comprobar la integridad de los datos y evitar omisiones"
+        },
+        {
+          "icon": "Building2",
+          "text": "Gestionar varios sitios o entidades"
+        },
+        {
+          "icon": "Calculator",
+          "text": "Prepare fácilmente la huella de carbono™ en CarboScan Carbon"
+        }
+      ]
+    },
+    "features": {
+      "title": "Funcionalidades principales",
+      "subtitle": "Un módulo diseñado para la simplicidad y la eficiencia.",
+      "items": [
+        "Interfaz clara e intuitiva",
+        "Importación automática de Excel (columnas inteligentes)",
+        "Historial mensual de datos",
+        "Validación de datos esenciales",
+        "Multi-sitio (fábricas, agencias, oficinas…)",
+        "Soporte de unidades locales (kWh, litro, tonelada, m³…)",
+        "Preparación directa de la huella de carbono™"
+      ]
+    },
+    "gains": {
+      "title": "Lo que gana",
+      "subtitle": "Más simple. Más rápido. Más estructurado.",
+      "items": [
+        {
+          "icon": "TrendingDown",
+          "text": "reduce el tiempo de recopilación un 50 %"
+        },
+        {
+          "icon": "ShieldCheck",
+          "text": "evita errores gracias a la validación integrada"
+        },
+        {
+          "icon": "Users",
+          "text": "puede involucrar a varios colaboradores"
+        },
+        {
+          "icon": "Database",
+          "text": "centraliza todos los datos en un solo lugar"
+        },
+        {
+          "icon": "Zap",
+          "text": "prepara automáticamente el cálculo de carbono"
+        }
+      ]
+    },
+    "target": {
+      "title": "¿Para quién está diseñado CarboScan Collect?",
+      "items": [
+        {
+          "icon": "Factory",
+          "name": "PYME y grandes empresas"
+        },
+        {
+          "icon": "Factory",
+          "name": "Industria y fábricas multi-sitio"
+        },
+        {
+          "icon": "Briefcase",
+          "name": "Oficinas de ingeniería"
+        },
+        {
+          "icon": "Building2",
+          "name": "Empresas de construcción"
+        },
+        {
+          "icon": "ShoppingCart",
+          "name": "Retail y distribución"
+        },
+        {
+          "icon": "Users",
+          "name": "Agencias y servicios"
+        }
+      ]
+    },
+    "integration": {
+      "title": "Conectado al módulo CarboScan Carbon",
+      "subtitle": "La recopilación es solo el primer paso.",
+      "description": "CarboScan Collect se integra de forma natural con el módulo CarboScan Carbon, que realiza su huella de carbono™ automáticamente.",
+      "steps": [
+        {
+          "icon": "Database",
+          "text": "Collect"
+        },
+        {
+          "icon": "Calculator",
+          "text": "Carbon"
+        },
+        {
+          "icon": "FileText",
+          "text": "Informe de huella de carbono™"
+        }
+      ]
+    },
+    "contact": {
+      "title": "Empiece con CarboScan Collect",
+      "subtitle": "Solicite una demo o acceso de prueba.",
+      "fields": {
+        "name": "Nombre",
+        "company": "Empresa",
+        "email": "Email",
+        "phone": "Teléfono",
+        "message": "Mensaje"
+      },
+      "placeholders": {
+        "name": "Su nombre",
+        "company": "Nombre de su empresa",
+        "email": "your@email.com",
+        "phone": "Su número de teléfono",
+        "message": "Su mensaje..."
+      },
+      "submitButton": "Enviar mi solicitud",
+      "successMessage": "Su solicitud se ha enviado correctamente. Nuestros expertos le contactarán lo antes posible."
+    }
+  },
+  "decarbotechLanding": {
+    "hero": {
+      "title": "Decarbotech: pase de la medición de carbono a la reducción real.",
+      "subtitle": "Transformamos sus resultados CarboScan en planes de reducción concretos, medibles y operativos, mediante un enfoque estructurado y herramientas de seguimiento en campo.",
+      "cta": "Activar Decarbotech"
+    },
+    "why": {
+      "title": "¿Por qué Decarbotech?",
+      "text1": "Medir sus emisiones ya no basta. Hay que actuar.",
+      "text2": "CarboScan le ayuda a medir y comprender sus emisiones. Decarbotech le ayuda a reducirlas de verdad, de forma progresiva, organizada y rentable.",
+      "requirementsTitle": "Las empresas deben hoy:",
+      "requirements": [
+        "controlar su consumo",
+        "reducir sus emisiones",
+        "cumplir los requisitos de clientes",
+        "mejorar su competitividad",
+        "anticipar las regulaciones"
+      ],
+      "conclusion": "Decarbotech está diseñado para ofrecer apoyo concreto, no solo teórico."
+    },
+    "actions": {
+      "title": "Lo que hace Decarbotech",
+      "subtitle": "Un enfoque completo para reducir sus emisiones.",
+      "description": "Decarbotech transforma sus datos CarboScan en acciones operativas:",
+      "items": [
+        {
+          "icon": "FileText",
+          "text": "Elaboración de planes de descarbonización"
+        },
+        {
+          "icon": "Target",
+          "text": "Priorización de acciones (costes, ROI, impacto CO₂)"
+        },
+        {
+          "icon": "TrendingUp",
+          "text": "Seguimiento del progreso mes a mes"
+        },
+        {
+          "icon": "Lightbulb",
+          "text": "Implementación de acciones bajas en carbono"
+        },
+        {
+          "icon": "Zap",
+          "text": "Instalación de sensores energéticos / ambientales"
+        },
+        {
+          "icon": "Settings",
+          "text": "Optimización del consumo (energía, agua, procesos)"
+        },
+        {
+          "icon": "Wrench",
+          "text": "Apoyo técnico in situ"
+        }
+      ]
+    },
+    "plans": {
+      "title": "Planes de descarbonización",
+      "subtitle": "Un plan claro y estructurado, adaptado a su empresa.",
+      "itemsTitle": "Cada plan incluye:",
+      "items": [
+        {
+          "icon": "Target",
+          "text": "acciones clasificadas por prioridad"
+        },
+        {
+          "icon": "TrendingDown",
+          "text": "estimación de la ganancia de carbono"
+        },
+        {
+          "icon": "DollarSign",
+          "text": "estimación de ahorros financieros"
+        },
+        {
+          "icon": "DollarSign2",
+          "text": "costes de inversión"
+        },
+        {
+          "icon": "Calendar",
+          "text": "calendario de implementación"
+        },
+        {
+          "icon": "BarChart",
+          "text": "indicadores de seguimiento"
+        }
+      ],
+      "conclusion": "No es una lista de ideas: es un plan operativo, diseñado para generar impacto real."
+    },
+    "sensors": {
+      "title": "Sensores y monitorización (opcional)",
+      "subtitle": "Mida de forma continua para reducir de manera sostenible.",
+      "itemsTitle": "Decarbotech puede integrar o instalar sensores para seguir:",
+      "items": [
+        {
+          "icon": "Zap",
+          "text": "consumo eléctrico"
+        },
+        {
+          "icon": "Zap2",
+          "text": "consumo de gas"
+        },
+        {
+          "icon": "Thermometer",
+          "text": "temperatura ambiente y de máquinas"
+        },
+        {
+          "icon": "Droplet",
+          "text": "humedad"
+        },
+        {
+          "icon": "Droplet2",
+          "text": "agua"
+        },
+        {
+          "icon": "Gauge",
+          "text": "presión del aire y CO₂ interior"
+        },
+        {
+          "icon": "AlertCircle",
+          "text": "anomalías operativas"
+        }
+      ],
+      "benefitsTitle": "Estos datos permiten identificar:",
+      "benefits": [
+        "desviaciones",
+        "sobreconsumo",
+        "equipos a optimizar",
+        "ahorros potenciales"
+      ]
+    },
+    "netZero": {
+      "title": "Seguimiento y trayectoria Net Zero",
+      "subtitle": "Una visión clara para alcanzar sus objetivos.",
+      "description": "Decarbotech puede definir su:",
+      "items": [
+        {
+          "icon": "Target",
+          "text": "trayectoria de reducción"
+        },
+        {
+          "icon": "Calendar",
+          "text": "presupuesto de carbono anual"
+        },
+        {
+          "icon": "BarChart",
+          "text": "indicadores clave (KPI)"
+        },
+        {
+          "icon": "TrendingDown",
+          "text": "curvas de evolución"
+        },
+        {
+          "icon": "Shield",
+          "text": "conformidad con los objetivos de clientes (scope 3)"
+        },
+        {
+          "icon": "Shield2",
+          "text": "coherencia con los requisitos europeos (SBTi, Net Zero)"
+        }
+      ]
+    },
+    "target": {
+      "title": "¿Para qué empresas?",
+      "subtitle": "Decarbotech está diseñado para:",
+      "items": [
+        {
+          "icon": "Factory",
+          "name": "Fábricas y sitios industriales"
+        },
+        {
+          "icon": "Package",
+          "name": "Fabricantes de materiales"
+        },
+        {
+          "icon": "Settings",
+          "name": "Cadenas de producción"
+        },
+        {
+          "icon": "Network",
+          "name": "Empresas multi-sitio"
+        },
+        {
+          "icon": "Building2",
+          "name": "Edificios y oficinas"
+        },
+        {
+          "icon": "Wheat",
+          "name": "Agroalimentario"
+        },
+        {
+          "icon": "UtensilsCrossed",
+          "name": "Hostelería y retail"
+        }
+      ],
+      "conclusion": "En todas partes, reducir emisiones también significa reducir costes."
+    },
+    "integration": {
+      "title": "¿Cómo complementa Decarbotech a CarboScan?",
+      "subtitle": "Sinergia completa: Medir → Actuar → Reducir.",
+      "steps": [
+        {
+          "icon": "Database",
+          "text": "Collect"
+        },
+        {
+          "icon": "Calculator",
+          "text": "Carbon"
+        },
+        {
+          "icon": "Zap",
+          "text": "Energy"
+        },
+        {
+          "icon": "Target",
+          "text": "Decarbotech"
+        }
+      ],
+      "descriptions": [
+        "CarboScan mide y analiza las emisiones.",
+        "Decarbotech implementa acciones concretas para reducir las emisiones."
+      ],
+      "conclusion": "La cadena completa del rendimiento de carbono."
+    },
+    "contact": {
+      "title": "Activar Decarbotech",
+      "subtitle": "Nuestros expertos le contactarán rápidamente para definir sus acciones de reducción.",
+      "fields": {
+        "name": "Nombre",
+        "company": "Empresa",
+        "phone": "Teléfono",
+        "email": "Email",
+        "message": "Mensaje"
+      },
+      "placeholders": {
+        "name": "Su nombre",
+        "company": "Nombre de su empresa",
+        "phone": "Su número de teléfono",
+        "email": "your@email.com",
+        "message": "Su mensaje..."
+      },
+      "submitButton": "Enviar mi solicitud",
+      "successMessage": "Su solicitud se ha enviado correctamente. Nuestros expertos le contactarán rápidamente."
+    }
+  },
+  "wattbim": {
+    "meta": {
+      "title": "WattBim by CarboScan — Gestione sus edificios y ahorros energéticos",
+      "description": "WattBim, el módulo de energía y edificios de CarboScan: siga el consumo de cada edificio, detecte el desperdicio y convierta sus facturas en ahorros — directamente integrado con su huella de carbono."
+    },
+    "hero": {
+      "badge": "Nuevo módulo CarboScan",
+      "titleLead": "Con CarboScan, mida sus emisiones",
+      "titleAccent": "y gestione sus edificios",
+      "subtitle": "WattBim es el módulo de energía y edificios de CarboScan. Más allá del cálculo de GEI, gestiona eficientemente cada edificio, detecta automáticamente desperdicio, picos y desviaciones, y convierte sus facturas en ahorros probados — todo en la misma plataforma que su huella de carbono.",
+      "ctaDemo": "Solicitar una demo",
+      "ctaExpert": "Hablar con un experto"
+    },
+    "kpis": [
+      {
+        "icon": "TrendingDown",
+        "value": "10-15 %",
+        "label": "de desperdicio energético detectable en promedio"
+      },
+      {
+        "icon": "Gauge",
+        "value": "< 6 meses",
+        "label": "para priorizar sus inversiones (PV, LED, HVAC...)"
+      },
+      {
+        "icon": "Bell",
+        "value": "24/7",
+        "label": "monitorización automática de desviaciones"
+      }
+    ],
+    "roi": {
+      "badge": "Simulador ROI",
+      "title": "Mida antes de invertir — ¿qué desperdicio se esconde en su factura?",
+      "subtitle": "WattBim no sustituye la PV solar: le indica dónde colocar sus primeras inversiones y mide su retorno.",
+      "currencyLabel": "Moneda",
+      "billLabel": "Factura energética anual ({{symbol}})",
+      "savings": "Ahorros / año",
+      "savingsHint": "Supone un 15 % de ahorros accionables",
+      "commission": "Comisión WattBim (30 %)",
+      "commissionHint": "Pagado solo por resultados",
+      "subscription": "Suscripción / año",
+      "subscriptionHint": "Acceso ilimitado a la plataforma",
+      "net": "Ganancia neta del cliente / año",
+      "roiIn": "Retorno en ~{{months}} meses",
+      "threshold": "Punto de equilibrio a partir de 14.300 TND de factura",
+      "modelNote": "Modelo sin riesgo: 1.500 TND de suscripción + 30 % de los ahorros realizados. WattBim no cobra comisión sobre inversiones (PV, aislamiento, LED) — solo sobre ganancias medidas mediante monitorización."
+    },
+    "pv": {
+      "badge": "¿Ya dispone de paneles solares?",
+      "titleLead": "WattBim no sustituye la PV solar —",
+      "titleAccent": "la complementa",
+      "subtitle": "La PV solar reduce su factura. WattBim mide el retorno real, elimina el desperdicio restante y le ayuda a decidir sus próximas inversiones energéticas.",
+      "card": {
+        "pvTitle": "PV = producción limpia",
+        "pvDesc": "Los paneles solares reducen lo que compra al suministrador.",
+        "wbTitle": "WattBim = pilotaje y prueba",
+        "wbDesc": "Mida, detecte el desperdicio y valide sus ahorros."
+      },
+      "items": [
+        {
+          "icon": "LineChart",
+          "title": "Demuestre el ROI real de su PV",
+          "desc": "kWh producidos, autoconsumidos, exportados. Cuantifique exactamente lo que sus paneles reportan cada mes."
+        },
+        {
+          "icon": "Moon",
+          "title": "Eliminar el desperdicio nocturno",
+          "desc": "Con o sin PV, luces, climatización y máquinas en standby siguen consumiendo. WattBim detecta desviaciones 24/7."
+        },
+        {
+          "icon": "Activity",
+          "title": "Priorice las inversiones adecuadas",
+          "desc": "LED, HVAC, baterías o ampliación PV: WattBim le indica qué palanca tiene el mayor impacto financiero."
+        },
+        {
+          "icon": "Building2",
+          "title": "Comparar sitio por sitio",
+          "desc": "Clasifique sus edificios con y sin PV. Identifique los que siguen desperdiciando a pesar de la solar."
+        },
+        {
+          "icon": "Leaf",
+          "title": "Valorice sus ahorros de carbono",
+          "desc": "Sincronizar automáticamente los kWh ahorrados en su huella CarboScan Scope 1 y 2."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Auditorías y financiación verde",
+          "desc": "Informes trazables para utilities, agencias, bancos e inversores ESG."
+        }
+      ]
+    },
+    "features": {
+      "title": "Todo lo necesario para pilotar la energía de sus edificios",
+      "subtitle": "Una plataforma completa, del contador a la descarbonización.",
+      "items": [
+        {
+          "icon": "Building2",
+          "title": "Multi-edificio, multi-contador",
+          "desc": "Siga cada sitio, cada contador (elec, gas, calor) y cada contrato en una sola vista."
+        },
+        {
+          "icon": "Moon",
+          "title": "Detección de desperdicio nocturno",
+          "desc": "Detección automática de consumos anómalos entre las 22 h y las 6 h."
+        },
+        {
+          "icon": "Activity",
+          "title": "Alertas de picos y desviaciones",
+          "desc": "Reciba alertas en cuanto el consumo supere sus umbrales o se desvíe respecto al año anterior."
+        },
+        {
+          "icon": "LineChart",
+          "title": "Seguimiento de ahorros",
+          "desc": "Mida las ganancias reales mes a mes y demuestre sus resultados."
+        },
+        {
+          "icon": "Leaf",
+          "title": "Sincronización de huella de carbono",
+          "desc": "Cada lectura validada alimenta automáticamente su huella Scope 1 y 2."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Datos seguros",
+          "desc": "Alojamiento europeo, RLS multi-tenant, conformidad GDPR."
+        }
+      ]
+    },
+    "iot": {
+      "badge": "IoT y conectores",
+      "title": "Conecte sus contadores en unos pocos pasos",
+      "subtitle": "Entrada manual, importación Excel, API o sensores IoT: WattBim se adapta a su nivel de equipamiento. No se requiere hardware propietario.",
+      "steps": [
+        {
+          "icon": "Cpu",
+          "title": "1. Sensor",
+          "desc": "Un subcontador o una pinza amperimétrica en el cuadro eléctrico (Shelly EM, ESP32, Modbus…)."
+        },
+        {
+          "icon": "Wifi",
+          "title": "2. Gateway",
+          "desc": "Wi-Fi, 4G o Ethernet: la pasarela envía lecturas a WattBim por HTTPS con su clave API."
+        },
+        {
+          "icon": "Activity",
+          "title": "3. WattBim",
+          "desc": "Almacenamiento, cálculo automático de CO₂, alertas y sincronización con su huella Scope 1 y 2."
+        }
+      ],
+      "guideTitle": "Guía estratégica — Por qué monitorizar la energía de sus edificios",
+      "guideDesc": "Beneficios, ROI típico y las preguntas clave antes de lanzar un proyecto de monitorización energética. Para directivos, CFO y responsables CSR.",
+      "guideCta": "Descargar la guía (PDF)",
+      "guideFootnote": "Las guías técnicas detalladas (API, IoT, cálculos) están disponibles para nuestros clientes desde la aplicación."
+    },
+    "audiences": {
+      "title": "Diseñado para organizaciones que quieren actuar",
+      "groups": [
+        {
+          "title": "Terciario y oficinas",
+          "items": [
+            "Oficinas, sedes, sucursales",
+            "Cadenas de tiendas",
+            "Hoteles y restaurantes"
+          ]
+        },
+        {
+          "title": "Industria y PYME",
+          "items": [
+            "Sitios de producción",
+            "Almacenes logísticos",
+            "Talleres"
+          ]
+        },
+        {
+          "title": "Sector público",
+          "items": [
+            "Edificios administrativos",
+            "Escuelas, hospitales",
+            "Administraciones locales"
+          ]
+        }
+      ]
+    },
+    "finalCta": {
+      "title": "¿Listo para medir antes de invertir?",
+      "subtitle": "Solicite una auditoría gratuita de su primera factura energética e identifique las primeras acciones a priorizar.",
+      "ctaDemo": "Solicitar una demo",
+      "ctaContact": "Contáctenos"
+    }
+  }
+}

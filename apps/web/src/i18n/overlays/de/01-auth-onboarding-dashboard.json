@@ -1,0 +1,216 @@
+{
+  "auth": {
+    "welcome": "Willkommen bei CarboScan",
+    "subtitle": "Melden Sie sich an oder erstellen Sie Ihr Konto",
+    "authentication": "Authentifizierung",
+    "accessDashboard": "Zugriff auf Ihr CO₂-Dashboard",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "fullName": "Vollständiger Name",
+    "company": "Unternehmen",
+    "confirmPassword": "Passwort bestätigen",
+    "placeholders": {
+      "email": "ihre@email.com",
+      "password": "••••••••",
+      "fullName": "Ihr vollständiger Name",
+      "company": "Name Ihres Unternehmens"
+    },
+    "buttons": {
+      "signIn": "Anmelden",
+      "signInLoading": "Anmeldung läuft...",
+      "signUp": "Konto erstellen",
+      "signUpLoading": "Registrierung läuft...",
+      "backToHome": "← Zurück zur Startseite"
+    },
+    "messages": {
+      "signInSuccess": "Anmeldung erfolgreich",
+      "signInSuccessDesc": "Weiterleitung...",
+      "signUpSuccess": "Registrierung erfolgreich",
+      "signUpSuccessDesc": "Weiterleitung zur Zahlungsseite...",
+      "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+      "signInError": "Anmeldefehler",
+      "signUpError": "Registrierungsfehler",
+      "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten.",
+      "ipBlocked": "Ihre IP-Adresse wurde aufgrund mehrerer fehlgeschlagener Anmeldeversuche vorübergehend gesperrt. Bitte versuchen Sie es in 24 Stunden erneut.",
+      "accessBlocked": "Zugriff vorübergehend gesperrt"
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "organization": "Ihre Organisation",
+      "organizationDesc": "Grundinformationen",
+      "team": "Ihr Team",
+      "teamDesc": "Größe und Sektor",
+      "ready": "Bereit zum Start",
+      "readyDesc": "Zusammenfassung"
+    },
+    "titles": {
+      "welcome": "Willkommen bei CarboScan 🌿",
+      "activity": "Erzählen Sie uns von Ihrer Tätigkeit",
+      "allSet": "Alles bereit!"
+    },
+    "descriptions": {
+      "welcome": "Richten wir Ihren Arbeitsbereich in wenigen Schritten ein",
+      "activity": "Diese Informationen helfen uns, Ihre Erfahrung zu personalisieren",
+      "allSet": "Hier ist eine Zusammenfassung Ihrer Konfiguration"
+    },
+    "fields": {
+      "companyName": "Name der Organisation",
+      "companyNamePlaceholder": "Z. B.: Meine Firma GmbH",
+      "country": "Land",
+      "sector": "Branche",
+      "sectorPlaceholder": "Wählen Sie Ihre Branche",
+      "employees": "Anzahl der Mitarbeitenden",
+      "employeesPlaceholder": "Wählen Sie einen Bereich",
+      "employeesUnit": "Mitarbeitende"
+    },
+    "summary": {
+      "organization": "Organisation",
+      "country": "Land",
+      "sector": "Branche",
+      "employees": "Mitarbeitende"
+    },
+    "buttons": {
+      "previous": "Zurück",
+      "next": "Weiter",
+      "configuring": "Konfiguration...",
+      "start": "CarboScan starten",
+      "skip": "Diesen Schritt überspringen"
+    },
+    "messages": {
+      "success": "Organisation erfolgreich konfiguriert!",
+      "error": "Fehler bei der Konfiguration"
+    }
+  },
+  "dashboard": {
+    "charts": {
+      "emissionPosts": {
+        "title": "Wichtigste Emissionsquellen",
+        "noData": "Keine Daten verfügbar",
+        "tooltip": {
+          "ofTotal": "der Gesamtsumme",
+          "scope": "Scope"
+        }
+      },
+      "scopeLegend": {
+        "scope1": "Scope 1",
+        "scope2": "Scope 2",
+        "scope3": "Scope 3"
+      }
+    },
+    "sidebar": {
+      "navigation": "Navigation",
+      "dashboard": "Dashboard",
+      "dataCollection": "Datenerfassung",
+      "myAssessments": "Meine Bilanzen",
+      "settings": "Einstellungen",
+      "logout": "Abmelden"
+    },
+    "header": {
+      "newAssessment": "Neue Bilanz",
+      "contactUs": "Neue Bilanz – Kontaktieren Sie uns",
+      "quotaReached": "Kontingent erreicht • Kontaktieren Sie uns für eine zusätzliche Bilanz",
+      "assessments": "Bilanzen",
+      "limitReached": "Limit erreicht",
+      "myProfile": "Mein Profil",
+      "settingsLabel": "Einstellungen",
+      "disconnect": "Abmelden",
+      "settings": "Einstellungen"
+    },
+    "adaptive": {
+      "loading": "Laden...",
+      "error": "Fehler",
+      "cannotLoadPlan": "Ihre Planinformationen konnten nicht geladen werden",
+      "retry": "Erneut versuchen",
+      "noActivePlan": "Kein aktiver Plan",
+      "noActivePlanDesc": "Um auf das CarboScan-Dashboard zuzugreifen, müssen Sie einen unserer Pläne abonnieren.",
+      "choosePlan": "Plan wählen",
+      "alreadyOrdered": "Ich habe bereits bestellt",
+      "planNotRecognized": "Plan nicht erkannt",
+      "planNotSupported": "Der Plantyp \"{planType}\" wird nicht unterstützt.",
+      "seeAvailablePlans": "Verfügbare Pläne ansehen",
+      "titles": {
+        "start": "Dashboard Plan Start",
+        "complete": "Dashboard Plan Complete",
+        "pro": "Dashboard CarboPro",
+        "default": "CarboScan-Dashboard"
+      },
+      "subtitles": {
+        "start": "Plan {planName} – Zugang zu Standardfunktionen",
+        "complete": "Plan {planName} – Zugang zu Standardfunktionen",
+        "pro": "Plan {planName} – Zugang zu unbegrenzten Funktionen"
+      }
+    },
+    "essential": {
+      "planBadge": "Plan CarboStart",
+      "scope12": "CO₂-Bilanz",
+      "scope12Desc": "Vollständige Analyse der Emissionen Ihres Unternehmens (Scopes 1, 2 und 3)",
+      "scopesIncluded": "Scopes 1, 2 & 3",
+      "assessmentStatus": "Status der Bilanz",
+      "inProgress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "pending": "Ausstehend",
+      "progress": "Fortschritt",
+      "quickActions": "Schnellaktionen",
+      "startAssessment": "Bilanz starten",
+      "viewReports": "Berichte ansehen",
+      "recentActivity": "Letzte Aktivität",
+      "noActivity": "Keine aktuelle Aktivität",
+      "viewAll": "Alle ansehen"
+    },
+    "complete": {
+      "overview": "Übersicht",
+      "totalEmissions": "Gesamtemissionen",
+      "scope1": "Scope 1",
+      "scope2": "Scope 2",
+      "scope3": "Scope 3",
+      "emissionsBreakdown": "Emissionsaufteilung",
+      "trends": "Trends",
+      "monthlyTrend": "Monatlicher Trend",
+      "recentAssessments": "Aktuelle Bilanzen",
+      "assessment": "Bilanz",
+      "status": "Status",
+      "date": "Datum",
+      "actions": "Aktionen",
+      "view": "Ansehen",
+      "download": "Herunterladen",
+      "quickStats": "Kurzstatistiken",
+      "assessmentsCompleted": "Abgeschlossene Bilanzen",
+      "totalEmissionsReduced": "Reduzierte Emissionen",
+      "complianceRate": "Konformitätsrate",
+      "recommendations": "Empfehlungen",
+      "viewAllRecommendations": "Alle Empfehlungen ansehen",
+      "bySector": "Nach Branche",
+      "ghgDistribution": "Verteilung der THG-Emissionen",
+      "sectorComparison": "Branchenvergleich",
+      "companyVsSector": "Ihr Unternehmen vs. Branche",
+      "emissionSources": "Emissionsquellen",
+      "detailedBreakdown": "Detaillierte Aufschlüsselung nach Quelle",
+      "yourCompany": "Ihr Unternehmen",
+      "averageSector": "Branchendurchschnitt"
+    },
+    "pro": {
+      "advancedAnalytics": "Erweiterte Analysen",
+      "realTimeMonitoring": "Echtzeitüberwachung",
+      "customReports": "Individuelle Berichte",
+      "teamCollaboration": "Teamzusammenarbeit",
+      "apiAccess": "API-Zugang",
+      "prioritySupport": "Prioritäts-Support",
+      "advancedFeatures": "Erweiterte Funktionen",
+      "unlimitedAssessments": "Unbegrenzte Bilanzen",
+      "customScopes": "Individuelle Scopes",
+      "advancedReporting": "Erweiterte Berichterstattung",
+      "teamManagement": "Teamverwaltung",
+      "apiIntegration": "API-Integration",
+      "whiteLabel": "White Label",
+      "dedicatedSupport": "Dedizierter Support"
+    },
+    "layout": {
+      "welcome": "Willkommen",
+      "backToHome": "Zurück zur Startseite",
+      "unspecifiedOrganization": "Organisation nicht angegeben"
+    }
+  }
+}

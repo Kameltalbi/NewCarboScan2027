@@ -1,0 +1,765 @@
+{
+  "pricing": {
+    "title": "Nuestros",
+    "titleHighlight": "Precios",
+    "subtitle": "Un enfoque sencillo y transparente para su huella de carbono",
+    "currencyToggle": "Mostrar precios en",
+    "commonFeatures": "Común a ambos planes:",
+    "feature1": "Acceso a la plataforma CarboScan",
+    "feature2": "1 evaluación + 2 revisiones/año",
+    "feature3": "Informe verificado en 2 días",
+    "feature4": "Atención al cliente",
+    "forWho": "¿Para quién?",
+    "essentialPlan": "Essential:",
+    "essentialDescription": "PYME, agencias, sitios industriales simples, restauración, talleres, puntos de venta...",
+    "completePlan": "Pro:",
+    "completeDescription": "Empresas comprometidas con la RSC, que cumplen requisitos regulatorios o desean un reporting ESG estructurado.",
+    "proPlan": "Premium:",
+    "proDescription": "Grandes empresas, grupos y multi-sedes que requieren soporte personalizado y funciones avanzadas.",
+    "talkToExpert": "Hablar con un experto",
+    "popular": "Popular",
+    "discover": "Descubrir",
+    "contactUs": "Contáctenos",
+    "perYear": "/año",
+    "onQuote": "Bajo presupuesto",
+    "plans": {
+      "essential": {
+        "name": "Essential",
+        "description": "Scope 1 y 2 (emisiones directas + energía adquirida)"
+      },
+      "complete": {
+        "name": "Pro",
+        "description": "Scope 1, 2 y 3 (compras, transporte, residuos, etc.)"
+      },
+      "pro": {
+        "name": "Premium",
+        "description": "Gran cuenta, multi-sede, servicios estratégicos"
+      }
+    },
+    "features": {
+      "scope1": {
+        "title": "Análisis de emisiones directas (Scope 1)",
+        "description": "Consumo de combustible, emisiones relacionadas con el uso directo de equipos o vehículos"
+      },
+      "scope2": {
+        "title": "Análisis de emisiones indirectas relacionadas con la energía (Scope 2)",
+        "description": "Electricidad, calor, vapor o refrigeración adquiridos"
+      },
+      "automatedCalculation": {
+        "title": "Cálculo automatizado de la huella de carbono",
+        "description": "A través de la plataforma CarboScan"
+      },
+      "expertValidation": {
+        "title": "Revisión y validación por un experto certificado",
+        "description": "Verificación humana por un profesional"
+      },
+      "finalReport": {
+        "title": "Entrega del informe final estructurado (PDF)",
+        "description": "Documento profesional compartible"
+      },
+      "revisions": {
+        "title": "Dos revisiones gratuitas al año",
+        "description": "En caso de actualización de datos"
+      },
+      "delivery": {
+        "title": "Informe entregado en un plazo de 2 días laborables",
+        "description": "Tras la validación de los datos"
+      },
+      "unlimitedUsers": {
+        "title": "Usuarios ilimitados",
+        "description": "Colaboración inter-sede e interdepartamental"
+      },
+      "expertSupport": {
+        "title": "Soporte experto dedicado",
+        "description": "Línea directa y reuniones mensuales"
+      },
+      "scope3": {
+        "title": "Análisis completo del Scope 3",
+        "description": "Compras, transporte, viajes, residuos...",
+        "descriptionComplete": "Compras de bienes y servicios, transporte aguas arriba y abajo, viajes de negocios, residuos generados, activos fijos..."
+      },
+      "actionPlan": {
+        "title": "Plan de acción personalizado",
+        "description": "Acompañamiento experto y seguimiento"
+      },
+      "netZero": {
+        "title": "Trayectoria Net Zero a 10 años",
+        "description": "Plan detallado con etapas e hitos"
+      },
+      "completeFootprint": {
+        "title": "Complete Carbon Footprint®",
+        "description": "Integra los Scope 1, 2 y 3, incluidas las emisiones indirectas relacionadas con compras, viajes, transporte, activos fijos..."
+      },
+      "strategicSupport": {
+        "title": "Acompañamiento estratégico personalizado",
+        "description": "Análisis detallado de las particularidades del sector, encuadre inicial con un consultor senior, desarrollo de un plan de acción realista y priorizado"
+      },
+      "internalTraining": {
+        "title": "Formación interna en carbono incluida",
+        "description": "De 2 a 4 sesiones de formación para capacitar a sus equipos, material didáctico incluido, cuestionarios y certificación posibles"
+      },
+      "reports": {
+        "title": "Informes y exportaciones",
+        "description": "Informe automatizado + informe revisado por un experto, exportación en formatos PDF y Excel, posible integración con sus herramientas internas"
+      },
+      "updates": {
+        "title": "Revisiones y actualizaciones periódicas",
+        "description": "Posibilidad de actualizaciones trimestrales, semestrales o anuales, adaptación a evoluciones regulatorias"
+      },
+      "consolidatedReporting": {
+        "title": "Reporting consolidado",
+        "description": "Agregación multi-sede o multi-filial, preparación para obligaciones de reporting extra-financiero (CSRD, RSC...)"
+      }
+    },
+    "notes": {
+      "title": "Servicios incluidos en todos los planes",
+      "completeFootprint": "Huella de carbono completa – evaluación profesional de sus emisiones",
+      "twoRevisions": "Dos revisiones/año – actualización de datos incluida",
+      "automatedReport": "Informe generado automáticamente – documento estructurado y profesional",
+      "humanVerification": "Verificación humana por un experto – validación por un profesional certificado",
+      "delivery2Days": "Entrega en un plazo de 2 días laborables – rapidez garantizada",
+      "customerSupport": "Atención al cliente – asistencia dedicada para su proyecto"
+    },
+    "plansDetails": {
+      "essential": {
+        "badge": "Plan Essential",
+        "title": "Huella de carbono – Scope 1 y 2",
+        "description": "Inicie su recorrido ambiental con nuestra solución integral para analizar emisiones directas e indirectas relacionadas con la energía.",
+        "price": "1000 DT",
+        "priceUnit": "al año",
+        "deliveryTime": "Informe entregado en un plazo de 2 días laborables",
+        "ctaPrimary": "Iniciar mi evaluación",
+        "ctaSecondary": "Solicitar presupuesto",
+        "featuresTitle": "Todo lo que necesita",
+        "featuresSubtitle": "Una solución completa para analizar y comprender su huella de carbono",
+        "features": {
+          "scope1": {
+            "title": "Análisis de emisiones directas (Scope 1)",
+            "description": "Consumo de combustible, emisiones del uso directo de equipos o vehículos"
+          },
+          "scope2": {
+            "title": "Análisis de emisiones indirectas relacionadas con la energía (Scope 2)",
+            "description": "Electricidad, calor, vapor o refrigeración adquiridos"
+          },
+          "automated": {
+            "title": "Cálculo automatizado de la huella de carbono",
+            "description": "A través de la plataforma CarboScan"
+          },
+          "validation": {
+            "title": "Revisión y validación por un experto certificado",
+            "description": "Verificación humana por un profesional"
+          },
+          "report": {
+            "title": "Entrega del informe final estructurado (PDF)",
+            "description": "Documento profesional compartible"
+          },
+          "revisions": {
+            "title": "Dos revisiones gratuitas al año",
+            "description": "En caso de actualización de datos"
+          }
+        },
+        "processTitle": "¿Cómo funciona?",
+        "processSubtitle": "Un proceso sencillo y transparente para su huella de carbono",
+        "process": {
+          "step1": {
+            "title": "Recogida automatizada",
+            "description": "Introduzca sus datos en la plataforma CarboScan para el cálculo automatizado"
+          },
+          "step2": {
+            "title": "Validación experta",
+            "description": "Un experto certificado valida y verifica sus resultados para garantizar la exactitud"
+          },
+          "step3": {
+            "title": "Informe final",
+            "description": "Reciba su informe PDF estructurado en un plazo de 2 días laborables"
+          }
+        },
+        "ctaTitle": "¿Listo para iniciar su huella de carbono?",
+        "ctaSubtitle": "Únase a las empresas que eligen la transparencia ambiental",
+        "ctaFeatures": {
+          "professional": "Informe profesional",
+          "certified": "Experto certificado",
+          "revisions": "2 revisiones gratuitas"
+        },
+        "ctaButton": "Empezar ahora"
+      },
+      "pro": {
+        "badge": "CarboPro",
+        "title": "Solución experta para grandes empresas",
+        "description": "Diagnóstico completo y acompañamiento experto para impulsar su estrategia climática a escala de grupo con soporte dedicado.",
+        "price": "Bajo presupuesto",
+        "priceUnit": "Solución personalizada",
+        "ctaPrimary": "Solicitar presupuesto",
+        "ctaSecondary": "Hablar con un experto",
+        "featuresTitle": "Una solución experta completa",
+        "featuresSubtitle": "Todas las funciones avanzadas para la gestión profesional de la huella de carbono",
+        "features": {
+          "complete": {
+            "title": "Complete Carbon Footprint (Scope 1, 2 y 3)",
+            "description": "Multi-sede, multiactividad para una cobertura integral"
+          },
+          "users": {
+            "title": "Usuarios ilimitados",
+            "description": "Gestión de equipos, reporting y validación interna"
+          },
+          "support": {
+            "title": "Soporte experto dedicado",
+            "description": "Línea directa, reuniones mensuales, seguimiento personalizado"
+          },
+          "reporting": {
+            "title": "Reporting consolidado",
+            "description": "Visualización multi-sede y consolidación de datos"
+          },
+          "trajectory": {
+            "title": "Trayectoria Net Zero a 10 años",
+            "description": "Plan cuantificado con hitos y etapas detallados"
+          },
+          "exports": {
+            "title": "Exportaciones profesionales en PDF y Excel",
+            "description": "Resultados detallados listos para comunicar"
+          }
+        },
+        "clientsTitle": "Confían en nosotros",
+        "clientsSubtitle": "Empresas que han elegido nuestra experiencia",
+        "clients": {
+          "baguette": {
+            "name": "Baguette & Baguette",
+            "description": "Comida rápida (multi-sede)"
+          },
+          "startup": {
+            "name": "Start Up Village",
+            "description": "Coworking e incubadoras de empresas"
+          },
+          "abc": {
+            "name": "ABC Archibat",
+            "description": "Servicios y comunicación multiactividad"
+          }
+        },
+        "processTitle": "¿Cómo funciona?",
+        "processSubtitle": "Un enfoque a medida para grandes empresas",
+        "process": {
+          "step1": {
+            "title": "Análisis de necesidades",
+            "description": "Analizamos su organización para proponer una solución a medida"
+          },
+          "step2": {
+            "title": "Despliegue de la solución",
+            "description": "Implementación de herramientas y formación del equipo"
+          },
+          "step3": {
+            "title": "Acompañamiento continuo",
+            "description": "Seguimiento experto y optimización de resultados"
+          }
+        },
+        "ctaTitle": "¿Listo para acelerar su transición climática?",
+        "ctaSubtitle": "Únase a las grandes empresas que actúan por el clima",
+        "ctaFeatures": {
+          "expert": "Experto dedicado",
+          "complete": "Solución completa",
+          "support": "Soporte prioritario"
+        },
+        "ctaButton": "Contacte con nuestros expertos"
+      },
+      "complete": {
+        "badge": "Carbo Complete",
+        "title": "Solución para redes y franquicias",
+        "description": "Una solución global para gestionar, agregar y monitorizar las emisiones de carbono de todas las entidades de un grupo, red de franquicias o cartera empresarial.",
+        "price": "Bajo presupuesto",
+        "priceUnit": "Precios adaptados a su red",
+        "supportNote": "Soporte prioritario y línea directa dedicada",
+        "ctaPrimary": "Solicitar presupuesto",
+        "ctaSecondary": "Descubrir la solución",
+        "featuresTitle": "Ventajas de Carbo Complete",
+        "featuresSubtitle": "Una solución diseñada para estructuras complejas y redes empresariales",
+        "features": {
+          "multiEntity": {
+            "title": "Multi-entidad y multi-sede",
+            "description": "Gestión de filiales, franquicias, agencias o socios"
+          },
+          "users": {
+            "title": "Usuarios ilimitados",
+            "description": "Acceso dedicado para cada estructura con gestión centralizada"
+          },
+          "reporting": {
+            "title": "Reporting consolidado",
+            "description": "Vista en tiempo real de la red o el grupo"
+          },
+          "support": {
+            "title": "Acompañamiento estratégico a medida",
+            "description": "Seguimiento experto adaptado a la estructura de su red"
+          },
+          "exports": {
+            "title": "Exportaciones profesionales en PDF y Excel",
+            "description": "Informes consolidados y por entidad"
+          },
+          "trajectory": {
+            "title": "Trayectoria de carbono común",
+            "description": "Planes de acción globales y personalizados por entidad"
+          }
+        },
+        "clientsTitle": "Confían en nosotros",
+        "clientsSubtitle": "Redes que han elegido nuestra solución",
+        "clients": {
+          "baguette": {
+            "name": "Baguette & Baguette",
+            "description": "Comida rápida multi-sede"
+          },
+          "startup": {
+            "name": "Start Up Village",
+            "description": "Red de espacios de coworking"
+          },
+          "abc": {
+            "name": "ABC Archibat",
+            "description": "Comunicación y medios multiactividad"
+          }
+        },
+        "processTitle": "¿Cómo funciona?",
+        "processSubtitle": "Una metodología adaptada a redes complejas",
+        "process": {
+          "step1": {
+            "title": "Arquitectura de red",
+            "description": "Mapeamos sus entidades y definimos la estructura de gobernanza"
+          },
+          "step2": {
+            "title": "Despliegue progresivo",
+            "description": "Despliegue progresivo con formación y soporte local"
+          },
+          "step3": {
+            "title": "Gestión centralizada",
+            "description": "Monitorización y reporting consolidados para una toma de decisiones informada"
+          }
+        },
+        "ctaTitle": "¿Listo para gestionar el impacto climático de su red?",
+        "ctaSubtitle": "Únase a las redes comprometidas con la transparencia ambiental",
+        "ctaFeatures": {
+          "consolidated": "Vista consolidada",
+          "personalized": "Acompañamiento personalizado",
+          "priority": "Línea directa prioritaria"
+        },
+        "ctaButton": "Iniciar la evaluación"
+      }
+    },
+    "modular": {
+      "questionnaire": {
+        "title": "Cuestionario de cualificación",
+        "subtitle": "Responda a 3 preguntas para obtener una oferta a medida",
+        "step1": {
+          "question": "¿Cuántos empleados tiene?",
+          "option1": "Menos de 250",
+          "option2": "Más de 250"
+        },
+        "step2": {
+          "question": "¿Cuántas sedes desea analizar?",
+          "option1": "1 sede",
+          "option2": "Varias sedes"
+        },
+        "step3": {
+          "question": "¿Desea ser contactado por un experto de CarboScan?",
+          "option1": "Sí",
+          "option2": "No"
+        },
+        "complete": "Continuar"
+      },
+      "emailCollector": {
+        "title": "Su dirección de correo electrónico",
+        "subtitle": "Necesitamos su correo electrónico para enviarle su presupuesto personalizado",
+        "emailLabel": "Correo electrónico",
+        "emailPlaceholder": "su@email.com",
+        "submit": "Ver precios",
+        "error": "Introduzca una dirección de correo electrónico válida",
+        "privacy": "Su correo electrónico solo se utilizará para enviarle su presupuesto personalizado. Nunca compartiremos sus datos."
+      },
+      "solutions": {
+        "title": "Soluciones modulares para acelerar su rendimiento climático",
+        "required": "(obligatorio)",
+        "bilanCarbone": {
+          "name": "Complete Carbon Footprint – 2.900 TND netos",
+          "description": "Evaluación integral de emisiones que cubre los Scope 1, 2 y 3 según estándares internacionales. Base esencial para estructurar su estrategia climática."
+        },
+        "collect": {
+          "name": "CarboScan Collect",
+          "description": "Recogida automatizada, OCR, integraciones y flujos de trabajo."
+        },
+        "empreinteProduit": {
+          "name": "Product Footprint",
+          "description": "Análisis por producto o gama, materiales, ciclo de vida."
+        },
+        "cbam": {
+          "name": "CBAM",
+          "description": "Preparación completa de su expediente CBAM con importación Excel y generación automática del informe."
+        },
+        "monitoring": {
+          "name": "Monitorización y reducción (DecarboTech)",
+          "description": "Seguimiento de consumos, indicadores en tiempo real y recomendaciones de reducción."
+        }
+      },
+      "modules": {
+        "collect": {
+          "name": "CarboScan Collect"
+        },
+        "empreinteProduit": {
+          "name": "Product Footprint"
+        },
+        "cbam": {
+          "name": "CBAM"
+        },
+        "monitoring": {
+          "name": "Monitorización y reducción (DecarboTech)"
+        }
+      },
+      "selector": {
+        "title": "Configure su solución a medida",
+        "subtitle": "Seleccione los módulos que se ajusten a sus necesidades",
+        "cardTitle": "Selección de módulos",
+        "bilanCarbone": {
+          "name": "Complete Carbon Footprint",
+          "description": "Siempre incluido en su solución"
+        },
+        "modulesTitle": "Módulos adicionales (1.500 TND netos cada uno)",
+        "total": "TOTAL",
+        "customQuote": "Presupuesto a medida – Contáctenos",
+        "cta": "Recibir una propuesta detallada"
+      },
+      "simulation": {
+        "title": "Simule su presupuesto en segundos",
+        "subtitle": "Obtenga una estimación inmediata y reciba todos los detalles por correo electrónico.",
+        "emailLabel": "Correo electrónico",
+        "emailPlaceholder": "su@email.com",
+        "submit": "Recibir mi estimación",
+        "submitting": "Enviando...",
+        "downloadPDF": "Descargar PDF",
+        "success": {
+          "title": "Solicitud enviada",
+          "description": "Recibirá su estimación detallada por correo electrónico en un plazo de 48 horas."
+        },
+        "error": {
+          "title": "Error",
+          "description": "Introduzca una dirección de correo electrónico válida."
+        },
+        "pdf": {
+          "title": "PDF descargado",
+          "description": "La guía de precios estará disponible próximamente."
+        }
+      },
+      "customQuote": {
+        "title": "Su organización requiere un enfoque a medida",
+        "message": "Un experto de CarboScan se pondrá en contacto con usted para elaborar la oferta adaptada a su alcance y objetivos.",
+        "benefit1": "Análisis en profundidad de sus necesidades específicas",
+        "benefit2": "Propuesta personalizada según su sector y tamaño",
+        "benefit3": "Soporte dedicado para optimizar su inversión"
+      },
+      "introduction": {
+        "mainText": "CarboScan reúne en una sola plataforma todas las herramientas necesarias para medir, analizar y reducir su huella de carbono.",
+        "baseText": "La Complete Carbon Footprint (Scope 1, 2 y 3) es la base de cada misión, a la que puede añadir módulos especializados según sus objetivos",
+        "modulesTitle": "Módulos disponibles",
+        "modules": {
+          "collect": {
+            "name": "Smart Collection",
+            "description": "Centralización automatizada de datos, OCR, importaciones guiadas y tiempo de recogida reducido."
+          },
+          "monitoring": {
+            "name": "Monitorización y reducción",
+            "description": "Seguimiento continuo de sus indicadores clave, alertas de rendimiento y recomendaciones de reducción."
+          },
+          "empreinteProduit": {
+            "name": "Product Footprint",
+            "description": "Análisis por producto y materiales según estándares ACV."
+          },
+          "cbam": {
+            "name": "CBAM",
+            "description": "Preparación completa de su archivo de importación y generación del informe oficial."
+          }
+        },
+        "conclusion": "Dado que cada empresa tiene un alcance único, nuestros precios se establecen según su estructura y el nivel de soporte requerido."
+      },
+      "explanation": {
+        "title": "¿Cómo se calculan nuestros precios?",
+        "intro": "Nuestros precios se personalizan según el tamaño de su empresa y el alcance del estudio. Cada situación es única y requiere un análisis en profundidad.",
+        "priceStart": "Precio de partida:",
+        "priceStartDesc": "El precio parte de 2.900 TND netos para una pequeña empresa con menos de 250 empleados y una sola sede. Este paquete incluye la Complete Carbon Footprint que cubre los Scope 1, 2 y 3.",
+        "perimeter": "Alcance del estudio:",
+        "perimeterDesc": "El precio varía según el número de sedes a analizar, la complejidad de su organización y el número de filiales o entidades a incluir en la huella de carbono. Cuanto más amplio sea el alcance, más tiempo y experiencia requerirá el análisis.",
+        "conclusion": "Para recibir una oferta detallada adaptada a su estructura, rellene el formulario a continuación. Un experto de CarboScan se pondrá en contacto con usted en un plazo de 48 horas con una propuesta personalizada."
+      },
+      "contactForm": {
+        "title": "Reciba una oferta detallada adaptada a su estructura",
+        "subtitle": "Rellene el formulario a continuación y un experto de CarboScan se pondrá en contacto con usted en un plazo de 48 horas con una propuesta personalizada.",
+        "formTitle": "Solicitud de presupuesto a medida",
+        "name": "Nombre",
+        "namePlaceholder": "Su nombre completo",
+        "company": "Empresa",
+        "companyPlaceholder": "Nombre de su empresa",
+        "email": "Correo electrónico",
+        "emailPlaceholder": "su@email.com",
+        "phone": "Teléfono",
+        "phonePlaceholder": "+216 XX XXX XXX",
+        "message": "Mensaje (opcional)",
+        "messagePlaceholder": "Describa brevemente sus necesidades o formule sus preguntas...",
+        "submit": "Enviar mi solicitud",
+        "submitting": "Enviando...",
+        "privacy": "Sus datos se tratan de forma confidencial y nunca se compartirán con terceros.",
+        "success": {
+          "title": "Solicitud enviada correctamente",
+          "description": "Un experto de CarboScan se pondrá en contacto con usted en un plazo de 48 horas con una propuesta personalizada."
+        }
+      }
+    }
+  },
+  "newPricing": {
+    "hero": {
+      "title": "Soluciones de carbono adaptadas a su empresa",
+      "subtitle": "Ya sea microempresa, PYME, empresa mediana o gran empresa: transparencia, experiencia y acompañamiento a medida para su transición climática",
+      "ctaPrimary": "Hablar con un experto",
+      "ctaSecondary": "Explore nuestras soluciones",
+      "visualText": "Reducción progresiva de las emisiones de CO₂"
+    },
+    "philosophy": {
+      "title": "¿Por qué nuestros precios son personalizados?",
+      "point1": {
+        "title": "Cada empresa es única",
+        "description": "Su sector, tamaño y huella de carbono influyen en la solución."
+      },
+      "point2": {
+        "title": "Más allá del precio, el valor",
+        "description": "Incluimos experiencia regulatoria, monitorización local y reporting."
+      },
+      "point3": {
+        "title": "Flexibilidad",
+        "description": "Opciones modulares según su madurez RSC y objetivos."
+      },
+      "highlight": "A petición simple, proporcionamos una estimación gratuita y sin compromiso adaptada a sus necesidades específicas."
+    },
+    "offers": {
+      "title": "Nuestras ofertas principales",
+      "subtitle": "Elija la solución acorde a su nivel de compromiso climático",
+      "decouverte": {
+        "name": "Discovery",
+        "price": "Bajo presupuesto",
+        "priceNote": "Paquete base",
+        "description": "Para empresas que empiezan",
+        "target": "PYME, primeros pasos en compensación",
+        "features": [
+          "Cálculo simplificado de la huella de carbono (Scope 1 y 2)",
+          "Acceso a la plataforma de monitorización",
+          "Compra de créditos de carbono estándar (proyectos tunecinos)",
+          "Certificado de participación"
+        ],
+        "cta": "Iniciar estimación"
+      },
+      "engagement": {
+        "name": "Compromiso",
+        "price": "Contáctenos",
+        "description": "Solución más popular",
+        "target": "Empresas medianas, grupos preocupados por su impacto",
+        "features": [
+          "Huella de carbono completa (Scope 1, 2, 3)",
+          "Plan de reducción personalizado",
+          "Compra de créditos de carbono premium (proyectos certificados Gold Standard/VCS en África)",
+          "Reporting trimestral y panel avanzado",
+          "Soporte dedicado"
+        ],
+        "cta": "Obtener una demo personalizada",
+        "popular": "Más popular"
+      },
+      "partenaire": {
+        "name": "Partner",
+        "price": "Presupuesto a medida",
+        "description": "A medida",
+        "target": "Grandes cuentas, grupos industriales",
+        "features": [
+          "Auditoría de carbono y estrategia «Net Zero»",
+          "Desarrollo de proyectos de carbono limpio (posibilidad de inversión)",
+          "100 % de compensación + etiqueta «Climate Committed Company»",
+          "Acompañamiento estratégico y comunicación"
+        ],
+        "cta": "Programar una llamada estratégica"
+      }
+    },
+    "simulator": {
+      "title": "Estime la inversión para su empresa",
+      "subtitle": "Responda a unas preguntas para obtener una estimación personalizada",
+      "cardTitle": "Simulador de precios",
+      "step1": "1. ¿Cuál es su sector de actividad?",
+      "step2": "2. ¿Cuál es el tamaño de su empresa?",
+      "step3": "3. ¿Cuál es su objetivo?",
+      "sectors": {
+        "industrie": "Industria",
+        "agroalimentaire": "Alimentación y agricultura",
+        "services": "Servicios",
+        "logistique": "Logística",
+        "tech": "Tech",
+        "autre": "Otro"
+      },
+      "sizes": {
+        "1-10": "1–10 empleados",
+        "11-50": "11–50 empleados",
+        "51-100": "51–100 empleados",
+        "101-250": "101–250 empleados",
+        "251-500": "251–500 empleados",
+        "500+": "Más de 500 empleados"
+      },
+      "objectives": {
+        "premiere": "Primera compensación",
+        "reduction": "Reducción continua",
+        "sur-mesure": "Proyecto a medida"
+      },
+      "result": {
+        "text": "Para una empresa del sector {sector} con {size}, le recomendamos contactarnos para una estimación personalizada.",
+        "note": "Cada empresa es única y requiere un análisis en profundidad de sus necesidades específicas.",
+        "cta": "Para una estimación precisa, descargue nuestra guía o hable con un experto."
+      },
+      "downloadGuide": "Descargar guía de precios (PDF)",
+      "getEstimate": "Obtener mi estimación precisa",
+      "newEstimate": "Nueva estimación",
+      "back": "Volver"
+    },
+    "included": {
+      "title": "Qué incluyen todos nuestros paquetes",
+      "subtitle": "Garantías que transmiten confianza sobre el valor base",
+      "items": [
+        "Experiencia regulatoria y seguimiento de estándares",
+        "Acceso a nuestra plataforma digital de monitorización",
+        "Certificados de compensación válidos internacionalmente",
+        "Atención al cliente en francés y árabe",
+        "Sin compromiso oculto, facturación transparente"
+      ]
+    },
+    "faq": {
+      "title": "Preguntas frecuentes sobre nuestros precios",
+      "questions": [
+        {
+          "question": "¿Puedo pagar a plazos?",
+          "answer": "Sí, ofrecemos condiciones de pago flexibles adaptadas a su situación. Contáctenos para hablar de las opciones disponibles."
+        },
+        {
+          "question": "¿Existen ayudas o incentivos fiscales para este tipo de inversión?",
+          "answer": "Las inversiones en transición climática pueden beneficiarse de ciertos incentivos. Nuestro equipo puede ayudarle a identificar los programas aplicables a su situación."
+        },
+        {
+          "question": "¿Cuánto dura normalmente un proyecto de compensación para una PYME?",
+          "answer": "La duración varía según la complejidad del proyecto, pero generalmente entre 3 y 6 meses para una primera compensación completa, incluyendo huella de carbono y compra de créditos."
+        },
+        {
+          "question": "¿Pueden ayudarnos a comunicar nuestro enfoque interna y externamente?",
+          "answer": "¡Por supuesto! Ofrecemos servicios de comunicación y formación para sus equipos, así como apoyo para dar visibilidad a su compromiso climático ante sus grupos de interés."
+        },
+        {
+          "question": "¿Ofrecen formación para nuestros equipos?",
+          "answer": "Sí, disponemos de una oferta formativa completa a través de CarboScan Academy, adaptada a distintos niveles y necesidades. También se pueden organizar formaciones a medida."
+        }
+      ]
+    },
+    "contact": {
+      "title": "Hablemos de su proyecto",
+      "subtitle": "Nuestro equipo de expertos está aquí para analizar sus necesidades y proponer la solución más eficaz.",
+      "form": {
+        "title": "Recibir una propuesta en 48 h",
+        "name": "Nombre",
+        "company": "Empresa",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "employees": "Número de empleados",
+        "message": "Mensaje",
+        "submit": "Enviar mi solicitud"
+      },
+      "directContact": {
+        "title": "Opciones de contacto directo",
+        "phone": "Teléfono",
+        "email": "Correo electrónico",
+        "schedule": "Programar una llamada",
+        "scheduleButton": "Reservar una cita",
+        "freeConsultation": "Primera consulta gratuita y sin compromiso"
+      }
+    },
+    "trust": {
+      "text": "Socio autorizado para la compensación de carbono. Nuestros créditos están verificados por organismos de verificación reconocidos internacionalmente.",
+      "sectors": "Sectores atendidos:",
+      "sectorList": [
+        "Industria",
+        "Alimentación y agricultura",
+        "Servicios",
+        "Logística",
+        "Tech"
+      ]
+    }
+  },
+  "pricingSection": {
+    "titleLead": "Comparativa de planes",
+    "subtitle": "Elija el plan que se adapte a su empresa y a sus objetivos climáticos",
+    "recommended": "Recomendado",
+    "perYear": "/ año",
+    "customQuote": "Presupuesto a medida",
+    "choosePlan": "Elegir este plan",
+    "talkExpert": "Hablar con un experto",
+    "plans": {
+      "essentiel": {
+        "name": "Essential",
+        "target": "PYME locales",
+        "features": [
+          "Huella de carbono – Scope 1 y 2",
+          "Informe en FR o EN",
+          "Informe generado por IA validado por un consultor – basado en la metodología ADEME",
+          "Simulación económica: dos escenarios de subida del precio del petróleo, hipótesis de impuesto al carbono, estimación de ahorros vinculada a reducciones de emisiones",
+          "Soluciones recomendadas (Scope 1 y 2)",
+          "Ratios de carbono (por empleado, por m², por M TND de facturación)",
+          "Resumen ejecutivo de 1 página para la dirección",
+          "Paneles visuales y gráficos",
+          "2 revisiones al año",
+          "Sesión de debriefing online – 1 h"
+        ],
+        "notIncluded": [
+          "Módulo CBAM (exportadores a la UE)",
+          "Plan de acción detallado",
+          "Formación interna",
+          "Trayectoria Net Zero a 10 años"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "target": "PYME que exportan a Europa",
+        "features": [
+          "Huella de carbono – Scope 1, 2 y 3",
+          "Informe en FR y EN",
+          "Informe generado por IA validado por un consultor – basado en la metodología ADEME",
+          "Simulación económica avanzada: escenarios multivariables (petróleo, impuesto al carbono, trayectorias de reducción), comparación de varias hipótesis de reducción",
+          "Plan de acción con recomendaciones prioritarias (Scope 1, 2 y 3)",
+          "Ratios de carbono (por empleado, por m², por M TND de facturación)",
+          "Referencia sectorial (cuando hay datos disponibles)",
+          "Resumen ejecutivo bilingüe (FR y EN) para la dirección y los socios",
+          "Paneles visuales y gráficos interactivos",
+          "3 revisiones al año",
+          "Sesión de debriefing online – 1 h 30 con preguntas y respuestas"
+        ],
+        "notIncluded": [
+          "Formación interna del equipo",
+          "Trayectoria Net Zero detallada a 10 años"
+        ]
+      },
+      "expert": {
+        "name": "Expert",
+        "target": "Grandes empresas y grupos",
+        "features": [
+          "Huella de carbono a medida – Scope 1, 2 y 3",
+          "Evaluación de emisiones evitadas (Scope 4) vinculadas a los productos/servicios de la empresa",
+          "Informe en FR y EN – detallado y adaptado a necesidades específicas",
+          "Informe generado por IA validado por un consultor senior – basado en la metodología ADEME",
+          "Simulación económica avanzada: escenarios multivariables (petróleo, impuesto al carbono, trayectorias de reducción)",
+          "Comparación de varias hipótesis de reducción",
+          "Plan de acción con recomendaciones prioritarias (Scope 1, 2, 3 y 4)",
+          "Ratios de carbono (por empleado, por m², por M TND de facturación)",
+          "Referencia sectorial (cuando hay datos disponibles)",
+          "Resumen ejecutivo bilingüe (FR y EN) para la dirección y los socios",
+          "Paneles visuales y gráficos interactivos",
+          "3 sedes analizadas de forma independiente en el mismo paquete",
+          "Acompañamiento personalizado por un consultor senior",
+          "Definición de la estrategia climática y plan de reducción a largo plazo",
+          "Cumplimiento de estándares internacionales (ADEME, GHG Protocol, SBTi)",
+          "Estudios específicos bajo demanda (cadena de suministro, exportación, reporting RSC, etc.)",
+          "5 revisiones",
+          "Sesiones de debriefing en profundidad (presencial u online)"
+        ],
+        "notIncluded": []
+      }
+    }
+  }
+}

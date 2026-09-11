@@ -1,0 +1,897 @@
+{
+  "newHomepage": {
+    "hero": {
+      "badge": "Carbono dominado, impacto multiplicado",
+      "titleLine1": "Mida, reporte y reduzca",
+      "titleLine2": "las emisiones de carbono de su empresa.",
+      "subtitle": "La plataforma de gestión de carbono para empresas en África y Europa — conforme al GHG Protocol, ISO 14064 y requisitos CBAM.",
+      "ctaPrimary": "Iniciar su evaluación de carbono",
+      "ctaSecondary": "Saber más",
+      "stats": {
+        "companies": "Empresas",
+        "co2Saved": "Toneladas CO₂e ahorradas",
+        "satisfaction": "% de satisfacción"
+      },
+      "buttons": {
+        "calculate": "Probar gratis",
+        "demo": "Reservar una demo"
+      },
+      "dataCards": {
+        "travel": "Desplazamientos",
+        "transport": "Transporte",
+        "electricity": "Electricidad"
+      },
+      "floatingCards": {
+        "treesPlanted": "+3 árboles plantados",
+        "wasteReduction": "-15 % residuos",
+        "greenEnergy": "100 % energía verde"
+      },
+      "scrollIndicator": "Descubrir"
+    },
+    "whyCarboScan": {
+      "badge": "El problema",
+      "title": "Por qué las empresas necesitan gestionar el carbono hoy",
+      "text": "Las empresas enfrentan una presión creciente para medir y reducir sus emisiones.",
+      "pressures": {
+        "cbam": {
+          "title": "Regulaciones europeas de carbono (CBAM)",
+          "description": "El Mecanismo de Ajuste en Frontera por Carbono exige declarar las emisiones incorporadas de las importaciones a la UE."
+        },
+        "esg": {
+          "title": "Requisitos ESG de bancos e inversores",
+          "description": "Las instituciones financieras exigen cada vez más datos de carbono transparentes antes de conceder financiación o inversiones."
+        },
+        "supplyChain": {
+          "title": "Reporting de carbono de la cadena de suministro",
+          "description": "Los grandes compradores exigen ahora datos de emisiones Scope 3 de sus proveedores en toda la cadena de valor."
+        },
+        "customers": {
+          "title": "Expectativas crecientes de los clientes",
+          "description": "Los consumidores finales y clientes B2B esperan que las empresas midan y reduzcan su impacto ambiental."
+        }
+      },
+      "conclusion": "CarboScan ayuda a las empresas a medir, monitorizar y reducir sus emisiones."
+    },
+    "solutions": {
+      "title": "Soluciones CarboScan",
+      "moreFeatures": "más funcionalidades",
+      "items": {
+        "bilanCarbone": {
+          "title": "Carbon Footprint™ (Organización)",
+          "description": "Mida las emisiones de su empresa en scopes 1, 2 y 3, con un informe estructurado y conforme.",
+          "cta": "Descubrir"
+        },
+        "empreinteProduit": {
+          "title": "Huella de Carbono de Producto",
+          "description": "Evalúe el impacto de carbono de un producto o gama para cumplir los requisitos de clientes y licitaciones.",
+          "cta": "Saber más"
+        },
+        "acv": {
+          "title": "Análisis de Ciclo de Vida (ACV)",
+          "description": "Análisis ambiental completo según normas ISO 14040/44: energía, materiales, residuos, transporte.",
+          "cta": "Ver ACV"
+        },
+        "cbam": {
+          "title": "Calculadora CBAM (CBAM)",
+          "description": "Calcule las emisiones incorporadas y el coste de carbono de sus exportaciones a Europa. Conformidad regulatoria UE 2026.",
+          "cta": "Calcular CBAM"
+        },
+        "collect": {
+          "title": "CarboScan Collect",
+          "description": "Recogida simple, centralizada e intuitiva de sus datos de carbono.\nImportación Excel, entrada manual, verificación automática.",
+          "cta": "Empezar recogida"
+        },
+        "energy": {
+          "title": "CarboScan Energy",
+          "description": "Controle su consumo energético, compare sus sedes e identifique el sobrecconsumo.",
+          "cta": "Optimizar energía"
+        },
+        "decarbotech": {
+          "title": "Decarbotech: de la medición a la acción",
+          "description": "Decarbotech es la solución que complementa CarboScan ayudándole a reducir realmente sus emisiones mediante un enfoque sencillo, progresivo y medible.",
+          "features": [
+            "Planes de acción bajos en carbono",
+            "Seguimiento de reducciones",
+            "Sensores y mediciones de campo (temperatura, energía, agua, CO₂…)",
+            "Simulación de trayectoria Net Zero",
+            "Soporte técnico y operativo",
+            "Resultados medibles y verificables"
+          ],
+          "cta": "Descubrir Decarbotech"
+        }
+      }
+    },
+    "audience": {
+      "title": "¿Para quién es CarboScan?",
+      "cards": {
+        "industrial": {
+          "title": "Empresas industriales",
+          "description": "Mida emisiones Scope 1-2-3 y prepárese para CBAM."
+        },
+        "exporters": {
+          "title": "Exportadores a Europa",
+          "description": "Calcule la huella de carbono del producto para clientes europeos."
+        },
+        "multiSite": {
+          "title": "Empresas multi-sede",
+          "description": "Centralice los datos de emisiones de todas las sedes."
+        },
+        "consulting": {
+          "title": "Consultoras",
+          "description": "Realice evaluaciones de carbono más rápido."
+        }
+      }
+    },
+    "keyStats": {
+      "title": "Por qué las empresas eligen CarboScan",
+      "stats": {
+        "scope3": "de las emisiones corporativas provienen del Scope 3",
+        "reduction": "de potencial medio de reducción identificado",
+        "faster": "cálculo de huella de carbono más rápido",
+        "compliant": "Conforme a estándares internacionales"
+      }
+    },
+    "references": {
+      "title": "Una solución diseñada para todas las empresas",
+      "text": "Industria, construcción, distribución, servicios: CarboScan ya acompaña a organizaciones de todos los tamaños en su enfoque bajo en carbono."
+    },
+    "reliability": {
+      "title": "Métodos reconocidos, resultados fiables",
+      "points": [
+        "Basado en la metodología Carbon Footprint™, GHG Protocol o ISO 14064",
+        "ACV conforme a normas ISO 14040/44",
+        "Factores de emisión Base Carbone",
+        "Integración multi-sede posible",
+        "Exportación PDF y Excel"
+      ]
+    },
+    "finalCTA": {
+      "title": "¿Listo para medir y reducir sus emisiones?",
+      "subtitle": "Nuestros expertos le acompañan del diagnóstico a la acción.",
+      "ctaPrimary": "Solicitar una demo",
+      "ctaSecondary": "Contáctenos"
+    },
+    "testimonials": {
+      "testimonials": [
+        {
+          "text": "CarboScan me ayudó a reducir mi huella de carbono un 30 % en 6 meses. ¡Las recomendaciones de IA son realmente relevantes!",
+          "author": "Sofiane Ghali",
+          "role": "CEO La Baguette"
+        },
+        {
+          "text": "La herramienta perfecta para sensibilizar a nuestros empleados sobre el impacto ambiental. Interfaz intuitiva y resultados precisos.",
+          "author": "Soufiene Majoul",
+          "role": "Manager Selvador Food"
+        },
+        {
+          "text": "Como startup, necesitábamos medir nuestro impacto. CarboScan nos dio las herramientas para convertirnos en una empresa responsable.",
+          "author": "Iheb Beji",
+          "role": "CEO Startup Village"
+        },
+        {
+          "text": "Gracias a CarboScan, pudimos identificar nuestras principales fuentes de emisión e implementar acciones concretas de reducción.",
+          "author": "Mourad Gueddiche",
+          "role": "CEO Express FM"
+        },
+        {
+          "text": "Una herramienta esencial para cualquier empresa preocupada por su impacto ambiental. Los informes son claros y las recomendaciones muy útiles.",
+          "author": "Amel Souissi",
+          "role": "CEO Archibat"
+        }
+      ]
+    },
+    "collect": {
+      "badge": "Nuevo • Powered by AI",
+      "title": "CarboScan Collect",
+      "subtitle": "La forma más sencilla de recoger sus datos de carbono",
+      "tagline": "Un cálculo de carbono preciso requiere una recogida rigurosa de datos.",
+      "description": "Centralice, estructure y valide todos sus datos necesarios para Carbon Footprint®, CSRD y reporting ESG — sin hojas de cálculo.",
+      "cta": "Solicitar una demo",
+      "ctaTitle": "¿Listo para empezar?",
+      "ctaDescription": "Simplifique la recogida de sus datos de carbono en pocos minutos.",
+      "features": {
+        "title": "Funcionalidades clave",
+        "forms": "Formularios inteligentes",
+        "dashboard": "Panel de progreso",
+        "validation": "Validación automática",
+        "import": "Importar energía / desplazamientos / compras",
+        "automated": {
+          "title": "Recogida inteligente de datos",
+          "description": "Benefíciese de una recogida optimizada por IA para acelerar su transición hacia una economía baja en carbono."
+        },
+        "noExcel": {
+          "title": "Se acabaron las hojas de cálculo Excel",
+          "description": "Elimine procesos manuales propensos a errores que ralentizan su avance hacia la neutralidad de carbono."
+        },
+        "centralized": {
+          "title": "Fuente única de datos",
+          "description": "Supere la complejidad de estructuras de datos descentralizadas con una plataforma centralizada y estructurada."
+        },
+        "trusted": {
+          "title": "Sus datos, protegidos",
+          "description": "La validación automática garantiza la ausencia de duplicados, errores o inconsistencias en sus datos."
+        }
+      },
+      "history": {
+        "title": "Historial de modificaciones",
+        "loading": "Cargando historial...",
+        "error": "Error al cargar",
+        "retry": "Reintentar",
+        "refresh": "Actualizar",
+        "noHistory": "Sin modificaciones registradas",
+        "filters": {
+          "search": "Buscar por pregunta...",
+          "allTypes": "Todos los tipos",
+          "allSources": "Todas las fuentes"
+        },
+        "changeTypes": {
+          "created": "Creado",
+          "updated": "Actualizado",
+          "deleted": "Eliminado",
+          "validated": "Validado",
+          "rejected": "Rechazado"
+        },
+        "sources": {
+          "manual": "Manual",
+          "excel_import": "Importación Excel",
+          "ocr": "OCR IA",
+          "ai_suggestion": "Sugerencia IA",
+          "api": "API"
+        },
+        "details": {
+          "show": "Mostrar detalles",
+          "hide": "Ocultar detalles",
+          "reason": "Motivo",
+          "metadata": "Metadatos"
+        },
+        "stats": {
+          "showing": "modificación(es) mostrada(s)",
+          "total": "de {{total}} en total"
+        }
+      },
+      "export": {
+        "title": "Exportar datos",
+        "options": "Opciones de exportación",
+        "includeMetadata": "Incluir metadatos (IDs, fechas, fuentes)",
+        "includeHistory": "Incluir historial de modificaciones",
+        "selectFormat": "Elegir formato de exportación",
+        "export": "Exportar",
+        "exporting": "Exportando...",
+        "success": "Exportación exitosa: {{filename}}",
+        "error": "Error de exportación: {{error}}",
+        "formats": {
+          "excel": "Excel (.xlsx)",
+          "excelDesc": "Formato Excel con varias hojas (datos, metadatos, estadísticas)",
+          "csv": "CSV (.csv)",
+          "csvDesc": "Formato CSV simple, compatible con todas las hojas de cálculo",
+          "json": "JSON (.json)",
+          "jsonDesc": "Formato JSON estructurado para integración con otros sistemas",
+          "audit": "Informe de auditoría (.txt)",
+          "auditDesc": "Informe de texto detallado para auditoría y conformidad"
+        },
+        "stats": {
+          "totalResponses": "Total de respuestas",
+          "validated": "Respuestas validadas"
+        }
+      },
+      "sites": {
+        "title": "Gestión de sedes",
+        "loading": "Cargando sedes...",
+        "noSites": "Sin sedes configuradas",
+        "add": "Añadir sede",
+        "edit": "Editar sede",
+        "manage": "Gestionar sedes",
+        "selectSite": "Sede",
+        "selectPlaceholder": "Seleccionar una sede",
+        "name": "Nombre",
+        "namePlaceholder": "Nombre de la sede",
+        "nameRequired": "El nombre de la sede es obligatorio",
+        "code": "Código",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Descripción de la sede",
+        "type": "Tipo",
+        "address": "Dirección",
+        "addressPlaceholder": "Dirección completa",
+        "city": "Ciudad",
+        "country": "País",
+        "postalCode": "Código postal",
+        "active": "Activo",
+        "consolidated": "Incluido en consolidación",
+        "inactive": "Inactivo",
+        "notConsolidated": "No consolidado",
+        "responses": "respuestas",
+        "createSuccess": "Sede creada con éxito",
+        "updateSuccess": "Sede actualizada con éxito",
+        "deleteSuccess": "Sede eliminada con éxito",
+        "deleteConfirm": "¿Está seguro de que desea eliminar esta sede?",
+        "deleteError": "Error al eliminar sede",
+        "saveError": "Error al guardar sede",
+        "loadError": "Error al cargar sedes",
+        "types": {
+          "headquarters": "Sede central",
+          "branch": "Sucursal",
+          "warehouse": "Almacén",
+          "factory": "Fábrica",
+          "office": "Oficina",
+          "other": "Otro"
+        }
+      },
+      "users": {
+        "title": "Gestión de usuarios",
+        "loading": "Cargando usuarios...",
+        "noUsers": "Sin usuarios asignados",
+        "noPermission": "No tiene permiso para gestionar usuarios",
+        "add": "Añadir usuario",
+        "edit": "Editar rol",
+        "email": "Email",
+        "emailRequired": "El email es obligatorio",
+        "userNotFound": "Usuario no encontrado",
+        "role": "Rol",
+        "site": "Sede",
+        "optional": "Opcional",
+        "allSites": "Todas las sedes",
+        "inactive": "Inactivo",
+        "createSuccess": "Usuario añadido con éxito",
+        "updateSuccess": "Rol actualizado con éxito",
+        "deactivateSuccess": "Rol desactivado con éxito",
+        "deactivateConfirm": "¿Está seguro de que desea desactivar este rol?",
+        "deactivateError": "Error al desactivar rol",
+        "saveError": "Error al guardar rol",
+        "loadError": "Error al cargar usuarios",
+        "roles": {
+          "admin": "Collect Admin",
+          "contributor": "Site Contributor",
+          "purchasing_manager": "Purchasing Manager",
+          "hr_manager": "HR Manager",
+          "validator": "Validador"
+        }
+      },
+      "validation": {
+        "title": "Validación automática",
+        "loading": "Validando...",
+        "noData": "Sin datos para validar",
+        "refresh": "Actualizar",
+        "errors": "Errores",
+        "warnings": "Advertencias",
+        "info": "Información",
+        "error": "Error",
+        "warning": "Advertencia",
+        "allValid": "Todas las validaciones superadas",
+        "allValidDesc": "No se detectaron errores ni advertencias en sus datos",
+        "filter": "Filtrar",
+        "all": "Todos",
+        "question": "Pregunta",
+        "suggestedFix": "Corrección sugerida",
+        "view": "Ver",
+        "noResults": "No se detectaron problemas",
+        "noResultsFiltered": "Sin resultados para este filtro"
+      },
+      "alerts": {
+        "title": "Alertas de anomalías",
+        "loading": "Cargando alertas...",
+        "refresh": "Actualizar",
+        "noAlerts": "Sin alertas",
+        "noAlertsDesc": "No se detectaron anomalías en sus datos",
+        "filter": "Filtrar",
+        "all": "Todos",
+        "question": "Pregunta",
+        "value": "Valor",
+        "threshold": "Umbral",
+        "view": "Ver",
+        "acknowledge": "Acusar recibo",
+        "acknowledged": "Alerta acusada recibo",
+        "acknowledgeError": "Error al acusar recibo de la alerta",
+        "resolved": "Alerta resuelta",
+        "resolveError": "Error al resolver alerta",
+        "noResultsFiltered": "Sin alertas para este filtro",
+        "severity": {
+          "critical": "Crítico",
+          "high": "Alta",
+          "medium": "Media",
+          "low": "Baja",
+          "info": "Información"
+        }
+      },
+      "notifications": {
+        "title": "Notificaciones",
+        "loading": "Cargando notificaciones...",
+        "refresh": "Actualizar",
+        "noNotifications": "Sin notificaciones",
+        "noNotificationsFiltered": "Sin notificaciones para este filtro",
+        "unread": "No leída",
+        "read": "Leída",
+        "all": "Todos",
+        "new": "Nuevo",
+        "markRead": "Marcar como leída",
+        "markAllRead": "Marcar todo como leído",
+        "view": "Ver",
+        "justNow": "Ahora mismo",
+        "minutesAgo": "Hace {{count}} minuto",
+        "minutesAgo_plural": "Hace {{count}} minutos",
+        "hoursAgo": "Hace {{count}} hora",
+        "hoursAgo_plural": "Hace {{count}} horas",
+        "daysAgo": "Hace {{count}} día",
+        "daysAgo_plural": "Hace {{count}} días",
+        "types": {
+          "data_missing": "Datos faltantes",
+          "validation_required": "Validación requerida",
+          "task_assigned": "Tarea asignada",
+          "task_due_soon": "Próximo vencimiento",
+          "task_overdue": "Tarea vencida",
+          "data_updated": "Datos actualizados",
+          "comment_added": "Comentario añadido",
+          "alert_triggered": "Alerta activada",
+          "reminder": "Recordatorio",
+          "session_completed": "Sesión completada",
+          "session_reminder": "Recordatorio de sesión"
+        }
+      },
+      "comments": {
+        "title": "Comentarios",
+        "loading": "Cargando comentarios...",
+        "noComments": "Sin comentarios",
+        "placeholder": "Añadir un comentario...",
+        "replyPlaceholder": "Responder al comentario...",
+        "mentionHint": "Use @nombre para mencionar a un usuario",
+        "send": "Enviar",
+        "reply": "Responder",
+        "resolve": "Marcar como resuelto",
+        "resolved": "Resuelto",
+        "anonymous": "Anónimo",
+        "confirmDelete": "¿Está seguro de que desea eliminar este comentario?",
+        "createSuccess": "Comentario añadido con éxito",
+        "createError": "Error al añadir comentario",
+        "replySuccess": "Respuesta añadida con éxito",
+        "replyError": "Error al añadir respuesta"
+      },
+      "consolidation": {
+        "title": "Consolidación multi-sede",
+        "loading": "Cargando consolidación...",
+        "refresh": "Actualizar",
+        "loadError": "Error al cargar consolidación",
+        "totalSites": "Sedes",
+        "totalQuestions": "Preguntas",
+        "totalValue": "Valor total",
+        "scopes": "Scopes",
+        "question": "Pregunta",
+        "total": "Total",
+        "unit": "Unidad",
+        "sites": "Sedes",
+        "scope": "Scope",
+        "details": "Detalles por sede",
+        "moreSites": "más sedes",
+        "filterScope": "Filtrar por scope",
+        "filterCategory": "Filtrar por categoría",
+        "allScopes": "Todos los scopes",
+        "allCategories": "Todas las categorías",
+        "byScope": "Distribución por scope",
+        "noData": "Sin datos para consolidar"
+      },
+      "tasks": {
+        "title": "Gestión de tareas",
+        "create": "Crear tarea",
+        "edit": "Editar tarea",
+        "noTasks": "Sin tareas",
+        "noTasksInColumn": "Sin tareas",
+        "assignTo": "Asignar a",
+        "selectUser": "Seleccionar usuario",
+        "type": "Tipo de tarea",
+        "description": "Descripción",
+        "priority": "Prioridad",
+        "dueDate": "Fecha límite",
+        "estimatedHours": "Horas estimadas",
+        "targetKey": "Clave objetivo (opcional)",
+        "notes": "Notas",
+        "confirmDelete": "¿Está seguro de que desea eliminar esta tarea?",
+        "createSuccess": "Tarea creada con éxito",
+        "updateSuccess": "Tarea actualizada con éxito",
+        "deleteSuccess": "Tarea eliminada con éxito",
+        "updateError": "Error al actualizar tarea",
+        "deleteError": "Error al eliminar tarea",
+        "submitError": "Error al enviar tarea",
+        "overdue": "Vencida",
+        "types": {
+          "dataEntry": "Entrada de datos",
+          "validation": "Validación",
+          "review": "Revisión",
+          "completion": "Finalización",
+          "correction": "Corrección"
+        },
+        "priorities": {
+          "low": "Baja",
+          "medium": "Media",
+          "high": "Alta",
+          "urgent": "Urgente"
+        },
+        "statuses": {
+          "todo": "Por hacer",
+          "in_progress": "En curso",
+          "completed": "Completada",
+          "cancelled": "Cancelado",
+          "overdue": "Vencida"
+        },
+        "actions": {
+          "moveToTodo": "Mover a Por hacer",
+          "moveToInProgress": "Mover a En curso",
+          "markCompleted": "Marcar como completada",
+          "cancel": "Cancelar"
+        },
+        "stats": {
+          "total": "Total",
+          "todo": "Por hacer",
+          "inProgress": "En curso",
+          "completed": "Completada",
+          "overdue": "Vencida"
+        }
+      },
+      "questions": {
+        "required": "Obligatorio",
+        "optional": "Opcional",
+        "validationError": "Error de validación",
+        "numericValue": "Se espera un valor numérico",
+        "invalidValue": "Valor no válido",
+        "noQuestions": "Sin preguntas disponibles",
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "yes": "Sí",
+        "no": "No",
+        "selectPlaceholder": "Seleccionar..."
+      },
+      "suggestions": {
+        "title": "Sugerencias IA",
+        "confidence": "Confianza",
+        "confidenceInterval": "Intervalo de confianza",
+        "learned": "Aprendido",
+        "basedOn": "Basado en",
+        "historicalData": "datos históricos",
+        "accept": "Aceptar",
+        "reject": "Rechazar",
+        "loading": "Cargando sugerencias IA..."
+      },
+      "benefits": {
+        "title": "¿Por qué usarlo?",
+        "time": "Ahorro de tiempo",
+        "reliable": "Datos fiables",
+        "noSpreadsheet": "Cero hojas de cálculo",
+        "complete": "Compatible SCOPES 1 • 2 • 3 + Carbon Footprint®"
+      },
+      "periodicity": {
+        "title": "Recogida continua",
+        "configure": "Configurar periodicidad",
+        "selectPeriodicity": "Seleccionar una periodicidad",
+        "monthly": "Mensual",
+        "quarterly": "Trimestral",
+        "yearly": "Anual",
+        "activate": "Activar",
+        "description": "Crear automáticamente sesiones de recogida periódicas",
+        "active": "Periodicidad activa",
+        "sessionsCreated": "{{count}} sesión(es) creada(s)",
+        "history": "Historial de recogidas",
+        "period": "Período",
+        "status": "Estado",
+        "progress": "Progreso",
+        "actions": "Acciones",
+        "open": "Abrir",
+        "noHistory": "Sin recogida periódica creada",
+        "loadError": "Error al cargar",
+        "activateSuccess": "Periodicidad activada con éxito",
+        "activateError": "Error de activación",
+        "statuses": {
+          "pending": "Pendiente",
+          "in_progress": "En curso",
+          "completed": "Completada",
+          "overdue": "Vencida",
+          "skipped": "Omitida"
+        }
+      },
+      "documents": {
+        "title": "CSRD DataRoom",
+        "upload": "Subir",
+        "uploadDocument": "Subir un documento",
+        "file": "Archivo",
+        "name": "Nombre",
+        "description": "Descripción",
+        "category": "Categoría",
+        "selectCategory": "Seleccionar una categoría",
+        "type": "Tipo",
+        "tags": "Etiquetas",
+        "tagsPlaceholder": "Separados por comas",
+        "selectFile": "Seleccionar un archivo",
+        "enterName": "Introduzca un nombre",
+        "uploadSuccess": "Documento subido con éxito",
+        "uploadError": "Error al subir",
+        "loadError": "Error al cargar",
+        "downloadError": "Error de descarga",
+        "deleteError": "Error al eliminar",
+        "deleteSuccess": "Documento eliminado con éxito",
+        "confirmDelete": "¿Está seguro de que desea eliminar este documento?",
+        "totalDocuments": "Documentos",
+        "totalSize": "Tamaño total",
+        "categories": {
+          "invoice": "Factura",
+          "receipt": "Recibo",
+          "certificate": "Certificado",
+          "report": "Informe",
+          "other": "Otro"
+        },
+        "filterCategory": "Filtrar por categoría",
+        "allCategories": "Todas las categorías",
+        "noDocuments": "Sin documentos",
+        "uploadedBy": "Subido por",
+        "date": "Fecha",
+        "actions": "Acciones",
+        "size": "Tamaño",
+        "types": {
+          "justificatif": "Documento justificativo",
+          "facture": "Factura",
+          "certificat": "Certificado",
+          "rapport": "Informe",
+          "autre": "Otro"
+        }
+      },
+      "import": {
+        "title": "Importación Excel especializada",
+        "selectCategory": "Seleccionar una categoría",
+        "selectCategoryPlaceholder": "Elija una categoría...",
+        "downloadTemplate": "Descargar plantilla",
+        "importFile": "Importar un archivo",
+        "templateDownloaded": "Plantilla descargada",
+        "importSuccess": "{{count}} datos importados con éxito",
+        "importErrors": "{{count}} error(es) durante la importación",
+        "importError": "Error de importación",
+        "errors": "Errores",
+        "warnings": "Advertencias",
+        "imported": "Importado",
+        "instructions": "Instrucciones",
+        "instruction1": "Seleccionar una categoría",
+        "instruction2": "Descargar la plantilla Excel",
+        "instruction3": "Rellene la plantilla con sus datos",
+        "instruction4": "Importar el archivo rellenado"
+      }
+    },
+    "tester": {
+      "title": "Probar gratis",
+      "subtitle": "Descubra su huella de carbono en menos de 3 minutos con nuestro test gratuito. Sin registro, resultados inmediatos.",
+      "features": {
+        "free": "100 % gratuito",
+        "time": "3 minutos",
+        "secure": "Datos seguros",
+        "instant": "Resultados instantáneos"
+      },
+      "chartTitle": "Distribución media de emisiones GEI por scope",
+      "chartSubtitle": "Ejemplo de huella de carbono",
+      "preview": {
+        "title": "Test Carbon Footprint",
+        "step": "Paso 2/5",
+        "question": "¿Cómo se desplaza principalmente?",
+        "options": {
+          "car": "Coche",
+          "bike": "Bicicleta",
+          "public": "Transporte público"
+        }
+      },
+      "cta": {
+        "button": "Prueba gratuita — Estime sus emisiones",
+        "note": "100 % gratuito • Sin registro • Resultados en 3 minutos"
+      }
+    },
+    "pricing": {
+      "title": "Elija su plan",
+      "subtitle": "Soluciones adaptadas a sus necesidades, del individuo a la empresa",
+      "from": "desde",
+      "toggle": {
+        "monthly": "Mensual",
+        "yearly": "Anual",
+        "discount": "-20 %"
+      },
+      "plans": {
+        "essential": {
+          "name": "Essential",
+          "description": "Perfecto para empezar",
+          "price": "1900",
+          "currency": "TND netos",
+          "period": "/año",
+          "features": {
+            "calculation": "Cálculo de huella de carbono",
+            "report": "Informe mensual",
+            "recommendations": "Recomendaciones de soluciones disponibles (Scope 1 y 2)",
+            "support": "Soporte por email",
+            "auditScopes12": "Huella de carbono – Scope 1 y 2",
+            "reportFREN": "Informe en FR o EN",
+            "aiGenerated": "Informe generado por IA validado por un consultor – basado en la metodología ADEME",
+            "economicSimulation": "Simulación económica: dos escenarios de subida del precio del petróleo, hipótesis de impuesto al carbono, estimación de ahorros por reducción de emisiones",
+            "carbonRatios": "Ratios de carbono (por empleado, por m², por M TND de facturación)",
+            "executiveSummary": "Resumen ejecutivo (1 página) para la dirección",
+            "visualDashboards": "Paneles visuales y gráficos",
+            "twoRevisions": "2 revisiones al año",
+            "onlineSession": "Sesión de restitución online – 1 h",
+            "validatedReport": "Informe validado por un consultor"
+          },
+          "cta": "Empezar"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "Para usuarios avanzados",
+          "popular": "Popular",
+          "price": "2900",
+          "currency": "TND netos",
+          "period": "/año",
+          "features": {
+            "everything": "Todo Essential",
+            "realTime": "Monitorización en tiempo real",
+            "unlimited": "Recomendaciones IA ilimitadas",
+            "comparison": "Comparación con pares",
+            "detailed": "Informes detallados",
+            "priority": "Soporte prioritario",
+            "emissionsTracking": "Huella de carbono – Scope 1, 2 y 3",
+            "auditScopes123": "Informe en FR y EN",
+            "bilingualReport": "Informe generado por IA validado por un consultor – basado en la metodología ADEME",
+            "aiGeneratedADEME": "Simulación económica avanzada: escenarios multivariables (petróleo, impuesto al carbono, trayectorias de reducción), comparación de múltiples hipótesis de reducción de emisiones",
+            "economicSimulationScenarios": "Plan de acción con recomendaciones prioritarias (Scope 1, 2 y 3)",
+            "detailedRecommendations": "Ratios de carbono (por empleado, por m², por M TND de facturación)",
+            "reductionPlan": "Benchmark sectorial (cuando hay datos disponibles)",
+            "twoRevisions": "Resumen ejecutivo bilingüe (FR y EN) para la dirección y los socios",
+            "validatedReport": "Paneles visuales y gráficos interactivos",
+            "threeRevisions": "3 revisiones al año",
+            "onlineSessionExtended": "Sesión de restitución online – 1 h 30 con preguntas y respuestas"
+          },
+          "cta": "Empezar"
+        },
+        "expert": {
+          "name": "Expert",
+          "description": "Para empresas",
+          "price": "Bajo presupuesto",
+          "currency": "",
+          "period": "",
+          "features": {
+            "everything": "Todo Pro",
+            "team": "Gestión de equipo",
+            "api": "Integración API",
+            "custom": "Informes personalizados",
+            "training": "Formación de equipo",
+            "dedicated": "Soporte dedicado",
+            "comprehensiveAudit": "Huella de carbono personalizada – Scope 1, 2 y 3",
+            "customReport": "Evaluación de emisiones evitadas (Scope 4) vinculadas a los productos/servicios de la empresa",
+            "strategicConsulting": "Informe en FR y EN – detallado y adaptado a necesidades específicas",
+            "implementationSupport": "Informe generado por IA validado por un consultor senior – basado en la metodología ADEME",
+            "trainingSessions": "Simulación económica avanzada: escenarios multivariables (petróleo, impuesto al carbono, trayectorias de reducción)",
+            "prioritySupport": "Comparación de múltiples hipótesis de reducción de emisiones",
+            "actionPlan": "Plan de acción con recomendaciones prioritarias (Scope 1, 2, 3 y 4)",
+            "carbonRatios": "Ratios de carbono (por empleado, por m², por M TND de facturación)",
+            "sectoralBenchmark": "Benchmark sectorial (cuando hay datos disponibles)",
+            "bilingualExecutiveSummary": "Resumen ejecutivo bilingüe (FR y EN) para la dirección y los socios",
+            "interactiveDashboards": "Paneles visuales y gráficos interactivos",
+            "threeSites": "3 sedes analizadas de forma independiente en el mismo paquete",
+            "seniorConsultant": "Acompañamiento personalizado por un consultor senior",
+            "climateStrategy": "Definición de la estrategia climática y plan de reducción a largo plazo",
+            "internationalStandards": "Conformidad con estándares internacionales (ADEME, GHG Protocol, SBTi)",
+            "specificStudies": "Estudios específicos bajo demanda (cadena de suministro, exportación, reporting CSR, etc.)",
+            "fiveRevisions": "5 revisiones",
+            "inDepthSessions": "Sesiones de restitución en profundidad (presencial u online)"
+          },
+          "cta": "Contáctenos"
+        },
+        "netZero": {
+          "name": "Trayectoria Net Zero",
+          "description": "Estrategia climática a largo plazo",
+          "price": "Bajo presupuesto",
+          "currency": "",
+          "period": "",
+          "features": {
+            "scopesAnalysis": "Scopes 1 y 2 físicos, scope 3 financiero",
+            "physicalScope3": "Análisis físico del scope 3: baja precisión",
+            "climateStrategy": "Estrategia climática",
+            "advancedActionPlans": "Planes de acción avanzados",
+            "reductionTrajectory": "Trayectoria de reducción",
+            "actionPlanWorkshop": "Taller de plan de acción",
+            "workshopInclusion": "Plan de acción y resultados del taller incluidos en el Carbon Assessment®",
+            "employeeEngagement": "Compromiso de empleados",
+            "supplierEngagement": "Compromiso de proveedores",
+            "quantificationTool": "Herramienta de cuantificación para planes de acción"
+          },
+          "cta": "Contáctenos"
+        }
+      }
+    },
+    "professionalPlans": {
+      "common": {
+        "from": "Desde"
+      },
+      "essential": {
+        "name": "Essential",
+        "description": "PYME y organizaciones — Conformidad básica",
+        "price": "TND 1300 / año",
+        "features": {
+          "scopes": "Scopes 1 y 2 (emisiones directas + energía comprada)",
+          "automated": "Cálculo automatizado en la plataforma",
+          "report": "Informe PDF anual en francés o inglés",
+          "verification": "Verificación por experto certificado",
+          "revisions": "2 revisiones incluidas",
+          "support": "Soporte básico por email (respuesta en 72 h)"
+        }
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "PYME y empresas exportadoras — Conformidad CBAM y optimización",
+        "price": "Desde TND 2400 / año",
+        "features": {
+          "allScopes": "Scopes 1, 2 y 3 (incluye compras, transporte, residuos)",
+          "cbam": "Módulo CBAM integrado (exportación Europa 2026)",
+          "simulation": "Simulación económica detallada (€/tCO₂e + escenarios)",
+          "actionPlan": "Plan de acción priorizado y presupuestado",
+          "expert": "Experto dedicado + línea directa mensual",
+          "report": "Informe PDF profesional en francés e inglés"
+        }
+      },
+      "expert": {
+        "name": "Expert",
+        "description": "Grandes empresas y grupos — Estrategia Net Zero",
+        "price": "Bajo presupuesto",
+        "features": {
+          "reporting": "Reporting consolidado multi-filiales / multi-sedes",
+          "cbamComplete": "Módulo CBAM + seguimiento regulatorio completo",
+          "economicAnalysis": "Análisis económico personalizado con escenarios",
+          "seniorConsultant": "Consultor senior dedicado + reuniones regulares",
+          "netZero": "Trayectoria Net Zero a 10 años con KPI monitorizados",
+          "professionalReport": "Informe PDF profesional en francés e inglés",
+          "premiumSupport": "Soporte premium (email <24 h + vídeo)"
+        }
+      }
+    },
+    "footer": {
+      "tagline": "Inteligencia artificial al servicio del medio ambiente. Calcule, analice y reduzca su huella de carbono con precisión.",
+      "sections": {
+        "product": {
+          "title": "Producto",
+          "links": {
+            "howItWorks": "Cómo funciona",
+            "freeTester": "Test gratuito",
+            "pricing": "Precios",
+            "api": "API",
+            "integrations": "Integraciones"
+          }
+        },
+        "company": {
+          "title": "Empresa",
+          "links": {
+            "about": "Acerca de",
+            "careers": "Carreras",
+            "press": "Prensa",
+            "partners": "Socios",
+            "blog": "Blog"
+          }
+        },
+        "support": {
+          "title": "Soporte",
+          "links": {
+            "helpCenter": "Centro de ayuda",
+            "contact": "Contacto",
+            "status": "Estado",
+            "community": "Comunidad",
+            "training": "Formación"
+          }
+        },
+        "legal": {
+          "title": "Legal",
+          "links": {
+            "legalMentions": "Aviso legal",
+            "privacy": "Política de privacidad",
+            "terms": "Condiciones de servicio",
+            "cookies": "Cookies",
+            "gdpr": "RGPD"
+          }
+        }
+      },
+      "bottom": {
+        "copyright": "© {{year}} CarboScan. Todos los derechos reservados.",
+        "links": {
+          "legal": "Aviso legal",
+          "privacy": "Privacidad",
+          "terms": "Condiciones"
+        }
+      }
+    }
+  }
+}

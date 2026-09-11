@@ -1,0 +1,252 @@
+{
+  "inscription": {
+    "title": "Erstellen Sie Ihr CarboScan-Konto",
+    "subtitle": "Werden Sie Teil der Gemeinschaft klimabewusster Unternehmen",
+    "formTitle": "Registrierung",
+    "formSubtitle": "Vervollständigen Sie Ihre Angaben, um Ihre CO₂-Bilanz zu starten",
+    "personalInfo": "Persönliche Informationen",
+    "companyInfo": "Unternehmensinformationen",
+    "security": "Sicherheit",
+    "choosePlan": "Wählen Sie Ihren Plan",
+    "fields": {
+      "fullName": "Vollständiger Name",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "company": "Unternehmensname",
+      "sector": "Branche",
+      "companySize": "Unternehmensgröße",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen"
+    },
+    "placeholders": {
+      "fullName": "Ihr vollständiger Name",
+      "email": "ihre@email.com",
+      "phone": "+216 XX XXX XXX",
+      "company": "Name Ihres Unternehmens",
+      "sector": "Wählen Sie Ihre Branche",
+      "companySize": "Anzahl der Mitarbeitenden"
+    },
+    "sectors": {
+      "construction": "Bauwesen",
+      "industrie": "Industrie",
+      "transport": "Transport",
+      "agriculture": "Landwirtschaft",
+      "services": "Dienstleistungen",
+      "technologie": "Technologie",
+      "autre": "Sonstige"
+    },
+    "companySizes": {
+      "1-10": "1–10 Mitarbeitende",
+      "11-50": "11–50 Mitarbeitende",
+      "51-200": "51–200 Mitarbeitende",
+      "201-500": "201–500 Mitarbeitende",
+      "500+": "Mehr als 500 Mitarbeitende"
+    },
+    "plans": {
+      "essential": "Essential-Plan – 1000 DT/Jahr",
+      "complete": "Complete-Plan – 2500 DT/Jahr",
+      "pro": "CarboPro – Auf Anfrage"
+    },
+    "planSelected": "Ausgewählter Plan",
+    "buttons": {
+      "createAccount": "Mein Konto erstellen und zur Zahlung",
+      "creatingAccount": "Konto wird erstellt...",
+      "signIn": "Anmelden",
+      "backToHome": "← Zurück zur Startseite"
+    },
+    "messages": {
+      "success": "Registrierung erfolgreich",
+      "successDesc": "Weiterleitung zur Zahlungsseite...",
+      "error": "Registrierungsfehler",
+      "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten.",
+      "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+      "alreadyHaveAccount": "Sie haben bereits ein Konto?"
+    },
+    "modernCta": {
+      "title": "Bereit, Ihren CO₂-Fußabdruck zu messen?",
+      "subtitle": "Starten Sie noch heute Ihre ökologische Transformation mit unserem kostenlosen Rechner und erfahren Sie, wie Sie Ihre CO₂-Emissionen wirksam reduzieren können.",
+      "features": {
+        "free": "100 % kostenlos",
+        "fast": "Ergebnisse in 5 Min.",
+        "actionable": "KI-Empfehlungen"
+      },
+      "primaryButton": "Meinen Fußabdruck berechnen",
+      "secondaryButton": "Mit einem Experten sprechen",
+      "trustIndicator": "Schließen Sie sich über 500 Unternehmen an, die ihre Transformation bereits begonnen haben"
+    }
+  },
+  "inscriptionForm": {
+    "title": "CarboScan-Registrierung",
+    "subtitle": "Füllen Sie dieses Formular aus, um Zugang zu unseren CO₂-Bilanzierungslösungen zu erhalten",
+    "fields": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "Geschäftliche E-Mail",
+      "phone": "Telefon",
+      "company": "Unternehmen",
+      "position": "Position",
+      "sector": "Branche",
+      "employeeCount": "Unternehmensgröße",
+      "plan": "Gewünschtes Angebot",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen"
+    },
+    "placeholders": {
+      "firstName": "Ihr Vorname",
+      "lastName": "Ihr Nachname",
+      "email": "ihre.email@unternehmen.com",
+      "phone": "+216 XX XXX XXX",
+      "company": "Name Ihres Unternehmens",
+      "position": "Ihre Funktion",
+      "sector": "Wählen Sie Ihre Branche",
+      "employeeCount": "Anzahl der Mitarbeitenden",
+      "plan": "Wählen Sie Ihr Angebot",
+      "password": "Mindestens 6 Zeichen",
+      "confirmPassword": "Passwort bestätigen"
+    },
+    "sectors": {
+      "industrie": "Industrie",
+      "services": "Dienstleistungen",
+      "commerce": "Handel",
+      "construction": "Bauwesen",
+      "transport": "Transport",
+      "agriculture": "Landwirtschaft",
+      "energie": "Energie",
+      "autre": "Sonstige"
+    },
+    "companySizes": {
+      "1-10": "1–10 Mitarbeitende",
+      "11-50": "11–50 Mitarbeitende",
+      "51-200": "51–200 Mitarbeitende",
+      "201-500": "201–500 Mitarbeitende",
+      "500+": "Mehr als 500 Mitarbeitende"
+    },
+    "plans": {
+      "essential": "Essential-Plan – 1000 DT/Jahr",
+      "complete": "Complete-Plan – 2500 DT/Jahr",
+      "pro": "CarboPro – Auf Anfrage"
+    },
+    "buttons": {
+      "continue": "Weiter zur Zahlung",
+      "loading": "Registrierung läuft..."
+    },
+    "messages": {
+      "success": "Registrierung erfolgreich!",
+      "successDesc": "Ihr Konto wurde erstellt. Sie werden zur Zahlungsseite weitergeleitet.",
+      "error": "Registrierungsfehler",
+      "errorDesc": "Bei der Registrierung ist ein Fehler aufgetreten"
+    },
+    "validation": {
+      "firstNameMin": "Der Vorname muss mindestens 2 Zeichen enthalten",
+      "lastNameMin": "Der Nachname muss mindestens 2 Zeichen enthalten",
+      "emailInvalid": "Ungültige E-Mail-Adresse",
+      "phoneMin": "Ungültige Telefonnummer",
+      "companyMin": "Der Unternehmensname ist erforderlich",
+      "positionMin": "Die Position ist erforderlich",
+      "sectorRequired": "Bitte wählen Sie eine Branche",
+      "employeeCountRequired": "Bitte wählen Sie die Unternehmensgröße",
+      "planRequired": "Bitte wählen Sie ein Angebot",
+      "passwordMin": "Das Passwort muss mindestens 6 Zeichen enthalten",
+      "confirmPasswordMin": "Bitte bestätigen Sie Ihr Passwort",
+      "passwordMismatch": "Die Passwörter stimmen nicht überein"
+    }
+  },
+  "inscriptionCalculator": {
+    "title": "Zugang zum Rechner",
+    "subtitle": "Füllen Sie diese Informationen aus, um Zugang zum CO₂-Fußabdruck-Rechner zu erhalten",
+    "fields": {
+      "name": "Vollständiger Name",
+      "email": "Geschäftliche E-Mail",
+      "phone": "Telefon",
+      "company": "Unternehmen"
+    },
+    "placeholders": {
+      "name": "Ihr Name",
+      "email": "name@unternehmen.com",
+      "phone": "06 12 34 56 78",
+      "company": "Name Ihres Unternehmens"
+    },
+    "buttons": {
+      "accessCalculator": "Zum Rechner"
+    },
+    "freeInfo": "100 % kostenlos • Sofortige Ergebnisse • Unverbindlich"
+  },
+  "checkout": {
+    "title": "Bestellung und Zahlung",
+    "selectedPlan": "Ausgewählter Plan",
+    "changePlan": "Plan ändern",
+    "perYear": "pro Jahr",
+    "onQuote": "Auf Anfrage",
+    "description": "Vielen Dank für Ihr Vertrauen. Um Ihr Abonnement für den Plan abzuschließen",
+    "description2": "wählen Sie bitte Ihre Zahlungsmethode und füllen Sie Ihre Angaben aus. Ihr Konto wird nach Zahlungseingang aktiviert.",
+    "cardPayment": {
+      "title": "Kreditkartenzahlung",
+      "description": "Sichere Zahlung und sofortige Aktivierung Ihres CarboScan-Starter-Kontos.",
+      "option": "Kreditkarte",
+      "securePayment": "Sichere Zahlung per Kreditkarte",
+      "payButton": "Mit Kreditkarte bezahlen",
+      "redirectNote": "Nach der Zahlung werden Sie automatisch zu Ihrem CarboScan-Starter-Dashboard weitergeleitet"
+    },
+    "otherPayment": {
+      "title": "Andere Zahlungsmethoden",
+      "description": "Wählen Sie eine alternative Zahlungsmethode nach Ihren Wünschen.",
+      "bankTransfer": {
+        "title": "Banküberweisung",
+        "holder": "Kontoinhaber",
+        "iban": "IBAN",
+        "bic": "BIC",
+        "rib": "RIB"
+      },
+      "check": {
+        "title": "Per Scheck",
+        "description": "Ausstellen an",
+        "appointment": "Wir können einen Termin zur Abholung vereinbaren."
+      },
+      "cash": {
+        "title": "Barzahlung",
+        "description": "Barzahlung bei einem Termin mit unserem Team."
+      },
+      "intermediary": {
+        "title": "Zahlungsdienstleister",
+        "description": "Verfügbare Dienste:",
+        "services": [
+          "MoneyGram",
+          "Western Union",
+          "Tunisian Post Express Money Order",
+          "Konnect"
+        ]
+      }
+    },
+    "form": {
+      "title": "Ihre Angaben",
+      "fields": {
+        "name": "Vollständiger Name",
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "address": "Adresse",
+        "notes": "Zusätzliche Hinweise",
+        "organization": "Name der Organisation",
+        "password": "Gewünschtes Passwort"
+      },
+      "placeholders": {
+        "notes": "Zusätzliche Informationen, Kontaktpräferenzen..."
+      },
+      "submitButton": "Bestellung abschließen",
+      "processing": "Verarbeitung...",
+      "selectPaymentMethod": "Zahlungsmethode auswählen"
+    },
+    "success": {
+      "title": "Vielen Dank!",
+      "message": "Ihre Bestellung wurde erfolgreich erfasst.",
+      "description": "Ihr CarboScan-Konto wird nach Zahlungseingang aktiviert. Sie erhalten innerhalb von 24 Werktstunden eine Bestätigungs-E-Mail.",
+      "closeButton": "Schließen"
+    },
+    "messages": {
+      "loginRequired": "Sie müssen angemeldet sein, um eine Zahlung vorzunehmen",
+      "loginRequiredOrder": "Sie müssen angemeldet sein, um eine Bestellung aufzugeben",
+      "fillRequiredFields": "Bitte füllen Sie alle Pflichtfelder aus",
+      "orderCreationError": "Bestellung konnte nicht erstellt werden",
+      "unexpectedError": "Ein Fehler ist aufgetreten"
+    }
+  }
+}

@@ -1,0 +1,479 @@
+{
+  "questionnaire": {
+    "questions": {
+      "sections": {
+        "generalInfo": "Información general",
+        "combustion": "Alcance 1 - Combustión",
+        "energy": "Alcance 2 - Energía",
+        "transport": "Alcance 1 - Transporte",
+        "refrigerants": "Alcance 1 - Refrigerantes",
+        "industrialProcesses": "Alcance 1 - Procesos industriales",
+        "purchases": "Alcance 3 - Compras",
+        "travel": "Alcance 3 - Desplazamientos",
+        "freight": "Alcance 3 - Flete",
+        "waste": "Alcance 3 - Residuos",
+        "productUse": "Alcance 3 - Uso del producto",
+        "endOfLife": "Alcance 3 - Fin de vida",
+        "scope1Combustion": "Alcance 1 - Combustión",
+        "scope2Energy": "Alcance 2 - Energía",
+        "scope3Transport": "Alcance 3 - Transporte",
+        "scope3Waste": "Alcance 3 - Residuos",
+        "scope3Purchases": "Alcance 3 - Compras"
+      },
+      "general": {
+        "employees": "¿Cuántos empleados tiene su empresa?",
+        "annualRevenue": "¿Cuál es su facturación anual (TND)?",
+        "businessSector": "¿Qué sector de actividad describiría para su empresa?",
+        "sitesCount": "¿Cuántos sitios o filiales están incluidos en el alcance de la evaluación?",
+        "sitesLocation": "¿Dónde se encuentran estos sitios o filiales?"
+      },
+      "combustion": {
+        "naturalGas": "¿Cuántos m³ de gas natural consumió el año pasado?",
+        "fuelOil": "¿Qué cantidad de fuelóleo (t) utilizó?",
+        "coal": "¿Qué cantidad de carbón (t) utilizó?",
+        "biomass": "¿Qué cantidad de biomasa (t) consumió?",
+        "boilers": "¿Cuántas calderas o instalaciones de combustión opera?"
+      },
+      "energy": {
+        "electricity": "¿Cuántos kWh de electricidad compró?",
+        "steam": "¿Qué cantidad de vapor (t) compró?",
+        "cooling": "¿Cuántos kWh de refrigeración industrial compró?",
+        "heating": "¿Cuántos kWh de calor compró?",
+        "renewable": "¿Qué porcentaje de su energía proviene de fuentes renovables?"
+      },
+      "transport": {
+        "fleet": "¿Cuántos vehículos tiene su flota?",
+        "fleetSize": "¿Cuántos vehículos tiene su flota?",
+        "fuelType": "¿Qué combustibles utiliza para estos vehículos?",
+        "fuelConsumption": "¿Cuántos litros de combustible consumió la flota?",
+        "distance": "¿Qué distancia media recorren sus vehículos cada año (km)?",
+        "transportModes": {
+          "truck": "Camión",
+          "maritime": "Marítimo",
+          "mixed": "Mixto",
+          "none": "Ninguno"
+        }
+      },
+      "refrigerants": {
+        "refill": "¿Cuántos kg de refrigerantes recargó?",
+        "leaks": "¿Qué cantidad de fugas de refrigerante se detectó?"
+      },
+      "industrialProcesses": {
+        "processes": "¿Qué procesos industriales distintos de la combustión generan emisiones?"
+      },
+      "purchases": {
+        "rawMaterials": "¿Qué cantidad de materias primas (t) utiliza anualmente?",
+        "goodsServices": "¿Cuánto gasta en la compra de bienes y servicios (TND)?",
+        "supplierDistance": "¿Qué distancia media recorren las entregas de sus proveedores (km)?",
+        "supplierTransport": "¿Qué modo de transporte utilizan principalmente sus proveedores?"
+      },
+      "travel": {
+        "businessTrips": "¿Cuántos viajes de negocios realiza anualmente?",
+        "hotelNights": "¿Cuántas noches de hotel para viajes de negocios?",
+        "carRental": "¿Cuántos días de alquiler de coche para viajes de negocios?",
+        "publicTransport": "¿Cuánto gasta en transporte público para viajes de negocios (TND)?",
+        "flights": "¿Cuántos vuelos de negocios realiza al año?",
+        "commuting": "¿Distancia media domicilio-trabajo de sus empleados (km)?",
+        "commutingMode": "¿Cuál es el principal modo de transporte de sus empleados?"
+      },
+      "freight": {
+        "inboundFreight": "¿Cuánto gasta en flete entrante anualmente (TND)?",
+        "outboundFreight": "¿Cuánto gasta en flete saliente anualmente (TND)?",
+        "freightDistance": "¿Qué distancia media para el transporte de sus mercancías (km)?"
+      },
+      "waste": {
+        "wasteProduction": "¿Qué cantidad de residuos produce anualmente (t)?",
+        "wasteTypes": "¿Qué tipos de residuos produce su empresa?",
+        "wasteTypesDescription": "Describa sus principales tipos de residuos",
+        "wasteTreatment": "¿Qué canales de tratamiento o reciclaje utiliza para sus residuos?",
+        "productUse": "¿Sus productos generan emisiones durante su uso por sus clientes?",
+        "endOfLife": "¿Cómo se tratan sus productos al final de su vida útil?",
+        "endOfLifeDescription": "Describa el tratamiento al final de la vida de sus productos",
+        "recyclingRate": "¿Qué porcentaje de sus productos se recicla al final de su vida útil?"
+      },
+      "businessTravel": {
+        "carTrips": "¿Cuántos desplazamientos profesionales en coche se realizaron?",
+        "trainTrips": "¿Cuántos desplazamientos profesionales en tren se realizaron?",
+        "flightTrips": "¿Cuántos vuelos de negocios se realizaron?",
+        "averageDistance": "¿Qué distancia media recorre por viaje de negocios (km)?",
+        "commuteMode": "¿Qué modo de transporte utiliza principalmente para los desplazamientos domicilio-trabajo?",
+        "commuteDistance": "¿Qué distancia media recorre para ir al trabajo (km)?",
+        "commuteFrequency": "¿Con qué frecuencia realiza este desplazamiento (días/semana)?"
+      },
+      "logistics": {
+        "freightVolume": "¿Qué volumen de mercancías (t) envió?",
+        "transportMode": "¿Qué modos de transporte utilizó para la logística?",
+        "freightDistance": "¿Qué distancia media recorren sus mercancías (km)?"
+      },
+      "commuteTransport": {
+        "car": "Coche",
+        "publicTransport": "Transporte público",
+        "bike": "Bicicleta",
+        "walk": "A pie",
+        "mixed": "Mixto"
+      },
+      "fuelTypes": {
+        "gasoline": "Gasolina",
+        "diesel": "Diésel",
+        "mixed": "Mixto",
+        "none": "Sin vehículos",
+        "other": "Otro"
+      },
+      "transportModes": {
+        "truck": "Camión",
+        "train": "Tren",
+        "boat": "Barco",
+        "plane": "Avión",
+        "mixed": "Mixto"
+      },
+      "wasteTypes": {
+        "general": "Residuos generales",
+        "hazardous": "Residuos peligrosos",
+        "recyclable": "Residuos reciclables",
+        "organic": "Residuos orgánicos"
+      },
+      "responses": {
+        "yes": "Sí",
+        "no": "No.",
+        "dontKnow": "No lo sé"
+      },
+      "placeholders": {
+        "employees": "Ej.: 50",
+        "annualRevenue": "Ej.: 1000000",
+        "selectSector": "Seleccione su sector",
+        "sitesCount": "Ej.: 3",
+        "sitesLocation": "Describa la ubicación de sus sitios",
+        "fleetSize": "Ej.: 10",
+        "fuelType": "Tipo de combustible principal",
+        "fuelConsumption": "Ej.: 5000",
+        "distance": "Ej.: 50000",
+        "refill": "Ej.: 5",
+        "leaks": "Ej.: 2",
+        "industrialProcesses": "Describa sus procesos industriales emisores",
+        "rawMaterials": "Ej.: 100",
+        "goodsServices": "Ej.: 500000",
+        "carTrips": "Ej.: 200",
+        "trainTrips": "Ej.: 50",
+        "flightTrips": "Ej.: 10",
+        "averageDistance": "Ej.: 200",
+        "commuteMode": "Modo de transporte principal",
+        "commuteDistance": "Ej.: 15",
+        "commuteFrequency": "Ej.: 5",
+        "freightVolume": "Ej.: 1000",
+        "transportMode": "Modo de transporte principal",
+        "freightDistance": "Ej.: 500",
+        "wasteProduction": "Ej.: 50",
+        "wasteTreatment": "Método de tratamiento principal",
+        "productUse": "Seleccionar",
+        "recyclingRate": "Ej.: 60 (en %)"
+      },
+      "sectors": {
+        "industry": "Industria",
+        "services": "Servicios",
+        "commerce": "Comercio",
+        "construction": "Construcción",
+        "transport": "Transporte",
+        "agriculture": "Agricultura",
+        "other": "Otro"
+      },
+      "validation": {
+        "commuteFrequency": "Introduzca un número entero entre 1 y 7 días"
+      },
+      "labels": {
+        "yourAnswer": "Su respuesta",
+        "selectOption": "Seleccione una opción",
+        "choose": "Elegir...",
+        "enterAnswer": "Introduzca su respuesta"
+      },
+      "required": "Pregunta obligatoria"
+    },
+    "progress": {
+      "restored": "Progreso restaurado",
+      "restoredDesc": "Sus respuestas anteriores han sido restauradas. Puede continuar donde lo dejó.",
+      "autoSave": "Guardado automático activado",
+      "autoSaveDesc": "Sus respuestas se guardan automáticamente en cada paso.",
+      "question": "Pregunta {{current}} de {{total}}"
+    },
+    "carboStart": {
+      "title": "CarboStart - Cuestionario adaptativo",
+      "subtitle": "Alcances 1 y 2 • Preguntas adaptadas a su sector de actividad"
+    },
+    "intro": {
+      "title": "CarboStart - Huella de carbono adaptativa",
+      "description": "Un cuestionario inteligente que se adapta a su sector de actividad para una huella de carbono precisa y personalizada."
+    },
+    "benefits": {
+      "adaptive": {
+        "title": "🎯 Cuestionario adaptativo",
+        "description": "Preguntas personalizadas según su sector de actividad para una evaluación más precisa."
+      },
+      "scopes": {
+        "title": "📊 Alcances 1 y 2 optimizados",
+        "description": "Enfoque en emisiones directas y energéticas, adaptado para pymes."
+      },
+      "interface": {
+        "title": "🚀 Interfaz moderna",
+        "description": "Experiencia de usuario mejorada con guardado automático y navegación intuitiva."
+      },
+      "factors": {
+        "title": "📈 Factores de emisión actualizados",
+        "description": "Base de datos constantemente actualizada con los últimos factores de emisión."
+      }
+    },
+    "expectations": {
+      "title": "Qué puede esperar:",
+      "duration": "Duración estimada:",
+      "durationValue": "15-25 minutos según su sector",
+      "questions": "Preguntas específicas:",
+      "questionsValue": "Entre 20 y 35 preguntas adaptadas",
+      "autoSave": "Guardado automático:",
+      "autoSaveValue": "Continúe donde lo dejó",
+      "help": "Ayuda contextual:",
+      "helpValue": "Explicaciones detalladas para cada pregunta",
+      "results": "Resultados inmediatos:",
+      "resultsValue": "Huella de carbono calculada en tiempo real"
+    },
+    "actions": {
+      "back": "Volver",
+      "start": "Iniciar el cuestionario adaptativo",
+      "backToDashboard": "Volver al panel",
+      "needHelp": "¿Necesita ayuda?",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "finish": "Finalizar"
+    },
+    "migration": {
+      "new": "📋 Nuevo:",
+      "description": "Este cuestionario adaptativo reemplaza el antiguo formulario CarboStart. Respeta los límites de su plan (Alcances 1 y 2) y ofrece una experiencia más personalizada."
+    },
+    "auth": {
+      "required": "Inicio de sesión requerido",
+      "description": "Debe iniciar sesión para acceder al cuestionario."
+    },
+    "completed": {
+      "title": "¡Huella de carbono completada!",
+      "subtitle": "Aquí están los resultados detallados de su huella de carbono",
+      "saved": "¡Evaluación guardada!",
+      "description": "Su huella de carbono se ha calculado correctamente"
+    },
+    "adaptive": {
+      "title": "Cuestionario de carbono",
+      "subtitle": "Cuestionario adaptado a su plan • Guardado automático",
+      "completed": "completado",
+      "results": "Resultados de su huella de carbono",
+      "question": "Pregunta {{number}}",
+      "sections": {
+        "generalInfo": "Información general",
+        "combustion": "Alcance 1 - Combustión",
+        "energy": "Alcance 2 - Energía",
+        "transport": "Alcance 1 - Transporte",
+        "refrigerants": "Alcance 1 - Refrigerantes",
+        "industrialProcesses": "Alcance 1 - Procesos industriales",
+        "purchases": "Alcance 3 - Compras",
+        "travel": "Alcance 3 - Desplazamientos",
+        "freight": "Alcance 3 - Flete",
+        "waste": "Alcance 3 - Residuos"
+      },
+      "questions": {
+        "general": {
+          "employees": "¿Cuántos empleados trabajan en su empresa?",
+          "annualRevenue": "¿Cuál es la facturación anual de su empresa (TND)?",
+          "businessSector": "¿En qué sector de actividad opera su empresa?",
+          "sitesCount": "¿Cuántos sitios operativos tiene?",
+          "sitesLocation": "¿Dónde se encuentran sus sitios operativos?"
+        },
+        "combustion": {
+          "naturalGas": "¿Cuántos m³ de gas natural consumió el año pasado?",
+          "fuelOil": "¿Qué cantidad de fuelóleo (t) utilizó?",
+          "coal": "¿Qué cantidad de carbón (t) utilizó?",
+          "biomass": "¿Qué cantidad de biomasa (t) consumió?",
+          "boilers": "¿Cuántas calderas o instalaciones de combustión opera?"
+        },
+        "energy": {
+          "electricity": "¿Cuántos kWh de electricidad compró?",
+          "steam": "¿Qué cantidad de vapor (t) compró?",
+          "cooling": "¿Cuántos kWh de refrigeración industrial compró?",
+          "heating": "¿Cuántos kWh de calor compró?",
+          "renewable": "¿Qué porcentaje de su energía proviene de fuentes renovables?"
+        },
+        "transport": {
+          "fleet": "¿Cuántos vehículos tiene su flota?",
+          "fleetSize": "¿Cuántos vehículos tiene su flota?",
+          "fuelType": "¿Qué combustibles utiliza para estos vehículos?",
+          "fuelConsumption": "¿Cuántos litros de combustible consumió la flota?",
+          "distance": "¿Qué distancia media recorren sus vehículos cada año (km)?",
+          "transportModes": {
+            "truck": "Camión",
+            "maritime": "Marítimo",
+            "mixed": "Mixto",
+            "none": "Ninguno"
+          }
+        },
+        "refrigerants": {
+          "refill": "¿Cuántos kg de refrigerantes recargó?",
+          "leaks": "¿Qué cantidad de fugas de refrigerante se detectó?"
+        },
+        "industrialProcesses": {
+          "processes": "¿Qué procesos industriales sin combustión generan emisiones?"
+        },
+        "purchases": {
+          "rawMaterials": "¿Qué cantidad de materias primas (t) utiliza anualmente?",
+          "goodsServices": "¿Cuánto gasta en compras de bienes y servicios (TND)?",
+          "supplierDistance": "¿Qué distancia media recorren las entregas de sus proveedores (km)?",
+          "supplierTransport": "¿Qué modo de transporte utilizan principalmente sus proveedores?"
+        },
+        "travel": {
+          "businessTrips": "¿Cuántos viajes de negocios realiza anualmente?",
+          "hotelNights": "¿Cuántas noches de hotel se reservan para viajes de negocios?",
+          "commuting": "¿Cuántos kilómetros recorren sus empleados de media para ir al trabajo?",
+          "commuteMode": "¿Qué modo de transporte utilizan principalmente sus empleados?"
+        },
+        "freight": {
+          "inboundFreight": "¿Qué volumen de mercancías recibe anualmente (t)?",
+          "outboundFreight": "¿Qué volumen de mercancías envía anualmente (t)?",
+          "freightDistance": "¿Qué distancia media recorren sus envíos (km)?",
+          "freightMode": "¿Qué modo de transporte utiliza principalmente para sus envíos?"
+        },
+        "waste": {
+          "wasteProduction": "¿Qué cantidad de residuos (t) genera su empresa?",
+          "wasteRecycling": "¿Qué porcentaje de sus residuos se recicla?",
+          "wasteTypes": "¿Qué tipos de residuos produce principalmente?",
+          "wasteTypesDescription": "Describa sus principales tipos de residuos",
+          "wasteTreatment": "¿Qué canales de tratamiento o reciclaje utiliza para sus residuos?",
+          "productUse": "¿Sus productos generan emisiones cuando los utilizan sus clientes?",
+          "endOfLife": "¿Cómo se tratan sus productos al final de su vida útil?",
+          "endOfLifeDescription": "Describa el tratamiento al final de la vida de sus productos",
+          "recyclingRate": "¿Qué porcentaje de sus productos se recicla al final de su vida útil?"
+        },
+        "businessTravel": {
+          "carTrips": "¿Cuántos desplazamientos profesionales en coche se realizaron?",
+          "trainTrips": "¿Cuántos desplazamientos profesionales en tren se realizaron?",
+          "flightTrips": "¿Cuántos desplazamientos profesionales en avión se realizaron?",
+          "averageDistance": "¿Qué distancia media recorre por viaje de negocios (km)?",
+          "commuteMode": "¿Qué modo de transporte utiliza principalmente para sus desplazamientos domicilio-trabajo?",
+          "commuteDistance": "¿Qué distancia media recorre para ir al trabajo (km)?",
+          "commuteFrequency": "¿Con qué frecuencia realiza este desplazamiento (días/semana)?"
+        },
+        "logistics": {
+          "freightVolume": "¿Qué volumen de mercancías (t) envió?",
+          "transportMode": "¿Qué modos de transporte utilizó para la logística?",
+          "freightDistance": "¿Qué distancia media recorren sus mercancías (km)?"
+        }
+      },
+      "fuelTypes": {
+        "gasoline": "Gasolina",
+        "diesel": "Diésel",
+        "mixed": "Mixto",
+        "none": "Sin vehículo",
+        "other": "Otro"
+      },
+      "transportModes": {
+        "truck": "Camión",
+        "train": "Tren",
+        "ship": "Barco",
+        "plane": "Avión",
+        "mixed": "Mixto",
+        "maritime": "Marítimo",
+        "none": "Sin logística"
+      },
+      "commuteTransport": {
+        "car": "Coche",
+        "publicTransport": "Transporte público",
+        "bike": "Bicicleta",
+        "walk": "A pie",
+        "mixed": "Mixto"
+      },
+      "wasteTypes": {
+        "organic": "Residuos orgánicos",
+        "paper": "Papel/Cartón",
+        "plastic": "Plástico",
+        "metal": "Metales",
+        "glass": "Vidrio",
+        "electronic": "Residuos electrónicos",
+        "hazardous": "Residuos peligrosos",
+        "mixed": "Residuos mixtos"
+      },
+      "wasteTreatment": {
+        "recycling": "Reciclaje",
+        "incineration": "Incineración",
+        "landfill": "Vertedero",
+        "mixed": "Mixto"
+      },
+      "yesNoOptions": {
+        "yes": "Sí",
+        "no": "No.",
+        "dontKnow": "No lo sé"
+      }
+    },
+    "notAvailable": "No disponible en su plan",
+    "companyName": "Nombre de la empresa",
+    "sector": "Sector de actividad",
+    "annualRevenue": "Facturación anual (€)",
+    "employees": "Número de empleados",
+    "dynamicQuestionnaire": {
+      "countries": {
+        "TN": "Túnez",
+        "MA": "Marruecos",
+        "DZ": "Argelia",
+        "SN": "República de Senegal",
+        "CI": "Costa de Marfil",
+        "CM": "Camerún",
+        "FR": "Francia",
+        "BE": "Bélgica",
+        "CH": "Suiza",
+        "CA": "Canadá",
+        "OTHER": "Otro"
+      },
+      "sectors": {
+        "agriculture": "Agricultura y agroalimentación",
+        "automotive": "Automoción y transporte",
+        "btp": "Construcción y edificación",
+        "chemicals": "Química y plásticos",
+        "textile": "Textil y moda",
+        "tourism": "Turismo y hostelería",
+        "finance": "Finanzas y banca",
+        "it": "TI y digital",
+        "retail": "Comercio y distribución",
+        "mining": "Minería y extracción",
+        "healthcare": "Salud y farmacéutica",
+        "education": "Educación y formación",
+        "media": "Medios y comunicación",
+        "gaming": "Videojuegos y gaming",
+        "aerospace": "Aeroespacial y espacio",
+        "fishing": "Pesca y acuicultura",
+        "artisanat": "Artesanía y oficios",
+        "blockchain": "Blockchain y cripto",
+        "industrial_equipment": "Equipos industriales",
+        "other": "Otro sector"
+      },
+      "questions": {
+        "electricity_consumption": "¿Cuál es su consumo anual de electricidad?",
+        "natural_gas_consumption": "¿Consumo anual de gas natural de su empresa?",
+        "fleet_diesel_consumption": "¿Cuánto diésel de flota consume su empresa anualmente?",
+        "heating_oil_consumption": "¿Consumo anual de fuelóleo de calefacción?",
+        "company_vehicles_gasoline": "¿Kilometraje anual de los vehículos de gasolina de la empresa?",
+        "company_vehicles_diesel": "¿Kilometraje anual de los vehículos diésel de la empresa?",
+        "fleet_trucks": "¿Kilometraje anual de los camiones/vehículos pesados de su empresa?",
+        "steam_purchased": "¿Cantidad de vapor comprado anualmente?",
+        "cooling_purchased": "¿Consumo de refrigeración comprada (climatización centralizada)?",
+        "business_flights_domestic": "¿Distancia recorrida en vuelos nacionales al año?",
+        "business_flights_international": "¿Distancia recorrida en vuelos internacionales al año?",
+        "train_travel": "¿Distancia recorrida en tren por negocios?",
+        "delivery_services": "¿Número de entregas/paquetes recibidos al año (proveedores)?",
+        "hotel_nights": "¿Número de noches de hotel para viajes de negocios?",
+        "cloud_data_usage": "¿Estimación de su uso anual de datos en la nube?",
+        "emails_sent": "¿Cuántos correos electrónicos envía aproximadamente su empresa al año?",
+        "video_conferences": "¿Horas de videoconferencias al año (todos los empleados)?",
+        "website_visits": "¿Número de visitantes únicos mensuales en su sitio web?",
+        "paper_consumption": "¿Consumo anual de papel de oficina?",
+        "paper_waste": "¿Qué cantidad de residuos de papel produce anualmente?",
+        "plastic_waste": "¿Qué cantidad de residuos plásticos produce anualmente?",
+        "general_waste": "¿Volumen de residuos generales no reciclables?",
+        "employee_commuting_car": "¿Distancia media domicilio-trabajo por empleado (coche)?",
+        "employee_commuting_public": "¿Distancia media domicilio-trabajo por empleado (transporte público)?",
+        "office_supplies": "¿Presupuesto anual para material de oficina y equipamiento?",
+        "catering_meals": "¿Número de comidas de empresa/catering al año?"
+      }
+    }
+  }
+}

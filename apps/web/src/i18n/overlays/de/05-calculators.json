@@ -1,0 +1,885 @@
+{
+  "carbonCalculator": {
+    "title": "CO₂-Rechner",
+    "sidebar": {
+      "sections": {
+        "company": "Unternehmen",
+        "offices": "Büros",
+        "fleet": "Flotte",
+        "travel": "Reisen",
+        "it": "IT",
+        "results": "Ergebnisse",
+        "energy": "Energie & Gebäude",
+        "purchases": "Einkäufe & Fracht",
+        "waste": "Abfälle & Digital"
+      },
+      "lastStep": "Letzter Schritt!",
+      "tips": {
+        "entreprise": "Branche und Unternehmensgröße beeinflussen das CO₂-Profil stark. Dienstleistungs-KMU emittieren im Durchschnitt 5 bis 15 tCO₂e pro Mitarbeitendem und Jahr.",
+        "energie": "Heizung und Kühlung machen oft 20–40 % der Emissionen eines Gebäudes aus. Der Umstieg auf Erdgas oder erneuerbaren Strom kann die Bilanz um 30 bis 70 % senken.",
+        "flotte": "Ein konventionelles Fahrzeug stößt im Durchschnitt 2,6 tCO₂e pro Jahr bei 15.000 km aus. Der Umstieg auf Elektro kann die Emissionen durch 3 bis 4 teilen.",
+        "deplacements": "Ein Hin- und Rückflug Paris–New York verursacht etwa 1,75 tCO₂e pro Passagier. Züge stoßen auf gleichen Strecken 50-mal weniger CO₂ aus als Flugzeuge.",
+        "achats": "Einkäufe und Subunternehmer sind oft die größte Emissionsquelle (Scope 3). Lokale Lieferanten können diese Bilanz um 15 bis 25 % senken.",
+        "dechets": "Denken Sie an Refurbished! Ein Laptop verursacht 942 kg CO₂e, ein Smartphone 79 kg und ein Fernseher 371 kg. Eine längere Nutzungsdauer senkt Ihre Bilanz deutlich."
+      }
+    },
+    "questions": {
+      "selectPlaceholder": "Option auswählen",
+      "inputPlaceholder": "Antwort eingeben",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "employeeCount": {
+        "title": "Anzahl Mitarbeitende",
+        "question": "Wie viele Mitarbeitende hat Ihr Unternehmen?",
+        "description": "Gesamtzahl Mitarbeitende (Voll- und Teilzeit)"
+      },
+      "annualRevenue": {
+        "title": "Jahresumsatz",
+        "question": "Wie hoch ist Ihr Jahresumsatz (in Tausend Dinar – KDT)?",
+        "description": "Jahresumsatz in KDT (Tausend tunesische Dinar)"
+      },
+      "numberOfSites": {
+        "title": "Anzahl Standorte",
+        "question": "Wie viele Standorte oder Tochtergesellschaften haben Sie?",
+        "description": "Gesamtzahl Gebäude, Fabriken, Büros usw."
+      },
+      "gasConsumption": {
+        "title": "Gasverbrauch",
+        "question": "Wie hoch ist Ihr jährlicher Erdgasverbrauch?",
+        "description": "Geschätzter Verbrauch in m³",
+        "options": {
+          "moins-1000": "Weniger als 1.000 m³",
+          "1000-3000": "1.000 - 3.000 m³",
+          "3000-10000": "3.000 - 10.000 m³",
+          "plus-10000": "Mehr als 10.000 m³"
+        }
+      },
+      "fuelConsumption": {
+        "title": "Heizölverbrauch",
+        "question": "Wie hoch ist Ihr jährlicher Heizölverbrauch?",
+        "description": "Geschätzter Verbrauch in Litern",
+        "options": {
+          "moins-500": "Weniger als 500 L",
+          "500-1500": "500 - 1.500 L",
+          "1500-5000": "1.500 - 5.000 L",
+          "plus-5000": "Mehr als 5.000 L"
+        }
+      },
+      "woodConsumption": {
+        "title": "Holzverbrauch",
+        "question": "Wie hoch ist Ihr jährlicher Holzverbrauch?",
+        "description": "Schätzung in Ster",
+        "options": {
+          "moins-5": "Weniger als 5 Ster",
+          "5-15": "5 - 15 Ster",
+          "15-30": "15 - 30 Ster",
+          "plus-30": "Mehr als 30 Ster"
+        }
+      },
+      "electricityConsumption": {
+        "title": "Stromverbrauch",
+        "question": "Wie hoch ist Ihr jährlicher Stromverbrauch?",
+        "description": "Geschätzter Gesamtstromverbrauch des Unternehmens",
+        "options": {
+          "moins-5000": "Weniger als 5.000 kWh",
+          "5000-15000": "5.000 - 15.000 kWh",
+          "15000-50000": "15.000 - 50.000 kWh",
+          "plus-50000": "Mehr als 50.000 kWh"
+        }
+      },
+      "annualPurchases": {
+        "title": "Einkäufe von Waren und Dienstleistungen",
+        "question": "Wie hoch ist der jährliche Betrag Ihrer Einkäufe von Waren und Dienstleistungen (in KDT)?",
+        "description": "Gesamtes Einkaufsbudget: Verbrauchsmaterial, Rohstoffe, ausgelagerte Dienstleistungen",
+        "options": {
+          "moins-100": "Weniger als 100 KDT",
+          "100-500": "100 - 500 KDT",
+          "500-2000": "500 - 2.000 KDT",
+          "plus-2000": "Mehr als 2.000 KDT"
+        }
+      },
+      "subcontracting": {
+        "title": "Subunternehmer",
+        "question": "Nutzen Sie ausgelagerte Dienstleistungen?",
+        "description": "Ausgelagerte Dienstleistungen: Wartung, Reinigung, Logistik usw.",
+        "options": {
+          "aucune": "Keine Subunternehmer",
+          "faible": "Niedrig (< 50 KDT/Jahr)",
+          "moderee": "Moderat (50 - 200 KDT/Jahr)",
+          "importante": "Erheblich (> 200 KDT/Jahr)"
+        }
+      },
+      "freightTonKm": {
+        "title": "Fracht & Logistik",
+        "question": "Welches Warenvolumen transportieren Sie jährlich (in Tonnen·km)?",
+        "description": "Gewicht × Strecke: z. B. 10 Tonnen über 500 km = 5.000 t.km"
+      },
+      "freightMode": {
+        "title": "Haupttransportart für Fracht",
+        "question": "Was ist die Haupttransportart für Ihre Waren?",
+        "description": "Am häufigsten genutzte Transportart für Fracht",
+        "options": {
+          "routier": "Straße (LKW)",
+          "maritime": "See",
+          "ferroviaire": "Schiene",
+          "mixte": "Gemischt"
+        }
+      },
+      "wasteVolume": {
+        "title": "Abfallmenge",
+        "question": "Wie hoch ist das jährliche Abfallvolumen Ihres Unternehmens?",
+        "description": "Geschätzte Gesamtmenge an Abfällen",
+        "options": {
+          "moins-1": "Weniger als 1 Tonne",
+          "1-5": "1 - 5 Tonnen",
+          "5-20": "5 - 20 Tonnen",
+          "plus-20": "Mehr als 20 Tonnen"
+        }
+      },
+      "wasteRecycling": {
+        "title": "Sortierung und Recycling",
+        "question": "Praktizieren Sie selektive Sortierung und Recycling?",
+        "description": "Niveau der Abfallsortierung und -verwertung",
+        "options": {
+          "aucun": "Keine Sortierung",
+          "partiel": "Teilweise Sortierung",
+          "complet": "Vollständige Sortierung / Recycling"
+        }
+      },
+      "finalize": "Abschließen",
+      "industrySector": {
+        "title": "Branche",
+        "question": "In welcher Branche ist Ihr Unternehmen tätig?",
+        "description": "Wählen Sie die Hauptbranche Ihres Unternehmens",
+        "options": {
+          "btp": "Bauwesen",
+          "restauration": "Gastronomie",
+          "services": "Dienstleistungen",
+          "industrie": "Industrie",
+          "commerce": "Handel",
+          "transport": "Transport",
+          "agriculture": "Landwirtschaft",
+          "sante": "Gesundheit",
+          "education": "Bildung",
+          "technologie": "Technologie",
+          "finance": "Finanzwesen",
+          "immobilier": "Immobilien",
+          "autre": "Sonstige"
+        }
+      },
+      "heatingSource": {
+        "title": "Heizquelle",
+        "question": "Was ist Ihre Heizquelle?",
+        "description": "Hauptheizquelle für Ihre Räumlichkeiten",
+        "options": {
+          "electricite": "Strom",
+          "gaz": "Gas",
+          "fioul": "Öl",
+          "bois": "Holz",
+          "climatisation": "Reversible Klimaanlage",
+          "aucun": "Keine Heizung"
+        }
+      },
+      "officeSpace": {
+        "title": "Bürofläche",
+        "question": "Welche Fläche nehmen Ihre Räumlichkeiten ein? (in m²)",
+        "description": "Gesamtfläche in Quadratmetern Ihrer Geschäftsräume"
+      },
+      "vehicleCount": {
+        "title": "Fahrzeugflotte",
+        "question": "Wie viele Fahrzeuge umfasst die Flotte Ihres Unternehmens?",
+        "description": "Gesamtzahl der vom Unternehmen genutzten Fahrzeuge"
+      },
+      "averageKilometers": {
+        "title": "Kilometer pro Fahrzeug",
+        "question": "Wie viele Kilometer fährt jedes Fahrzeug Ihrer Flotte im Durchschnitt pro Jahr?",
+        "description": "Durchschnittliche Jahresstrecke pro Fahrzeug in Kilometern"
+      },
+      "shortFlights": {
+        "title": "Kurzstreckenflüge",
+        "question": "Wie viele Kurzstrecken-Geschäftsflüge (<1h30) Hin und Rück finden im Durchschnitt pro Jahr statt?",
+        "description": "Anzahl Hin- und Rückflüge unter 1h30 pro Jahr"
+      },
+      "mediumFlights": {
+        "title": "Mittelstreckenflüge",
+        "question": "Wie viele Mittelstrecken-Geschäftsflüge (1h30–4 h) Hin und Rück finden im Durchschnitt pro Jahr statt?",
+        "description": "Anzahl Hin- und Rückflüge zwischen 1h30 und 4 h pro Jahr"
+      },
+      "longFlights": {
+        "title": "Langstreckenflüge",
+        "question": "Wie viele Langstrecken-Geschäftsflüge (>4 h) Hin und Rück finden im Durchschnitt pro Jahr statt?",
+        "description": "Anzahl Hin- und Rückflüge über 4 h pro Jahr"
+      },
+      "trainTrips": {
+        "title": "Zugfahrten",
+        "question": "Wie viele Zugfahrten werden im Durchschnitt pro Jahr unternommen?",
+        "description": "Gesamtzahl Zugfahrten pro Jahr für das Unternehmen"
+      },
+      "laptops": {
+        "title": "Laptops",
+        "question": "Wie viele Laptops stellt Ihr Unternehmen bereit?",
+        "description": "Anzahl an Mitarbeitende bereitgestellter Laptops"
+      },
+      "mobilePhones": {
+        "title": "Mobiltelefone",
+        "question": "Wie viele Mobiltelefone stellt Ihr Unternehmen bereit?",
+        "description": "Anzahl an Mitarbeitende bereitgestellter Mobiltelefone"
+      },
+      "monitors": {
+        "title": "Feste Bildschirme",
+        "question": "Wie viele feste Bildschirme stellt Ihr Unternehmen bereit?",
+        "description": "Anzahl fester Bildschirme/Monitore im Unternehmen"
+      },
+      "desktopComputers": {
+        "title": "Desktop-Computer",
+        "question": "Wie viele Desktop-Computer stellt Ihr Unternehmen bereit?",
+        "description": "Anzahl fester Desktop-Computer im Unternehmen"
+      }
+    },
+    "contactForm": {
+      "title": "Ihre Kontaktinformationen",
+      "subtitle": "Hinterlassen Sie uns Ihre Kontaktdaten, um Ihren detaillierten Bericht zu erhalten",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "Geschäftliche E-Mail",
+      "company": "Unternehmen",
+      "phone": "Telefon",
+      "position": "Branche",
+      "placeholders": {
+        "firstName": "Ihr Vorname",
+        "lastName": "Ihr Nachname",
+        "email": "ihre.email@unternehmen.com",
+        "company": "Name Ihres Unternehmens",
+        "phone": "+216 XX XXX XXX",
+        "position": "Z. B. Industrie, Dienstleistungen, Handel …"
+      },
+      "submitButton": "Meinen Bericht erhalten",
+      "validation": {
+        "firstNameMin": "Der Vorname muss mindestens 2 Zeichen enthalten",
+        "lastNameMin": "Der Nachname muss mindestens 2 Zeichen enthalten",
+        "emailInvalid": "Ungültige E-Mail",
+        "companyMin": "Der Firmenname muss mindestens 2 Zeichen enthalten",
+        "phoneMin": "Die Telefonnummer muss mindestens 8 Ziffern enthalten"
+      }
+    },
+    "results": {
+      "title": "Ihre CO₂-Bilanz",
+      "subtitle": "Entdecken Sie die Details Ihrer CO₂-Bilanz und unsere personalisierten Empfehlungen zur Emissionsreduktion.",
+      "totalEmissions": "Gesamtemissionen pro Jahr",
+      "tonnesCO2e": "Tonnen CO₂-Äquivalent",
+      "scopeBreakdown": "Aufschlüsselung nach Scope",
+      "topEmitters": "Emissionsstärkste Kategorien",
+      "analysis": "Analyse & Empfehlungen",
+      "mainEmissionSource": "Hauptemissionsquelle",
+      "recommendation": "Unsere Empfehlung",
+      "categoryDetail": "Detail nach Kategorie",
+      "scopes": {
+        "scope1": "Scope 1 – Direkte Emissionen",
+        "scope2": "Scope 2 – Eingekaufte Energie",
+        "scope3": "Scope 3 – Sonstige indirekte Emissionen"
+      },
+      "categories": {
+        "heating": "Heizung",
+        "fleetTransport": "Flottentransport",
+        "vehicles": "Fahrzeuge",
+        "businessTravel": "Geschäftsreisen",
+        "flights": "Flüge",
+        "commuteTransport": "Pendelverkehr",
+        "train": "Zug",
+        "itEquipment": "IT-Ausstattung",
+        "digital": "Digital",
+        "electricityConsumption": "Stromverbrauch",
+        "purchases": "Einkäufe von Waren und Dienstleistungen"
+      },
+      "recommendations": {
+        "fleet": "Erwägen Sie die Elektrifizierung Ihrer Flotte, Fahrgemeinschaften oder öffentliche Verkehrsmittel für Ihre Mitarbeitenden.",
+        "heating": "Verbessern Sie die Dämmung Ihrer Räumlichkeiten und wechseln Sie zu erneuerbaren Energiequellen.",
+        "travel": "Bevorzugen Sie Videokonferenzen und begrenzen Sie nicht essenzielle Geschäftsreisen.",
+        "it": "Optimieren Sie Ihr IT-Ausstattungsmanagement und setzen Sie auf Kreislaufwirtschaft.",
+        "commute": "Fördern Sie Telearbeit und nachhaltige Verkehrsmittel für den Arbeitsweg.",
+        "electricity": "Optimieren Sie Ihren Stromverbrauch und wechseln Sie zu erneuerbaren Energiequellen.",
+        "purchases": "Bevorzugen Sie lokale und ökologisch verantwortliche Lieferanten, reduzieren Sie nicht essenzielle Einkäufe.",
+        "default": "Konzentrieren Sie Ihre Anstrengungen auf diese prioritäre Emissionsquelle."
+      },
+      "represents": "entspricht",
+      "ofYourTotalEmissions": "Ihrer Gesamtemissionen",
+      "scope": "Scope",
+      "cta": {
+        "title": "Jetzt handeln!",
+        "subtitle": "Erhalten Sie einen detaillierten Bericht mit personalisiertem Aktionsplan zur Reduzierung Ihrer CO₂-Bilanz.",
+        "requestDiagnostic": "Vollständige Diagnose anfordern",
+        "backToHome": "Zurück zur Startseite"
+      },
+      "modernCta": {
+        "title": "Bereit, Ihre CO₂-Bilanz zu messen?",
+        "subtitle": "Starten Sie heute Ihre ökologische Transition mit unserem kostenlosen Rechner und erfahren Sie, wie Sie Ihre CO₂-Emissionen effektiv reduzieren.",
+        "features": {
+          "free": "100 % kostenlos",
+          "fast": "Ergebnisse in 5 Min.",
+          "actionable": "KI-Empfehlungen"
+        },
+        "primaryButton": "Meine Bilanz berechnen",
+        "secondaryButton": "Mit einem Experten sprechen",
+        "trustIndicator": "Schließen Sie sich über 500 Unternehmen an, die ihre Transition bereits begonnen haben"
+      }
+    },
+    "messages": {
+      "success": "Ihre Informationen wurden erfolgreich gespeichert",
+      "error": "Fehler beim Speichern der Informationen"
+    }
+  },
+  "freeCalculators": {
+    "selector": {
+      "back": "← Zurück zur Startseite",
+      "badge": "Kostenloser Rechner",
+      "title": "Was möchten Sie bewerten?",
+      "subtitle": "Wählen Sie den Rechner, der zu Ihrem Profil passt. Die Ergebnisse sind kostenlos und vertraulich.",
+      "start": "Starten",
+      "footer": "Daten vertraulich verarbeitet · Methoden ADEME / GHG Protocol",
+      "company": {
+        "title": "Unternehmen",
+        "description": "Bewerten Sie die CO₂-Bilanz Ihres Unternehmens (Scope 1, 2, 3).",
+        "duration": "≈ 8–10 Minuten",
+        "badge": "Am vollständigsten",
+        "bullets": [
+          "Scope 1, 2 & 3 (GHG Protocol)",
+          "Intensität pro Mitarbeitendem / m² / Umsatz",
+          "Herunterladbarer PDF-Bericht",
+          "Branchenspezifische Empfehlungen"
+        ]
+      }
+    },
+    "bilan": {
+      "intro": {
+        "title": "Kostenlose CO₂-Bilanz",
+        "subtitle": "Schätzen Sie die CO₂-Bilanz Ihres Unternehmens in wenigen Minuten",
+        "questions": "Fragen",
+        "scopes": "Scopes",
+        "minutes": "Minuten",
+        "feat1": "Erfasst <strong>Scope 1, 2 und 3</strong> Ihrer Emissionen",
+        "feat2": "Sofortige Ergebnisse mit detaillierten Diagrammen",
+        "feat3": "Kein Konto erforderlich — 100 % kostenlos",
+        "feat4": "Ihre Daten bleiben vertraulich",
+        "start": "Schätzung starten",
+        "proHint": "Für eine von einem Experten geprüfte Bilanz entdecken Sie unsere",
+        "proLink": "professionellen Angebote"
+      },
+      "questions": {
+        "minutesLeft": "Min. verbleibend",
+        "questionCount_one": "{{count}} Frage",
+        "questionCount_other": "{{count}} Fragen",
+        "optional": "Leer lassen, wenn nicht zutreffend",
+        "home": "Wohnen",
+        "back": "Zurück",
+        "next": "Weiter →",
+        "seeResults": "Meine Ergebnisse ansehen"
+      },
+      "results": {
+        "title": "Ihre geschätzte CO₂-Bilanz",
+        "yourCompany": "Ihr Unternehmen",
+        "year": "Jahr",
+        "unit": "Tonnen CO₂e / Jahr",
+        "byScope": "Aufschlüsselung nach Scope",
+        "scopeDetail": "Scope-Details",
+        "scope1Desc": "Direkte Emissionen",
+        "scope2Desc": "Eingekaufte Energie",
+        "scope3Desc": "Wertschöpfungskette",
+        "topCategories": "Top-Emissionsquellen (Tonnen CO₂e)",
+        "emissionsLabel": "Emissionen",
+        "upsellTitle": "Zur professionellen Bilanz wechseln",
+        "upsellText": "Erhalten Sie einen detaillierten 25-seitigen Bericht, geprüft von einem CO₂-Bilanz-Experten, mit personalisiertem Aktionsplan und branchenspezifischen Empfehlungen.",
+        "seeOffers": "Angebote ansehen",
+        "contactExpert": "Einen Experten kontaktieren",
+        "restart": "Fragebogen neu starten"
+      },
+      "sections": {
+        "company": "Ihr Unternehmen",
+        "scope1Energy": "Scope 1 — Direkte Energie",
+        "scope1Fleet": "Scope 1 — Fahrzeugflotte",
+        "scope1Fluids": "Scope 1 — Kältemittel",
+        "scope2Elec": "Scope 2 — Strom",
+        "scope3Purchases": "Scope 3 — Einkäufe",
+        "scope3Travel": "Scope 3 — Geschäftsreisen",
+        "scope3Commute": "Scope 3 — Pendeln",
+        "scope3Freight": "Scope 3 — Fracht",
+        "scope3Waste": "Scope 3 — Abfälle"
+      },
+      "q": {
+        "companyName": {
+          "q": "Firmenname",
+          "p": "z. B. MeineFirma GmbH"
+        },
+        "sector": {
+          "q": "Branche",
+          "p": "Auswählen"
+        },
+        "referenceYear": {
+          "q": "Referenzjahr",
+          "p": "z. B. 2025"
+        },
+        "employees": {
+          "q": "Gesamtzahl Mitarbeitende",
+          "p": "z. B. 50"
+        },
+        "revenue": {
+          "q": "Jahresumsatz (DT)",
+          "p": "z. B. 1.500.000"
+        },
+        "gas": {
+          "q": "Erdgasverbrauch (m³/Jahr)",
+          "p": "z. B. 10.000"
+        },
+        "fuel": {
+          "q": "Heizöl- / Dieselverbrauch (Liter/Jahr)",
+          "p": "z. B. 5.000"
+        },
+        "fleetFuel": {
+          "q": "Hauptkraftstoffart Ihrer Flotte",
+          "p": "Auswählen"
+        },
+        "fleetLiters": {
+          "q": "Gesamter Flottenkraftstoffverbrauch (Liter/Jahr)",
+          "p": "z. B. 15.000"
+        },
+        "fleetKm": {
+          "q": "Gesamtkilometerstand der Flotte pro Jahr (km)",
+          "p": "z. B. 200.000"
+        },
+        "refrigerant": {
+          "q": "Kältemittelnachfüllung (kg/Jahr)",
+          "p": "z. B. 5"
+        },
+        "electricity": {
+          "q": "Stromverbrauch (kWh/Jahr)",
+          "p": "z. B. 100.000"
+        },
+        "heat": {
+          "q": "Wärme- / Dampfverbrauch (kWh/Jahr)",
+          "p": "z. B. 20.000"
+        },
+        "renewable": {
+          "q": "Anteil erneuerbarer Energie (%)",
+          "p": "z. B. 10"
+        },
+        "purchases": {
+          "q": "Jahresbudget für Waren und Dienstleistungen (DT)",
+          "p": "z. B. 500.000"
+        },
+        "rawMaterials": {
+          "q": "Gekaufte Rohstoffe (Tonnen/Jahr)",
+          "p": "z. B. 100"
+        },
+        "tripsCar": {
+          "q": "Anzahl Geschäftsreisen mit dem Auto pro Jahr",
+          "p": "z. B. 200"
+        },
+        "tripsTrain": {
+          "q": "Anzahl Geschäftsreisen mit dem Zug pro Jahr",
+          "p": "z. B. 30"
+        },
+        "tripsFlight": {
+          "q": "Anzahl Geschäftsflüge pro Jahr",
+          "p": "z. B. 10"
+        },
+        "commuteMode": {
+          "q": "Hauptpendelverkehrsmittel der Mitarbeitenden",
+          "p": "Auswählen"
+        },
+        "commuteKm": {
+          "q": "Durchschnittliche Pendelstrecke (km einfache Fahrt)",
+          "p": "z. B. 15"
+        },
+        "freightT": {
+          "q": "Transportiertes Warenvolumen (Tonnen/Jahr)",
+          "p": "z. B. 500"
+        },
+        "freightMode": {
+          "q": "Hauptfrachttransportart",
+          "p": "Auswählen"
+        },
+        "wasteT": {
+          "q": "Erzeugte Abfälle (Tonnen/Jahr)",
+          "p": "z. B. 20"
+        },
+        "wasteTreatment": {
+          "q": "Hauptabfallbehandlung",
+          "p": "Auswählen"
+        }
+      },
+      "opt": {
+        "sector": {
+          "services": "Dienstleistungen / Tertiär",
+          "industrie": "Industrie / Fertigung",
+          "btp": "Bauwesen",
+          "commerce": "Einzelhandel / Distribution",
+          "transport": "Transport / Logistik",
+          "agroalimentaire": "Lebensmittel & Getränke",
+          "sante": "Gesundheitswesen",
+          "education": "Bildung",
+          "hotellerie": "Hotellerie / Tourismus",
+          "autre": "Sonstige"
+        },
+        "fleetFuel": {
+          "essence": "Benzin",
+          "diesel": "Diesel",
+          "mixte": "Gemischt (Benzin + Diesel)",
+          "aucun": "Keine Flotte"
+        },
+        "commuteMode": {
+          "voiture": "Privatauto",
+          "transport_public": "Öffentliche Verkehrsmittel",
+          "mixte": "Gemischt",
+          "velo": "Fahrrad / Zu Fuß"
+        },
+        "freightMode": {
+          "camion": "LKW",
+          "maritime": "See",
+          "mixte": "Gemischt",
+          "aucun": "Kein Frachtverkehr"
+        },
+        "wasteTreatment": {
+          "recyclage": "Recycling",
+          "incineration": "Verbrennung",
+          "decharge": "Deponie",
+          "mixte": "Gemischt"
+        }
+      },
+      "cats": {
+        "gas": "Erdgas",
+        "fuel": "Heizöl / Diesel",
+        "fleet": "Flottenkraftstoff",
+        "refrigerant": "Kältemittel",
+        "electricity": "Strom",
+        "heat": "Wärme / Dampf",
+        "purchases": "Einkäufe Waren & Dienstleistungen",
+        "rawMaterials": "Rohstoffe",
+        "tripsCar": "Geschäftsreisen mit dem Auto",
+        "tripsTrain": "Geschäftsreisen mit dem Zug",
+        "tripsFlight": "Flüge",
+        "commute": "Pendeln",
+        "freight": "Fracht",
+        "waste": "Abfälle"
+      }
+    },
+    "personal": {
+      "sidebar": {
+        "back": "← Rechner wechseln",
+        "results": "Ergebnisse"
+      },
+      "progressLabel": "Persönliche Bilanz",
+      "buttons": {
+        "back": "Zurück",
+        "next": "Weiter",
+        "finalize": "Fertigstellen"
+      },
+      "requiredHint": "Bitte füllen Sie die Pflichtfelder (*) aus, bevor Sie fortfahren.",
+      "confidentialTip": "Ihre Antworten bleiben vertraulich. Je präziser sie sind, desto genauer Ihre Bilanz.",
+      "selectPlaceholder": "Auswählen…",
+      "inputPlaceholder": "Wert eingeben",
+      "contact": {
+        "title": "Ihre Bilanz erhalten",
+        "subtitle": "Ihre Angaben ermöglichen uns, Ihnen Ergebnisse und personalisierte Empfehlungen zu senden.",
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "email": "E-Mail",
+        "phone": "Telefon (optional)",
+        "submit": "Meine Ergebnisse ansehen",
+        "validation": {
+          "firstName": "Vorname zu kurz",
+          "lastName": "Nachname zu kurz",
+          "email": "Ungültige E-Mail",
+          "phone": "Telefonnummer zu kurz"
+        },
+        "successToast": "Bilanz erfolgreich berechnet",
+        "errorToast": "Anfrage konnte nicht gespeichert werden"
+      },
+      "sections": {
+        "profil": {
+          "title": "Profil",
+          "description": "Einige Angaben zur Personalisierung Ihrer Bilanz."
+        },
+        "logement": {
+          "title": "Wohnen",
+          "description": "Ihr Energieverbrauch zu Hause."
+        },
+        "transport": {
+          "title": "Transport",
+          "description": "Ihre persönlichen Fahrten über ein Jahr."
+        },
+        "alimentation": {
+          "title": "Ernährung",
+          "description": "Ihre Essgewohnheiten."
+        },
+        "consommation": {
+          "title": "Konsum",
+          "description": "Ihre Einkäufe von Waren und Dienstleistungen."
+        },
+        "dechets": {
+          "title": "Abfälle",
+          "description": "Ihr Abfallmanagement."
+        }
+      },
+      "fields": {
+        "country": {
+          "label": "Wohnsitzland *"
+        },
+        "city": {
+          "label": "Wohnort *",
+          "placeholder": "z. B. Tunis, Paris, Casablanca …"
+        },
+        "householdSize": {
+          "label": "Anzahl Personen in Ihrem Haushalt",
+          "placeholder": "z. B. 3"
+        },
+        "homeSurface": {
+          "label": "Wohnfläche (m²)",
+          "placeholder": "z. B. 80"
+        },
+        "heatingType": {
+          "label": "Hauptheizquelle"
+        },
+        "heatingConsumption": {
+          "label": "Jährlicher Heizverbrauch",
+          "description": "kWh/Jahr für Gas, Strom, Wärmepumpe — Liter/Jahr für Heizöl — Ster/Jahr für Holz.",
+          "placeholder": "z. B. 8000",
+          "bois": {
+            "label": "Ster Holz pro Jahr verbraucht",
+            "description": "Ein Ster = 1 m³ gestapeltes Holz (1 m Scheite), etwa 500 kg Trockenholz. Ein Kaminofen als Zusatzheizung verbraucht 2–5 Ster/Jahr, Hauptheizung mit Holz 8–15 Ster/Jahr.",
+            "placeholder": "z. B. 5"
+          },
+          "fioul": {
+            "label": "Liter Heizöl pro Jahr verbraucht",
+            "description": "Prüfen Sie Ihre Lieferrechnung (typisch: 1.000 bis 3.000 L/Jahr).",
+            "placeholder": "z. B. 1500"
+          },
+          "kwh": {
+            "label": "Jährlicher Heizverbrauch (kWh)",
+            "description": "kWh/Jahr laut Rechnung (typisch: 5.000 bis 20.000 kWh/Jahr).",
+            "placeholder": "z. B. 8000"
+          }
+        },
+        "electricityConsumption": {
+          "label": "Jährlicher Stromverbrauch (ohne Heizung)",
+          "description": "kWh/Jahr (Beleuchtung, Geräte, Warmwasser …).",
+          "placeholder": "z. B. 2500"
+        },
+        "carFuel": {
+          "label": "Kraftstoff Ihres Hauptfahrzeugs"
+        },
+        "carKm": {
+          "label": "Km pro Jahr gefahren",
+          "placeholder": "z. B. 12000"
+        },
+        "trainKm": {
+          "label": "Km mit dem Zug pro Jahr",
+          "placeholder": "z. B. 800"
+        },
+        "busKm": {
+          "label": "Km mit Bus / Metro pro Jahr",
+          "placeholder": "z. B. 2000"
+        },
+        "shortFlights": {
+          "label": "Kurzstreckenflüge (<1500 km) pro Jahr",
+          "placeholder": "z. B. 1"
+        },
+        "mediumFlights": {
+          "label": "Mittelstreckenflüge (1500–4000 km) pro Jahr",
+          "placeholder": "z. B. 0"
+        },
+        "longFlights": {
+          "label": "Langstreckenflüge (>4000 km) pro Jahr",
+          "placeholder": "z. B. 0"
+        },
+        "diet": {
+          "label": "Ihre Ernährung"
+        },
+        "redMeatPerWeek": {
+          "label": "Rindfleisch-Mahlzeiten pro Woche",
+          "placeholder": "z. B. 2"
+        },
+        "clothingSpend": {
+          "label": "Ausgaben für Kleidung & Textilien"
+        },
+        "electronicsSpend": {
+          "label": "Elektronikeinkäufe (Telefone, Computer …)"
+        },
+        "leisureSpend": {
+          "label": "Freizeit, Restaurants, Ausflüge"
+        },
+        "recycling": {
+          "label": "Sortieren Sie Ihre Abfälle regelmäßig?"
+        }
+      },
+      "options": {
+        "country": {
+          "TN": "Tunesien",
+          "FR": "Frankreich",
+          "MA": "Marokko",
+          "DZ": "Algerien",
+          "EG": "Ägypten",
+          "SN": "Senegal",
+          "CI": "Elfenbeinküste",
+          "DE": "Deutschland",
+          "BE": "Belgien",
+          "CH": "Schweiz",
+          "ES": "Spanien",
+          "IT": "Italien",
+          "UK": "Vereinigtes Königreich",
+          "US": "Vereinigte Staaten",
+          "CA": "Kanada",
+          "autre": "Sonstige"
+        },
+        "heatingType": {
+          "gaz": "Erdgas",
+          "fioul": "Heizöl",
+          "electricite": "Strom (Heizkörper)",
+          "pac": "Wärmepumpe",
+          "bois": "Holz / Pellets",
+          "aucun": "Keine / mildes Klima"
+        },
+        "carFuel": {
+          "essence": "Benzin",
+          "diesel": "Diesel",
+          "hybride": "Hybrid",
+          "electrique": "Elektrisch",
+          "aucun": "Kein Auto"
+        },
+        "diet": {
+          "omnivore": "Allesfresser (regelmäßig Fleisch)",
+          "flexitarien": "Flexitarisch (gelegentlich Fleisch)",
+          "vegetarien": "Vegetarisch",
+          "vegan": "Vegan"
+        },
+        "spend": {
+          "faible": "Niedrig",
+          "moyen": "Mittel",
+          "eleve": "Hoch",
+          "tres_eleve": "Sehr hoch"
+        },
+        "clothingSpend": {
+          "faible": "Niedrig (<30 €/Monat)",
+          "moyen": "Mittel (30–80 €/Monat)",
+          "eleve": "Hoch (80–200 €/Monat)",
+          "tres_eleve": "Sehr hoch (>200 €/Monat)"
+        },
+        "recycling": {
+          "oui": "Ja",
+          "non": "Nein"
+        }
+      },
+      "warnings": {
+        "boisHigh": "{{v}} Ster/Jahr ist sehr hoch (Haushaltsdurchschnitt: 2–8 Ster). Bitte Einheit prüfen.",
+        "fioulHigh": "{{v}} L/Jahr ist sehr hoch (Haushaltsdurchschnitt: 1.000–3.000 L). Bitte Einheit prüfen.",
+        "kwhHigh": "{{v}} kWh/Jahr ist sehr hoch (Haushaltsdurchschnitt: 5.000–20.000 kWh). Bitte Einheit prüfen.",
+        "elecHigh": "{{v}} kWh/Jahr ist hoch ohne Heizung (Durchschnitt: 1.500–4.000 kWh).",
+        "carHigh": "{{v}} km/Jahr ist sehr hoch (Durchschnitt: 8.000–15.000 km).",
+        "longFlightsHigh": "{{v}} Langstreckenflüge/Jahr ist sehr hoch. Bitte prüfen Sie diese Angabe.",
+        "mediumFlightsHigh": "{{v}} Mittelstreckenflüge/Jahr ist sehr hoch.",
+        "shortFlightsHigh": "{{v}} Kurzstreckenflüge/Jahr ist sehr hoch.",
+        "redMeatHigh": "Mehr als 2 Rindfleisch-Mahlzeiten/Tag — ist das realistisch?",
+        "householdHigh": "Haushalt mit {{v}} Personen: ungewöhnlicher Wert.",
+        "homeSurfaceHigh": "{{v}} m² ist sehr groß für eine private Wohnung."
+      },
+      "results": {
+        "eyebrow": "Ihre persönliche CO₂-Bilanz",
+        "titleWithName": "{{name}}, Ihre Jahresbilanz",
+        "titleNoName": "Ihre Jahresbilanz",
+        "unit": "Tonnen CO₂e pro Jahr",
+        "vsAverage": "vs. Durchschnitt",
+        "target2050": "Ziel 2050",
+        "gap": "Zu schließende Lücke",
+        "parisGoal": "Ziel des Pariser Abkommens",
+        "breakdownTitle": "Aufschlüsselung nach Kategorie",
+        "breakdownSubtitle": "Identifizieren Sie Ihre wichtigsten Hebel zur Reduktion.",
+        "actionsTitle": "Ihre prioritären Maßnahmen",
+        "actionsSubtitle": "Empfehlungen angepasst an Ihre Hauptkategorie: ",
+        "downloadPdf": "Meine PDF-Bilanz herunterladen",
+        "methodology": "Methodik inspiriert von ADEME / Nos Gestes Climat. Ergebnisse sind indikativ."
+      }
+    }
+  },
+  "cbamCalculator": {
+    "title": "CBAM-Rechner – Schätzen Sie Ihre CO₂-Kosten",
+    "subtitle": "Berechnen Sie die Auswirkungen des Carbon Border Adjustment Mechanism auf Ihre EU-Exporte",
+    "steps": {
+      "general": "Allgemeine Informationen",
+      "directData": "Energiedaten",
+      "indirectData": "Transport & Logistik",
+      "summary": "Zusammenfassung",
+      "results": "Ergebnisse",
+      "contact": "Kontaktinformationen"
+    },
+    "questions": {
+      "sector": {
+        "title": "In welcher Branche sind Sie tätig?",
+        "description": "Wählen Sie die Branche Ihrer in die EU exportierten Produkte",
+        "options": {
+          "cement": "Zement",
+          "steel": "Eisen und Stahl",
+          "aluminum": "Aluminium",
+          "fertilizer": "Düngemittel",
+          "electricity": "Strom",
+          "hydrogen": "Wasserstoff",
+          "other": "Sonstige"
+        }
+      },
+      "exportCountry": {
+        "title": "Was ist Ihr Exportland?",
+        "description": "Das Land, in dem Ihre Produktion stattfindet"
+      },
+      "annualVolume": {
+        "title": "Welches Volumen exportieren Sie pro Jahr in die EU?",
+        "description": "Jährliches Volumen in Tonnen Ihrer Exporte in die Europäische Union",
+        "placeholder": "z. B. 1000"
+      },
+      "energyConsumption": {
+        "title": "Jährlicher Energieverbrauch für Ihre Produktion",
+        "description": "Geben Sie Ihre Energiedaten ein oder nutzen Sie EU-Standardwerte",
+        "electricity": "Strom (kWh)",
+        "gas": "Erdgas (m³)",
+        "fuel": "Flüssige Brennstoffe (Liter)",
+        "useDefault": "Ich habe diese Daten nicht → EU-Standardwerte verwenden"
+      },
+      "transport": {
+        "title": "Zurückgelegte Strecke für den Transport Ihrer Produkte in die EU",
+        "description": "Genutzte Transportarten und ungefähre Entfernungen",
+        "truck": "Straßentransport (km)",
+        "ship": "Seetransport (km)",
+        "air": "Lufttransport (km)",
+        "useAverage": "Branchendurchschnitte verwenden"
+      }
+    },
+    "results": {
+      "title": "Ihre CBAM-Ergebnisse",
+      "totalEmissions": "Gesamtemissionen",
+      "emissionsPerTonne": "Emissionen pro exportierter Tonne",
+      "cbamCost": "Geschätzte CBAM-Kosten",
+      "breakdown": {
+        "title": "Emissionsaufschlüsselung",
+        "production": "Produktion",
+        "energy": "Energie",
+        "transport": "Transport"
+      },
+      "comparison": {
+        "title": "Vergleich mit EU-Standardwerten",
+        "realData": "Ihre Daten",
+        "defaultData": "EU-Standardwerte",
+        "savings": "Potenzielle Einsparungen"
+      },
+      "recommendations": {
+        "title": "Personalisierte Empfehlungen"
+      },
+      "actions": {
+        "downloadReport": "Meinen PDF-Bericht herunterladen",
+        "contactExperts": "Kontaktieren Sie unsere CarboScan-Experten",
+        "newCalculation": "Neue Simulation"
+      }
+    },
+    "navigation": {
+      "previous": "Zurück",
+      "next": "Weiter",
+      "calculate": "CBAM-Berechnung starten",
+      "restart": "Neu starten"
+    }
+  }
+}

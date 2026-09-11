@@ -1,0 +1,1332 @@
+{
+  "solutions": {
+    "home": {
+      "hero": {
+        "title": "Reduzieren Sie Ihre Emissionen. Beschleunigen Sie Ihre Leistung.",
+        "subtitle": "DecarboTech® verwandelt Ihre CO₂-Bilanzen in konkrete und messbare Maßnahmen. Wir unterstützen Unternehmen im Maghreb und in Afrika bei der Umsetzung von Dekarbonisierungsplänen, die an ihre Realität angepasst sind.",
+        "discoverButton": "Unsere Lösungen entdecken",
+        "contactButton": "Kostenlose Diagnose anfragen"
+      },
+      "mission": {
+        "quote": "Ihre Emissionen zu messen ist ein erster Schritt. Sie zu reduzieren ist unsere Aufgabe.",
+        "description": "DecarboTech® hilft Organisationen, Prioritätshebel zu identifizieren, die profitabelsten Projekte umzusetzen und Fortschritte in tCO₂e, kWh und ROI zu verfolgen."
+      },
+      "axes": {
+        "title": "Unsere 4 Handlungsfelder",
+        "energy": {
+          "title": "Energie & Effizienz",
+          "description": "Energieaudit, LED, Solar, Wärmerückgewinnung, Prozessoptimierung"
+        },
+        "mobility": {
+          "title": "Mobilität & Transport",
+          "description": "Eco-Driving, Hybrid-/Elektroflotte, Mobilitätsplan, Logistikoptimierung"
+        },
+        "production": {
+          "title": "Produktion & Einkauf",
+          "description": "Kohlenstoffarme Materialien, lokale Beschaffung, Materialreduzierung, Kreislaufwirtschaft"
+        },
+        "culture": {
+          "title": "Kultur & Governance",
+          "description": "Interne Schulungen, CO₂-Management, Mitarbeitersensibilisierung, CSR-Reporting"
+        }
+      },
+      "iot": {
+        "title": "IoT-Lösung in Entwicklung",
+        "description": "Wir entwickeln eine IoT-Lösung, mit der Kunden Scope-1- und -2-Emissionen in Echtzeit verfolgen können.",
+        "contactButton": "Kontaktieren Sie uns für weitere Informationen"
+      },
+      "whyUs": {
+        "title": "Warum uns wählen",
+        "point1": "Expertise aus ADEME Carbon Footprint®",
+        "point2": "Methodik gemäß GHG Protocol und ISO 14064",
+        "point3": "Realistische, messbare und wirtschaftliche Lösungen",
+        "point4": "Netzwerk zertifizierter Technikpartner"
+      },
+      "cta": {
+        "title": "Von der Messung zur Aktion",
+        "button": "Unsere Lösungen entdecken"
+      }
+    },
+    "catalog": {
+      "hero": {
+        "title": "Unsere Lösungen",
+        "subtitle": "Entdecken Sie unseren vollständigen Katalog an Reduktionslösungen nach Scope"
+      },
+      "intro": {
+        "text1": "\"Scopes\" definieren Emissionskategorien gemäß dem internationalen GHG-Protokoll:",
+        "scope1": "Scope 1: direkte Emissionen (Verbrennung, Prozesse, Fahrzeuge)",
+        "scope2": "Scope 2: indirekte Emissionen (zugekaufter Strom und Wärme)",
+        "scope3": "Scope 3: Emissionen der Wertschöpfungskette (Einkäufe, Transport, Abfall, Nutzung)"
+      },
+      "scope1": {
+        "title": "Scope 1 — Direkte Emissionen",
+        "subtitle": "Kontrollieren Sie Ihre internen Emissionen",
+        "combustion": {
+          "title": "Verbrennung & Prozesse",
+          "description": "Fuel → Gas/Biomasse-Umstellung, Wärmerückgewinnung, effiziente Kessel"
+        },
+        "cooling": {
+          "title": "Kühlung & Klimatisierung",
+          "description": "HFC-Leckreduzierung, Ersatz durch CO₂ oder R290"
+        },
+        "fleet": {
+          "title": "Flotte & Mobilität",
+          "description": "Eco-Driving, Kraftstofftracking, Hybrid- oder Elektroflotte"
+        },
+        "reduction": "💡 Potenzielle Reduktion: 10 bis 40 %"
+      },
+      "scope2": {
+        "title": "Scope 2 — Zugekaufte Elektrizität und Energie",
+        "subtitle": "Optimieren Sie Ihren Energieverbrauch",
+        "optimization": {
+          "title": "Energieoptimierung",
+          "description": "LED, Sensoren, Frequenzumrichter, Wärmedämmung"
+        },
+        "renewable": {
+          "title": "Erneuerbare Energien",
+          "description": "Solarmodule, Eigenverbrauch, Energiespeicher"
+        },
+        "monitoring": {
+          "title": "Energiemanagement",
+          "description": "Monats-Dashboard, kWh/produzierte Einheit, Echtzeit-Monitoring"
+        },
+        "reduction": "💡 Potenzielle Reduktion: bis zu 50 %"
+      },
+      "scope3": {
+        "title": "Scope 3 — Erweiterte Wertschöpfungskette",
+        "subtitle": "Transformieren Sie Ihr Ökosystem",
+        "purchasing": {
+          "title": "Verantwortungsvoller Einkauf",
+          "description": "Recycelte Materialien, kohlenstoffarme Lieferanten, lokale Beschaffung"
+        },
+        "waste": {
+          "title": "Abfall & Kreislaufwirtschaft",
+          "description": "Selektive Sortierung, Wiederverwendung, Verwertung, Quellenreduzierung"
+        },
+        "transport": {
+          "title": "Transport & Logistik",
+          "description": "Routenoptimierung, sanfte Mobilität, Remote-Arbeit"
+        },
+        "awareness": {
+          "title": "Sensibilisierung & Kultur",
+          "description": "Schulung, Mitarbeiterengagement, CSR-Reporting"
+        },
+        "reduction": "💡 Potenzielle Reduktion: 10 bis 30 %"
+      },
+      "cta": {
+        "title": "Erstellen Sie Ihren personalisierten Reduktionsplan",
+        "subtitle": "Unsere Experten begleiten Sie Schritt für Schritt",
+        "button": "Ich möchte meinen Dekarbonisierungsplan"
+      }
+    },
+    "support": {
+      "hero": {
+        "title": "Von der Messung zur Transformation: Begleitung mit konkreten Lösungen",
+        "subtitle": "Bei DecarboTech® sind wir überzeugt, dass die kohlenstoffarme Transformation auf messbaren, realistischen Maßnahmen basiert, die an jedes Unternehmen angepasst sind. Unsere Rolle endet nicht bei der Diagnose: Wir unterstützen Sie bei der Umsetzung technischer, organisatorischer und verhaltensbezogener Lösungen, die Ihre Emissionen an der Quelle reduzieren und gleichzeitig Ihre operative Leistung verbessern."
+      },
+      "approach": {
+        "title": "Unser Begleitungsansatz",
+        "step1": {
+          "title": "1. Gezielte Analyse der Reduktionshebel",
+          "description": "Aus der auf CarboScan erstellten CO₂-Bilanz® identifizieren wir prioritäre Emissionsposten nach drei Kriterien:",
+          "point1": "Potenzielle CO₂-Wirkung (vermeidbare tCO₂e)",
+          "point2": "Technische und wirtschaftliche Machbarkeit",
+          "point3": "Umsetzungsgeschwindigkeit",
+          "conclusion": "Dieser erste Schritt ermöglicht einen priorisierten Aktionsplan auf Basis messbarer Indikatoren."
+        },
+        "step2": {
+          "title": "2. Gemeinsame Erstellung des Dekarbonisierungsplans",
+          "description": "Wir arbeiten mit Ihren Technikteams, Partnern und Lieferanten zusammen, um:",
+          "point1": "Kurz-, mittel- und langfristige Reduktionsziele definieren",
+          "point2": "Die relevantesten Maßnahmen nach Ihren industriellen und logistischen Constraints auswählen",
+          "point3": "Erwartete Gewinne integrieren (Energie, Kosten, Image, regulatorische Konformität)",
+          "conclusion": "Jedes Unternehmen erhält so eine personalisierte kohlenstoffarme Roadmap, von der Leitung validiert und an die CSR-Strategie angepasst."
+        },
+        "step3": {
+          "title": "3. Operative Umsetzung",
+          "description": "Unsere Experten und Technikpartner arbeiten an den wichtigsten Reduktionshebeln:",
+          "levers": {
+            "energy": {
+              "title": "Energie & Prozesse",
+              "point1": "Energieaudit und Energieeffizienzplan",
+              "point2": "Umstellung thermischer Systeme auf Gas, Biomasse oder Strom",
+              "point3": "Abwärmerückgewinnung und Effizienzsteigerung",
+              "point4": "Installation von Sensoren und Energie-Monitoring-Systemen"
+            },
+            "mobility": {
+              "title": "Mobilität & Transport",
+              "point1": "Routenoptimierung und Mobilitätsplan",
+              "point2": "Eco-Driving-Schulung",
+              "point3": "Flottenmanagement und Umstieg auf Hybrid- oder Elektrofahrzeuge",
+              "point4": "Förderung von Fahrgemeinschaften und sanfter Mobilität"
+            },
+            "purchases": {
+              "title": "Einkauf & Produktion",
+              "point1": "Auswahl kohlenstoffarmer Materialien",
+              "point2": "Optimierung von Volumina und Logistikflüssen",
+              "point3": "Aufbau lokaler und zirkulärer Lieferketten",
+              "point4": "Verbesserung der Produkthaltbarkeit"
+            },
+            "waste": {
+              "title": "Abfall & Kreislaufwirtschaft",
+              "point1": "Quellenreduzierung und selektive Sortierung",
+              "point2": "Wiederverwendung, energetische Verwertung und Recycling",
+              "point3": "Verpackungsoptimierung und Eliminierung von Einwegplastik",
+              "point4": "Partnerschaften mit lokalen Verwertungskanälen"
+            },
+            "culture": {
+              "title": "Kultur & Governance",
+              "point1": "Schulung und Sensibilisierung der Mitarbeitenden",
+              "point2": "Integration von CO₂-Indikatoren in interne Entscheidungen",
+              "point3": "CSR-Kommunikation und internes/externes Reporting",
+              "point4": "Aufbau einer Community von Klima-Botschaftern"
+            }
+          }
+        },
+        "step4": {
+          "title": "4. Monitoring und Fortschrittsbewertung",
+          "description": "Jede umgesetzte Maßnahme wird im Zeitverlauf verfolgt durch:",
+          "point1": "CO₂-Leistungsindikatoren (vermiedene tCO₂e, % Reduktion, Energie-ROI)",
+          "point2": "Ein vereinfachtes Dashboard integriert in DecarboTech® Solutions",
+          "point3": "Quartals- oder Jahresberichte zur Anpassung der Trajektorie",
+          "conclusion": "Dieser Schritt garantiert echte Ergebnismessung und Nachhaltigkeit des Ansatzes."
+        },
+        "step5": {
+          "title": "5. Innovation und kontinuierliche Verbesserung",
+          "description": "DecarboTech bleibt dauerhaft wachsam bei:",
+          "point1": "Kohlenstoffarme Technologien (IoT-Sensoren, Energieeffizienz, Elektromobilität, Abfallverwertung)",
+          "point2": "Neue Regulierungen (CSRD, CBAM, grüne Taxonomie)",
+          "point3": "Digitale Lösungen für Umweltmanagement und Optimierung",
+          "conclusion": "Wir aktualisieren regelmäßig Tools und Methoden für modernste Lösungen."
+        }
+      },
+      "finalCta": {
+        "quote": "Emissionen zu reduzieren bedeutet, in die Zukunft Ihres Unternehmens zu investieren.",
+        "description": "Mit DecarboTech® wird Dekarbonisierung ein globales, messbares und wertschöpfendes Projekt. Wir begleiten Sie Schritt für Schritt von der Diagnose bis zur Umsetzung.",
+        "button": "Kontaktieren Sie uns für Ihren kohlenstoffarmen Aktionsplan"
+      }
+    }
+  },
+  "bilanCarboneLanding": {
+    "hero": {
+      "title": "Erstellen Sie Ihre CO₂-Bilanz™ einfach und vollständig konform.",
+      "subtitle": "CarboScan hilft Ihnen, die Emissionen Ihres Unternehmens in Scope 1, 2 und 3 zu messen – mit einem klaren, strukturierten und konformen Bericht.",
+      "cta": "Ihre CO₂-Bilanz™ anfragen"
+    },
+    "why": {
+      "title": "Warum eine CO₂-Bilanz™?",
+      "text": "Ihre Emissionen zu verstehen ist der erste Schritt zum Handeln.\n\nDie CO₂-Bilanz™ hilft, die wichtigsten Emissionsquellen zu identifizieren, Energieverbrauch zu steuern, Kundenanforderungen zu erfüllen und Ihre Reduktionstrajektorie vorzubereiten."
+    },
+    "benefits": {
+      "title": "Was CarboScan Ihnen bietet",
+      "items": [
+        "Vollständige Analyse Scope 1, 2 und 3",
+        "Vereinfachte Datenerfassung",
+        "Emissionsfaktoren Base Carbone",
+        "Klare Tabellen & Diagramme",
+        "Kohlenstoffarme Empfehlungen",
+        "Strukturierter PDF-Bericht"
+      ]
+    },
+    "methodology": {
+      "title": "Verwendete Methodik",
+      "description": "CarboScan wendet die CO₂-Bilanz™-Methodik an, eine europäische Referenz, und nutzt offizielle ADEME-Faktoren.",
+      "points": [
+        {
+          "icon": "FileText",
+          "title": "Organisatorischer Ansatz"
+        },
+        {
+          "icon": "BarChart3",
+          "title": "Segmentierung nach Emissionsquellen"
+        },
+        {
+          "icon": "Building2",
+          "title": "Multi-Standort-Konsolidierung"
+        },
+        {
+          "icon": "Eye",
+          "title": "Transparenz zu Annahmen und EF"
+        },
+        {
+          "icon": "Shield",
+          "title": "GHG Protocol"
+        },
+        {
+          "icon": "Award",
+          "title": "ISO 14064"
+        }
+      ]
+    },
+    "results": {
+      "title": "Ergebnisse, die Sie erhalten",
+      "items": [
+        {
+          "icon": "TrendingDown",
+          "title": "Gesamtemissionen (tCO₂e)"
+        },
+        {
+          "icon": "PieChart",
+          "title": "Aufschlüsselung nach Scopes"
+        },
+        {
+          "icon": "BarChart",
+          "title": "Aufschlüsselung nach Quellen"
+        },
+        {
+          "icon": "Target",
+          "title": "Hotspot-Analyse"
+        },
+        {
+          "icon": "Lightbulb",
+          "title": "Dekarbonisierungsstrategie"
+        },
+        {
+          "icon": "FileDown",
+          "title": "Exportierbarer PDF-/Excel-Bericht"
+        }
+      ]
+    },
+    "industries": {
+      "title": "Betroffene Unternehmen",
+      "items": [
+        {
+          "icon": "Factory",
+          "name": "Industrie"
+        },
+        {
+          "icon": "Building2",
+          "name": "Bauwesen"
+        },
+        {
+          "icon": "ShoppingCart",
+          "name": "Einzelhandel"
+        },
+        {
+          "icon": "Briefcase",
+          "name": "Dienstleistungen"
+        },
+        {
+          "icon": "Truck",
+          "name": "Transport"
+        },
+        {
+          "icon": "Wheat",
+          "name": "Lebensmittel & Landwirtschaft"
+        }
+      ]
+    },
+    "contact": {
+      "title": "CO₂-Bilanz™ anfragen",
+      "subtitle": "Unsere Experten kontaktieren Sie noch heute.",
+      "fields": {
+        "name": "Name",
+        "email": "E-Mail",
+        "company": "Unternehmen",
+        "phone": "Telefon",
+        "message": "Nachricht"
+      },
+      "placeholders": {
+        "name": "Ihr Name",
+        "email": "your@email.com",
+        "company": "Name Ihres Unternehmens",
+        "phone": "Ihre Telefonnummer",
+        "message": "Ihre Nachricht..."
+      },
+      "submitButton": "Anfrage senden",
+      "successMessage": "Ihre Anfrage wurde erfolgreich gesendet. Unsere Experten kontaktieren Sie noch heute."
+    }
+  },
+  "empreinteProduitLanding": {
+    "hero": {
+      "title": "Messen Sie die CO₂-Bilanz Ihrer Produkte einfach und präzise.",
+      "subtitle": "CarboScan analysiert die CO₂-Wirkung Ihrer Produkte — Rohstoffe, Fertigung, Transport, Verpackung, Nutzung und End-of-Life — um Kundenerwartungen und Marktanforderungen zu erfüllen.",
+      "cta": "Produktanalyse anfragen"
+    },
+    "why": {
+      "title": "Warum eine Produkt-CO₂-Bilanz?",
+      "text": "Ein Bedarf, der für wettbewerbsfähige Unternehmen unverzichtbar geworden ist.",
+      "reasons": [
+        "nationale und internationale Ausschreibungen bedienen",
+        "Kunden mit Nachhaltigkeitsanspruch überzeugen",
+        "Produktionsszenarien vergleichen",
+        "Umweltleistung verbessern",
+        "europäische Regulierungen antizipieren (CBAM, Eco-Design, EPD…)"
+      ]
+    },
+    "benefits": {
+      "title": "Was CarboScan Ihnen anbietet",
+      "subtitle": "Eine klare, präzise und sofort nutzbare Analyse.",
+      "calculationsTitle": "CarboScan berechnet:",
+      "calculations": [
+        {
+          "icon": "Calculator",
+          "text": "Gesamte CO₂-Wirkung (kg CO₂e)"
+        },
+        {
+          "icon": "TrendingDown",
+          "text": "Emissionen nach Lebenszyklusphase"
+        },
+        {
+          "icon": "Package",
+          "text": "Emissionen nach Material / Lieferant"
+        },
+        {
+          "icon": "Truck",
+          "text": "Emissionen durch Transport und Verpackung"
+        },
+        {
+          "icon": "Recycle",
+          "text": "End-of-Life-Emissionen (Recycling, Verwertung, Abfall)"
+        }
+      ],
+      "advantagesTitle": "Sie profitieren außerdem von:",
+      "advantages": [
+        "Offizielle Emissionsfaktoren",
+        "Rigorose Methodik",
+        "Verbesserungsempfehlungen",
+        "PDF-/Excel-Bericht intern und extern nutzbar"
+      ]
+    },
+    "methodology": {
+      "title": "Angewandte Methodik",
+      "subtitle": "Ein Ansatz, der internationalen Standards entspricht.",
+      "standardsTitle": "CarboScan wendet an:",
+      "standards": [
+        {
+          "icon": "FileText",
+          "text": "Vereinfachte Ökobilanz-Methode am Produkt"
+        },
+        {
+          "icon": "Award",
+          "text": "Normen ISO 14040 / ISO 14044"
+        },
+        {
+          "icon": "Database",
+          "text": "Offizielle Emissionsfaktoren (Base Carbone + internationale Datenbanken)"
+        }
+      ],
+      "approachesTitle": "Ein flexibler Ansatz:",
+      "approaches": [
+        "Cradle-to-Gate",
+        "Cradle-to-Grave (nach Bedarf)"
+      ]
+    },
+    "deliverables": {
+      "title": "Was Sie erhalten",
+      "items": [
+        {
+          "icon": "FileText",
+          "title": "Gesamte Produkt-CO₂-Bilanz (kg CO₂e)"
+        },
+        {
+          "icon": "BarChart",
+          "title": "Detaillierte Aufschlüsselung nach Phasen"
+        },
+        {
+          "icon": "Target",
+          "title": "Analyse der emittierendsten Quellen (Hotspots)"
+        },
+        {
+          "icon": "Lightbulb",
+          "title": "Empfehlungen & Dekarbonisierungsstrategien"
+        },
+        {
+          "icon": "FileDown",
+          "title": "Klarer, strukturierter PDF-Bericht, nutzbar in Ausschreibungen"
+        },
+        {
+          "icon": "Package",
+          "title": "Excel-Export für Archivierung / internes Reporting"
+        }
+      ],
+      "breakdownTitle": "Detaillierte Aufschlüsselung nach Phasen:",
+      "breakdown": [
+        "Rohstoffgewinnung",
+        "Fertigung",
+        "Verpackung",
+        "Transport",
+        "Nutzung (falls zutreffend)",
+        "End-of-Life"
+      ]
+    },
+    "products": {
+      "title": "Betroffene Produkte",
+      "subtitle": "CarboScan analysiert alle Produkttypen:",
+      "items": [
+        {
+          "icon": "Factory",
+          "name": "Industrieprodukte"
+        },
+        {
+          "icon": "Building2",
+          "name": "Bauprodukte & Materialien (Aluminium, PVC, Holz, Stahl…)"
+        },
+        {
+          "icon": "Apple",
+          "name": "Lebensmittelprodukte"
+        },
+        {
+          "icon": "Cpu",
+          "name": "Elektronikprodukte"
+        },
+        {
+          "icon": "Box",
+          "name": "Verpackung"
+        },
+        {
+          "icon": "Wheat",
+          "name": "Agro-Lebensmittelprodukte"
+        },
+        {
+          "icon": "Sofa",
+          "name": "Möbel, Tischlerei, Türen und Fenster"
+        }
+      ]
+    },
+    "whyCarboScan": {
+      "title": "Warum CarboScan?",
+      "points": [
+        {
+          "icon": "Shield",
+          "text": "Zuverlässige und transparente Methodik"
+        },
+        {
+          "icon": "Zap",
+          "text": "Einfaches Tool, für KMU und Konzerne geeignet"
+        },
+        {
+          "icon": "Globe",
+          "text": "Lokale CO₂-Expertise + internationale Standards"
+        },
+        {
+          "icon": "Target",
+          "text": "Mögliche Integration mit Decarbotech zur Umsetzung von Reduktionsplänen"
+        }
+      ]
+    },
+    "contact": {
+      "title": "Produkt-CO₂-Bilanz-Analyse anfragen",
+      "subtitle": "Unsere Experten kontaktieren Sie innerhalb von 24 Stunden.",
+      "fields": {
+        "name": "Name",
+        "company": "Unternehmen",
+        "phone": "Telefon",
+        "email": "E-Mail",
+        "product": "Zu analysierendes Produkt",
+        "message": "Nachricht"
+      },
+      "placeholders": {
+        "name": "Ihr Name",
+        "company": "Name Ihres Unternehmens",
+        "phone": "Ihre Telefonnummer",
+        "email": "your@email.com",
+        "product": "Name des zu analysierenden Produkts",
+        "message": "Ihre Nachricht..."
+      },
+      "submitButton": "Anfrage senden",
+      "successMessage": "Ihre Anfrage wurde erfolgreich gesendet. Unsere Experten kontaktieren Sie innerhalb von 24 Stunden."
+    }
+  },
+  "acvLanding": {
+    "hero": {
+      "title": "Ökobilanz (LCA): Bewerten Sie die vollständige Umweltwirkung Ihrer Produkte.",
+      "subtitle": "CarboScan erstellt Ihre Ökobilanz gemäß ISO 14040/44: Rohstoffe, Fertigung, Transport, Nutzung und End-of-Life.",
+      "cta": "Ökobilanz anfragen"
+    },
+    "why": {
+      "title": "Warum eine Ökobilanz?",
+      "text": "Die Ökobilanz ist ein unverzichtbares Werkzeug für innovative Unternehmen geworden.",
+      "description": "Die Ökobilanz ermöglicht die Bewertung aller Umweltwirkungen eines Produkts – nicht nur des CO₂-Fußabdrucks.",
+      "reasons": [
+        "Ihre Wirkungen besser verstehen",
+        "Ihre Produktionsszenarien vergleichen",
+        "Eco-Design verbessern",
+        "Kundenanforderungen und Ausschreibungen erfüllen",
+        "eine Environmental Product Declaration (EPD / FDES) vorbereiten",
+        "europäische Regulierungen antizipieren"
+      ]
+    },
+    "benefits": {
+      "title": "Was CarboScan Ihnen anbietet",
+      "subtitle": "Eine vollständige, präzise und sofort anwendbare Ökobilanz.",
+      "analysesTitle": "CarboScan analysiert:",
+      "analyses": [
+        {
+          "icon": "Package",
+          "text": "Material- und Energieverbrauch"
+        },
+        {
+          "icon": "Factory",
+          "text": "Fertigungsprozesse"
+        },
+        {
+          "icon": "Box",
+          "text": "Verpackung"
+        },
+        {
+          "icon": "Truck",
+          "text": "Transport"
+        },
+        {
+          "icon": "Zap",
+          "text": "Nutzung (falls zutreffend)"
+        },
+        {
+          "icon": "Recycle",
+          "text": "End-of-Life (Recycling, Verwertung, Abfall)"
+        }
+      ],
+      "resultsTitle": "Mit klaren und interpretierbaren Ergebnissen:",
+      "results": [
+        {
+          "icon": "Target",
+          "text": "CO₂-Fußabdruck"
+        },
+        {
+          "icon": "Droplet",
+          "text": "Wasserwirkungen"
+        },
+        {
+          "icon": "Wind",
+          "text": "Luftwirkungen"
+        },
+        {
+          "icon": "Database",
+          "text": "verbrauchte Ressourcen"
+        },
+        {
+          "icon": "Trash2",
+          "text": "produzierte Abfälle"
+        },
+        {
+          "icon": "Target",
+          "text": "Analyse der wichtigsten Wirkungspunkte"
+        }
+      ]
+    },
+    "methodology": {
+      "title": "Angewandte Methodik",
+      "subtitle": "Internationale Standards für eine zuverlässige Analyse.",
+      "standardsTitle": "CarboScan wendet folgende Standards an:",
+      "standards": [
+        {
+          "icon": "Award",
+          "text": "ISO 14040 (Grundsätze und allgemeiner Rahmen)"
+        },
+        {
+          "icon": "Award",
+          "text": "ISO 14044 (Anforderungen und Leitlinien)"
+        }
+      ],
+      "approachesTitle": "Mit einem strukturierten Ansatz:",
+      "approaches": [
+        "Cradle-to-Gate",
+        "Cradle-to-Grave",
+        "Gate-to-Gate (für Industrieunternehmen, die einen einzelnen Prozess analysieren wollen)"
+      ],
+      "databasesNote": "Wir nutzen anerkannte internationale Datenbanken für zuverlässige Ergebnisse."
+    },
+    "deliverables": {
+      "title": "Bereitgestellte Deliverables",
+      "subtitle": "Sie erhalten eine vollständige Analyse und einen professionellen Bericht.",
+      "items": [
+        {
+          "icon": "FileText",
+          "title": "Detaillierte Produkt-Ökobilanz"
+        },
+        {
+          "icon": "BarChart",
+          "title": "Impactdiagramme nach Phase"
+        },
+        {
+          "icon": "Target",
+          "title": "Analyse der Umwelt-Hotspots"
+        },
+        {
+          "icon": "Lightbulb",
+          "title": "Technische Empfehlungen für Eco-Design"
+        },
+        {
+          "icon": "FileDown",
+          "title": "Strukturierter PDF-Bericht"
+        },
+        {
+          "icon": "FileDown",
+          "title": "Excel-Export der Ergebnisse"
+        },
+        {
+          "icon": "GitCompare",
+          "title": "Möglicher Vergleich mehrerer Szenarien"
+        },
+        {
+          "icon": "TrendingDown",
+          "title": "Dekarbonisierungs- und Umweltverbesserungsstrategien"
+        }
+      ]
+    },
+    "products": {
+      "title": "Für welche Produkttypen?",
+      "subtitle": "CarboScan erstellt Ökobilanzen für:",
+      "items": [
+        {
+          "icon": "Building2",
+          "name": "Baumaterialien (Beton, Aluminium, Stahl, Glas…)"
+        },
+        {
+          "icon": "Factory",
+          "name": "Industrieprodukte"
+        },
+        {
+          "icon": "Apple",
+          "name": "Lebensmittelprodukte"
+        },
+        {
+          "icon": "Box",
+          "name": "Verpackung"
+        },
+        {
+          "icon": "Wrench",
+          "name": "Ausrüstung und Maschinen"
+        },
+        {
+          "icon": "Cpu",
+          "name": "Elektronikprodukte"
+        },
+        {
+          "icon": "Hammer",
+          "name": "Handwerkliche oder industrielle Produkte"
+        }
+      ]
+    },
+    "whyCarboScan": {
+      "title": "Warum CarboScan wählen?",
+      "points": [
+        {
+          "icon": "Shield",
+          "text": "Analyse gemäß internationalen Standards"
+        },
+        {
+          "icon": "FileText",
+          "text": "Klarer Bericht, nutzbar für Ihre Kunden"
+        },
+        {
+          "icon": "Globe",
+          "text": "Lokale Expertise + internationaler Ansatz"
+        },
+        {
+          "icon": "Users",
+          "text": "Personalisierte Begleitung"
+        },
+        {
+          "icon": "Target",
+          "text": "Mögliche Umsetzung über Decarbotech (Reduktionspläne)"
+        }
+      ]
+    },
+    "contact": {
+      "title": "Ökobilanz (LCA) anfragen",
+      "subtitle": "Unsere Experten antworten innerhalb von 24 Stunden.",
+      "fields": {
+        "name": "Name",
+        "company": "Unternehmen",
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "product": "Zu analysierendes Produkt",
+        "message": "Nachricht"
+      },
+      "placeholders": {
+        "name": "Ihr Name",
+        "company": "Name Ihres Unternehmens",
+        "email": "your@email.com",
+        "phone": "Ihre Telefonnummer",
+        "product": "Name des zu analysierenden Produkts",
+        "message": "Ihre Nachricht..."
+      },
+      "submitButton": "Anfrage senden",
+      "successMessage": "Ihre Anfrage wurde erfolgreich gesendet. Unsere Experten antworten innerhalb von 24 Stunden."
+    }
+  },
+  "collectLanding": {
+    "hero": {
+      "title": "Erfassen Sie Ihre CO₂-Daten einfach und ohne Komplexität.",
+      "subtitle": "CarboScan Collect zentralisiert alle Ihre Umweltdaten: Energie, Materialien, Reisen, Abfälle, Einkäufe… Importieren Sie Ihre Dateien oder erfassen Sie Ihre Daten in wenigen Minuten.",
+      "cta": "Datenerfassung starten"
+    },
+    "why": {
+      "title": "Warum ein Erfassungsmodul?",
+      "intro": "Die Qualität der CO₂-Bilanz hängt von der Datenqualität ab.",
+      "text": "Die Datenerfassung ist oft der komplexeste Teil einer CO₂-Bilanz™. CarboScan Collect vereinfacht diesen Schritt mit intuitiver Oberfläche, intelligentem Excel-Import und klarer Kategorienstruktur.",
+      "benefit": "Mit Collect sparen Sie Zeit und reduzieren Fehler."
+    },
+    "benefits": {
+      "title": "Was CarboScan Collect ermöglicht",
+      "subtitle": "Zentralisierte, einfache und zuverlässige Datenerfassung.",
+      "features": [
+        {
+          "icon": "Edit",
+          "text": "Daten manuell erfassen (Energie, Materialien, Transport…)"
+        },
+        {
+          "icon": "FileSpreadsheet",
+          "text": "Excel- oder CSV-Dateien importieren"
+        },
+        {
+          "icon": "FolderTree",
+          "text": "Daten automatisch nach Kategorien strukturieren"
+        },
+        {
+          "icon": "ShieldCheck",
+          "text": "Datenvollständigkeit prüfen und Auslassungen vermeiden"
+        },
+        {
+          "icon": "Building2",
+          "text": "Mehrere Standorte oder Einheiten verwalten"
+        },
+        {
+          "icon": "Calculator",
+          "text": "CO₂-Bilanz™ einfach in CarboScan Carbon vorbereiten"
+        }
+      ]
+    },
+    "features": {
+      "title": "Hauptfunktionen",
+      "subtitle": "Ein Modul für Einfachheit und Effizienz.",
+      "items": [
+        "Klare und intuitive Oberfläche",
+        "Automatischer Excel-Import (intelligente Spalten)",
+        "Monatlicher Datenverlauf",
+        "Validierung der Kerndaten",
+        "Multi-Standort (Fabriken, Niederlassungen, Büros…)",
+        "Unterstützung lokaler Einheiten (kWh, Liter, Tonne, m³…)",
+        "Direkte Vorbereitung der CO₂-Bilanz™"
+      ]
+    },
+    "gains": {
+      "title": "Was Sie gewinnen",
+      "subtitle": "Einfacher. Schneller. Strukturierter.",
+      "items": [
+        {
+          "icon": "TrendingDown",
+          "text": "reduziert Erfassungszeit um 50 %"
+        },
+        {
+          "icon": "ShieldCheck",
+          "text": "vermeidet Fehler durch integrierte Validierung"
+        },
+        {
+          "icon": "Users",
+          "text": "kann mehrere Mitarbeitende einbeziehen"
+        },
+        {
+          "icon": "Database",
+          "text": "zentralisiert alle Daten an einem Ort"
+        },
+        {
+          "icon": "Zap",
+          "text": "bereitet CO₂-Berechnung automatisch vor"
+        }
+      ]
+    },
+    "target": {
+      "title": "Für wen ist CarboScan Collect konzipiert?",
+      "items": [
+        {
+          "icon": "Factory",
+          "name": "KMU & Großunternehmen"
+        },
+        {
+          "icon": "Factory",
+          "name": "Industrie & Multi-Standort-Fabriken"
+        },
+        {
+          "icon": "Briefcase",
+          "name": "Ingenieurbüros"
+        },
+        {
+          "icon": "Building2",
+          "name": "Bauunternehmen"
+        },
+        {
+          "icon": "ShoppingCart",
+          "name": "Einzelhandel & Distribution"
+        },
+        {
+          "icon": "Users",
+          "name": "Agenturen & Dienstleistungen"
+        }
+      ]
+    },
+    "integration": {
+      "title": "Verbunden mit dem CarboScan-Carbon-Modul",
+      "subtitle": "Die Datenerfassung ist nur der erste Schritt.",
+      "description": "CarboScan Collect integriert sich nahtlos in das CarboScan-Carbon-Modul, das Ihre CO₂-Bilanz™ automatisch erstellt.",
+      "steps": [
+        {
+          "icon": "Database",
+          "text": "Collect"
+        },
+        {
+          "icon": "Calculator",
+          "text": "Carbon"
+        },
+        {
+          "icon": "FileText",
+          "text": "CO₂-Bilanz™-Bericht"
+        }
+      ]
+    },
+    "contact": {
+      "title": "Starten Sie mit CarboScan Collect",
+      "subtitle": "Demo oder Testzugang anfragen.",
+      "fields": {
+        "name": "Name",
+        "company": "Unternehmen",
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "message": "Nachricht"
+      },
+      "placeholders": {
+        "name": "Ihr Name",
+        "company": "Name Ihres Unternehmens",
+        "email": "your@email.com",
+        "phone": "Ihre Telefonnummer",
+        "message": "Ihre Nachricht..."
+      },
+      "submitButton": "Anfrage senden",
+      "successMessage": "Ihre Anfrage wurde erfolgreich gesendet. Unsere Experten kontaktieren Sie so schnell wie möglich."
+    }
+  },
+  "decarbotechLanding": {
+    "hero": {
+      "title": "Decarbotech: von der CO₂-Messung zur echten Reduzierung.",
+      "subtitle": "Wir verwandeln Ihre CarboScan-Ergebnisse in konkrete, messbare und operative Reduktionspläne — mit strukturiertem Ansatz und Monitoring-Tools vor Ort.",
+      "cta": "Decarbotech aktivieren"
+    },
+    "why": {
+      "title": "Warum Decarbotech?",
+      "text1": "Emissionen zu messen reicht nicht mehr. Sie müssen handeln.",
+      "text2": "CarboScan hilft Ihnen, Ihre Emissionen zu messen und zu verstehen. Decarbotech hilft Ihnen, sie tatsächlich schrittweise, organisiert und wirtschaftlich zu reduzieren.",
+      "requirementsTitle": "Unternehmen müssen heute:",
+      "requirements": [
+        "ihren Verbrauch kontrollieren",
+        "ihre Emissionen reduzieren",
+        "Kundenanforderungen erfüllen",
+        "ihre Wettbewerbsfähigkeit verbessern",
+        "Regulierungen antizipieren"
+      ],
+      "conclusion": "Decarbotech bietet konkrete Unterstützung – nicht nur Theorie."
+    },
+    "actions": {
+      "title": "Was Decarbotech leistet",
+      "subtitle": "Ein umfassender Ansatz zur Reduzierung Ihrer Emissionen.",
+      "description": "Decarbotech verwandelt Ihre CarboScan-Daten in operative Maßnahmen:",
+      "items": [
+        {
+          "icon": "FileText",
+          "text": "Erstellung von Dekarbonisierungsplänen"
+        },
+        {
+          "icon": "Target",
+          "text": "Priorisierung der Maßnahmen (Kosten, ROI, CO₂-Wirkung)"
+        },
+        {
+          "icon": "TrendingUp",
+          "text": "Monatliche Fortschrittsverfolgung"
+        },
+        {
+          "icon": "Lightbulb",
+          "text": "Umsetzung kohlenstoffarmer Maßnahmen"
+        },
+        {
+          "icon": "Zap",
+          "text": "Installation von Energie- / Umweltsensoren"
+        },
+        {
+          "icon": "Settings",
+          "text": "Optimierung des Verbrauchs (Energie, Wasser, Prozesse)"
+        },
+        {
+          "icon": "Wrench",
+          "text": "Technischer Support vor Ort"
+        }
+      ]
+    },
+    "plans": {
+      "title": "Dekarbonisierungspläne",
+      "subtitle": "Ein klarer, strukturierter Plan, angepasst an Ihr Unternehmen.",
+      "itemsTitle": "Jeder Plan umfasst:",
+      "items": [
+        {
+          "icon": "Target",
+          "text": "nach Priorität geordnete Maßnahmen"
+        },
+        {
+          "icon": "TrendingDown",
+          "text": "Schätzung des CO₂-Gewinns"
+        },
+        {
+          "icon": "DollarSign",
+          "text": "Schätzung der finanziellen Einsparungen"
+        },
+        {
+          "icon": "DollarSign2",
+          "text": "Investitionskosten"
+        },
+        {
+          "icon": "Calendar",
+          "text": "Umsetzungsplan"
+        },
+        {
+          "icon": "BarChart",
+          "text": "Monitoring-Indikatoren"
+        }
+      ],
+      "conclusion": "Das ist keine Ideenliste: ein operativer Plan für echten Impact."
+    },
+    "sensors": {
+      "title": "Sensoren & Monitoring (optional)",
+      "subtitle": "Kontinuierlich messen, um nachhaltig zu reduzieren.",
+      "itemsTitle": "Decarbotech kann Sensoren integrieren oder installieren, um zu erfassen:",
+      "items": [
+        {
+          "icon": "Zap",
+          "text": "Stromverbrauch"
+        },
+        {
+          "icon": "Zap2",
+          "text": "Gasverbrauch"
+        },
+        {
+          "icon": "Thermometer",
+          "text": "Umgebungs- und Maschinentemperatur"
+        },
+        {
+          "icon": "Droplet",
+          "text": "Luftfeuchtigkeit"
+        },
+        {
+          "icon": "Droplet2",
+          "text": "Wasser"
+        },
+        {
+          "icon": "Gauge",
+          "text": "Luftdruck und Innenraum-CO₂"
+        },
+        {
+          "icon": "AlertCircle",
+          "text": "Betriebsanomalien"
+        }
+      ],
+      "benefitsTitle": "Diese Daten ermöglichen die Identifikation von:",
+      "benefits": [
+        "Abweichungen",
+        "Überverbrauch",
+        "zu optimierende Anlagen",
+        "potenzielle Einsparungen"
+      ]
+    },
+    "netZero": {
+      "title": "Net-Zero-Tracking & Trajektorie",
+      "subtitle": "Eine klare Vision zur Erreichung Ihrer Ziele.",
+      "description": "Decarbotech kann definieren:",
+      "items": [
+        {
+          "icon": "Target",
+          "text": "Reduktionstrajektorie"
+        },
+        {
+          "icon": "Calendar",
+          "text": "Jahres-CO₂-Budget"
+        },
+        {
+          "icon": "BarChart",
+          "text": "Schlüsselindikatoren (KPI)"
+        },
+        {
+          "icon": "TrendingDown",
+          "text": "Entwicklungskurven"
+        },
+        {
+          "icon": "Shield",
+          "text": "Konformität mit Kundenzielen (Scope 3)"
+        },
+        {
+          "icon": "Shield2",
+          "text": "Kohärenz mit europäischen Anforderungen (SBTi, Net Zero)"
+        }
+      ]
+    },
+    "target": {
+      "title": "Für welche Unternehmen?",
+      "subtitle": "Decarbotech ist konzipiert für:",
+      "items": [
+        {
+          "icon": "Factory",
+          "name": "Fabriken und Industriestandorte"
+        },
+        {
+          "icon": "Package",
+          "name": "Materialhersteller"
+        },
+        {
+          "icon": "Settings",
+          "name": "Produktionsketten"
+        },
+        {
+          "icon": "Network",
+          "name": "Multi-Standort-Unternehmen"
+        },
+        {
+          "icon": "Building2",
+          "name": "Gebäude und Büros"
+        },
+        {
+          "icon": "Wheat",
+          "name": "Agro-Lebensmittel"
+        },
+        {
+          "icon": "UtensilsCrossed",
+          "name": "Hotellerie und Einzelhandel"
+        }
+      ],
+      "conclusion": "Überall bedeutet Emissionsreduzierung auch Kostenreduzierung."
+    },
+    "integration": {
+      "title": "Wie ergänzt Decarbotech CarboScan?",
+      "subtitle": "Vollständige Synergie: Messen → Handeln → Reduzieren.",
+      "steps": [
+        {
+          "icon": "Database",
+          "text": "Collect"
+        },
+        {
+          "icon": "Calculator",
+          "text": "Carbon"
+        },
+        {
+          "icon": "Zap",
+          "text": "Energy"
+        },
+        {
+          "icon": "Target",
+          "text": "Decarbotech"
+        }
+      ],
+      "descriptions": [
+        "CarboScan misst und analysiert Emissionen.",
+        "Decarbotech setzt konkrete Maßnahmen zur Emissionsreduzierung um."
+      ],
+      "conclusion": "Die vollständige Kette der CO₂-Performance."
+    },
+    "contact": {
+      "title": "Decarbotech aktivieren",
+      "subtitle": "Unsere Experten kontaktieren Sie schnell, um Ihre Reduktionsmaßnahmen zu definieren.",
+      "fields": {
+        "name": "Name",
+        "company": "Unternehmen",
+        "phone": "Telefon",
+        "email": "E-Mail",
+        "message": "Nachricht"
+      },
+      "placeholders": {
+        "name": "Ihr Name",
+        "company": "Name Ihres Unternehmens",
+        "phone": "Ihre Telefonnummer",
+        "email": "your@email.com",
+        "message": "Ihre Nachricht..."
+      },
+      "submitButton": "Anfrage senden",
+      "successMessage": "Ihre Anfrage wurde erfolgreich gesendet. Unsere Experten kontaktieren Sie schnell."
+    }
+  },
+  "wattbim": {
+    "meta": {
+      "title": "WattBim by CarboScan — Gebäude und Energieeinsparungen steuern",
+      "description": "WattBim, das Energie- & Gebäude-Modul von CarboScan: Verbrauch pro Gebäude verfolgen, Verschwendung erkennen und Rechnungen in Einsparungen verwandeln — direkt integriert mit Ihrer CO₂-Bilanz."
+    },
+    "hero": {
+      "badge": "Neues CarboScan-Modul",
+      "titleLead": "Mit CarboScan Ihre Emissionen messen",
+      "titleAccent": "und Ihre Gebäude steuern",
+      "subtitle": "WattBim ist das Energie- & Gebäude-Modul von CarboScan. Über die THG-Berechnung hinaus steuern Sie jedes Gebäude effizient, erkennen automatisch Verschwendung, Spitzen und Abweichungen und verwandeln Rechnungen in nachgewiesene Einsparungen — auf derselben Plattform wie Ihre CO₂-Bilanz.",
+      "ctaDemo": "Demo anfragen",
+      "ctaExpert": "Mit einem Experten sprechen"
+    },
+    "kpis": [
+      {
+        "icon": "TrendingDown",
+        "value": "10-15 %",
+        "label": "des typisch erkennbaren Energieverschwendung"
+      },
+      {
+        "icon": "Gauge",
+        "value": "< 6 Monate",
+        "label": "zur Priorisierung Ihrer Investitionen (PV, LED, HVAC...)"
+      },
+      {
+        "icon": "Bell",
+        "value": "24/7",
+        "label": "automatische Abweichungsüberwachung"
+      }
+    ],
+    "roi": {
+      "badge": "ROI-Simulator",
+      "title": "Vor dem Investieren messen — welche Verschwendung steckt in Ihrer Rechnung?",
+      "subtitle": "WattBim ersetzt keine Solar-PV: Es zeigt, wo erste Investitionen sinnvoll sind, und misst deren Return.",
+      "currencyLabel": "Währung",
+      "billLabel": "Jährliche Energierechnung ({{symbol}})",
+      "savings": "Einsparungen / Jahr",
+      "savingsHint": "Annahme: 15 % umsetzbare Einsparungen",
+      "commission": "WattBim-Provision (30 %)",
+      "commissionHint": "Nur bei Ergebnissen bezahlt",
+      "subscription": "Abonnement / Jahr",
+      "subscriptionHint": "Unbegrenzter Plattformzugang",
+      "net": "Nettogewinn Kunde / Jahr",
+      "roiIn": "Amortisation in ~{{months}} Monaten",
+      "threshold": "Break-even ab 14.300 TND Rechnung",
+      "modelNote": "Risikofreies Modell: 1.500 TND Abo + 30 % der realisierten Einsparungen. WattBim erhält keine Provision auf Investitionen (PV, Dämmung, LED) — nur auf durch Monitoring nachgewiesene Gewinne."
+    },
+    "pv": {
+      "badge": "Bereits mit Solarmodulen ausgestattet?",
+      "titleLead": "WattBim ersetzt keine Solar-PV —",
+      "titleAccent": "es ergänzt sie",
+      "subtitle": "Solar-PV senkt Ihre Rechnung. WattBim misst den echten Return, beseitigt verbleibende Verschwendung und hilft bei der nächsten Energieinvestition.",
+      "card": {
+        "pvTitle": "PV = saubere Produktion",
+        "pvDesc": "Solarmodule reduzieren den Bezug vom Versorger.",
+        "wbTitle": "WattBim = Steuerung & Nachweis",
+        "wbDesc": "Messen, Verschwendung erkennen und Einsparungen validieren."
+      },
+      "items": [
+        {
+          "icon": "LineChart",
+          "title": "Den echten ROI Ihrer PV nachweisen",
+          "desc": "kWh produziert, eigenverbraucht, eingespeist. Quantifizieren Sie genau, was Ihre Module monatlich bringen."
+        },
+        {
+          "icon": "Moon",
+          "title": "Nachtverschwendung beseitigen",
+          "desc": "Mit oder ohne PV: Beleuchtung, Klima und Standby-Maschinen verbrauchen weiter. WattBim erkennt Abweichungen 24/7."
+        },
+        {
+          "icon": "Activity",
+          "title": "Die richtigen Investitionen priorisieren",
+          "desc": "LED, HVAC, Batterien oder PV-Erweiterung: WattBim zeigt, welcher Hebel die größte finanzielle Wirkung hat."
+        },
+        {
+          "icon": "Building2",
+          "title": "Standort für Standort vergleichen",
+          "desc": "Gebäude mit und ohne PV einordnen. Verschwendung trotz Solar erkennen."
+        },
+        {
+          "icon": "Leaf",
+          "title": "Ihre CO₂-Einsparungen bewerten",
+          "desc": "Gesparte kWh automatisch in Ihre CarboScan Scope-1-&-2-Bilanz synchronisieren."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Audits & grüne Finanzierung",
+          "desc": "Nachverfolgbare Berichte für Versorger, Behörden, Banken und ESG-Investoren."
+        }
+      ]
+    },
+    "features": {
+      "title": "Alles, um die Energie Ihrer Gebäude zu steuern",
+      "subtitle": "Eine komplette Plattform – vom Zähler bis zur Dekarbonisierung.",
+      "items": [
+        {
+          "icon": "Building2",
+          "title": "Multi-Gebäude, Multi-Zähler",
+          "desc": "Jeden Standort, jeden Zähler (Strom, Gas, Wärme) und jeden Vertrag in einer Ansicht."
+        },
+        {
+          "icon": "Moon",
+          "title": "Nachtverschwendungs-Erkennung",
+          "desc": "Automatische Erkennung abnormaler Verbräuche zwischen 22 und 6 Uhr."
+        },
+        {
+          "icon": "Activity",
+          "title": "Spitzen- & Abweichungsalarme",
+          "desc": "Benachrichtigung, sobald der Verbrauch Ihre Schwellen überschreitet oder gegenüber dem Vorjahr abweicht."
+        },
+        {
+          "icon": "LineChart",
+          "title": "Einsparungs-Tracking",
+          "desc": "Echte Einsparungen Monat für Monat messen und Ergebnisse nachweisen."
+        },
+        {
+          "icon": "Leaf",
+          "title": "Sync CO₂-Bilanz",
+          "desc": "Jede validierte Messung speist automatisch Ihre Scope-1-&-2-Bilanz."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Sichere Daten",
+          "desc": "Europäisches Hosting, Multi-Tenant-RLS, DSGVO-Konformität."
+        }
+      ]
+    },
+    "iot": {
+      "badge": "IoT & Konnektoren",
+      "title": "Schließen Sie Ihre Zähler in wenigen Schritten an",
+      "subtitle": "Manuelle Eingabe, Excel-Import, API oder IoT-Sensoren: WattBim passt sich Ihrem Ausstattungsniveau an. Keine proprietäre Hardware erforderlich.",
+      "steps": [
+        {
+          "icon": "Cpu",
+          "title": "1. Sensor",
+          "desc": "Ein Unterzähler oder eine Stromzange am Verteiler (Shelly EM, ESP32, Modbus…)."
+        },
+        {
+          "icon": "Wifi",
+          "title": "2. Gateway",
+          "desc": "Wi-Fi, 4G oder Ethernet: Das Gateway sendet Messwerte per HTTPS mit Ihrem API-Schlüssel an WattBim."
+        },
+        {
+          "icon": "Activity",
+          "title": "3. WattBim",
+          "desc": "Speicherung, automatische CO₂-Berechnung, Alarme und Sync in Ihre Scope-1-&-2-Bilanz."
+        }
+      ],
+      "guideTitle": "Strategischer Leitfaden — Warum die Energie Ihrer Gebäude überwachen",
+      "guideDesc": "Vorteile, typischer ROI und die richtigen Fragen vor Start eines Energie-Monitoring-Projekts. Für Geschäftsführung, CFOs und CSR-Verantwortliche.",
+      "guideCta": "Leitfaden herunterladen (PDF)",
+      "guideFootnote": "Detaillierte technische Leitfäden (API, IoT, Berechnungen) sind Kunden in der Anwendung verfügbar."
+    },
+    "audiences": {
+      "title": "Für Organisationen, die handeln wollen",
+      "groups": [
+        {
+          "title": "Tertiär & Büros",
+          "items": [
+            "Büros, Hauptsitze, Niederlassungen",
+            "Einzelhandelsketten",
+            "Hotels & Restaurants"
+          ]
+        },
+        {
+          "title": "Industrie & KMU",
+          "items": [
+            "Produktionsstandorte",
+            "Logistiklager",
+            "Werkstätten"
+          ]
+        },
+        {
+          "title": "Öffentlicher Sektor",
+          "items": [
+            "Verwaltungsgebäude",
+            "Schulen, Krankenhäuser",
+            "Kommunen"
+          ]
+        }
+      ]
+    },
+    "finalCta": {
+      "title": "Bereit, vor dem Investieren zu messen?",
+      "subtitle": "Fordern Sie ein kostenloses Audit Ihrer ersten Energierechnung an und identifizieren Sie die ersten Maßnahmen.",
+      "ctaDemo": "Demo anfragen",
+      "ctaContact": "Kontaktieren Sie uns"
+    }
+  }
+}

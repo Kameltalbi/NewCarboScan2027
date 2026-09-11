@@ -1,0 +1,897 @@
+{
+  "newHomepage": {
+    "hero": {
+      "badge": "CO₂ im Griff, Wirkung vervielfacht",
+      "titleLine1": "Messen, berichten und reduzieren",
+      "titleLine2": "die CO₂-Emissionen Ihres Unternehmens.",
+      "subtitle": "Die CO₂-Management-Plattform für Unternehmen in Afrika und Europa — konform mit GHG Protocol, ISO 14064 und CBAM-Anforderungen.",
+      "ctaPrimary": "CO₂-Bilanz starten",
+      "ctaSecondary": "Mehr erfahren",
+      "stats": {
+        "companies": "Unternehmen",
+        "co2Saved": "Tonnen CO₂e eingespart",
+        "satisfaction": "% Zufriedenheit"
+      },
+      "buttons": {
+        "calculate": "Kostenlos testen",
+        "demo": "Demo buchen"
+      },
+      "dataCards": {
+        "travel": "Reisen",
+        "transport": "Transport",
+        "electricity": "Strom"
+      },
+      "floatingCards": {
+        "treesPlanted": "+3 Bäume gepflanzt",
+        "wasteReduction": "-15 % Abfall",
+        "greenEnergy": "100 % Ökostrom"
+      },
+      "scrollIndicator": "Entdecken"
+    },
+    "whyCarboScan": {
+      "badge": "Das Problem",
+      "title": "Warum Unternehmen heute CO₂-Management brauchen",
+      "text": "Unternehmen stehen unter zunehmendem Druck, ihre Emissionen zu messen und zu reduzieren.",
+      "pressures": {
+        "cbam": {
+          "title": "Europäische CO₂-Regulierung (CBAM)",
+          "description": "Der CO₂-Grenzausgleichsmechanismus erfordert die Meldung eingebetteter Emissionen für Importe in die EU."
+        },
+        "esg": {
+          "title": "ESG-Anforderungen von Banken und Investoren",
+          "description": "Finanzinstitute verlangen zunehmend transparente CO₂-Daten, bevor sie Finanzierungen oder Investitionen gewähren."
+        },
+        "supplyChain": {
+          "title": "CO₂-Reporting der Lieferkette",
+          "description": "Große Abnehmer verlangen nun Scope-3-Emissionsdaten von ihren Lieferanten entlang der Wertschöpfungskette."
+        },
+        "customers": {
+          "title": "Steigende Erwartungen der Kunden",
+          "description": "Endverbraucher und B2B-Kunden erwarten von Unternehmen, dass sie ihre Umweltauswirkungen messen und reduzieren."
+        }
+      },
+      "conclusion": "CarboScan hilft Unternehmen, ihre Emissionen zu messen, zu überwachen und zu reduzieren."
+    },
+    "solutions": {
+      "title": "CarboScan-Lösungen",
+      "moreFeatures": "weitere Funktionen",
+      "items": {
+        "bilanCarbone": {
+          "title": "Carbon Footprint™ (Organisation)",
+          "description": "Messen Sie die Emissionen Ihres Unternehmens auf Scope 1, 2 und 3 mit einem strukturierten und konformen Bericht.",
+          "cta": "Entdecken"
+        },
+        "empreinteProduit": {
+          "title": "Product Carbon Footprint",
+          "description": "Bewerten Sie die CO₂-Wirkung eines Produkts oder einer Produktlinie, um Kundenanforderungen und Ausschreibungen zu erfüllen.",
+          "cta": "Mehr erfahren"
+        },
+        "acv": {
+          "title": "Ökobilanz (LCA)",
+          "description": "Vollständige Umweltanalyse gemäß ISO 14040/44: Energie, Materialien, Abfall, Transport.",
+          "cta": "LCA ansehen"
+        },
+        "cbam": {
+          "title": "CBAM-Rechner (CBAM)",
+          "description": "Berechnen Sie eingebettete Emissionen und CO₂-Kosten Ihrer Exporte nach Europa. EU-Regulierungskonformität 2026.",
+          "cta": "CBAM berechnen"
+        },
+        "collect": {
+          "title": "CarboScan Collect",
+          "description": "Einfache, zentralisierte und intuitive Erfassung Ihrer CO₂-Daten.\nExcel-Import, manuelle Eingabe, automatische Überprüfung.",
+          "cta": "Erfassung starten"
+        },
+        "energy": {
+          "title": "CarboScan Energy",
+          "description": "Verfolgen Sie Ihren Energieverbrauch, vergleichen Sie Ihre Standorte und identifizieren Sie Überverbrauch.",
+          "cta": "Energie optimieren"
+        },
+        "decarbotech": {
+          "title": "Decarbotech: von der Messung zur Umsetzung",
+          "description": "Decarbotech ist die Lösung, die CarboScan ergänzt, indem sie Ihnen hilft, Ihre Emissionen durch einen einfachen, schrittweisen und messbaren Ansatz tatsächlich zu reduzieren.",
+          "features": [
+            "Kohlenstoffarme Aktionspläne",
+            "Reduktionsverfolgung",
+            "Sensoren und Feldmessungen (Temperatur, Energie, Wasser, CO₂…)",
+            "Net-Zero-Trajektorie-Simulation",
+            "Technischer und operativer Support",
+            "Messbare und überprüfbare Ergebnisse"
+          ],
+          "cta": "Decarbotech entdecken"
+        }
+      }
+    },
+    "audience": {
+      "title": "Für wen CarboScan gedacht ist",
+      "cards": {
+        "industrial": {
+          "title": "Industrieunternehmen",
+          "description": "Scope-1-2-3-Emissionen messen und sich auf CBAM vorbereiten."
+        },
+        "exporters": {
+          "title": "Exporteure nach Europa",
+          "description": "Produkt-CO₂-Fußabdruck für europäische Kunden berechnen."
+        },
+        "multiSite": {
+          "title": "Multi-Standort-Unternehmen",
+          "description": "Emissionsdaten standortübergreifend zentralisieren."
+        },
+        "consulting": {
+          "title": "Beratungsunternehmen",
+          "description": "CO₂-Bilanzen schneller erstellen."
+        }
+      }
+    },
+    "keyStats": {
+      "title": "Warum Unternehmen CarboScan wählen",
+      "stats": {
+        "scope3": "der Unternehmensemissionen stammen aus Scope 3",
+        "reduction": "durchschnittliches identifiziertes Reduktionspotenzial",
+        "faster": "schnellere CO₂-Bilanz-Berechnung",
+        "compliant": "Konform mit internationalen Standards"
+      }
+    },
+    "references": {
+      "title": "Eine Lösung für Unternehmen jeder Größe",
+      "text": "Industrie, Bau, Handel, Dienstleistungen: CarboScan unterstützt bereits Organisationen jeder Größe auf ihrem Weg zur Kohlenstoffarmut."
+    },
+    "reliability": {
+      "title": "Anerkannte Methoden, verlässliche Ergebnisse",
+      "points": [
+        "Basierend auf Bilan Carbone™, GHG Protocol oder ISO 14064",
+        "Ökobilanz gemäß ISO 14040/44",
+        "Emissionsfaktoren der Base Carbone",
+        "Multi-Standort-Integration möglich",
+        "Export als PDF und Excel"
+      ]
+    },
+    "finalCTA": {
+      "title": "Bereit, Ihre Emissionen zu messen und zu reduzieren?",
+      "subtitle": "Unsere Experten begleiten Sie von der Diagnose bis zur Umsetzung.",
+      "ctaPrimary": "Demo anfragen",
+      "ctaSecondary": "Kontakt"
+    },
+    "testimonials": {
+      "testimonials": [
+        {
+          "text": "CarboScan hat mir geholfen, meinen CO₂-Fußabdruck in 6 Monaten um 30 % zu reduzieren. Die KI-Empfehlungen sind wirklich relevant!",
+          "author": "Sofiane Ghali",
+          "role": "CEO La Baguette"
+        },
+        {
+          "text": "Das perfekte Tool, um unsere Mitarbeitenden für Umweltauswirkungen zu sensibilisieren. Intuitive Oberfläche und präzise Ergebnisse.",
+          "author": "Soufiene Majoul",
+          "role": "Manager Selvador Food"
+        },
+        {
+          "text": "Als Startup mussten wir unsere Wirkung messen. CarboScan hat uns die Werkzeuge gegeben, um ein verantwortungsvolles Unternehmen zu werden.",
+          "author": "Iheb Beji",
+          "role": "CEO Startup Village"
+        },
+        {
+          "text": "Dank CarboScan konnten wir unsere wichtigsten Emissionsquellen identifizieren und konkrete Reduktionsmaßnahmen umsetzen.",
+          "author": "Mourad Gueddiche",
+          "role": "CEO Express FM"
+        },
+        {
+          "text": "Ein unverzichtbares Tool für jedes umweltbewusste Unternehmen. Die Berichte sind klar und die Empfehlungen sehr nützlich.",
+          "author": "Amel Souissi",
+          "role": "CEO Archibat"
+        }
+      ]
+    },
+    "collect": {
+      "badge": "Neu • Powered by AI",
+      "title": "CarboScan Collect",
+      "subtitle": "Der einfachste Weg, Ihre CO₂-Daten zu erfassen",
+      "tagline": "Eine präzise CO₂-Berechnung erfordert eine sorgfältige Datenerfassung.",
+      "description": "Zentralisieren, strukturieren und validieren Sie alle Daten für Carbon Footprint®, CSRD und ESG-Reporting — ohne Tabellenkalkulation.",
+      "cta": "Demo anfragen",
+      "ctaTitle": "Bereit loszulegen?",
+      "ctaDescription": "Vereinfachen Sie Ihre CO₂-Datenerfassung in wenigen Minuten.",
+      "features": {
+        "title": "Hauptfunktionen",
+        "forms": "Intelligente Formulare",
+        "dashboard": "Fortschritts-Dashboard",
+        "validation": "Automatische Validierung",
+        "import": "Energie / Reisen / Einkäufe importieren",
+        "automated": {
+          "title": "Intelligente Datenerfassung",
+          "description": "Profitieren Sie von KI-optimierter Datenerfassung, um Ihren Übergang zu einer kohlenstoffarmen Wirtschaft zu beschleunigen."
+        },
+        "noExcel": {
+          "title": "Keine Excel-Tabellen mehr",
+          "description": "Beseitigen Sie manuelle, fehleranfällige Prozesse, die Ihren Fortschritt zur Klimaneutralität verlangsamen."
+        },
+        "centralized": {
+          "title": "Einzelne Datenquelle",
+          "description": "Meistern Sie die Komplexität dezentraler Datenstrukturen mit einer zentralisierten und strukturierten Plattform."
+        },
+        "trusted": {
+          "title": "Ihre Daten, gesichert",
+          "description": "Die automatische Validierung stellt sicher, dass keine Duplikate, Fehler oder Inkonsistenzen in Ihren Daten vorhanden sind."
+        }
+      },
+      "history": {
+        "title": "Änderungshistorie",
+        "loading": "Historie wird geladen...",
+        "error": "Fehler beim Laden",
+        "retry": "Erneut versuchen",
+        "refresh": "Aktualisieren",
+        "noHistory": "Keine Änderungen erfasst",
+        "filters": {
+          "search": "Nach Frage suchen...",
+          "allTypes": "Alle Typen",
+          "allSources": "Alle Quellen"
+        },
+        "changeTypes": {
+          "created": "Erstellt",
+          "updated": "Aktualisiert",
+          "deleted": "Gelöscht",
+          "validated": "Validiert",
+          "rejected": "Abgelehnt"
+        },
+        "sources": {
+          "manual": "Manuell",
+          "excel_import": "Excel-Import",
+          "ocr": "KI-OCR",
+          "ai_suggestion": "KI-Vorschlag",
+          "api": "API"
+        },
+        "details": {
+          "show": "Details anzeigen",
+          "hide": "Details ausblenden",
+          "reason": "Grund",
+          "metadata": "Metadaten"
+        },
+        "stats": {
+          "showing": "Änderung(en) angezeigt",
+          "total": "von {{total}} gesamt"
+        }
+      },
+      "export": {
+        "title": "Daten exportieren",
+        "options": "Exportoptionen",
+        "includeMetadata": "Metadaten einschließen (IDs, Daten, Quellen)",
+        "includeHistory": "Änderungshistorie einschließen",
+        "selectFormat": "Exportformat wählen",
+        "export": "Exportieren",
+        "exporting": "Export wird durchgeführt...",
+        "success": "Export erfolgreich: {{filename}}",
+        "error": "Exportfehler: {{error}}",
+        "formats": {
+          "excel": "Excel (.xlsx)",
+          "excelDesc": "Excel-Format mit mehreren Blättern (Daten, Metadaten, Statistiken)",
+          "csv": "CSV (.csv)",
+          "csvDesc": "Einfaches CSV-Format, kompatibel mit allen Tabellenkalkulationen",
+          "json": "JSON (.json)",
+          "jsonDesc": "Strukturiertes JSON-Format für die Integration mit anderen Systemen",
+          "audit": "Auditbericht (.txt)",
+          "auditDesc": "Detaillierter Textbericht für Audit und Compliance"
+        },
+        "stats": {
+          "totalResponses": "Gesamtantworten",
+          "validated": "Validierte Antworten"
+        }
+      },
+      "sites": {
+        "title": "Standortverwaltung",
+        "loading": "Standorte werden geladen...",
+        "noSites": "Keine Standorte konfiguriert",
+        "add": "Standort hinzufügen",
+        "edit": "Standort bearbeiten",
+        "manage": "Standorte verwalten",
+        "selectSite": "Standort",
+        "selectPlaceholder": "Standort auswählen",
+        "name": "Name",
+        "namePlaceholder": "Standortname",
+        "nameRequired": "Standortname ist erforderlich",
+        "code": "Code",
+        "description": "Beschreibung",
+        "descriptionPlaceholder": "Standortbeschreibung",
+        "type": "Typ",
+        "address": "Adresse",
+        "addressPlaceholder": "Vollständige Adresse",
+        "city": "Stadt",
+        "country": "Land",
+        "postalCode": "Postleitzahl",
+        "active": "Aktiv",
+        "consolidated": "In Konsolidierung enthalten",
+        "inactive": "Inaktiv",
+        "notConsolidated": "Nicht konsolidiert",
+        "responses": "Antworten",
+        "createSuccess": "Standort erfolgreich erstellt",
+        "updateSuccess": "Standort erfolgreich aktualisiert",
+        "deleteSuccess": "Standort erfolgreich gelöscht",
+        "deleteConfirm": "Möchten Sie diesen Standort wirklich löschen?",
+        "deleteError": "Fehler beim Löschen des Standorts",
+        "saveError": "Fehler beim Speichern des Standorts",
+        "loadError": "Fehler beim Laden der Standorte",
+        "types": {
+          "headquarters": "Hauptsitz",
+          "branch": "Niederlassung",
+          "warehouse": "Lager",
+          "factory": "Fabrik",
+          "office": "Büro",
+          "other": "Sonstige"
+        }
+      },
+      "users": {
+        "title": "Benutzerverwaltung",
+        "loading": "Benutzer werden geladen...",
+        "noUsers": "Keine Benutzer zugewiesen",
+        "noPermission": "Sie haben keine Berechtigung, Benutzer zu verwalten",
+        "add": "Benutzer hinzufügen",
+        "edit": "Rolle bearbeiten",
+        "email": "E-Mail",
+        "emailRequired": "E-Mail ist erforderlich",
+        "userNotFound": "Benutzer nicht gefunden",
+        "role": "Rolle",
+        "site": "Standort",
+        "optional": "Optional",
+        "allSites": "Alle Standorte",
+        "inactive": "Inaktiv",
+        "createSuccess": "Benutzer erfolgreich hinzugefügt",
+        "updateSuccess": "Rolle erfolgreich aktualisiert",
+        "deactivateSuccess": "Rolle erfolgreich deaktiviert",
+        "deactivateConfirm": "Möchten Sie diese Rolle wirklich deaktivieren?",
+        "deactivateError": "Fehler beim Deaktivieren der Rolle",
+        "saveError": "Fehler beim Speichern der Rolle",
+        "loadError": "Fehler beim Laden der Benutzer",
+        "roles": {
+          "admin": "Collect Admin",
+          "contributor": "Site Contributor",
+          "purchasing_manager": "Purchasing Manager",
+          "hr_manager": "HR Manager",
+          "validator": "Validator"
+        }
+      },
+      "validation": {
+        "title": "Automatische Validierung",
+        "loading": "Wird validiert...",
+        "noData": "Keine Daten zur Validierung",
+        "refresh": "Aktualisieren",
+        "errors": "Fehler",
+        "warnings": "Warnungen",
+        "info": "Information",
+        "error": "Fehler",
+        "warning": "Warnung",
+        "allValid": "Alle Validierungen bestanden",
+        "allValidDesc": "Keine Fehler oder Warnungen in Ihren Daten erkannt",
+        "filter": "Filtern",
+        "all": "Alle",
+        "question": "Frage",
+        "suggestedFix": "Vorgeschlagene Korrektur",
+        "view": "Anzeigen",
+        "noResults": "Keine Probleme erkannt",
+        "noResultsFiltered": "Keine Ergebnisse für diesen Filter"
+      },
+      "alerts": {
+        "title": "Anomalie-Alarme",
+        "loading": "Alarme werden geladen...",
+        "refresh": "Aktualisieren",
+        "noAlerts": "Keine Alarme",
+        "noAlertsDesc": "Keine Anomalien in Ihren Daten erkannt",
+        "filter": "Filtern",
+        "all": "Alle",
+        "question": "Frage",
+        "value": "Wert",
+        "threshold": "Schwellenwert",
+        "view": "Anzeigen",
+        "acknowledge": "Bestätigen",
+        "acknowledged": "Alarm bestätigt",
+        "acknowledgeError": "Fehler beim Bestätigen des Alarms",
+        "resolved": "Alarm gelöst",
+        "resolveError": "Fehler beim Lösen des Alarms",
+        "noResultsFiltered": "Keine Alarme für diesen Filter",
+        "severity": {
+          "critical": "Kritisch",
+          "high": "Hoch",
+          "medium": "Mittel",
+          "low": "Niedrig",
+          "info": "Information"
+        }
+      },
+      "notifications": {
+        "title": "Benachrichtigungen",
+        "loading": "Benachrichtigungen werden geladen...",
+        "refresh": "Aktualisieren",
+        "noNotifications": "Keine Benachrichtigungen",
+        "noNotificationsFiltered": "Keine Benachrichtigungen für diesen Filter",
+        "unread": "Ungelesen",
+        "read": "Gelesen",
+        "all": "Alle",
+        "new": "Neu",
+        "markRead": "Als gelesen markieren",
+        "markAllRead": "Alle als gelesen markieren",
+        "view": "Anzeigen",
+        "justNow": "Gerade eben",
+        "minutesAgo": "vor {{count}} Minute",
+        "minutesAgo_plural": "vor {{count}} Minuten",
+        "hoursAgo": "vor {{count}} Stunde",
+        "hoursAgo_plural": "vor {{count}} Stunden",
+        "daysAgo": "vor {{count}} Tag",
+        "daysAgo_plural": "vor {{count}} Tagen",
+        "types": {
+          "data_missing": "Fehlende Daten",
+          "validation_required": "Validierung erforderlich",
+          "task_assigned": "Aufgabe zugewiesen",
+          "task_due_soon": "Bald fällig",
+          "task_overdue": "Überfällige Aufgabe",
+          "data_updated": "Daten aktualisiert",
+          "comment_added": "Kommentar hinzugefügt",
+          "alert_triggered": "Alarm ausgelöst",
+          "reminder": "Erinnerung",
+          "session_completed": "Sitzung abgeschlossen",
+          "session_reminder": "Sitzungserinnerung"
+        }
+      },
+      "comments": {
+        "title": "Kommentare",
+        "loading": "Kommentare werden geladen...",
+        "noComments": "Keine Kommentare",
+        "placeholder": "Kommentar hinzufügen...",
+        "replyPlaceholder": "Auf Kommentar antworten...",
+        "mentionHint": "@name verwenden, um einen Benutzer zu erwähnen",
+        "send": "Senden",
+        "reply": "Antworten",
+        "resolve": "Als gelöst markieren",
+        "resolved": "Gelöst",
+        "anonymous": "Anonym",
+        "confirmDelete": "Möchten Sie diesen Kommentar wirklich löschen?",
+        "createSuccess": "Kommentar erfolgreich hinzugefügt",
+        "createError": "Fehler beim Hinzufügen des Kommentars",
+        "replySuccess": "Antwort erfolgreich hinzugefügt",
+        "replyError": "Fehler beim Hinzufügen der Antwort"
+      },
+      "consolidation": {
+        "title": "Multi-Standort-Konsolidierung",
+        "loading": "Konsolidierung wird geladen...",
+        "refresh": "Aktualisieren",
+        "loadError": "Fehler beim Laden der Konsolidierung",
+        "totalSites": "Standorte",
+        "totalQuestions": "Fragen",
+        "totalValue": "Gesamtwert",
+        "scopes": "Scopes",
+        "question": "Frage",
+        "total": "Gesamt",
+        "unit": "Einheit",
+        "sites": "Standorte",
+        "scope": "Scope",
+        "details": "Details nach Standort",
+        "moreSites": "weitere Standorte",
+        "filterScope": "Nach Scope filtern",
+        "filterCategory": "Nach Kategorie filtern",
+        "allScopes": "Alle Scopes",
+        "allCategories": "Alle Kategorien",
+        "byScope": "Verteilung nach Scope",
+        "noData": "Keine Daten zur Konsolidierung"
+      },
+      "tasks": {
+        "title": "Aufgabenverwaltung",
+        "create": "Aufgabe erstellen",
+        "edit": "Aufgabe bearbeiten",
+        "noTasks": "Keine Aufgaben",
+        "noTasksInColumn": "Keine Aufgaben",
+        "assignTo": "Zuweisen an",
+        "selectUser": "Benutzer auswählen",
+        "type": "Aufgabentyp",
+        "description": "Beschreibung",
+        "priority": "Priorität",
+        "dueDate": "Fälligkeitsdatum",
+        "estimatedHours": "Geschätzte Stunden",
+        "targetKey": "Zielschlüssel (optional)",
+        "notes": "Notizen",
+        "confirmDelete": "Möchten Sie diese Aufgabe wirklich löschen?",
+        "createSuccess": "Aufgabe erfolgreich erstellt",
+        "updateSuccess": "Aufgabe erfolgreich aktualisiert",
+        "deleteSuccess": "Aufgabe erfolgreich gelöscht",
+        "updateError": "Fehler beim Aktualisieren der Aufgabe",
+        "deleteError": "Fehler beim Löschen der Aufgabe",
+        "submitError": "Fehler beim Übermitteln der Aufgabe",
+        "overdue": "Überfällig",
+        "types": {
+          "dataEntry": "Datenerfassung",
+          "validation": "Validierung",
+          "review": "Überprüfung",
+          "completion": "Abschluss",
+          "correction": "Korrektur"
+        },
+        "priorities": {
+          "low": "Niedrig",
+          "medium": "Mittel",
+          "high": "Hoch",
+          "urgent": "Dringend"
+        },
+        "statuses": {
+          "todo": "Zu erledigen",
+          "in_progress": "In Bearbeitung",
+          "completed": "Abgeschlossen",
+          "cancelled": "Abgebrochen",
+          "overdue": "Überfällig"
+        },
+        "actions": {
+          "moveToTodo": "Zu Erledigen verschieben",
+          "moveToInProgress": "In Bearbeitung verschieben",
+          "markCompleted": "Als abgeschlossen markieren",
+          "cancel": "Abbrechen"
+        },
+        "stats": {
+          "total": "Gesamt",
+          "todo": "Zu erledigen",
+          "inProgress": "In Bearbeitung",
+          "completed": "Abgeschlossen",
+          "overdue": "Überfällig"
+        }
+      },
+      "questions": {
+        "required": "Erforderlich",
+        "optional": "Optional",
+        "validationError": "Validierungsfehler",
+        "numericValue": "Numerischer Wert erwartet",
+        "invalidValue": "Ungültiger Wert",
+        "noQuestions": "Keine Fragen verfügbar",
+        "previous": "Zurück",
+        "next": "Weiter",
+        "save": "Speichern",
+        "saving": "Wird gespeichert...",
+        "yes": "Ja",
+        "no": "Nein",
+        "selectPlaceholder": "Auswählen..."
+      },
+      "suggestions": {
+        "title": "KI-Vorschläge",
+        "confidence": "Konfidenz",
+        "confidenceInterval": "Konfidenzintervall",
+        "learned": "Gelernt",
+        "basedOn": "Basierend auf",
+        "historicalData": "historische Daten",
+        "accept": "Akzeptieren",
+        "reject": "Ablehnen",
+        "loading": "KI-Vorschläge werden geladen..."
+      },
+      "benefits": {
+        "title": "Warum nutzen?",
+        "time": "Zeitersparnis",
+        "reliable": "Verlässliche Daten",
+        "noSpreadsheet": "Keine Tabellenkalkulation",
+        "complete": "Kompatibel mit SCOPE 1 • 2 • 3 + Carbon Footprint®"
+      },
+      "periodicity": {
+        "title": "Kontinuierliche Erfassung",
+        "configure": "Periodizität konfigurieren",
+        "selectPeriodicity": "Periodizität auswählen",
+        "monthly": "Monatlich",
+        "quarterly": "Vierteljährlich",
+        "yearly": "Jährlich",
+        "activate": "Aktivieren",
+        "description": "Periodische Erfassungssitzungen automatisch erstellen",
+        "active": "Aktive Periodizität",
+        "sessionsCreated": "{{count}} Sitzung(en) erstellt",
+        "history": "Erfassungshistorie",
+        "period": "Zeitraum",
+        "status": "Status",
+        "progress": "Fortschritt",
+        "actions": "Aktionen",
+        "open": "Öffnen",
+        "noHistory": "Keine periodische Erfassung erstellt",
+        "loadError": "Fehler beim Laden",
+        "activateSuccess": "Periodizität erfolgreich aktiviert",
+        "activateError": "Fehler bei der Aktivierung",
+        "statuses": {
+          "pending": "Ausstehend",
+          "in_progress": "In Bearbeitung",
+          "completed": "Abgeschlossen",
+          "overdue": "Überfällig",
+          "skipped": "Übersprungen"
+        }
+      },
+      "documents": {
+        "title": "CSRD DataRoom",
+        "upload": "Hochladen",
+        "uploadDocument": "Dokument hochladen",
+        "file": "Datei",
+        "name": "Name",
+        "description": "Beschreibung",
+        "category": "Kategorie",
+        "selectCategory": "Kategorie auswählen",
+        "type": "Typ",
+        "tags": "Tags",
+        "tagsPlaceholder": "Durch Kommas getrennt",
+        "selectFile": "Datei auswählen",
+        "enterName": "Namen eingeben",
+        "uploadSuccess": "Dokument erfolgreich hochgeladen",
+        "uploadError": "Fehler beim Hochladen",
+        "loadError": "Fehler beim Laden",
+        "downloadError": "Fehler beim Herunterladen",
+        "deleteError": "Fehler beim Löschen",
+        "deleteSuccess": "Dokument erfolgreich gelöscht",
+        "confirmDelete": "Möchten Sie dieses Dokument wirklich löschen?",
+        "totalDocuments": "Dokumente",
+        "totalSize": "Gesamtgröße",
+        "categories": {
+          "invoice": "Rechnung",
+          "receipt": "Beleg",
+          "certificate": "Zertifikat",
+          "report": "Bericht",
+          "other": "Sonstige"
+        },
+        "filterCategory": "Nach Kategorie filtern",
+        "allCategories": "Alle Kategorien",
+        "noDocuments": "Keine Dokumente",
+        "uploadedBy": "Hochgeladen von",
+        "date": "Datum",
+        "actions": "Aktionen",
+        "size": "Größe",
+        "types": {
+          "justificatif": "Beleg",
+          "facture": "Rechnung",
+          "certificat": "Zertifikat",
+          "rapport": "Bericht",
+          "autre": "Sonstige"
+        }
+      },
+      "import": {
+        "title": "Spezialisierter Excel-Import",
+        "selectCategory": "Kategorie auswählen",
+        "selectCategoryPlaceholder": "Kategorie wählen...",
+        "downloadTemplate": "Vorlage herunterladen",
+        "importFile": "Datei importieren",
+        "templateDownloaded": "Vorlage heruntergeladen",
+        "importSuccess": "{{count}} Daten erfolgreich importiert",
+        "importErrors": "{{count}} Fehler beim Import",
+        "importError": "Importfehler",
+        "errors": "Fehler",
+        "warnings": "Warnungen",
+        "imported": "Importiert",
+        "instructions": "Anleitung",
+        "instruction1": "Kategorie auswählen",
+        "instruction2": "Excel-Vorlage herunterladen",
+        "instruction3": "Vorlage mit Ihren Daten ausfüllen",
+        "instruction4": "Ausgefüllte Datei importieren"
+      }
+    },
+    "tester": {
+      "title": "Kostenlos testen",
+      "subtitle": "Entdecken Sie Ihren CO₂-Fußabdruck in weniger als 3 Minuten mit unserem kostenlosen Tester. Keine Registrierung erforderlich, sofortige Ergebnisse.",
+      "features": {
+        "free": "100 % kostenlos",
+        "time": "3 Minuten",
+        "secure": "Sichere Daten",
+        "instant": "Sofortige Ergebnisse"
+      },
+      "chartTitle": "Durchschnittliche Verteilung der THG-Emissionen nach Scope",
+      "chartSubtitle": "Beispiel-CO₂-Bilanz",
+      "preview": {
+        "title": "Carbon Footprint Test",
+        "step": "Schritt 2/5",
+        "question": "Wie bewegen Sie sich hauptsächlich fort?",
+        "options": {
+          "car": "Auto",
+          "bike": "Fahrrad",
+          "public": "Öffentlicher Verkehr"
+        }
+      },
+      "cta": {
+        "button": "Kostenlos testen — Schätzen Sie Ihre Emissionen",
+        "note": "100 % kostenlos • Keine Anmeldung • Ergebnisse in 3 Minuten"
+      }
+    },
+    "pricing": {
+      "title": "Wählen Sie Ihren Plan",
+      "subtitle": "Lösungen angepasst an Ihre Bedürfnisse, vom Einzelnen bis zum Unternehmen",
+      "from": "ab",
+      "toggle": {
+        "monthly": "Monatlich",
+        "yearly": "Jährlich",
+        "discount": "-20 %"
+      },
+      "plans": {
+        "essential": {
+          "name": "Essential",
+          "description": "Ideal für den Einstieg",
+          "price": "1900",
+          "currency": "TND netto",
+          "period": "/Jahr",
+          "features": {
+            "calculation": "CO₂-Bilanz-Berechnung",
+            "report": "Monatlicher Bericht",
+            "recommendations": "Verfügbare Lösungsempfehlungen (Scope 1 & 2)",
+            "support": "E-Mail-Support",
+            "auditScopes12": "CO₂-Bilanz – Scope 1 & 2",
+            "reportFREN": "Bericht auf FR oder EN",
+            "aiGenerated": "KI-generierter Bericht, von einem Berater validiert – basierend auf der ADEME-Methodik",
+            "economicSimulation": "Wirtschaftssimulation: Zwei Szenarien für Ölpreiserhöhungen, CO₂-Steuer-Hypothese, Schätzung der Einsparungen durch Emissionsreduktionen",
+            "carbonRatios": "CO₂-Kennzahlen (pro Mitarbeitendem, pro m², pro M TND Umsatz)",
+            "executiveSummary": "Management-Zusammenfassung (1 Seite)",
+            "visualDashboards": "Visuelle Dashboards & Diagramme",
+            "twoRevisions": "2 Überarbeitungen pro Jahr",
+            "onlineSession": "Online-Präsentationssitzung – 1 h",
+            "validatedReport": "Vom Berater validierter Bericht"
+          },
+          "cta": "Loslegen"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "Für fortgeschrittene Nutzer",
+          "popular": "Beliebt",
+          "price": "2900",
+          "currency": "TND netto",
+          "period": "/Jahr",
+          "features": {
+            "everything": "Alles aus Essential",
+            "realTime": "Echtzeit-Monitoring",
+            "unlimited": "Unbegrenzte KI-Empfehlungen",
+            "comparison": "Vergleich mit Branchenkollegen",
+            "detailed": "Detaillierte Berichte",
+            "priority": "Prioritäts-Support",
+            "emissionsTracking": "CO₂-Bilanz – Scope 1, 2 & 3",
+            "auditScopes123": "Bericht auf FR & EN",
+            "bilingualReport": "KI-generierter Bericht, von einem Berater validiert – basierend auf der ADEME-Methodik",
+            "aiGeneratedADEME": "Erweiterte Wirtschaftssimulation: Multivariable Szenarien (Öl, CO₂-Steuer, Reduktionstrajektorien), Vergleich mehrerer Emissionsreduktionshypothesen",
+            "economicSimulationScenarios": "Aktionsplan mit priorisierten Empfehlungen (Scope 1, 2 & 3)",
+            "detailedRecommendations": "CO₂-Kennzahlen (pro Mitarbeitendem, pro m², pro M TND Umsatz)",
+            "reductionPlan": "Branchen-Benchmark (sofern Daten verfügbar)",
+            "twoRevisions": "Zweisprachige Management-Zusammenfassung (FR & EN) für Führung und Partner",
+            "validatedReport": "Visuelle Dashboards & interaktive Diagramme",
+            "threeRevisions": "3 Überarbeitungen pro Jahr",
+            "onlineSessionExtended": "Online-Präsentationssitzung – 1 h 30 mit Q&A"
+          },
+          "cta": "Loslegen"
+        },
+        "expert": {
+          "name": "Expert",
+          "description": "Für Unternehmen",
+          "price": "Auf Anfrage",
+          "currency": "",
+          "period": "",
+          "features": {
+            "everything": "Alles aus Pro",
+            "team": "Teamverwaltung",
+            "api": "API-Integration",
+            "custom": "Individuelle Berichte",
+            "training": "Teamschulung",
+            "dedicated": "Dedizierter Support",
+            "comprehensiveAudit": "Individuelle CO₂-Bilanz – Scope 1, 2 & 3",
+            "customReport": "Bewertung vermiedener Emissionen (Scope 4) im Zusammenhang mit den Produkten/Dienstleistungen des Unternehmens",
+            "strategicConsulting": "Bericht auf FR & EN – detailliert und an spezifische Bedürfnisse angepasst",
+            "implementationSupport": "KI-generierter Bericht, von einem Senior-Berater validiert – basierend auf der ADEME-Methodik",
+            "trainingSessions": "Erweiterte Wirtschaftssimulation: Multivariable Szenarien (Öl, CO₂-Steuer, Reduktionstrajektorien)",
+            "prioritySupport": "Vergleich mehrerer Emissionsreduktionshypothesen",
+            "actionPlan": "Aktionsplan mit priorisierten Empfehlungen (Scope 1, 2, 3 & 4)",
+            "carbonRatios": "CO₂-Kennzahlen (pro Mitarbeitendem, pro m², pro M TND Umsatz)",
+            "sectoralBenchmark": "Branchen-Benchmark (sofern Daten verfügbar)",
+            "bilingualExecutiveSummary": "Zweisprachige Management-Zusammenfassung (FR & EN) für Führung und Partner",
+            "interactiveDashboards": "Visuelle Dashboards & interaktive Diagramme",
+            "threeSites": "3 Standorte unabhängig im selben Paket analysiert",
+            "seniorConsultant": "Personalisierte Betreuung durch einen Senior-Berater",
+            "climateStrategy": "Definition der Klimastrategie und langfristigen Reduktionsplan",
+            "internationalStandards": "Konformität mit internationalen Standards (ADEME, GHG Protocol, SBTi)",
+            "specificStudies": "Spezifische Studien auf Anfrage (Lieferkette, Export, CSR-Reporting usw.)",
+            "fiveRevisions": "5 Überarbeitungen",
+            "inDepthSessions": "Vertiefende Präsentationssitzungen (vor Ort oder online)"
+          },
+          "cta": "Kontakt"
+        },
+        "netZero": {
+          "name": "Net-Zero-Trajektorie",
+          "description": "Langfristige Klimastrategie",
+          "price": "Auf Anfrage",
+          "currency": "",
+          "period": "",
+          "features": {
+            "scopesAnalysis": "Physische Scope 1 & 2, finanzieller Scope 3",
+            "physicalScope3": "Physische Analyse von Scope 3: geringe Präzision",
+            "climateStrategy": "Klimastrategie",
+            "advancedActionPlans": "Erweiterte Aktionspläne",
+            "reductionTrajectory": "Reduktionstrajektorie",
+            "actionPlanWorkshop": "Workshop Aktionsplan",
+            "workshopInclusion": "Aktionsplan und Workshop-Ergebnisse im Carbon Assessment® enthalten",
+            "employeeEngagement": "Mitarbeiterengagement",
+            "supplierEngagement": "Lieferantenengagement",
+            "quantificationTool": "Quantifizierungstool für Aktionspläne"
+          },
+          "cta": "Kontakt"
+        }
+      }
+    },
+    "professionalPlans": {
+      "common": {
+        "from": "Ab"
+      },
+      "essential": {
+        "name": "Essential",
+        "description": "KMU und Organisationen — Basis-Compliance",
+        "price": "TND 1300 / Jahr",
+        "features": {
+          "scopes": "Scope 1 & 2 (direkte Emissionen + eingekaufte Energie)",
+          "automated": "Automatisierte Berechnung auf der Plattform",
+          "report": "Jährlicher PDF-Bericht auf Französisch oder Englisch",
+          "verification": "Verifizierung durch zertifizierten Experten",
+          "revisions": "2 Überarbeitungen inklusive",
+          "support": "Basis-E-Mail-Support (Antwort innerhalb von 72 h)"
+        }
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "KMU und Exportunternehmen — CBAM-Konformität und Optimierung",
+        "price": "Ab TND 2400 / Jahr",
+        "features": {
+          "allScopes": "Scope 1, 2 & 3 (einschließlich Einkäufe, Transport, Abfall)",
+          "cbam": "Integriertes CBAM-Modul (Export Europa 2026)",
+          "simulation": "Detaillierte Wirtschaftssimulation (€/tCO₂e + Szenarien)",
+          "actionPlan": "Priorisierter und kalkulierter Aktionsplan",
+          "expert": "Dedizierter Experte + monatliche Hotline",
+          "report": "Professioneller PDF-Bericht auf Französisch und Englisch"
+        }
+      },
+      "expert": {
+        "name": "Expert",
+        "description": "Großunternehmen & Konzerne — Net-Zero-Strategie",
+        "price": "Auf Anfrage",
+        "features": {
+          "reporting": "Konsolidiertes Multi-Tochtergesellschafts- / Multi-Standort-Reporting",
+          "cbamComplete": "CBAM-Modul + vollständiges regulatorisches Monitoring",
+          "economicAnalysis": "Personalisierte Wirtschaftsanalyse mit Szenarien",
+          "seniorConsultant": "Dedizierter Senior-Berater + regelmäßige Meetings",
+          "netZero": "10-Jahres-Net-Zero-Trajektorie mit überwachten KPIs",
+          "professionalReport": "Professioneller PDF-Bericht auf Französisch und Englisch",
+          "premiumSupport": "Premium-Support (E-Mail <24 h + Video)"
+        }
+      }
+    },
+    "footer": {
+      "tagline": "Künstliche Intelligenz im Dienst der Umwelt. Berechnen, analysieren und reduzieren Sie Ihren CO₂-Fußabdruck präzise.",
+      "sections": {
+        "product": {
+          "title": "Produkt",
+          "links": {
+            "howItWorks": "So funktioniert’s",
+            "freeTester": "Kostenloser Test",
+            "pricing": "Preise",
+            "api": "API",
+            "integrations": "Integrationen"
+          }
+        },
+        "company": {
+          "title": "Unternehmen",
+          "links": {
+            "about": "Über uns",
+            "careers": "Karriere",
+            "press": "Presse",
+            "partners": "Partner",
+            "blog": "Blog"
+          }
+        },
+        "support": {
+          "title": "Support",
+          "links": {
+            "helpCenter": "Hilfezentrum",
+            "contact": "Kontakt",
+            "status": "Status",
+            "community": "Community",
+            "training": "Schulung"
+          }
+        },
+        "legal": {
+          "title": "Rechtliches",
+          "links": {
+            "legalMentions": "Impressum",
+            "privacy": "Datenschutz",
+            "terms": "AGB",
+            "cookies": "Cookies",
+            "gdpr": "DSGVO"
+          }
+        }
+      },
+      "bottom": {
+        "copyright": "© {{year}} CarboScan. Alle Rechte vorbehalten.",
+        "links": {
+          "legal": "Impressum",
+          "privacy": "Datenschutz",
+          "terms": "AGB"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "inscription": {
+    "title": "Cree su cuenta CarboScan",
+    "subtitle": "Únase a la comunidad de empresas comprometidas con el clima",
+    "formTitle": "Registro",
+    "formSubtitle": "Complete su información para iniciar su balance de carbono",
+    "personalInfo": "Información personal",
+    "companyInfo": "Información de la empresa",
+    "security": "Seguridad",
+    "choosePlan": "Elija su plan",
+    "fields": {
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "company": "Nombre de la empresa",
+      "sector": "Sector de actividad",
+      "companySize": "Tamaño de la empresa",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña"
+    },
+    "placeholders": {
+      "fullName": "Su nombre completo",
+      "email": "su@email.com",
+      "phone": "+216 XX XXX XXX",
+      "company": "Nombre de su empresa",
+      "sector": "Seleccione su sector",
+      "companySize": "Número de empleados"
+    },
+    "sectors": {
+      "construction": "Construcción",
+      "industrie": "Industria",
+      "transport": "Transporte",
+      "agriculture": "Agricultura",
+      "services": "Servicios",
+      "technologie": "Tecnología",
+      "autre": "Otro"
+    },
+    "companySizes": {
+      "1-10": "1–10 empleados",
+      "11-50": "11–50 empleados",
+      "51-200": "51–200 empleados",
+      "201-500": "201–500 empleados",
+      "500+": "Más de 500 empleados"
+    },
+    "plans": {
+      "essential": "Plan Essential – 1000 DT/año",
+      "complete": "Plan Complete – 2500 DT/año",
+      "pro": "CarboPro – Bajo presupuesto"
+    },
+    "planSelected": "Plan seleccionado",
+    "buttons": {
+      "createAccount": "Crear mi cuenta y proceder al pago",
+      "creatingAccount": "Creando cuenta...",
+      "signIn": "Iniciar sesión",
+      "backToHome": "← Volver al inicio"
+    },
+    "messages": {
+      "success": "Registro correcto",
+      "successDesc": "Redirigiendo a la página de pago...",
+      "error": "Error de registro",
+      "unexpectedError": "Se ha producido un error inesperado.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "alreadyHaveAccount": "¿Ya tiene una cuenta?"
+    },
+    "modernCta": {
+      "title": "¿Listo para medir su huella de carbono?",
+      "subtitle": "Inicie hoy su transición ecológica con nuestra calculadora gratuita y descubra cómo reducir eficazmente sus emisiones de CO₂.",
+      "features": {
+        "free": "100 % gratuito",
+        "fast": "Resultados en 5 min",
+        "actionable": "Recomendaciones IA"
+      },
+      "primaryButton": "Calcular mi huella",
+      "secondaryButton": "Hablar con un experto",
+      "trustIndicator": "Únase a más de 500 empresas que ya han iniciado su transición"
+    }
+  },
+  "inscriptionForm": {
+    "title": "Registro CarboScan",
+    "subtitle": "Complete este formulario para acceder a nuestras soluciones de contabilidad de carbono",
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Correo profesional",
+      "phone": "Teléfono",
+      "company": "Empresa",
+      "position": "Cargo",
+      "sector": "Sector de actividad",
+      "employeeCount": "Tamaño de la empresa",
+      "plan": "Oferta deseada",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña"
+    },
+    "placeholders": {
+      "firstName": "Su nombre",
+      "lastName": "Sus apellidos",
+      "email": "su.email@empresa.com",
+      "phone": "+216 XX XXX XXX",
+      "company": "Nombre de su empresa",
+      "position": "Su función",
+      "sector": "Seleccione su sector",
+      "employeeCount": "Número de empleados",
+      "plan": "Elija su oferta",
+      "password": "Mínimo 6 caracteres",
+      "confirmPassword": "Confirme su contraseña"
+    },
+    "sectors": {
+      "industrie": "Industria",
+      "services": "Servicios",
+      "commerce": "Comercio",
+      "construction": "Construcción",
+      "transport": "Transporte",
+      "agriculture": "Agricultura",
+      "energie": "Energía",
+      "autre": "Otro"
+    },
+    "companySizes": {
+      "1-10": "1–10 empleados",
+      "11-50": "11–50 empleados",
+      "51-200": "51–200 empleados",
+      "201-500": "201–500 empleados",
+      "500+": "Más de 500 empleados"
+    },
+    "plans": {
+      "essential": "Plan Essential – 1000 DT/año",
+      "complete": "Plan Complete – 2500 DT/año",
+      "pro": "CarboPro – Bajo presupuesto"
+    },
+    "buttons": {
+      "continue": "Continuar al pago",
+      "loading": "Registro en curso..."
+    },
+    "messages": {
+      "success": "¡Registro correcto!",
+      "successDesc": "Su cuenta ha sido creada. Será redirigido a la página de pago.",
+      "error": "Error de registro",
+      "errorDesc": "Se ha producido un error durante el registro"
+    },
+    "validation": {
+      "firstNameMin": "El nombre debe contener al menos 2 caracteres",
+      "lastNameMin": "Los apellidos deben contener al menos 2 caracteres",
+      "emailInvalid": "Correo electrónico no válido",
+      "phoneMin": "Número de teléfono no válido",
+      "companyMin": "El nombre de la empresa es obligatorio",
+      "positionMin": "El cargo es obligatorio",
+      "sectorRequired": "Seleccione un sector",
+      "employeeCountRequired": "Seleccione el tamaño de la empresa",
+      "planRequired": "Seleccione una oferta",
+      "passwordMin": "La contraseña debe contener al menos 6 caracteres",
+      "confirmPasswordMin": "Confirme su contraseña",
+      "passwordMismatch": "Las contraseñas no coinciden"
+    }
+  },
+  "inscriptionCalculator": {
+    "title": "Acceso a la calculadora",
+    "subtitle": "Complete esta información para acceder a la calculadora de huella de carbono",
+    "fields": {
+      "name": "Nombre completo",
+      "email": "Correo profesional",
+      "phone": "Teléfono",
+      "company": "Empresa"
+    },
+    "placeholders": {
+      "name": "Su nombre",
+      "email": "nombre@empresa.com",
+      "phone": "06 12 34 56 78",
+      "company": "Nombre de su empresa"
+    },
+    "buttons": {
+      "accessCalculator": "Acceder a la calculadora"
+    },
+    "freeInfo": "100 % gratuito • Resultados instantáneos • Sin compromiso"
+  },
+  "checkout": {
+    "title": "Pedido y pago",
+    "selectedPlan": "Plan seleccionado",
+    "changePlan": "Cambiar de plan",
+    "perYear": "al año",
+    "onQuote": "Bajo presupuesto",
+    "description": "Gracias por su confianza. Para finalizar su suscripción al plan",
+    "description2": "elija su método de pago y complete su información. Su cuenta se activará al recibir el pago.",
+    "cardPayment": {
+      "title": "Pago con tarjeta bancaria",
+      "description": "Pago seguro y activación inmediata de su cuenta CarboScan Starter.",
+      "option": "Tarjeta bancaria",
+      "securePayment": "Pago seguro con tarjeta bancaria",
+      "payButton": "Pagar con tarjeta bancaria",
+      "redirectNote": "Tras el pago, será redirigido automáticamente a su panel CarboScan Starter"
+    },
+    "otherPayment": {
+      "title": "Otros métodos de pago",
+      "description": "Elija un método de pago alternativo según sus preferencias.",
+      "bankTransfer": {
+        "title": "Transferencia bancaria",
+        "holder": "Titular",
+        "iban": "IBAN",
+        "bic": "BIC",
+        "rib": "RIB"
+      },
+      "check": {
+        "title": "Por cheque",
+        "description": "A nombre de",
+        "appointment": "Podemos concertar una cita para la recogida."
+      },
+      "cash": {
+        "title": "Efectivo",
+        "description": "Pago en efectivo durante una cita con nuestro equipo."
+      },
+      "intermediary": {
+        "title": "Intermediario de pago",
+        "description": "Servicios disponibles:",
+        "services": [
+          "MoneyGram",
+          "Western Union",
+          "Tunisian Post Express Money Order",
+          "Konnect"
+        ]
+      }
+    },
+    "form": {
+      "title": "Su información",
+      "fields": {
+        "name": "Nombre completo",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "address": "Dirección",
+        "notes": "Notas adicionales",
+        "organization": "Nombre de la organización",
+        "password": "Contraseña deseada"
+      },
+      "placeholders": {
+        "notes": "Información adicional, preferencias de contacto..."
+      },
+      "submitButton": "Finalizar mi pedido",
+      "processing": "Procesando...",
+      "selectPaymentMethod": "Seleccione un método de pago"
+    },
+    "success": {
+      "title": "¡Gracias!",
+      "message": "Su pedido se ha registrado correctamente.",
+      "description": "Su cuenta CarboScan se activará al recibir el pago. Recibirá un correo de confirmación en un plazo de 24 horas laborables.",
+      "closeButton": "Cerrar"
+    },
+    "messages": {
+      "loginRequired": "Debe iniciar sesión para realizar un pago",
+      "loginRequiredOrder": "Debe iniciar sesión para realizar un pedido",
+      "fillRequiredFields": "Complete todos los campos obligatorios",
+      "orderCreationError": "No se pudo crear el pedido",
+      "unexpectedError": "Se ha producido un error"
+    }
+  }
+}
