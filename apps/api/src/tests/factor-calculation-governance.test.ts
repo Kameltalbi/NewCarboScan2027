@@ -408,32 +408,23 @@ describe("factor calculation governance 019C", () => {
     }
   });
 
-  it("019B simulation: ADEME visible in catalog but calculate refused (ROLLBACK)", async (t) => {
+  it("019B active: ADEME visible in catalog but calculate refused", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
     }
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
-    const client = await pool.connect();
     const auth = await loadAuth(pool);
     if (!auth) {
-      client.release();
       t.skip("need org member");
       return;
     }
     const app = await buildTestApp();
     try {
-      await client.query("BEGIN");
-      await client.query(
-        `UPDATE emission_factor_versions
-         SET status = 'approved', catalog_status = 'visible', calculation_status = 'disabled'
-         WHERE dataset_version = '23.9'`,
-      );
-
-      const search = await searchFactors(client, { status: "approved", q: "15319", limit: 5 });
+      const search = await searchFactors(pool, { status: "approved", q: "15319", limit: 5 });
       assert.ok(search.items.some((i) => i.externalCode === "15319"));
 
-      const detail = await getFactorById(client, ADEME_FACTOR_ID, false);
+      const detail = await getFactorById(pool, ADEME_FACTOR_ID, false);
       assert.ok(detail);
       assert.equal(detail!.governance.catalogStatus, "visible");
       assert.equal(detail!.governance.calculationStatus, "disabled");
@@ -442,7 +433,7 @@ describe("factor calculation governance 019C", () => {
         method: "bilan_carbone",
         lines: [
           {
-            lineKey: "ademe-019b-sim",
+            lineKey: "ademe-019b-active",
             scope: 1,
             factorId: ADEME_FACTOR_ID,
             activityQuantity: "1",
@@ -461,11 +452,8 @@ describe("factor calculation governance 019C", () => {
          WHERE f.status = 'approved' AND v.status = 'approved' AND s.source_key = 'internal'`,
       );
       assert.equal(Number(legacy.rows[0].n), 8);
-
-      await client.query("ROLLBACK");
     } finally {
       await app.close();
-      client.release();
       await pool.end();
     }
   });

@@ -1,6 +1,11 @@
 -- =============================================================================
 -- 019A — Catalog visibility & resolver eligibility governance (version-level)
--- Additive. Does not activate ADEME catalog (019B is separate).
+-- Additive. Does not activate ADEME catalog (020 / 019B is separate).
+--
+-- Backfill is monotone:
+--   - Core TN → always ensure visible + resolver disabled
+--   - ADEME draft → catalog hidden + resolver disabled (pre-publication)
+--   - ADEME already approved/visible → DO NOT TOUCH (never unpublish)
 -- =============================================================================
 
 BEGIN;
@@ -30,13 +35,15 @@ SET
   resolver_status = 'disabled'
 WHERE version_label = 'core-tn-2027.1';
 
--- ADEME 23.9: explicit defaults (draft + hidden + disabled) — idempotent
+-- ADEME 23.9 pre-publication only: draft → keep/force hidden.
+-- Never rewrite approved/visible (post-020) back to hidden on re-run.
 UPDATE emission_factor_versions
 SET
   catalog_status = 'hidden',
   resolver_status = 'disabled'
 WHERE dataset_version = '23.9'
-  AND version_label = '23.9';
+  AND version_label = '23.9'
+  AND status = 'draft';
 
 CREATE INDEX IF NOT EXISTS idx_ef_versions_governance
   ON emission_factor_versions (status, catalog_status, resolver_status);

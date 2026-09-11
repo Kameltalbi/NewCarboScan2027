@@ -12,7 +12,7 @@ SELECT version_label, status, catalog_status, resolver_status
 FROM emission_factor_versions
 WHERE version_label = 'core-tn-2027.1';
 
-\echo '=== ADEME 23.9 governance (must stay draft/hidden) ==='
+\echo '=== ADEME 23.9 governance (post-019B: approved/visible/disabled/disabled) ==='
 SELECT version_label, status, catalog_status, resolver_status
 FROM emission_factor_versions
 WHERE dataset_version = '23.9';
@@ -54,5 +54,6 @@ WHERE f.status = 'approved' AND v.status = 'approved' AND s.source_key = 'intern
 
 ROLLBACK;
 
-\echo '=== ADEME after rollback (draft/hidden) ==='
-SELECT status, catalog_status FROM emission_factor_versions WHERE dataset_version = '23.9';
+\echo '=== ADEME current state (approved/visible after 019B when active) ==='
+SELECT status, catalog_status, calculation_status, resolver_status
+FROM emission_factor_versions WHERE dataset_version = '23.9';

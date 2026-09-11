@@ -28,7 +28,7 @@ describe("factor search live DB", () => {
     if (!DATABASE_URL) assert.ok(true);
   });
 
-  it("approved search excludes ADEME draft by default", async (t) => {
+  it("approved search includes ADEME catalog after 019B activation", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
@@ -36,11 +36,20 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const result = await searchFactors(pool, { status: "approved", limit: 100 });
-      assert.equal(result.items.length, 8);
-      for (const item of result.items) {
-        assert.equal(item.status, "approved");
-        assert.ok(item.source.key === "internal" || item.source.name.includes("Core"));
-      }
+      assert.equal(result.items.length, 100);
+      assert.ok(result.items.some((i) => i.source.key === "ademe"));
+      const internal = await searchFactors(pool, {
+        status: "approved",
+        source: "internal",
+        limit: 8,
+      });
+      assert.equal(internal.items.length, 8);
+      const count = await pool.query<{ n: string }>(
+        `SELECT COUNT(*)::text AS n FROM emission_factors f
+         JOIN emission_factor_versions v ON v.id = f.version_id
+         WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
+      );
+      assert.equal(Number(count.rows[0].n), 7402);
     } finally {
       await pool.end();
     }
@@ -60,7 +69,7 @@ describe("factor search live DB", () => {
 
       const result = await searchFactors(
         pool,
-        { status: "draft", q: "26815", limit: 5 },
+        { status: "approved", q: "26815", limit: 5 },
         undefined,
         { debug: true },
       );
@@ -86,7 +95,7 @@ describe("factor search live DB", () => {
     try {
       const result = await searchFactors(
         pool,
-        { status: "draft", q: "15319", limit: 3 },
+        { status: "approved", q: "15319", limit: 3 },
         undefined,
         { debug: true },
       );
@@ -110,7 +119,7 @@ describe("factor search live DB", () => {
       const intersection = await pool.query<{ n: number }>(
         `SELECT COUNT(*)::int AS n FROM emission_factors f
          JOIN emission_factor_versions v ON v.id = f.version_id
-         WHERE v.status = 'draft'
+         WHERE v.status = 'approved' AND v.catalog_status = 'visible'
            AND ef_immutable_unaccent(lower(f.name)) LIKE '%service%'
            AND ef_immutable_unaccent(lower(f.name)) LIKE '%informatique%'`,
       );
@@ -118,7 +127,7 @@ describe("factor search live DB", () => {
 
       const result = await searchFactors(
         pool,
-        { status: "draft", q: "service informatique", limit: 10 },
+        { status: "approved", q: "service informatique", limit: 10 },
         undefined,
         { debug: true },
       );
@@ -143,7 +152,7 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const result = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         q: "electricite",
         limit: 5,
       });
@@ -167,7 +176,7 @@ describe("factor search live DB", () => {
     try {
       const result = await searchFactors(
         pool,
-        { status: "draft", q: "electricite", limit: 5 },
+        { status: "approved", q: "electricite", limit: 5 },
         undefined,
         { debug: true },
       );
@@ -191,7 +200,7 @@ describe("factor search live DB", () => {
     try {
       const result = await searchFactors(
         pool,
-        { status: "draft", q: "26815", limit: 5 },
+        { status: "approved", q: "26815", limit: 5 },
         undefined,
         { debug: true },
       );
@@ -212,7 +221,7 @@ describe("factor search live DB", () => {
       for (const q of ["g", "ga"]) {
         const result = await searchFactors(
           pool,
-          { status: "draft", q, limit: 5 },
+          { status: "approved", q, limit: 5 },
           undefined,
           { debug: true },
         );
@@ -235,7 +244,7 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const result = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         q: "diesl",
         limit: 5,
       });
@@ -255,7 +264,7 @@ describe("factor search live DB", () => {
     try {
       const result = await searchFactors(
         pool,
-        { status: "draft", q: "electrcite", limit: 5 },
+        { status: "approved", q: "electrcite", limit: 5 },
         undefined,
         { debug: true },
       );
@@ -277,12 +286,12 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const nm3 = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         unit_denominator: "Nm3",
         limit: 20,
       });
       const m3 = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         unit_denominator: "m3",
         limit: 20,
       });
@@ -307,7 +316,7 @@ describe("factor search live DB", () => {
       for (let page = 0; page < 3; page++) {
         const result = await searchFactors(
           pool,
-          { status: "draft", q: "gaz", limit: 5 },
+          { status: "approved", q: "gaz", limit: 5 },
           cursor ? decodeSearchCursor(cursor) : undefined,
         );
         assert.ok(result.items.length > 0, `page ${page + 1} empty`);
@@ -338,9 +347,9 @@ describe("factor search live DB", () => {
 
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
-      const q1 = await searchFactors(pool, { status: "draft", q: "g", limit: 10 });
-      const q2 = await searchFactors(pool, { status: "draft", q: "ga", limit: 10 });
-      const q3 = await searchFactors(pool, { status: "draft", q: "gaz", limit: 10 });
+      const q1 = await searchFactors(pool, { status: "approved", q: "g", limit: 10 });
+      const q2 = await searchFactors(pool, { status: "approved", q: "ga", limit: 10 });
+      const q3 = await searchFactors(pool, { status: "approved", q: "gaz", limit: 10 });
       assert.ok(q1.items.length >= 1);
       assert.ok(q2.items.length >= 1);
       assert.ok(q3.items.length >= q1.items.length);
@@ -349,7 +358,7 @@ describe("factor search live DB", () => {
     }
   });
 
-  it("approved facets never expose ADEME draft catalogue", async (t) => {
+  it("approved facets expose ADEME and internal sources after 019B", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
@@ -357,24 +366,10 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const facets = await getFactorFacets(pool, { status: "approved" });
-      assert.ok(facets.sources.some((s) => s.value === "internal"));
-      assert.ok(!facets.sources.some((s) => s.value === "ademe"));
-      const total = facets.sources.reduce((sum, s) => sum + s.count, 0);
-      assert.equal(total, 8);
-    } finally {
-      await pool.end();
-    }
-  });
-
-  it("draft facets can expose ADEME for admin-style audit", async (t) => {
-    if (!DATABASE_URL) {
-      t.skip("DATABASE_URL unset");
-      return;
-    }
-    const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
-    try {
-      const facets = await getFactorFacets(pool, { status: "draft" });
+      assert.ok(facets.sources.some((s) => s.value === "internal" && s.count === 8));
       assert.ok(facets.sources.some((s) => s.value === "ademe" && s.count >= 7000));
+      const total = facets.sources.reduce((sum, s) => sum + s.count, 0);
+      assert.equal(total, 7402);
     } finally {
       await pool.end();
     }
@@ -388,56 +383,56 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const bySource = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         source: "ademe",
         limit: 20,
       });
       assert.ok(bySource.items.every((i) => i.source.key === "ademe"));
 
       const byVersion = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         dataset_version: "23.9",
         limit: 20,
       });
       assert.ok(byVersion.items.every((i) => i.datasetVersion === "23.9"));
 
       const byType = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         factor_type: "physical",
         limit: 20,
       });
       assertAllFilters(byType.items, { factorType: "physical" });
 
       const byCat = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         internal_category: "energy",
         limit: 20,
       });
       assertAllFilters(byCat.items, { internalCategory: "energy" });
 
       const bySub = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         internal_subcategory: "electricity",
         limit: 20,
       });
       assertAllFilters(bySub.items, { internalSubcategory: "electricity" });
 
       const byUnitNum = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         unit_numerator: "kgCO2e",
         limit: 20,
       });
       assertAllFilters(byUnitNum.items, { unitNumerator: "kgCO2e" });
 
       const byUnitDen = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         unit_denominator: "kWh",
         limit: 20,
       });
       assertAllFilters(byUnitDen.items, { unitDenominator: "kWh" });
 
       const combo1 = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         source: "ademe",
         factor_type: "physical",
         unit_denominator: "kWh",
@@ -450,7 +445,7 @@ describe("factor search live DB", () => {
       }
 
       const frEnergy = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         source: "ademe",
         internal_category: "energy",
         country_code: "FR",
@@ -468,7 +463,7 @@ describe("factor search live DB", () => {
       if (withRegion.rows[0]?.region) {
         const region = withRegion.rows[0].region as string;
         const byRegion = await searchFactors(pool, {
-          status: "draft",
+          status: "approved",
           region,
           limit: 10,
         });
@@ -481,7 +476,7 @@ describe("factor search live DB", () => {
       if (withYear.rows[0]?.factor_year) {
         const year = Number(withYear.rows[0].factor_year);
         const byYear = await searchFactors(pool, {
-          status: "draft",
+          status: "approved",
           factor_year: year,
           limit: 10,
         });
@@ -500,7 +495,7 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const list = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         q: "15319",
         limit: 1,
       });
@@ -508,13 +503,13 @@ describe("factor search live DB", () => {
       assert.ok(detail);
       assert.ok(detail!.provenance.originalUnit);
       assert.ok(detail!.provenance.originalValue);
-      assert.equal(detail!.version.status, "draft");
+      assert.equal(detail!.version.status, "approved");
     } finally {
       await pool.end();
     }
   });
 
-  it("hides draft factor detail when allowDraft=false", async (t) => {
+  it("exposes approved ADEME detail when allowDraft=false", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
@@ -522,12 +517,13 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const list = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         q: "15319",
         limit: 1,
       });
       const detail = await getFactorById(pool, list.items[0].id, false);
-      assert.equal(detail, null);
+      assert.ok(detail);
+      assert.equal(detail!.governance.calculationStatus, "disabled");
     } finally {
       await pool.end();
     }
@@ -541,7 +537,7 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const result = await searchFactors(pool, {
-        status: "draft",
+        status: "approved",
         q: "gaz",
         limit: 3,
       });

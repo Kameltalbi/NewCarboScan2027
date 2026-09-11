@@ -88,7 +88,13 @@ describe("factor catalog governance 019", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const normal = await searchFactors(pool, { status: "approved", limit: 100 });
-      assert.equal(normal.items.length, 8);
+      assert.equal(normal.items.length, 100);
+      const catalogCount = await pool.query<{ n: string }>(
+        `SELECT COUNT(*)::text AS n FROM emission_factors f
+         JOIN emission_factor_versions v ON v.id = f.version_id
+         WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
+      );
+      assert.equal(Number(catalogCount.rows[0].n), 7402);
 
       const approvedHidden = await searchFactors(pool, {
         status: "approved",
@@ -98,26 +104,6 @@ describe("factor catalog governance 019", () => {
       });
       assert.equal(approvedHidden.items.length, 0);
 
-      const client = await pool.connect();
-      try {
-        await client.query("BEGIN");
-        await client.query(
-          `UPDATE emission_factor_versions SET catalog_status = 'visible'
-           WHERE status = 'draft' AND dataset_version = '23.9'`,
-        );
-        const draftVisibleAdmin = await searchFactors(client, {
-          status: "draft",
-          catalog_status: "visible",
-          limit: 5,
-        });
-        assert.ok(draftVisibleAdmin.items.length >= 1);
-        const draftVisibleNormal = await searchFactors(client, { status: "approved", limit: 100 });
-        assert.equal(draftVisibleNormal.items.length, 8);
-        await client.query("ROLLBACK");
-      } finally {
-        client.release();
-      }
-
       const deprecated = await searchFactors(pool, { status: "deprecated", limit: 5 });
       assert.equal(deprecated.items.length, 0);
     } finally {
@@ -125,16 +111,16 @@ describe("factor catalog governance 019", () => {
     }
   });
 
-  it("superadmin can inspect draft ADEME via status=draft", async (t) => {
+  it("normal catalog includes ADEME after 019B activation", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
     }
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
-      const draft = await searchFactors(pool, { status: "draft", source: "ademe", limit: 5 });
-      assert.ok(draft.items.length >= 1);
-      assert.ok(draft.items.every((i) => i.source.key === "ademe"));
+      const catalog = await searchFactors(pool, { status: "approved", source: "ademe", limit: 5 });
+      assert.ok(catalog.items.length >= 1);
+      assert.ok(catalog.items.every((i) => i.source.key === "ademe"));
     } finally {
       await pool.end();
     }
@@ -165,126 +151,68 @@ describe("factor catalog governance 019", () => {
     }
   });
 
-  it("review_required factor visible in catalog when approved+visible (019B sim)", async (t) => {
+  it("review_required factor visible in catalog after 019B", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
     }
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
-    const client = await pool.connect();
     try {
-      await client.query("BEGIN");
-      const { rows } = await client.query<{ id: string }>(
+      const { rows } = await pool.query<{ id: string }>(
         `SELECT f.id FROM emission_factors f
          WHERE f.name ILIKE '%Décarbonatation%fabrication du ciment%'
          LIMIT 1`,
       );
       if (!rows[0]) {
-        await client.query("ROLLBACK");
         t.skip("review_required cement factor not found");
         return;
       }
 
-      await client.query(
-        `UPDATE emission_factor_versions SET status = 'approved', catalog_status = 'visible'
-         WHERE dataset_version = '23.9'`,
-      );
-
-      const detailRes = await client.query(
-        `SELECT f.metadata->'units'->>'normalization_status' AS ns
-         FROM emission_factors f WHERE f.id = $1`,
-        [rows[0].id],
-      );
-      const ns = detailRes.rows[0]?.ns;
-
-      const visible = await searchFactors(client, {
+      const visible = await searchFactors(pool, {
         status: "approved",
         q: "Décarbonatation",
         limit: 5,
       });
-      assert.ok(
-        visible.items.some((i) => i.id === rows[0].id),
-        "review_required factor should appear in catalog when version approved+visible",
-      );
-      const item = visible.items.find((i) => i.id === rows[0].id);
-      if (ns) {
-        assert.equal(item?.normalizationStatus, ns);
-      }
-
-      assert.equal(await legacyFactorCount(client), 8);
-      await client.query("ROLLBACK");
-    } catch (err) {
-      await client.query("ROLLBACK");
-      throw err;
+      assert.ok(visible.items.some((i) => i.id === rows[0].id));
+      const detail = await getFactorById(pool, rows[0].id, false);
+      assert.equal(detail!.units.normalizationStatus, "review_required");
+      assert.equal(detail!.governance.calculationStatus, "disabled");
+      assert.equal(await legacyFactorCount(pool), 8);
     } finally {
-      client.release();
       await pool.end();
     }
   });
 
-  it("019B simulation: catalog expands, legacy stays 8, then ROLLBACK", async (t) => {
+  it("019B active state: catalog 7402, legacy 8", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
     }
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
-    const client = await pool.connect();
     try {
-      await client.query("BEGIN");
-
-      const beforeLegacy = await legacyFactorCount(client);
-      assert.equal(beforeLegacy, 8);
-
-      const beforeSearch = await searchFactors(client, { status: "approved", limit: 100 });
-      assert.equal(beforeSearch.items.length, 8);
-
-      await client.query(
-        `UPDATE emission_factor_versions
-         SET status = 'approved', catalog_status = 'visible', resolver_status = 'disabled'
-         WHERE dataset_version = '23.9'`,
-      );
-
-      const countRes = await client.query<{ n: string }>(
+      assert.equal(await legacyFactorCount(pool), 8);
+      const countRes = await pool.query<{ n: string }>(
         `SELECT COUNT(*)::text AS n
          FROM emission_factors f
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      const catalogTotal = Number(countRes.rows[0]?.n ?? 0);
-      assert.ok(catalogTotal >= 7400, `expected ~7402, got ${catalogTotal}`);
+      assert.equal(Number(countRes.rows[0].n), 7402);
 
-      const afterSearch = await searchFactors(client, { status: "approved", limit: 100 });
-      assert.equal(afterSearch.items.length, 100);
-
-      const facets = await getFactorFacets(client, { status: "approved" });
-      assert.ok(facets.sources.some((s) => s.value === "ademe" && s.count >= 7000));
-      assert.ok(facets.sources.some((s) => s.value === "internal" && s.count === 8));
-
-      assert.equal(await legacyFactorCount(client), 8);
-
-      const ademeSample = afterSearch.items.find((i) => i.source.key === "ademe");
-      if (ademeSample) {
-        const detail = await getFactorById(client, ademeSample.id, false);
-        assert.ok(detail);
-        assert.equal(detail!.governance.catalogStatus, "visible");
-        assert.equal(detail!.governance.resolverStatus, "disabled");
-      }
-
-      await client.query("ROLLBACK");
-
-      const afterRollback = await searchFactors(pool, { status: "approved", limit: 100 });
-      assert.equal(afterRollback.items.length, 8);
-
-      const ademeState = await pool.query<{ status: string; catalog_status: string }>(
-        `SELECT status, catalog_status FROM emission_factor_versions WHERE dataset_version = '23.9'`,
+      const ademeState = await pool.query<{
+        status: string;
+        catalog_status: string;
+        calculation_status: string;
+        resolver_status: string;
+      }>(
+        `SELECT status, catalog_status, calculation_status, resolver_status
+         FROM emission_factor_versions WHERE dataset_version = '23.9'`,
       );
-      assert.equal(ademeState.rows[0]?.status, "draft");
-      assert.equal(ademeState.rows[0]?.catalog_status, "hidden");
-    } catch (err) {
-      await client.query("ROLLBACK");
-      throw err;
+      assert.equal(ademeState.rows[0]?.status, "approved");
+      assert.equal(ademeState.rows[0]?.catalog_status, "visible");
+      assert.equal(ademeState.rows[0]?.calculation_status, "disabled");
+      assert.equal(ademeState.rows[0]?.resolver_status, "disabled");
     } finally {
-      client.release();
       await pool.end();
     }
   });
@@ -308,7 +236,7 @@ describe("factor catalog governance 019", () => {
         resolver_status: "disabled",
         limit: 100,
       });
-      assert.equal(disabled.items.length, 8);
+      assert.equal(disabled.items.length, 100);
     } finally {
       await pool.end();
     }

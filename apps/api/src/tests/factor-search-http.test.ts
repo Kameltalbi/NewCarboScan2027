@@ -13,7 +13,7 @@ type AuthFixtures = {
   memberEmail: string;
   superadminUserId: string;
   superadminEmail: string;
-  draftFactorId: string;
+  ademeFactorId: string;
 };
 
 async function loadAuthFixtures(pool: pg.Pool): Promise<AuthFixtures | null> {
@@ -37,7 +37,7 @@ async function loadAuthFixtures(pool: pg.Pool): Promise<AuthFixtures | null> {
   if (!sa.rows[0] || !member.rows[0]) return null;
 
   const draftList = await searchFactors(pool, {
-    status: "draft",
+    status: "approved",
     q: "15319",
     limit: 1,
   });
@@ -49,7 +49,7 @@ async function loadAuthFixtures(pool: pg.Pool): Promise<AuthFixtures | null> {
     memberEmail: member.rows[0].email,
     superadminUserId: sa.rows[0].user_id,
     superadminEmail: sa.rows[0].email,
-    draftFactorId: draftList.items[0].id,
+    ademeFactorId: draftList.items[0].id,
   };
 }
 
@@ -110,38 +110,38 @@ describe("factor search HTTP auth", () => {
     });
     assert.equal(memberDraftFacets.statusCode, 403);
 
-    const memberDraftDetail = await app.inject({
+    const memberAdemeDetail = await app.inject({
       method: "GET",
-      url: `/v1/factors/${fixtures.draftFactorId}`,
+      url: `/v1/factors/${fixtures.ademeFactorId}`,
       headers: { authorization: `Bearer ${memberToken}`, ...orgHeader },
     });
-    assert.equal(memberDraftDetail.statusCode, 404);
+    assert.equal(memberAdemeDetail.statusCode, 200);
 
-    const adminDraftSearch = await app.inject({
+    const adminCatalogSearch = await app.inject({
       method: "GET",
-      url: "/v1/factors/search?status=draft&q=gaz&limit=5",
+      url: "/v1/factors/search?status=approved&q=gaz&limit=5",
       headers: { authorization: `Bearer ${adminToken}`, ...orgHeader },
     });
-    assert.equal(adminDraftSearch.statusCode, 200);
-    const adminSearchBody = adminDraftSearch.json() as { items: unknown[] };
+    assert.equal(adminCatalogSearch.statusCode, 200);
+    const adminSearchBody = adminCatalogSearch.json() as { items: unknown[] };
     assert.ok(adminSearchBody.items.length >= 1);
 
-    const adminDraftFacets = await app.inject({
+    const adminCatalogFacets = await app.inject({
       method: "GET",
-      url: "/v1/factors/facets?status=draft",
+      url: "/v1/factors/facets?status=approved",
       headers: { authorization: `Bearer ${adminToken}`, ...orgHeader },
     });
-    assert.equal(adminDraftFacets.statusCode, 200);
-    const adminFacetsBody = adminDraftFacets.json() as {
+    assert.equal(adminCatalogFacets.statusCode, 200);
+    const adminFacetsBody = adminCatalogFacets.json() as {
       sources: Array<{ value: string; count: number }>;
     };
     assert.ok(adminFacetsBody.sources.some((s) => s.value === "ademe"));
 
-    const adminDraftDetail = await app.inject({
+    const adminAdemeDetail = await app.inject({
       method: "GET",
-      url: `/v1/factors/${fixtures.draftFactorId}`,
+      url: `/v1/factors/${fixtures.ademeFactorId}`,
       headers: { authorization: `Bearer ${adminToken}`, ...orgHeader },
     });
-    assert.equal(adminDraftDetail.statusCode, 200);
+    assert.equal(adminAdemeDetail.statusCode, 200);
   });
 });
