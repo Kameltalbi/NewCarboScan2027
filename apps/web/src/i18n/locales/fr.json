@@ -7377,286 +7377,84 @@
   },
   "facteursEmissionLanding": {
     "hero": {
-      "eyebrow": "Catalogue de facteurs d'émission",
-      "title": "Facteurs d'émission carbone :\ntrouvez la donnée adaptée à votre calcul",
-      "subtitle": "Explorez un catalogue de plus de 10 000 facteurs d'émission référencés et documentés pour mesurer les émissions liées à l'énergie, aux transports, aux achats et aux activités des organisations.",
-      "ctaPrimary": "Découvrir CarboScan",
-      "ctaSecondary": "Explorer les facteurs d'émission"
-    },
-    "stats": {
-      "items": [
-        {
-          "value": "10 000+",
-          "label": "Facteurs référencés"
-        },
-        {
-          "value": "Multi-sources",
-          "label": "Référentiels reconnus"
-        },
-        {
-          "value": "Traçabilité",
-          "label": "Source et version documentées"
-        },
-        {
-          "value": "Multi-contextes",
-          "label": "Énergie, transport, achats…"
-        }
-      ]
-    },
-    "what": {
-      "title": "Qu'est-ce qu'un facteur d'émission ?",
-      "body": "Un facteur d'émission permet de convertir une donnée d'activité en émissions de gaz à effet de serre. Il associe une quantité physique ou monétaire à un impact en kgCO₂e, dans un contexte donné.",
-      "disclaimer": "La valeur d'un facteur dépend notamment du pays, de l'année, de la source, de la technologie, du périmètre et de la méthodologie. Aucune valeur unique n'est universelle.",
-      "formula": {
-        "activity": "DONNÉE D'ACTIVITÉ",
-        "factor": "FACTEUR D'ÉMISSION",
-        "result": "ÉMISSIONS DE GES"
-      },
-      "example": "Exemple générique : 1 000 kWh × facteur d'émission adapté = émissions en kgCO₂e"
+      "titleLine1": "Le bon facteur d'émission.",
+      "titleLine2": "Pour le bon calcul.",
+      "subtitle": "Accédez à plus de 10 000 facteurs d'émission référencés et documentés, avec leurs sources, versions, unités et contextes d'utilisation.",
+      "ctaPrimary": "Explorer les facteurs",
+      "ctaSecondary": "Découvrir CarboScan",
+      "statFactors": "facteurs référencés",
+      "statMulti": "Multi-sources",
+      "statMultiLabel": "référentiels reconnus",
+      "statTrace": "Traçables",
+      "statTraceLabel": "source et version documentées"
     },
     "catalog": {
-      "title": "Plus de 10 000 facteurs d'émission référencés",
-      "body": "CarboScan construit un catalogue multi-sources permettant de rechercher et documenter les facteurs nécessaires aux calculs carbone.",
-      "metaIntro": "Selon la source et les données disponibles, un facteur peut notamment contenir :",
-      "metaItems": [
-        "Nom et catégories",
-        "Valeur et unité",
-        "Géographie et année",
-        "Source et version du dataset",
-        "Type de facteur",
-        "Contexte méthodologique",
-        "Informations de traçabilité"
-      ]
-    },
-    "search": {
-      "title": "Aperçu du catalogue",
-      "subtitle": "Recherchez par activité, filtrez par catégorie et consultez le contexte documenté — sans charger tout le registry dans le navigateur.",
-      "placeholder": "Rechercher un facteur d'émission…",
-      "chips": {
+      "title": "Un catalogue conçu pour aller au-delà de la simple recherche.",
+      "body": "CarboScan structure les facteurs pour permettre une sélection cohérente avec le contexte du calcul et conserver leur provenance.",
+      "placeholder": "Rechercher un facteur d'émission...",
+      "all": "Tous",
+      "empty": "Aucun résultat pour cette recherche.",
+      "contextLabel": "Contexte de sélection",
+      "structureNote": "Géographie, unité, source, version et contexte méthodologique restent visibles pour documenter chaque choix.",
+      "categories": {
         "electricity": "Électricité",
         "transport": "Transport",
         "fuels": "Combustibles",
-        "freight": "Fret",
-        "purchases": "Achats"
+        "freight": "Fret"
+      },
+      "cols": {
+        "name": "Nom",
+        "source": "Source",
+        "unit": "Unité",
+        "geo": "Géo"
+      },
+      "context": {
+        "geography": "Géographie",
+        "unit": "Unité",
+        "source": "Source",
+        "version": "Version",
+        "methodContext": "Contexte méthodologique"
       },
       "rows": {
-        "electricity": "Électricité réseau",
-        "diesel": "Diesel / gazole",
-        "grid": "Électricité location-based"
-      },
-      "disclaimer": "Démonstration illustrative : unités et sources représentatives, sans valeur numérique inventée."
-    },
-    "context": {
-      "title": "Un même besoin peut correspondre à plusieurs facteurs",
-      "subtitle": "Une recherche textuelle seule n'est pas suffisante pour choisir un facteur d'émission pertinent.",
-      "cards": [
-        {
-          "title": "Géographie",
-          "body": "France, Royaume-Uni, Tunisie, Global… La géographie conditionne la pertinence d'un facteur pour votre activité."
-        },
-        {
-          "title": "Unité",
-          "body": "kWh, kg, tonne, km, passager.km, tonne.km… L'unité doit être compatible avec la donnée d'activité."
-        },
-        {
-          "title": "Périmètre",
-          "body": "Émissions directes, amont énergétique, cycle de vie… lorsqu'ils sont documentés. Ne pas inférer un périmètre absent."
-        },
-        {
-          "title": "Source & version",
-          "body": "Le facteur doit rester rattaché au référentiel et à la version dont il provient pour rester justifiable."
-        }
-      ]
-    },
-    "resolve": {
-      "title": "Trouver un facteur ne suffit pas. Il faut choisir le bon.",
-      "body": "CarboScan développe une logique de résolution qui tient compte du contexte disponible afin d'identifier les facteurs compatibles avec l'activité étudiée.",
-      "items": [
-        "Activité et unité",
-        "Géographie",
-        "Source et année",
-        "Périmètre méthodologique",
-        "Contexte énergétique",
-        "Disponibilité des métadonnées"
-      ],
-      "disclaimer": "Tous les facteurs du catalogue ne sont pas automatiquement sélectionnés pour chaque calcul. La résolution dépend du contexte fourni et des règles méthodologiques applicables."
-    },
-    "traceability": {
-      "title": "Un facteur d'émission doit pouvoir être justifié",
-      "body": "Un bilan carbone professionnel ne doit pas seulement donner un résultat. Il doit permettre de comprendre les données et facteurs ayant contribué au calcul.",
-      "steps": [
-        "Source",
-        "Version",
-        "Facteur",
-        "Donnée d'activité",
-        "Conversion éventuelle",
-        "Résultat"
-      ],
-      "itemsIntro": "Selon les données disponibles, CarboScan conserve notamment :",
-      "items": [
-        "Facteur utilisé et identifiant",
-        "Source et version",
-        "Unité et quantité",
-        "Conversion appliquée le cas échéant",
-        "Résultat calculé"
-      ]
+        "gridElectricity": "Électricité réseau",
+        "diesel": "Diesel / gasoil",
+        "passengerCar": "Voiture particulière",
+        "roadFreight": "Fret routier",
+        "naturalGas": "Gaz naturel",
+        "gridLocal": "Électricité réseau — contexte local"
+      }
     },
     "sources": {
-      "title": "Un catalogue multi-sources en constante évolution",
-      "subtitle": "CarboScan rassemble progressivement des facteurs provenant de référentiels reconnus afin d'adapter les calculs aux différents secteurs, pays et activités.",
+      "title": "Une base multi-sources, en constante évolution.",
+      "localFactors": "Facteurs locaux documentés",
+      "inies": "Données environnementales construction",
       "badges": {
         "available": "Disponible",
         "soon": "Bientôt disponible",
         "upcoming": "À venir",
         "study": "À l'étude"
-      },
-      "available": {
-        "title": "Disponible",
-        "items": [
-          {
-            "name": "ADEME Base Carbone",
-            "description": "Référentiel français de facteurs d'émission utilisé dans de nombreuses démarches de comptabilité carbone."
-          },
-          {
-            "name": "UK Government GHG Conversion Factors",
-            "description": "Facteurs de conversion publiés par le gouvernement britannique pour différentes catégories d'activités."
-          },
-          {
-            "name": "CarboScan / Tunisie",
-            "description": "Facteurs documentés utilisés pour certains contextes locaux et besoins de calcul CarboScan."
-          }
-        ]
-      },
-      "soon": {
-        "title": "Bientôt disponible",
-        "items": [
-          {
-            "name": "EPA",
-            "description": "US Environmental Protection Agency — GHG Emission Factors Hub."
-          },
-          {
-            "name": "INIES",
-            "description": "Données environnementales des produits et équipements de construction."
-          },
-          {
-            "name": "PEP ecopassport",
-            "description": "Données environnementales liées notamment aux équipements électriques, électroniques et de génie climatique."
-          },
-          {
-            "name": "IPCC",
-            "description": "Références méthodologiques et facteurs disponibles via les travaux du GIEC/IPCC."
-          },
-          {
-            "name": "Agribalyse",
-            "description": "Données environnementales particulièrement pertinentes pour l'alimentation et l'agriculture."
-          }
-        ]
-      },
-      "upcoming": {
-        "title": "À venir",
-        "items": [
-          {
-            "name": "HBEFA",
-            "description": "Pertinent notamment pour les émissions liées au transport routier."
-          },
-          {
-            "name": "Worldsteel",
-            "description": "Données sectorielles liées à l'acier."
-          },
-          {
-            "name": "Plastics Europe",
-            "description": "Données sectorielles liées aux matières plastiques."
-          }
-        ]
-      },
-      "study": {
-        "title": "À l'étude",
-        "items": [
-          {
-            "name": "ecoinvent",
-            "description": "Les conditions de licence et d'utilisation doivent être étudiées avant toute intégration. Aucune intégration n'est promise à ce stade."
-          }
-        ]
-      },
-      "roadmapNote": "Le catalogue CarboScan évolue progressivement. La disponibilité d'une source dans le catalogue ne signifie pas qu'un facteur est automatiquement applicable à tous les calculs. La géographie, l'unité et le contexte méthodologique restent déterminants."
+      }
     },
-    "useCases": {
-      "title": "Des facteurs adaptés à vos activités",
-      "items": [
-        {
-          "title": "Énergie",
-          "items": [
-            "Électricité",
-            "Chaleur",
-            "Combustibles"
-          ]
-        },
-        {
-          "title": "Mobilité",
-          "items": [
-            "Déplacements professionnels",
-            "Trajets",
-            "Véhicules"
-          ]
-        },
-        {
-          "title": "Fret",
-          "items": [
-            "Transport routier",
-            "Maritime",
-            "Aérien — selon disponibilité des facteurs"
-          ]
-        },
-        {
-          "title": "Achats",
-          "items": [
-            "Biens",
-            "Services",
-            "Dépenses — selon méthodologie et disponibilité"
-          ]
-        },
-        {
-          "title": "Immobilisations / Produits",
-          "items": [
-            "À développer progressivement avec les référentiels adaptés"
-          ]
-        }
-      ]
+    "why": {
+      "title": "Plus qu'une base de facteurs.",
+      "contextual": {
+        "title": "Sélection contextuelle",
+        "body": "La pertinence d'un facteur dépend notamment de l'activité, de l'unité, de la géographie et du contexte méthodologique."
+      },
+      "traceability": {
+        "title": "Traçabilité",
+        "body": "Conservez la source, la version et les informations nécessaires pour justifier le facteur utilisé."
+      },
+      "multisource": {
+        "title": "Multi-sources",
+        "body": "Centralisez progressivement plusieurs référentiels dans un même environnement de travail."
+      }
     },
     "cta": {
-      "title": "Les facteurs d'émission ne sont qu'une partie du bilan carbone",
-      "body": "CarboScan permet d'organiser les données d'activité, les calculs et la restitution dans une démarche globale de comptabilité carbone.",
-      "primary": "Réaliser mon bilan carbone",
-      "secondary": "Découvrir la plateforme"
-    },
-    "faq": {
-      "title": "Questions fréquentes",
-      "items": [
-        {
-          "question": "Qu'est-ce qu'un facteur d'émission ?",
-          "answer": "C'est un coefficient qui convertit une donnée d'activité (kWh, litre, km…) en émissions de gaz à effet de serre, généralement exprimées en kgCO₂e, dans un contexte donné."
-        },
-        {
-          "question": "Comment calculer les émissions de CO₂ avec un facteur d'émission ?",
-          "answer": "On multiplie la quantité d'activité par le facteur adapté, après s'être assuré que l'unité, la géographie et le périmètre sont cohérents. Le résultat s'exprime généralement en kgCO₂e ou tCO₂e."
-        },
-        {
-          "question": "Où trouver les facteurs d'émission de l'ADEME ?",
-          "answer": "La Base Carbone ADEME est un référentiel français de facteurs d'émission. CarboScan référence des facteurs ADEME dans son catalogue multi-sources, avec leur source et version documentées."
-        },
-        {
-          "question": "Pourquoi un facteur d'émission varie-t-il selon le pays ?",
-          "answer": "Parce que les mixes énergétiques, les technologies, les pratiques et les méthodes de publication diffèrent. Un facteur français n'est pas automatiquement applicable au Royaume-Uni ou à la Tunisie."
-        },
-        {
-          "question": "Quelle différence entre une donnée d'activité et un facteur d'émission ?",
-          "answer": "La donnée d'activité décrit ce que vous avez consommé ou réalisé (ex. 1 000 kWh). Le facteur d'émission convertit cette activité en émissions GES."
-        },
-        {
-          "question": "Comment CarboScan assure-t-il la traçabilité des facteurs utilisés ?",
-          "answer": "Lorsque un calcul est réalisé via les parcours prévus, CarboScan conserve les informations de provenance disponibles : facteur, source, version, quantités, conversions et résultat, afin de documenter le calcul."
-        }
-      ]
+      "title": "Du facteur d'émission au bilan carbone.",
+      "body": "Centralisez vos données, sélectionnez les facteurs adaptés et conservez la traçabilité de vos calculs dans CarboScan.",
+      "primary": "Découvrir CarboScan",
+      "secondary": "Demander une démonstration"
     }
   }
 }

@@ -1,465 +1,457 @@
 /**
- * Public marketing / SEO page — Emission factors catalogue.
- * Does not load registry data; demo search UI is illustrative only.
+ * Public marketing page — Emission factors catalogue.
+ * Illustrative search UI only; does not load registry data.
  */
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
-import { SolutionFaq, type FaqItem } from "@/components/seo/SolutionFaq";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  ArrowRight,
-  BookOpen,
-  Globe2,
-  Layers,
-  Ruler,
-  Search,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { ArrowRight, Search } from "lucide-react";
 
 const NS = "facteursEmissionLanding";
+const PATH = "/facteurs-emission";
 
-type SourceCard = {
-  name: string;
-  description: string;
-  status: "available" | "soon" | "upcoming" | "study";
+type Category = "electricity" | "transport" | "fuels" | "freight";
+
+type DemoRow = {
+  id: string;
+  category: Category;
+  nameKey: string;
+  source: string;
+  unit: string;
+  geo: string;
 };
 
-type UseCase = { title: string; items: string[] };
-
-const STATUS_STYLES: Record<
-  SourceCard["status"],
-  { badge: string; border: string }
-> = {
-  available: {
-    badge: "bg-emerald-50 text-emerald-800 border-emerald-200",
-    border: "border-emerald-200/80",
-  },
-  soon: {
-    badge: "bg-amber-50 text-amber-900 border-amber-200",
-    border: "border-amber-200/80",
-  },
-  upcoming: {
-    badge: "bg-slate-100 text-slate-700 border-slate-200",
-    border: "border-slate-200",
-  },
-  study: {
-    badge: "bg-background text-muted-foreground border-border",
-    border: "border-dashed border-border",
-  },
-};
-
-const ILLUSTRATIVE_ROWS = [
+/** Illustrative rows — name/source/unit/geo only (no invented factor values). */
+const DEMO_ROWS: DemoRow[] = [
   {
-    nameKey: "search.rows.electricity",
-    categoryKey: "search.chips.electricity",
+    id: "elec-fr",
+    category: "electricity",
+    nameKey: "catalog.rows.gridElectricity",
     source: "ADEME Base Carbone",
     unit: "kgCO₂e / kWh",
     geo: "FR",
   },
   {
-    nameKey: "search.rows.diesel",
-    categoryKey: "search.chips.fuels",
-    source: "UK GHG Conversion Factors",
-    unit: "kgCO₂e / L",
+    id: "diesel-uk",
+    category: "fuels",
+    nameKey: "catalog.rows.diesel",
+    source: "UK Government GHG Conversion Factors",
+    unit: "kgCO₂e / litre",
     geo: "GB",
   },
   {
-    nameKey: "search.rows.grid",
-    categoryKey: "search.chips.electricity",
-    source: "CarboScan / Tunisie",
+    id: "car-fr",
+    category: "transport",
+    nameKey: "catalog.rows.passengerCar",
+    source: "ADEME Base Carbone",
+    unit: "kgCO₂e / km",
+    geo: "FR",
+  },
+  {
+    id: "freight-uk",
+    category: "freight",
+    nameKey: "catalog.rows.roadFreight",
+    source: "UK Government GHG Conversion Factors",
+    unit: "kgCO₂e / tonne.km",
+    geo: "GB",
+  },
+  {
+    id: "gas-fr",
+    category: "fuels",
+    nameKey: "catalog.rows.naturalGas",
+    source: "ADEME Base Carbone",
+    unit: "kgCO₂e / kWh PCS",
+    geo: "FR",
+  },
+  {
+    id: "elec-tn",
+    category: "electricity",
+    nameKey: "catalog.rows.gridLocal",
+    source: "CarboScan",
     unit: "kgCO₂e / kWh",
     geo: "TN",
   },
+];
+
+const CATEGORIES: Category[] = ["electricity", "transport", "fuels", "freight"];
+
+const CONTEXT_KEYS = [
+  "geography",
+  "unit",
+  "source",
+  "version",
+  "methodContext",
 ] as const;
+
+const WHY_KEYS = ["contextual", "traceability", "multisource"] as const;
 
 const FacteursEmission: React.FC = () => {
   const { t } = useTranslation();
-  const [chip, setChip] = useState(0);
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<Category | "all">("all");
 
-  const stats = t(`${NS}.stats.items`, { returnObjects: true }) as Array<{
-    value: string;
-    label: string;
-  }>;
-  const metaItems = t(`${NS}.catalog.metaItems`, { returnObjects: true }) as string[];
-  const chips = t(`${NS}.search.chips`, { returnObjects: true }) as Record<
-    string,
-    string
-  >;
-  const chipKeys = ["electricity", "transport", "fuels", "freight", "purchases"] as const;
-  const contextCards = t(`${NS}.context.cards`, { returnObjects: true }) as Array<{
-    title: string;
-    body: string;
-  }>;
-  const resolveItems = t(`${NS}.resolve.items`, { returnObjects: true }) as string[];
-  const provenanceSteps = t(`${NS}.traceability.steps`, {
-    returnObjects: true,
-  }) as string[];
-  const provenanceItems = t(`${NS}.traceability.items`, {
-    returnObjects: true,
-  }) as string[];
-  const available = t(`${NS}.sources.available.items`, {
-    returnObjects: true,
-  }) as SourceCard[];
-  const soon = t(`${NS}.sources.soon.items`, { returnObjects: true }) as SourceCard[];
-  const upcoming = t(`${NS}.sources.upcoming.items`, {
-    returnObjects: true,
-  }) as SourceCard[];
-  const study = t(`${NS}.sources.study.items`, { returnObjects: true }) as SourceCard[];
-  const useCases = t(`${NS}.useCases.items`, { returnObjects: true }) as UseCase[];
-  const faqs = t(`${NS}.faq.items`, { returnObjects: true }) as FaqItem[];
-
-  const statusLabel = useMemo(
-    () => ({
-      available: t(`${NS}.sources.badges.available`),
-      soon: t(`${NS}.sources.badges.soon`),
-      upcoming: t(`${NS}.sources.badges.upcoming`),
-      study: t(`${NS}.sources.badges.study`),
-    }),
+  const sourceGroups = useMemo(
+    () =>
+      [
+        {
+          status: "available" as const,
+          items: [
+            { name: "ADEME", subtitle: "Base Carbone" },
+            { name: "UK Government", subtitle: "GHG Conversion Factors" },
+            { name: "CarboScan", subtitle: t(`${NS}.sources.localFactors`) },
+          ],
+        },
+        {
+          status: "soon" as const,
+          items: [
+            { name: "EPA", subtitle: "US GHG Emission Factors Hub" },
+            { name: "INIES", subtitle: t(`${NS}.sources.inies`) },
+            { name: "PEP ecopassport" },
+            { name: "IPCC" },
+            { name: "Agribalyse" },
+          ],
+        },
+        {
+          status: "upcoming" as const,
+          items: [{ name: "HBEFA" }, { name: "Worldsteel" }, { name: "Plastics Europe" }],
+        },
+        {
+          status: "study" as const,
+          items: [{ name: "ecoinvent" }],
+        },
+      ] as const,
     [t],
   );
 
-  const renderSourceGroup = (
-    title: string,
-    items: SourceCard[],
-    status: SourceCard["status"],
-  ) => (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-        <Badge variant="outline" className={STATUS_STYLES[status].badge}>
-          {statusLabel[status]}
-        </Badge>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => (
-          <article
-            key={item.name}
-            className={`rounded-2xl border bg-card p-5 ${STATUS_STYLES[status].border}`}
-          >
-            <div className="mb-3 flex items-start justify-between gap-3">
-              <h4 className="font-semibold text-foreground leading-snug">{item.name}</h4>
-              <Badge variant="outline" className={`shrink-0 text-[10px] ${STATUS_STYLES[status].badge}`}>
-                {statusLabel[status]}
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  );
+  const rows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return DEMO_ROWS.filter((row) => {
+      if (category !== "all" && row.category !== category) return false;
+      if (!q) return true;
+      const name = t(`${NS}.${row.nameKey}`).toLowerCase();
+      return (
+        name.includes(q) ||
+        row.source.toLowerCase().includes(q) ||
+        row.geo.toLowerCase().includes(q) ||
+        row.unit.toLowerCase().includes(q)
+      );
+    });
+  }, [category, query, t]);
+
+  const statusStyle: Record<
+    (typeof sourceGroups)[number]["status"],
+    { badge: string; wrap: string }
+  > = {
+    available: {
+      badge: "bg-[#07563F] text-white",
+      wrap: "border-[#07563F]/20 bg-white",
+    },
+    soon: {
+      badge: "bg-[#073D30]/08 text-[#073D30]",
+      wrap: "border-[#073D30]/10 bg-white",
+    },
+    upcoming: {
+      badge: "bg-transparent text-[#073D30]/55 border border-[#073D30]/15",
+      wrap: "border-[#073D30]/08 bg-[#F7FAF8]",
+    },
+    study: {
+      badge: "bg-transparent text-[#073D30]/45 border border-dashed border-[#073D30]/25",
+      wrap: "border-dashed border-[#073D30]/20 bg-transparent",
+    },
+  };
 
   return (
-    <SolutionLandingShell path="/facteurs-emission">
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border/60">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_hsl(var(--primary)/0.08),_transparent_55%)]" />
-        <div className="container relative mx-auto max-w-5xl px-4 py-16 md:py-24">
-          <p className="mb-4 text-sm font-medium tracking-wide text-primary">
-            {t(`${NS}.hero.eyebrow`)}
-          </p>
-          <h1 className="max-w-4xl whitespace-pre-line text-3xl font-bold tracking-tight text-foreground md:text-5xl md:leading-[1.15]">
-            {t(`${NS}.hero.title`)}
-          </h1>
-          <p className="mt-6 max-w-3xl text-lg text-muted-foreground md:text-xl">
-            {t(`${NS}.hero.subtitle`)}
-          </p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="gap-2">
-              <Link to="/demo">
-                {t(`${NS}.hero.ctaPrimary`)}
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <a href="#catalogue">{t(`${NS}.hero.ctaSecondary`)}</a>
-            </Button>
-          </div>
-        </div>
-      </section>
+    <SolutionLandingShell path={PATH} showRelated={false}>
+      <SEOHead path={PATH} />
 
-      {/* Stats */}
-      <section className="border-b border-border/60 bg-muted/30">
-        <div className="container mx-auto grid max-w-5xl gap-6 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
-          {(Array.isArray(stats) ? stats : []).map((s) => (
-            <div key={s.label} className="space-y-1">
-              <p className="text-2xl font-bold text-foreground md:text-3xl">{s.value}</p>
-              <p className="text-sm text-muted-foreground">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* What is FE */}
-      <section className="container mx-auto max-w-5xl px-4 py-16 md:py-20">
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      {/* 1 — Hero */}
+      <section className="relative overflow-hidden bg-[#F7FAF8]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(7,86,63,0.08),transparent_55%)]" />
+        <div className="relative mx-auto grid max-w-6xl gap-14 px-6 py-20 md:py-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16 lg:px-8 lg:py-32">
           <div>
-            <h2 className="text-2xl font-bold text-foreground md:text-3xl">
-              {t(`${NS}.what.title`)}
-            </h2>
-            <p className="mt-4 text-muted-foreground leading-relaxed">
-              {t(`${NS}.what.body`)}
+            <h1 className="max-w-xl text-[2.35rem] font-semibold leading-[1.08] tracking-[-0.035em] text-[#073D30] md:text-5xl lg:text-[3.35rem]">
+              {t(`${NS}.hero.titleLine1`)}
+              <br />
+              {t(`${NS}.hero.titleLine2`)}
+            </h1>
+            <p className="mt-7 max-w-lg text-[17px] leading-relaxed text-[#073D30]/70 md:text-lg">
+              {t(`${NS}.hero.subtitle`)}
             </p>
-            <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-              {t(`${NS}.what.disclaimer`)}
-            </p>
-          </div>
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <div className="w-full rounded-2xl bg-muted/60 px-4 py-3 text-sm font-medium">
-                {t(`${NS}.what.formula.activity`)}
-              </div>
-              <span className="text-xl font-semibold text-primary">×</span>
-              <div className="w-full rounded-2xl bg-primary/10 px-4 py-3 text-sm font-medium text-foreground">
-                {t(`${NS}.what.formula.factor`)}
-              </div>
-              <span className="text-xl font-semibold text-primary">=</span>
-              <div className="w-full rounded-2xl border border-primary/20 bg-background px-4 py-3 text-sm font-semibold">
-                {t(`${NS}.what.formula.result`)}
-              </div>
-            </div>
-            <p className="mt-5 text-center text-xs text-muted-foreground">
-              {t(`${NS}.what.example`)}
-            </p>
-          </div>
-        </div>
-      </section>
 
-      {/* Catalogue */}
-      <section id="catalogue" className="bg-muted/25 py-16 md:py-20">
-        <div className="container mx-auto max-w-5xl px-4">
-          <h2 className="text-2xl font-bold text-foreground md:text-3xl">
-            {t(`${NS}.catalog.title`)}
-          </h2>
-          <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
-            {t(`${NS}.catalog.body`)}
-          </p>
-          <p className="mt-3 text-sm text-muted-foreground">{t(`${NS}.catalog.metaIntro`)}</p>
-          <ul className="mt-6 grid gap-2 sm:grid-cols-2">
-            {(Array.isArray(metaItems) ? metaItems : []).map((item) => (
-              <li
-                key={item}
-                className="flex items-start gap-2 text-sm text-foreground/90"
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <a
+                href="#catalogue"
+                className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#07563F] px-6 text-[15px] font-semibold text-white transition-colors hover:bg-[#054C36]"
               >
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                {item}
-              </li>
-            ))}
-          </ul>
+                {t(`${NS}.hero.ctaPrimary`)}
+              </a>
+              <Link
+                to="/bilan-carbone"
+                className="inline-flex h-12 items-center justify-center rounded-2xl border border-[#073D30]/15 bg-white px-6 text-[15px] font-semibold text-[#073D30] transition-colors hover:border-[#073D30]/30 hover:bg-white"
+              >
+                {t(`${NS}.hero.ctaSecondary`)}
+              </Link>
+            </div>
+
+            <div className="mt-12 flex flex-wrap gap-x-10 gap-y-5 border-t border-[#073D30]/10 pt-8">
+              <div>
+                <div className="text-2xl font-semibold tracking-tight text-[#073D30]">10 000+</div>
+                <div className="mt-1 text-sm text-[#073D30]/55">{t(`${NS}.hero.statFactors`)}</div>
+              </div>
+              <div>
+                <div className="text-2xl font-semibold tracking-tight text-[#073D30]">
+                  {t(`${NS}.hero.statMulti`)}
+                </div>
+                <div className="mt-1 text-sm text-[#073D30]/55">{t(`${NS}.hero.statMultiLabel`)}</div>
+              </div>
+              <div>
+                <div className="text-2xl font-semibold tracking-tight text-[#073D30]">
+                  {t(`${NS}.hero.statTrace`)}
+                </div>
+                <div className="mt-1 text-sm text-[#073D30]/55">{t(`${NS}.hero.statTraceLabel`)}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Product preview — search engine */}
+          <div className="relative">
+            <div className="rounded-[28px] border border-[#073D30]/08 bg-white p-3 shadow-[0_30px_80px_-40px_rgba(7,61,48,0.45)] sm:p-4">
+              <div className="rounded-2xl border border-[#073D30]/08 bg-[#F7FAF8] p-4">
+                <div className="flex items-center gap-3 rounded-xl border border-[#073D30]/10 bg-white px-3.5 py-3">
+                  <Search className="h-4 w-4 shrink-0 text-[#073D30]/40" aria-hidden />
+                  <span className="truncate text-[14px] text-[#073D30]/40">
+                    {t(`${NS}.catalog.placeholder`)}
+                  </span>
+                </div>
+                <div className="mt-4 space-y-2">
+                  {DEMO_ROWS.slice(0, 3).map((row) => (
+                    <div
+                      key={row.id}
+                      className="flex items-center justify-between gap-3 rounded-xl bg-white px-3.5 py-3"
+                    >
+                      <div className="min-w-0">
+                        <div className="truncate text-[14px] font-medium text-[#073D30]">
+                          {t(`${NS}.${row.nameKey}`)}
+                        </div>
+                        <div className="mt-0.5 truncate text-[12px] text-[#073D30]/45">
+                          {row.source}
+                        </div>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <div className="text-[12px] font-medium text-[#073D30]/70">{row.unit}</div>
+                        <div className="mt-0.5 text-[11px] uppercase tracking-wide text-[#073D30]/40">
+                          {row.geo}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Search preview — illustrative, no numeric FE values */}
-      <section className="container mx-auto max-w-5xl px-4 py-16 md:py-20">
-        <div className="mb-8 max-w-3xl">
-          <h2 className="text-2xl font-bold text-foreground md:text-3xl">
-            {t(`${NS}.search.title`)}
-          </h2>
-          <p className="mt-3 text-muted-foreground">{t(`${NS}.search.subtitle`)}</p>
-        </div>
-        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
-          <div className="border-b border-border bg-muted/40 px-4 py-4 md:px-6">
-            <div className="flex items-center gap-3 rounded-xl border border-border bg-background px-3 py-2.5 text-muted-foreground">
-              <Search className="h-4 w-4 shrink-0" />
-              <span className="text-sm">{t(`${NS}.search.placeholder`)}</span>
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {chipKeys.map((key, i) => (
+      {/* 2 — Catalogue */}
+      <section id="catalogue" className="bg-white py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <h2 className="text-3xl font-semibold tracking-[-0.03em] text-[#073D30] md:text-4xl">
+              {t(`${NS}.catalog.title`)}
+            </h2>
+            <p className="mt-5 text-[16px] leading-relaxed text-[#073D30]/65 md:text-[17px]">
+              {t(`${NS}.catalog.body`)}
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-8 lg:grid-cols-[1.35fr_0.65fr] lg:gap-10">
+            <div className="rounded-[24px] border border-[#073D30]/08 bg-[#F7FAF8] p-4 sm:p-5">
+              <label className="sr-only" htmlFor="fe-search">
+                {t(`${NS}.catalog.placeholder`)}
+              </label>
+              <div className="flex items-center gap-3 rounded-2xl border border-[#073D30]/10 bg-white px-4 py-3.5 shadow-sm">
+                <Search className="h-4 w-4 text-[#073D30]/40" aria-hidden />
+                <input
+                  id="fe-search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t(`${NS}.catalog.placeholder`)}
+                  className="w-full bg-transparent text-[15px] text-[#073D30] outline-none placeholder:text-[#073D30]/35"
+                />
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
                 <button
-                  key={key}
                   type="button"
-                  onClick={() => setChip(i)}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                    chip === i
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-background text-muted-foreground hover:text-foreground"
+                  onClick={() => setCategory("all")}
+                  className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
+                    category === "all"
+                      ? "bg-[#07563F] text-white"
+                      : "bg-white text-[#073D30]/70 ring-1 ring-[#073D30]/10 hover:text-[#073D30]"
                   }`}
                 >
-                  {chips?.[key] ?? key}
+                  {t(`${NS}.catalog.all`)}
                 </button>
-              ))}
-            </div>
-          </div>
-          <div className="divide-y divide-border">
-            {ILLUSTRATIVE_ROWS.map((row) => (
-              <div
-                key={row.nameKey}
-                className="grid gap-2 px-4 py-4 md:grid-cols-[1.4fr_0.8fr_0.6fr_0.4fr] md:items-center md:px-6"
-              >
-                <div>
-                  <p className="font-medium text-foreground">{t(`${NS}.${row.nameKey}`)}</p>
-                  <p className="text-xs text-muted-foreground">{t(`${NS}.${row.categoryKey}`)}</p>
+                {CATEGORIES.map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setCategory(key)}
+                    className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
+                      category === key
+                        ? "bg-[#07563F] text-white"
+                        : "bg-white text-[#073D30]/70 ring-1 ring-[#073D30]/10 hover:text-[#073D30]"
+                    }`}
+                  >
+                    {t(`${NS}.catalog.categories.${key}`)}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-5 overflow-hidden rounded-2xl border border-[#073D30]/08 bg-white">
+                <div className="hidden grid-cols-[1.4fr_1.2fr_0.9fr_0.35fr] gap-3 border-b border-[#073D30]/06 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#073D30]/40 sm:grid">
+                  <span>{t(`${NS}.catalog.cols.name`)}</span>
+                  <span>{t(`${NS}.catalog.cols.source`)}</span>
+                  <span>{t(`${NS}.catalog.cols.unit`)}</span>
+                  <span>{t(`${NS}.catalog.cols.geo`)}</span>
                 </div>
-                <p className="text-sm text-muted-foreground">{row.source}</p>
-                <p className="font-mono text-xs text-muted-foreground">{row.unit}</p>
-                <p className="text-xs font-medium text-foreground">{row.geo}</p>
+                <ul>
+                  {rows.map((row) => (
+                    <li
+                      key={row.id}
+                      className="grid gap-1 border-b border-[#073D30]/06 px-4 py-3.5 last:border-0 sm:grid-cols-[1.4fr_1.2fr_0.9fr_0.35fr] sm:items-center sm:gap-3"
+                    >
+                      <div className="text-[14px] font-medium text-[#073D30]">
+                        {t(`${NS}.${row.nameKey}`)}
+                      </div>
+                      <div className="text-[13px] text-[#073D30]/55">{row.source}</div>
+                      <div className="text-[13px] text-[#073D30]/70">{row.unit}</div>
+                      <div className="text-[12px] font-medium uppercase tracking-wide text-[#073D30]/45">
+                        {row.geo}
+                      </div>
+                    </li>
+                  ))}
+                  {rows.length === 0 && (
+                    <li className="px-4 py-8 text-center text-[14px] text-[#073D30]/45">
+                      {t(`${NS}.catalog.empty`)}
+                    </li>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            <aside className="flex flex-col justify-between gap-6 lg:pt-1">
+              <div>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#073D30]/40">
+                  {t(`${NS}.catalog.contextLabel`)}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {CONTEXT_KEYS.map((key) => (
+                    <span
+                      key={key}
+                      className="rounded-full border border-[#073D30]/10 bg-white px-3.5 py-2 text-[13px] font-medium text-[#073D30]"
+                    >
+                      {t(`${NS}.catalog.context.${key}`)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[15px] leading-relaxed text-[#073D30]/65">
+                {t(`${NS}.catalog.structureNote`)}
+              </p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      {/* 3 — Multi-sources */}
+      <section className="border-y border-[#073D30]/06 bg-[#F7FAF8] py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <h2 className="max-w-2xl text-3xl font-semibold tracking-[-0.03em] text-[#073D30] md:text-4xl">
+            {t(`${NS}.sources.title`)}
+          </h2>
+
+          <div className="mt-14 space-y-10">
+            {sourceGroups.map((group) => (
+              <div key={group.status}>
+                <div className="mb-4 flex items-center gap-3">
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${statusStyle[group.status].badge}`}
+                  >
+                    {t(`${NS}.sources.badges.${group.status}`)}
+                  </span>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {group.items.map((item) => (
+                    <div
+                      key={item.name}
+                      className={`rounded-2xl border px-5 py-4 ${statusStyle[group.status].wrap}`}
+                    >
+                      <div className="text-[15px] font-semibold text-[#073D30]">{item.name}</div>
+                      {"subtitle" in item && item.subtitle ? (
+                        <div className="mt-1 text-[13px] text-[#073D30]/55">{item.subtitle}</div>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
-          <p className="border-t border-border px-4 py-3 text-xs text-muted-foreground md:px-6">
-            {t(`${NS}.search.disclaimer`)}
-          </p>
         </div>
       </section>
 
-      {/* Context cards */}
-      <section className="border-y border-border/60 bg-muted/25 py-16 md:py-20">
-        <div className="container mx-auto max-w-5xl px-4">
-          <h2 className="text-2xl font-bold text-foreground md:text-3xl">
-            {t(`${NS}.context.title`)}
+      {/* 4 — Pourquoi CarboScan */}
+      <section className="bg-white py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <h2 className="text-3xl font-semibold tracking-[-0.03em] text-[#073D30] md:text-4xl">
+            {t(`${NS}.why.title`)}
           </h2>
-          <p className="mt-3 max-w-3xl text-muted-foreground">{t(`${NS}.context.subtitle`)}</p>
-          <div className="mt-10 grid gap-4 md:grid-cols-2">
-            {(Array.isArray(contextCards) ? contextCards : []).map((card, i) => {
-              const Icon = [Globe2, Ruler, Layers, BookOpen][i] ?? Layers;
-              return (
-                <article key={card.title} className="rounded-2xl border border-border bg-card p-6">
-                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="font-semibold text-foreground">{card.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{card.body}</p>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Resolve intelligence */}
-      <section className="container mx-auto max-w-5xl px-4 py-16 md:py-20">
-        <div className="rounded-3xl border border-border bg-card p-8 md:p-10">
-          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <h2 className="text-2xl font-bold text-foreground md:text-3xl">
-            {t(`${NS}.resolve.title`)}
-          </h2>
-          <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
-            {t(`${NS}.resolve.body`)}
-          </p>
-          <ul className="mt-6 grid gap-2 sm:grid-cols-2">
-            {(Array.isArray(resolveItems) ? resolveItems : []).map((item) => (
-              <li key={item} className="flex items-start gap-2 text-sm text-foreground/90">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                {item}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-6 text-sm text-muted-foreground">{t(`${NS}.resolve.disclaimer`)}</p>
-        </div>
-      </section>
-
-      {/* Traceability */}
-      <section className="bg-muted/25 py-16 md:py-20">
-        <div className="container mx-auto max-w-5xl px-4">
-          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
-          <h2 className="text-2xl font-bold text-foreground md:text-3xl">
-            {t(`${NS}.traceability.title`)}
-          </h2>
-          <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
-            {t(`${NS}.traceability.body`)}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-2 text-sm">
-            {(Array.isArray(provenanceSteps) ? provenanceSteps : []).map((step, i, arr) => (
-              <React.Fragment key={step}>
-                <span className="rounded-full border border-border bg-card px-3 py-1.5 font-medium">
-                  {step}
-                </span>
-                {i < arr.length - 1 && (
-                  <span className="text-muted-foreground" aria-hidden>
-                    →
-                  </span>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-          <p className="mt-6 text-sm text-muted-foreground">{t(`${NS}.traceability.itemsIntro`)}</p>
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            {(Array.isArray(provenanceItems) ? provenanceItems : []).map((item) => (
-              <li key={item} className="flex items-start gap-2 text-sm">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Sources */}
-      <section id="sources" className="container mx-auto max-w-5xl space-y-12 px-4 py-16 md:py-20">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground md:text-3xl">
-            {t(`${NS}.sources.title`)}
-          </h2>
-          <p className="mt-3 max-w-3xl text-muted-foreground">{t(`${NS}.sources.subtitle`)}</p>
-        </div>
-        {renderSourceGroup(t(`${NS}.sources.available.title`), available, "available")}
-        {renderSourceGroup(t(`${NS}.sources.soon.title`), soon, "soon")}
-        {renderSourceGroup(t(`${NS}.sources.upcoming.title`), upcoming, "upcoming")}
-        {renderSourceGroup(t(`${NS}.sources.study.title`), study, "study")}
-        <p className="rounded-2xl border border-border bg-muted/40 px-5 py-4 text-sm text-muted-foreground leading-relaxed">
-          {t(`${NS}.sources.roadmapNote`)}
-        </p>
-      </section>
-
-      {/* Use cases */}
-      <section className="border-y border-border/60 bg-muted/25 py-16 md:py-20">
-        <div className="container mx-auto max-w-5xl px-4">
-          <h2 className="text-2xl font-bold text-foreground md:text-3xl">
-            {t(`${NS}.useCases.title`)}
-          </h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {(Array.isArray(useCases) ? useCases : []).map((uc) => (
-              <article key={uc.title} className="rounded-2xl border border-border bg-card p-6">
-                <h3 className="font-semibold text-foreground">{uc.title}</h3>
-                <ul className="mt-3 space-y-1.5">
-                  {(uc.items ?? []).map((item) => (
-                    <li key={item} className="text-sm text-muted-foreground">
-                      · {item}
-                    </li>
-                  ))}
-                </ul>
-              </article>
+          <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
+            {WHY_KEYS.map((key, index) => (
+              <div key={key} className="border-t border-[#073D30]/12 pt-6">
+                <div className="text-[13px] font-semibold tracking-[0.12em] text-[#07563F]">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <h3 className="mt-4 text-xl font-semibold tracking-tight text-[#073D30]">
+                  {t(`${NS}.why.${key}.title`)}
+                </h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-[#073D30]/65">
+                  {t(`${NS}.why.${key}.body`)}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA bilan */}
-      <section className="container mx-auto max-w-5xl px-4 py-16 md:py-20">
-        <div className="rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-background to-background p-8 md:p-12">
-          <h2 className="max-w-2xl text-2xl font-bold text-foreground md:text-3xl">
+      {/* 5 — CTA final */}
+      <section className="bg-[#073D30] py-20 md:py-24">
+        <div className="mx-auto max-w-3xl px-6 text-center lg:px-8">
+          <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white md:text-4xl">
             {t(`${NS}.cta.title`)}
           </h2>
-          <p className="mt-4 max-w-2xl text-muted-foreground leading-relaxed">
+          <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-white/70 md:text-[17px]">
             {t(`${NS}.cta.body`)}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="gap-2">
-              <Link to="/bilan-carbone">
-                {t(`${NS}.cta.primary`)}
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link to="/demo">{t(`${NS}.cta.secondary`)}</Link>
-            </Button>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/bilan-carbone"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-white px-6 text-[15px] font-semibold text-[#073D30] transition-colors hover:bg-[#F7FAF8]"
+            >
+              {t(`${NS}.cta.primary`)}
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+            <Link
+              to="/demo"
+              className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/25 px-6 text-[15px] font-semibold text-white transition-colors hover:border-white/45 hover:bg-white/5"
+            >
+              {t(`${NS}.cta.secondary`)}
+            </Link>
           </div>
         </div>
       </section>
-
-      <SolutionFaq
-        path="/facteurs-emission"
-        title={t(`${NS}.faq.title`)}
-        faqs={Array.isArray(faqs) ? faqs : []}
-      />
     </SolutionLandingShell>
   );
 };

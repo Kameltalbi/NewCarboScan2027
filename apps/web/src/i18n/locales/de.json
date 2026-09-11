@@ -7663,286 +7663,84 @@
   },
   "facteursEmissionLanding": {
     "hero": {
-      "eyebrow": "Katalog der Emissionsfaktoren",
-      "title": "CO₂-Emissionsfaktoren:\nfinden Sie die Daten, die zu Ihrer Berechnung passen",
-      "subtitle": "Entdecken Sie einen Katalog mit mehr als 10.000 referenzierten und dokumentierten Emissionsfaktoren zur Messung der Emissionen aus Energie, Transport, Beschaffung und organisatorischen Aktivitäten.",
-      "ctaPrimary": "CarboScan entdecken",
-      "ctaSecondary": "Emissionsfaktoren erkunden"
-    },
-    "stats": {
-      "items": [
-        {
-          "value": "10.000+",
-          "label": "Referenzierte Faktoren"
-        },
-        {
-          "value": "Multi-Source",
-          "label": "Anerkannte Datensätze"
-        },
-        {
-          "value": "Rückverfolgbarkeit",
-          "label": "Quelle und Version dokumentiert"
-        },
-        {
-          "value": "Multi-Kontext",
-          "label": "Energie, Transport, Einkauf…"
-        }
-      ]
-    },
-    "what": {
-      "title": "Was ist ein Emissionsfaktor?",
-      "body": "Ein Emissionsfaktor wandelt eine Aktivitätsmenge in Treibhausgasemissionen um. Er verknüpft eine physische oder monetäre Größe mit einer Wirkung in kgCO₂e – in einem gegebenen Kontext.",
-      "disclaimer": "Der Wert eines Faktors hängt von Land, Jahr, Quelle, Technologie, Systemgrenze und Methodik ab. Es gibt keinen universellen Wert.",
-      "formula": {
-        "activity": "AKTIVITÄTSDATEN",
-        "factor": "EMISSIONSFAKTOR",
-        "result": "THG-EMISSIONEN"
-      },
-      "example": "Allgemeines Beispiel: 1.000 kWh × geeigneter Emissionsfaktor = Emissionen in kgCO₂e"
+      "titleLine1": "Der richtige Emissionsfaktor.",
+      "titleLine2": "Für die richtige Berechnung.",
+      "subtitle": "Zugriff auf mehr als 10.000 referenzierte und dokumentierte Emissionsfaktoren mit Quellen, Versionen, Einheiten und Nutzungskontexten.",
+      "ctaPrimary": "Faktoren erkunden",
+      "ctaSecondary": "CarboScan entdecken",
+      "statFactors": "referenzierte Faktoren",
+      "statMulti": "Multi-Source",
+      "statMultiLabel": "anerkannte Datensätze",
+      "statTrace": "Rückverfolgbar",
+      "statTraceLabel": "Quelle und Version dokumentiert"
     },
     "catalog": {
-      "title": "Mehr als 10.000 referenzierte Emissionsfaktoren",
-      "body": "CarboScan baut einen Multi-Source-Katalog auf, um die für CO₂-Berechnungen benötigten Faktoren zu suchen und zu dokumentieren.",
-      "metaIntro": "Je nach Quelle und verfügbaren Daten kann ein Faktor Folgendes enthalten:",
-      "metaItems": [
-        "Name und Kategorien",
-        "Wert und Einheit",
-        "Geografie und Jahr",
-        "Quelle und Datensatzversion",
-        "Faktortyp",
-        "Methodischer Kontext",
-        "Informationen zur Rückverfolgbarkeit"
-      ]
-    },
-    "search": {
-      "title": "Katalogvorschau",
-      "subtitle": "Suchen Sie nach Aktivität, filtern Sie nach Kategorie und prüfen Sie den dokumentierten Kontext — ohne das gesamte Register im Browser zu laden.",
-      "placeholder": "Emissionsfaktor suchen…",
-      "chips": {
+      "title": "Ein Katalog, der über die reine Suche hinausgeht.",
+      "body": "CarboScan strukturiert Faktoren so, dass sie konsistent zum Berechnungskontext ausgewählt und ihre Herkunft bewahrt werden können.",
+      "placeholder": "Emissionsfaktor suchen...",
+      "all": "Alle",
+      "empty": "Keine Ergebnisse für diese Suche.",
+      "contextLabel": "Auswahlkontext",
+      "structureNote": "Geografie, Einheit, Quelle, Version und methodischer Kontext bleiben sichtbar, um jede Auswahl zu dokumentieren.",
+      "categories": {
         "electricity": "Strom",
         "transport": "Transport",
         "fuels": "Kraftstoffe",
-        "freight": "Güterverkehr",
-        "purchases": "Einkäufe"
+        "freight": "Güterverkehr"
+      },
+      "cols": {
+        "name": "Name",
+        "source": "Quelle",
+        "unit": "Einheit",
+        "geo": "Geo"
+      },
+      "context": {
+        "geography": "Geografie",
+        "unit": "Einheit",
+        "source": "Quelle",
+        "version": "Version",
+        "methodContext": "Methodischer Kontext"
       },
       "rows": {
-        "electricity": "Netzstrom",
+        "gridElectricity": "Netzstrom",
         "diesel": "Diesel / Gasöl",
-        "grid": "Standortbasierter Strom"
-      },
-      "disclaimer": "Illustrative Demo: repräsentative Einheiten und Quellen, ohne erfundene Zahlenwerte."
-    },
-    "context": {
-      "title": "Derselbe Bedarf kann mehreren Faktoren entsprechen",
-      "subtitle": "Eine reine Textsuche reicht nicht aus, um einen relevanten Emissionsfaktor auszuwählen.",
-      "cards": [
-        {
-          "title": "Geografie",
-          "body": "Frankreich, Vereinigtes Königreich, Tunesien, Global… Die Geografie entscheidet, ob ein Faktor zu Ihrer Aktivität passt."
-        },
-        {
-          "title": "Einheit",
-          "body": "kWh, kg, Tonne, km, Personenkilometer, Tonnenkilometer… Die Einheit muss zur Aktivitätsmenge passen."
-        },
-        {
-          "title": "Systemgrenze",
-          "body": "Direkte Emissionen, vorgelagerte Energie, Lebenszyklus… sofern dokumentiert. Eine fehlende Grenze nicht ableiten."
-        },
-        {
-          "title": "Quelle & Version",
-          "body": "Ein Faktor muss mit dem Datensatz und der Version verknüpft bleiben, aus dem er stammt, um prüfbar zu bleiben."
-        }
-      ]
-    },
-    "resolve": {
-      "title": "Einen Faktor zu finden reicht nicht. Es muss der richtige sein.",
-      "body": "CarboScan entwickelt eine Auflösungslogik, die verfügbaren Kontext nutzt, um mit der untersuchten Aktivität kompatible Faktoren zu identifizieren.",
-      "items": [
-        "Aktivität und Einheit",
-        "Geografie",
-        "Quelle und Jahr",
-        "Methodische Systemgrenze",
-        "Energiekontext",
-        "Verfügbarkeit von Metadaten"
-      ],
-      "disclaimer": "Nicht jeder Katalogfaktor wird automatisch für jede Berechnung ausgewählt. Die Auflösung hängt vom bereitgestellten Kontext und den geltenden methodischen Regeln ab."
-    },
-    "traceability": {
-      "title": "Ein Emissionsfaktor muss begründbar sein",
-      "body": "Eine professionelle CO₂-Bilanz sollte nicht nur ein Ergebnis liefern. Sie sollte die beitragenden Aktivitätsdaten und Faktoren nachvollziehbar machen.",
-      "steps": [
-        "Quelle",
-        "Version",
-        "Faktor",
-        "Aktivitätsdaten",
-        "Optionale Umrechnung",
-        "Ergebnis"
-      ],
-      "itemsIntro": "Je nach verfügbaren Daten kann CarboScan speichern:",
-      "items": [
-        "Verwendeter Faktor und Kennung",
-        "Quelle und Version",
-        "Einheit und Menge",
-        "Angewandte Umrechnung, falls relevant",
-        "Berechnetes Ergebnis"
-      ]
+        "passengerCar": "Pkw",
+        "roadFreight": "Straßengüterverkehr",
+        "naturalGas": "Erdgas",
+        "gridLocal": "Netzstrom — lokaler Kontext"
+      }
     },
     "sources": {
-      "title": "Ein Multi-Source-Katalog, der weiter wächst",
-      "subtitle": "CarboScan führt schrittweise Faktoren aus anerkannten Datensätzen zusammen, um Berechnungen über Sektoren, Länder und Aktivitäten hinweg anzupassen.",
+      "title": "Eine Multi-Source-Basis in stetiger Weiterentwicklung.",
+      "localFactors": "Dokumentierte lokale Faktoren",
+      "inies": "Umweltdaten Bauwesen",
       "badges": {
         "available": "Verfügbar",
-        "soon": "Demnächst",
+        "soon": "Demnächst verfügbar",
         "upcoming": "Geplant",
         "study": "In Prüfung"
-      },
-      "available": {
-        "title": "Verfügbar",
-        "items": [
-          {
-            "name": "ADEME Base Carbone",
-            "description": "Französischer Datensatz zu Emissionsfaktoren, der in CO₂-Bilanzierungsabläufen häufig genutzt wird."
-          },
-          {
-            "name": "UK Government GHG Conversion Factors",
-            "description": "Vom britischen Staat veröffentlichte Umrechnungsfaktoren für zahlreiche Aktivitätskategorien."
-          },
-          {
-            "name": "CarboScan / Tunisia",
-            "description": "Dokumentierte Faktoren für ausgewählte lokale Kontexte und CarboScan-Berechnungsbedarf."
-          }
-        ]
-      },
-      "soon": {
-        "title": "Demnächst",
-        "items": [
-          {
-            "name": "EPA",
-            "description": "US Environmental Protection Agency — GHG Emission Factors Hub."
-          },
-          {
-            "name": "INIES",
-            "description": "Umweltdaten für Bauprodukte und Ausrüstung."
-          },
-          {
-            "name": "PEP ecopassport",
-            "description": "Umweltdaten besonders relevant für elektrische, elektronische und HLK-Ausrüstung."
-          },
-          {
-            "name": "IPCC",
-            "description": "Methodische Referenzen und Faktoren aus der Arbeit des IPCC."
-          },
-          {
-            "name": "Agribalyse",
-            "description": "Umweltdaten besonders relevant für Lebensmittel und Landwirtschaft."
-          }
-        ]
-      },
-      "upcoming": {
-        "title": "Geplant",
-        "items": [
-          {
-            "name": "HBEFA",
-            "description": "Besonders relevant für Emissionen des Straßenverkehrs."
-          },
-          {
-            "name": "Worldsteel",
-            "description": "Branchendaten zum Stahl."
-          },
-          {
-            "name": "Plastics Europe",
-            "description": "Branchendaten zu Kunststoffen."
-          }
-        ]
-      },
-      "study": {
-        "title": "In Prüfung",
-        "items": [
-          {
-            "name": "ecoinvent",
-            "description": "Lizenz- und Nutzungsbedingungen müssen vor jeder Integration geprüft werden. Zum jetzigen Zeitpunkt wird keine Integration zugesagt."
-          }
-        ]
-      },
-      "roadmapNote": "Der CarboScan-Katalog entwickelt sich schrittweise weiter. Die Verfügbarkeit einer Quelle im Katalog bedeutet nicht, dass ein Faktor automatisch für jede Berechnung anwendbar ist. Geografie, Einheit und methodischer Kontext bleiben entscheidend."
+      }
     },
-    "useCases": {
-      "title": "Faktoren, die zu Ihren Aktivitäten passen",
-      "items": [
-        {
-          "title": "Energie",
-          "items": [
-            "Strom",
-            "Wärme",
-            "Kraftstoffe"
-          ]
-        },
-        {
-          "title": "Mobilität",
-          "items": [
-            "Geschäftsreisen",
-            "Fahrten",
-            "Fahrzeuge"
-          ]
-        },
-        {
-          "title": "Güterverkehr",
-          "items": [
-            "Straßentransport",
-            "Seeverkehr",
-            "Luftverkehr — vorbehaltlich der Verfügbarkeit von Faktoren"
-          ]
-        },
-        {
-          "title": "Einkäufe",
-          "items": [
-            "Waren",
-            "Dienstleistungen",
-            "Ausgaben — vorbehaltlich Methodik und Verfügbarkeit"
-          ]
-        },
-        {
-          "title": "Anlagen / Produkte",
-          "items": [
-            "Schrittweise mit geeigneten Datensätzen weiterzuentwickeln"
-          ]
-        }
-      ]
+    "why": {
+      "title": "Mehr als eine Faktorenbasis.",
+      "contextual": {
+        "title": "Kontextuelle Auswahl",
+        "body": "Die Relevanz eines Faktors hängt von Aktivität, Einheit, Geografie und methodischem Kontext ab."
+      },
+      "traceability": {
+        "title": "Rückverfolgbarkeit",
+        "body": "Bewahren Sie Quelle, Version und die Informationen, die zur Begründung des verwendeten Faktors nötig sind."
+      },
+      "multisource": {
+        "title": "Multi-Source",
+        "body": "Führen Sie schrittweise mehrere Referenzen in einer gemeinsamen Arbeitsumgebung zusammen."
+      }
     },
     "cta": {
-      "title": "Emissionsfaktoren sind nur ein Teil einer CO₂-Bilanz",
-      "body": "CarboScan hilft, Aktivitätsdaten, Berechnungen und Reporting in einem umfassenderen CO₂-Bilanzierungsprozess zu organisieren.",
-      "primary": "Meine CO₂-Bilanz starten",
-      "secondary": "Die Plattform entdecken"
-    },
-    "faq": {
-      "title": "Häufig gestellte Fragen",
-      "items": [
-        {
-          "question": "Was ist ein Emissionsfaktor?",
-          "answer": "Es ist ein Koeffizient, der Aktivitätsdaten (kWh, Liter, km…) in Treibhausgasemissionen umrechnet, in der Regel in kgCO₂e und in einem gegebenen Kontext."
-        },
-        {
-          "question": "Wie berechnet man CO₂-Emissionen mit einem Emissionsfaktor?",
-          "answer": "Multiplizieren Sie die Aktivitätsmenge mit dem geeigneten Faktor, nachdem Sie Einheit, Geografie und Systemgrenze geprüft haben. Das Ergebnis wird in der Regel in kgCO₂e oder tCO₂e ausgedrückt."
-        },
-        {
-          "question": "Wo finde ich ADEME-Emissionsfaktoren?",
-          "answer": "ADEME Base Carbone ist ein französischer Datensatz zu Emissionsfaktoren. CarboScan referenziert ADEME-Faktoren in seinem Multi-Source-Katalog mit dokumentierter Quelle und Version."
-        },
-        {
-          "question": "Warum variiert ein Emissionsfaktor je nach Land?",
-          "answer": "Weil Energiemixe, Technologien, Praktiken und Veröffentlichungsverfahren unterschiedlich sind. Ein französischer Faktor gilt nicht automatisch für das Vereinigte Königreich oder Tunesien."
-        },
-        {
-          "question": "Was ist der Unterschied zwischen Aktivitätsdaten und einem Emissionsfaktor?",
-          "answer": "Aktivitätsdaten beschreiben, was Sie verbraucht oder getan haben (z. B. 1.000 kWh). Der Emissionsfaktor wandelt diese Aktivität in THG-Emissionen um."
-        },
-        {
-          "question": "Wie stellt CarboScan die Rückverfolgbarkeit der verwendeten Faktoren sicher?",
-          "answer": "Wenn eine Berechnung den vorgesehenen Pfaden folgt, behält CarboScan verfügbare Herkunftsinformationen: Faktor, Quelle, Version, Mengen, Umrechnungen und Ergebnis, um die Berechnung zu dokumentieren."
-        }
-      ]
+      "title": "Vom Emissionsfaktor zur CO₂-Bilanz.",
+      "body": "Zentralisieren Sie Ihre Daten, wählen Sie passende Faktoren und behalten Sie die Rückverfolgbarkeit Ihrer Berechnungen in CarboScan.",
+      "primary": "CarboScan entdecken",
+      "secondary": "Demo anfragen"
     }
   }
 }
