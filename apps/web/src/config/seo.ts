@@ -102,6 +102,17 @@ export const PAGE_SEO: Record<string, PageSEO> = {
       { name: 'Bilan carbone', path: '/bilan-carbone' },
     ],
   },
+  '/facteurs-emission': {
+    path: '/facteurs-emission',
+    title: "Facteurs d'émission carbone : base et calcul CO₂ | CarboScan",
+    description:
+      "Explorez plus de 10 000 facteurs d'émission référencés et documentés dans CarboScan pour l'énergie, les transports, les achats et les activités des organisations.",
+    breadcrumbs: [
+      { name: 'Accueil', path: '/' },
+      { name: 'Plateforme', path: '/bilan-carbone' },
+      { name: "Facteurs d'émission", path: '/facteurs-emission' },
+    ],
+  },
   '/empreinte-produit': {
     path: '/empreinte-produit',
     title: 'Empreinte Produit (PCF) — Calcul carbone produit | CarboScan',

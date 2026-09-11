@@ -45,6 +45,7 @@ const Changelog = lazy(() => import("./pages/Changelog"));
 
 // Landing pages modules — lazy loaded
 const BilanCarbone = lazy(() => import("./pages/BilanCarbone"));
+const FacteursEmission = lazy(() => import("./pages/FacteursEmission"));
 const EmpreinteProduit = lazy(() => import("./pages/EmpreinteProduit"));
 const ACVLanding = lazy(() => import("./pages/ACVLanding"));
 const CollectLanding = lazy(() => import("./pages/CollectLanding"));
@@ -151,6 +152,7 @@ function App() {
 
               {/* Landing pages modules */}
               <Route path="/bilan-carbone" element={<BilanCarbone />} />
+              <Route path="/facteurs-emission" element={<FacteursEmission />} />
               <Route path="/empreinte-produit" element={<EmpreinteProduit />} />
               <Route path="/acv-landing" element={<ACVLanding />} />
               <Route path="/collect" element={<CollectLanding />} />

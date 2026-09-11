@@ -291,7 +291,8 @@
       "requestDemo": "Request a demo",
       "login": "Login"
     },
-    "login": "Login"
+    "login": "Login",
+    "emissionFactors": "Emission factors"
   },
   "hero": {
     "title": "Measure. Monitor. Reduce.",
@@ -6531,21 +6532,54 @@
       "metaDescription": "Run your industrial carbon footprint with CarboScan. Measure Scope 1, 2 and 3 emissions of your plant and identify decarbonization levers.",
       "heroDescription": "Industry accounts for 21% of global GHG emissions. CarboScan helps you map your emissions, identify the top emitters and pilot your decarbonization trajectory.",
       "stats": [
-        { "value": "21%", "label": "of global emissions" },
-        { "value": "-30%", "label": "potential reduction by 2030" },
-        { "value": "3", "label": "scopes analysed" },
-        { "value": "48h", "label": "report delivered" }
+        {
+          "value": "21%",
+          "label": "of global emissions"
+        },
+        {
+          "value": "-30%",
+          "label": "potential reduction by 2030"
+        },
+        {
+          "value": "3",
+          "label": "scopes analysed"
+        },
+        {
+          "value": "48h",
+          "label": "report delivered"
+        }
       ],
       "challenges": [
-        { "title": "Energy-intensive processes", "description": "Industrial processes consume large amounts of fossil energy, generating significant direct emissions." },
-        { "title": "Complex supply chain", "description": "Upstream Scope 3 (raw materials, transport) often represents more than 60% of the total footprint." },
-        { "title": "Growing regulations", "description": "CSRD, EU Taxonomy, CBAM: carbon reporting obligations keep expanding." }
+        {
+          "title": "Energy-intensive processes",
+          "description": "Industrial processes consume large amounts of fossil energy, generating significant direct emissions."
+        },
+        {
+          "title": "Complex supply chain",
+          "description": "Upstream Scope 3 (raw materials, transport) often represents more than 60% of the total footprint."
+        },
+        {
+          "title": "Growing regulations",
+          "description": "CSRD, EU Taxonomy, CBAM: carbon reporting obligations keep expanding."
+        }
       ],
       "benefits": [
-        { "title": "Multi-site analysis", "description": "Consolidate data from all your plants and production sites into a single dashboard." },
-        { "title": "Industrial emission factors", "description": "Specialised database with emission factors for industrial processes." },
-        { "title": "Regulatory compliance", "description": "Reports aligned with ISO 14064, GHG Protocol and CSRD." },
-        { "title": "Decarbonization plan", "description": "Identify the most impactful reduction levers and build your climate roadmap." }
+        {
+          "title": "Multi-site analysis",
+          "description": "Consolidate data from all your plants and production sites into a single dashboard."
+        },
+        {
+          "title": "Industrial emission factors",
+          "description": "Specialised database with emission factors for industrial processes."
+        },
+        {
+          "title": "Regulatory compliance",
+          "description": "Reports aligned with ISO 14064, GHG Protocol and CSRD."
+        },
+        {
+          "title": "Decarbonization plan",
+          "description": "Identify the most impactful reduction levers and build your climate roadmap."
+        }
       ]
     },
     "btp": {
@@ -6555,21 +6589,54 @@
       "metaDescription": "Assess the carbon footprint of your construction sites and projects. Reduce the environmental impact of construction with CarboScan.",
       "heroDescription": "Buildings and construction account for 38% of energy-related CO₂ emissions. CarboScan helps you measure the impact of your sites and buildings.",
       "stats": [
-        { "value": "38%", "label": "of energy-related emissions" },
-        { "value": "RE2020", "label": "regulatory compliance" },
-        { "value": "LCA", "label": "life-cycle analysis included" },
-        { "value": "50+", "label": "materials referenced" }
+        {
+          "value": "38%",
+          "label": "of energy-related emissions"
+        },
+        {
+          "value": "RE2020",
+          "label": "regulatory compliance"
+        },
+        {
+          "value": "LCA",
+          "label": "life-cycle analysis included"
+        },
+        {
+          "value": "50+",
+          "label": "materials referenced"
+        }
       ],
       "challenges": [
-        { "title": "High-footprint materials", "description": "Cement and steel represent a major share of construction emissions." },
-        { "title": "Distributed sites", "description": "Consolidate carbon data across many sites and subcontractors." },
-        { "title": "Long life cycle", "description": "Account for the operation and end-of-life of the building in the calculation." }
+        {
+          "title": "High-footprint materials",
+          "description": "Cement and steel represent a major share of construction emissions."
+        },
+        {
+          "title": "Distributed sites",
+          "description": "Consolidate carbon data across many sites and subcontractors."
+        },
+        {
+          "title": "Long life cycle",
+          "description": "Account for the operation and end-of-life of the building in the calculation."
+        }
       ],
       "benefits": [
-        { "title": "Integrated Building LCA", "description": "Full life-cycle analysis of your construction projects." },
-        { "title": "Per-site tracking", "description": "Dedicated dashboard to monitor emissions site by site." },
-        { "title": "RE2020 compliance", "description": "Calculations compliant with building environmental regulation." },
-        { "title": "Low-carbon materials", "description": "Compare material alternatives and their impact on the overall footprint." }
+        {
+          "title": "Integrated Building LCA",
+          "description": "Full life-cycle analysis of your construction projects."
+        },
+        {
+          "title": "Per-site tracking",
+          "description": "Dedicated dashboard to monitor emissions site by site."
+        },
+        {
+          "title": "RE2020 compliance",
+          "description": "Calculations compliant with building environmental regulation."
+        },
+        {
+          "title": "Low-carbon materials",
+          "description": "Compare material alternatives and their impact on the overall footprint."
+        }
       ]
     },
     "agroalimentaire": {
@@ -6579,21 +6646,54 @@
       "metaDescription": "Measure the carbon footprint of your food value chain. From farm to distribution, cut your emissions with CarboScan.",
       "heroDescription": "The food industry accounts for 26% of global GHG emissions. From agriculture to distribution, CarboScan supports you in measuring and reducing your value chain footprint.",
       "stats": [
-        { "value": "26%", "label": "of global emissions" },
-        { "value": "Scope 3", "label": "main emission source" },
-        { "value": "PCF", "label": "product footprint included" },
-        { "value": "200+", "label": "agricultural factors" }
+        {
+          "value": "26%",
+          "label": "of global emissions"
+        },
+        {
+          "value": "Scope 3",
+          "label": "main emission source"
+        },
+        {
+          "value": "PCF",
+          "label": "product footprint included"
+        },
+        {
+          "value": "200+",
+          "label": "agricultural factors"
+        }
       ],
       "challenges": [
-        { "title": "Agricultural emissions", "description": "Methane, nitrous oxide and CO₂ from livestock and crops must be quantified." },
-        { "title": "Cold chain", "description": "Refrigeration and refrigerated transport are major emission sources." },
-        { "title": "Food waste", "description": "Losses and food waste have a significant carbon impact that is often underestimated." }
+        {
+          "title": "Agricultural emissions",
+          "description": "Methane, nitrous oxide and CO₂ from livestock and crops must be quantified."
+        },
+        {
+          "title": "Cold chain",
+          "description": "Refrigeration and refrigerated transport are major emission sources."
+        },
+        {
+          "title": "Food waste",
+          "description": "Losses and food waste have a significant carbon impact that is often underestimated."
+        }
       ],
       "benefits": [
-        { "title": "Specialised agricultural factors", "description": "Comprehensive database covering agriculture, livestock and processing emissions." },
-        { "title": "Product Carbon Footprint (PCF)", "description": "Calculate the carbon footprint of each product reference in your catalogue." },
-        { "title": "Environmental labelling", "description": "Prepare compliance with mandatory environmental labelling." },
-        { "title": "Sustainable sourcing", "description": "Assess and compare suppliers based on their carbon footprint." }
+        {
+          "title": "Specialised agricultural factors",
+          "description": "Comprehensive database covering agriculture, livestock and processing emissions."
+        },
+        {
+          "title": "Product Carbon Footprint (PCF)",
+          "description": "Calculate the carbon footprint of each product reference in your catalogue."
+        },
+        {
+          "title": "Environmental labelling",
+          "description": "Prepare compliance with mandatory environmental labelling."
+        },
+        {
+          "title": "Sustainable sourcing",
+          "description": "Assess and compare suppliers based on their carbon footprint."
+        }
       ]
     },
     "energie": {
@@ -6603,21 +6703,54 @@
       "metaDescription": "Measure the carbon footprint of your energy activity. Production, distribution and consumption: pilot your transition with CarboScan.",
       "heroDescription": "The energy sector is the largest contributor to global GHG emissions. CarboScan supports energy players in their transition to a decarbonised mix.",
       "stats": [
-        { "value": "73%", "label": "of global emissions (energy broadly)" },
-        { "value": "Net Zero", "label": "2050 target" },
-        { "value": "CBAM", "label": "compliance built-in" },
-        { "value": "Multi-site", "label": "automatic consolidation" }
+        {
+          "value": "73%",
+          "label": "of global emissions (energy broadly)"
+        },
+        {
+          "value": "Net Zero",
+          "label": "2050 target"
+        },
+        {
+          "value": "CBAM",
+          "label": "compliance built-in"
+        },
+        {
+          "value": "Multi-site",
+          "label": "automatic consolidation"
+        }
       ],
       "challenges": [
-        { "title": "Energy mix", "description": "Quantify emissions from each energy source: fossil, renewable, nuclear." },
-        { "title": "Heavy infrastructure", "description": "Plants, distribution networks and storage have a significant carbon footprint." },
-        { "title": "Ongoing transition", "description": "Plan the replacement of fossil assets while maintaining security of supply." }
+        {
+          "title": "Energy mix",
+          "description": "Quantify emissions from each energy source: fossil, renewable, nuclear."
+        },
+        {
+          "title": "Heavy infrastructure",
+          "description": "Plants, distribution networks and storage have a significant carbon footprint."
+        },
+        {
+          "title": "Ongoing transition",
+          "description": "Plan the replacement of fossil assets while maintaining security of supply."
+        }
       ],
       "benefits": [
-        { "title": "Per-source factors", "description": "Detailed emission factors for each type of energy production." },
-        { "title": "Transition scenarios", "description": "Model the impact of different energy mix scenarios on your emissions." },
-        { "title": "Regulatory reporting", "description": "Automatic generation of reports compliant with CSRD, CBAM and taxonomy." },
-        { "title": "Net Zero roadmap", "description": "Build your decarbonization trajectory aligned with climate objectives." }
+        {
+          "title": "Per-source factors",
+          "description": "Detailed emission factors for each type of energy production."
+        },
+        {
+          "title": "Transition scenarios",
+          "description": "Model the impact of different energy mix scenarios on your emissions."
+        },
+        {
+          "title": "Regulatory reporting",
+          "description": "Automatic generation of reports compliant with CSRD, CBAM and taxonomy."
+        },
+        {
+          "title": "Net Zero roadmap",
+          "description": "Build your decarbonization trajectory aligned with climate objectives."
+        }
       ]
     },
     "transport": {
@@ -6627,21 +6760,54 @@
       "metaDescription": "Calculate the carbon footprint of your fleet and logistics chain. Optimise your routes and reduce your CO₂ emissions with CarboScan.",
       "heroDescription": "Transport accounts for 25% of GHG emissions. CarboScan helps you measure fleet emissions, optimise routes and plan the transition to low-carbon logistics.",
       "stats": [
-        { "value": "25%", "label": "of global emissions" },
-        { "value": "-45%", "label": "EU 2030 target" },
-        { "value": "100+", "label": "transport emission factors" },
-        { "value": "24h", "label": "automated calculation" }
+        {
+          "value": "25%",
+          "label": "of global emissions"
+        },
+        {
+          "value": "-45%",
+          "label": "EU 2030 target"
+        },
+        {
+          "value": "100+",
+          "label": "transport emission factors"
+        },
+        {
+          "value": "24h",
+          "label": "automated calculation"
+        }
       ],
       "challenges": [
-        { "title": "Vehicle fleet", "description": "Direct emissions from trucks, light utility vehicles and company fleets to quantify and optimise." },
-        { "title": "Multi-modal logistics", "description": "Combining road, rail, sea and air with very different emission factors." },
-        { "title": "Last mile", "description": "Urban delivery is the most emissive link per tonne-kilometre." }
+        {
+          "title": "Vehicle fleet",
+          "description": "Direct emissions from trucks, light utility vehicles and company fleets to quantify and optimise."
+        },
+        {
+          "title": "Multi-modal logistics",
+          "description": "Combining road, rail, sea and air with very different emission factors."
+        },
+        {
+          "title": "Last mile",
+          "description": "Urban delivery is the most emissive link per tonne-kilometre."
+        }
       ],
       "benefits": [
-        { "title": "Per-mode calculation", "description": "Detailed emission factors for each mode: road, rail, sea, air." },
-        { "title": "Fleet tracking", "description": "Integration of consumption data for precise per-vehicle emissions tracking." },
-        { "title": "CSRD compliance", "description": "Reports compliant with European regulatory requirements for the transport sector." },
-        { "title": "Electrification scenarios", "description": "Simulate the impact of switching to electric or hydrogen vehicles." }
+        {
+          "title": "Per-mode calculation",
+          "description": "Detailed emission factors for each mode: road, rail, sea, air."
+        },
+        {
+          "title": "Fleet tracking",
+          "description": "Integration of consumption data for precise per-vehicle emissions tracking."
+        },
+        {
+          "title": "CSRD compliance",
+          "description": "Reports compliant with European regulatory requirements for the transport sector."
+        },
+        {
+          "title": "Electrification scenarios",
+          "description": "Simulate the impact of switching to electric or hydrogen vehicles."
+        }
       ]
     }
   },
@@ -6659,9 +6825,21 @@
       "ctaExpert": "Talk to an expert"
     },
     "kpis": [
-      { "icon": "TrendingDown", "value": "10-15%", "label": "of energy waste typically detectable" },
-      { "icon": "Gauge", "value": "< 6 months", "label": "to prioritise your investments (PV, LED, HVAC...)" },
-      { "icon": "Bell", "value": "24/7", "label": "automatic drift monitoring" }
+      {
+        "icon": "TrendingDown",
+        "value": "10-15%",
+        "label": "of energy waste typically detectable"
+      },
+      {
+        "icon": "Gauge",
+        "value": "< 6 months",
+        "label": "to prioritise your investments (PV, LED, HVAC...)"
+      },
+      {
+        "icon": "Bell",
+        "value": "24/7",
+        "label": "automatic drift monitoring"
+      }
     ],
     "roi": {
       "badge": "ROI simulator",
@@ -6692,24 +6870,72 @@
         "wbDesc": "Measure, detect waste and validate your savings."
       },
       "items": [
-        { "icon": "LineChart", "title": "Prove the real ROI of your PV", "desc": "kWh produced, self-consumed, exported. Quantify exactly what your panels return each month." },
-        { "icon": "Moon", "title": "Eliminate night-time waste", "desc": "PV or not, lights, AC and standby machines keep consuming. WattBim spots drifts 24/7." },
-        { "icon": "Activity", "title": "Prioritise the right investments", "desc": "LED, HVAC, batteries or PV expansion: WattBim tells you which lever has the highest financial impact." },
-        { "icon": "Building2", "title": "Compare site by site", "desc": "Rank your buildings with and without PV. Identify those still wasting despite solar." },
-        { "icon": "Leaf", "title": "Value your carbon savings", "desc": "Automatically sync saved kWh into your CarboScan Scope 1 & 2 footprint." },
-        { "icon": "ShieldCheck", "title": "Audits & green financing", "desc": "Traceable reports for utilities, agencies, banks and ESG investors." }
+        {
+          "icon": "LineChart",
+          "title": "Prove the real ROI of your PV",
+          "desc": "kWh produced, self-consumed, exported. Quantify exactly what your panels return each month."
+        },
+        {
+          "icon": "Moon",
+          "title": "Eliminate night-time waste",
+          "desc": "PV or not, lights, AC and standby machines keep consuming. WattBim spots drifts 24/7."
+        },
+        {
+          "icon": "Activity",
+          "title": "Prioritise the right investments",
+          "desc": "LED, HVAC, batteries or PV expansion: WattBim tells you which lever has the highest financial impact."
+        },
+        {
+          "icon": "Building2",
+          "title": "Compare site by site",
+          "desc": "Rank your buildings with and without PV. Identify those still wasting despite solar."
+        },
+        {
+          "icon": "Leaf",
+          "title": "Value your carbon savings",
+          "desc": "Automatically sync saved kWh into your CarboScan Scope 1 & 2 footprint."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Audits & green financing",
+          "desc": "Traceable reports for utilities, agencies, banks and ESG investors."
+        }
       ]
     },
     "features": {
       "title": "Everything you need to pilot the energy of your buildings",
       "subtitle": "A complete platform, from meter to decarbonization.",
       "items": [
-        { "icon": "Building2", "title": "Multi-building, multi-meter", "desc": "Track every site, every meter (elec, gas, heat) and every contract in one view." },
-        { "icon": "Moon", "title": "Night-time waste detection", "desc": "Automatic detection of abnormal consumption between 10pm and 6am." },
-        { "icon": "Activity", "title": "Peak & drift alerts", "desc": "Be notified as soon as consumption exceeds your thresholds or drifts vs prior year." },
-        { "icon": "LineChart", "title": "Savings tracking", "desc": "Measure real gains month after month and prove your results." },
-        { "icon": "Leaf", "title": "Carbon footprint sync", "desc": "Every validated reading automatically feeds your Scope 1 & 2 footprint." },
-        { "icon": "ShieldCheck", "title": "Secure data", "desc": "European hosting, multi-tenant RLS, GDPR compliance." }
+        {
+          "icon": "Building2",
+          "title": "Multi-building, multi-meter",
+          "desc": "Track every site, every meter (elec, gas, heat) and every contract in one view."
+        },
+        {
+          "icon": "Moon",
+          "title": "Night-time waste detection",
+          "desc": "Automatic detection of abnormal consumption between 10pm and 6am."
+        },
+        {
+          "icon": "Activity",
+          "title": "Peak & drift alerts",
+          "desc": "Be notified as soon as consumption exceeds your thresholds or drifts vs prior year."
+        },
+        {
+          "icon": "LineChart",
+          "title": "Savings tracking",
+          "desc": "Measure real gains month after month and prove your results."
+        },
+        {
+          "icon": "Leaf",
+          "title": "Carbon footprint sync",
+          "desc": "Every validated reading automatically feeds your Scope 1 & 2 footprint."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Secure data",
+          "desc": "European hosting, multi-tenant RLS, GDPR compliance."
+        }
       ]
     },
     "iot": {
@@ -6717,9 +6943,21 @@
       "title": "Connect your meters in a few steps",
       "subtitle": "Manual entry, Excel import, API or IoT sensors: WattBim adapts to your equipment level. No proprietary hardware required.",
       "steps": [
-        { "icon": "Cpu", "title": "1. Sensor", "desc": "A submeter or a clamp ammeter on your electrical panel (Shelly EM, ESP32, Modbus…)." },
-        { "icon": "Wifi", "title": "2. Gateway", "desc": "Wi-Fi, 4G or Ethernet: the gateway posts readings to WattBim over HTTPS using your API key." },
-        { "icon": "Activity", "title": "3. WattBim", "desc": "Storage, automatic CO₂ calculation, alerts and sync into your Scope 1 & 2 footprint." }
+        {
+          "icon": "Cpu",
+          "title": "1. Sensor",
+          "desc": "A submeter or a clamp ammeter on your electrical panel (Shelly EM, ESP32, Modbus…)."
+        },
+        {
+          "icon": "Wifi",
+          "title": "2. Gateway",
+          "desc": "Wi-Fi, 4G or Ethernet: the gateway posts readings to WattBim over HTTPS using your API key."
+        },
+        {
+          "icon": "Activity",
+          "title": "3. WattBim",
+          "desc": "Storage, automatic CO₂ calculation, alerts and sync into your Scope 1 & 2 footprint."
+        }
       ],
       "guideTitle": "Strategic guide — Why monitor your buildings' energy",
       "guideDesc": "Benefits, typical ROI and the right questions to ask before launching an energy monitoring project. For executives, CFOs and CSR managers.",
@@ -6729,9 +6967,30 @@
     "audiences": {
       "title": "Built for organisations that want to act",
       "groups": [
-        { "title": "Tertiary & offices", "items": ["Offices, HQs, branches", "Retail chains", "Hotels & restaurants"] },
-        { "title": "Industry & SMEs", "items": ["Production sites", "Logistics warehouses", "Workshops"] },
-        { "title": "Public sector", "items": ["Administrative buildings", "Schools, hospitals", "Local authorities"] }
+        {
+          "title": "Tertiary & offices",
+          "items": [
+            "Offices, HQs, branches",
+            "Retail chains",
+            "Hotels & restaurants"
+          ]
+        },
+        {
+          "title": "Industry & SMEs",
+          "items": [
+            "Production sites",
+            "Logistics warehouses",
+            "Workshops"
+          ]
+        },
+        {
+          "title": "Public sector",
+          "items": [
+            "Administrative buildings",
+            "Schools, hospitals",
+            "Local authorities"
+          ]
+        }
       ]
     },
     "finalCta": {
@@ -6753,35 +7012,72 @@
       {
         "title": "Collect your data",
         "description": "Choose the collection mode that fits your needs",
-        "features": ["Guided mode (step-by-step wizard)", "Direct entry (manual add)", "Excel/CSV import (bulk data)", "Invoice upload (proof)"]
+        "features": [
+          "Guided mode (step-by-step wizard)",
+          "Direct entry (manual add)",
+          "Excel/CSV import (bulk data)",
+          "Invoice upload (proof)"
+        ]
       },
       {
         "title": "Your data is centralised",
         "description": "All your data is stored in a single secure repository",
-        "features": ["One data point = many uses", "No duplicate entry", "Real-time updates", "Full history"]
+        "features": [
+          "One data point = many uses",
+          "No duplicate entry",
+          "Real-time updates",
+          "Full history"
+        ]
       },
       {
         "title": "Use your data",
         "description": "Your data automatically feeds every module",
-        "features": ["Carbon footprint (Scopes 1, 2, 3)", "Product Footprint", "Simple LCA", "Global dashboard"]
+        "features": [
+          "Carbon footprint (Scopes 1, 2, 3)",
+          "Product Footprint",
+          "Simple LCA",
+          "Global dashboard"
+        ]
       },
       {
         "title": "Improve your score",
         "description": "Track data quality and improve calculation reliability",
-        "features": ["Visible quality score", "Real vs estimated data", "Improvement suggestions", "Full traceability"]
+        "features": [
+          "Visible quality score",
+          "Real vs estimated data",
+          "Improvement suggestions",
+          "Full traceability"
+        ]
       }
     ],
     "modesTitle": "4 collection modes tailored to your needs",
     "modesSubtitle": "Pick the mode that best fits your context",
     "modes": [
-      { "title": "Guided mode", "description": "Step-by-step wizard for Carbon Footprint, Product Footprint or Simple LCA" },
-      { "title": "Direct entry", "description": "Manually add a carbon activity data point" },
-      { "title": "Excel/CSV import", "description": "Import your data in bulk from a file" },
-      { "title": "Invoice upload", "description": "Upload your invoices as proof and fill in the key data" }
+      {
+        "title": "Guided mode",
+        "description": "Step-by-step wizard for Carbon Footprint, Product Footprint or Simple LCA"
+      },
+      {
+        "title": "Direct entry",
+        "description": "Manually add a carbon activity data point"
+      },
+      {
+        "title": "Excel/CSV import",
+        "description": "Import your data in bulk from a file"
+      },
+      {
+        "title": "Invoice upload",
+        "description": "Upload your invoices as proof and fill in the key data"
+      }
     ],
     "benefits": {
       "title": "Why choose our centralised collection?",
-      "items": ["No duplicate entry", "Reusable data", "Visible quality score", "Real-time updates"]
+      "items": [
+        "No duplicate entry",
+        "Reusable data",
+        "Visible quality score",
+        "Real-time updates"
+      ]
     },
     "finalCta": {
       "title": "Ready to start?",
@@ -6797,13 +7093,42 @@
     },
     "stepsTitle": "Our step-by-step support",
     "steps": [
-      { "title": "Define your goals", "bullets": ["Set quantified and realistic targets", "Prioritise actions by impact"] },
-      { "title": "Detailed action plan", "bullets": ["Concrete actions with schedule", "Budget forecast and ROI"] },
-      { "title": "Implementation", "bullets": ["Execution support", "Team training"] },
-      { "title": "Monitoring & optimisation", "bullets": ["Measure achieved results", "Adjustments and continuous improvement"] }
+      {
+        "title": "Define your goals",
+        "bullets": [
+          "Set quantified and realistic targets",
+          "Prioritise actions by impact"
+        ]
+      },
+      {
+        "title": "Detailed action plan",
+        "bullets": [
+          "Concrete actions with schedule",
+          "Budget forecast and ROI"
+        ]
+      },
+      {
+        "title": "Implementation",
+        "bullets": [
+          "Execution support",
+          "Team training"
+        ]
+      },
+      {
+        "title": "Monitoring & optimisation",
+        "bullets": [
+          "Measure achieved results",
+          "Adjustments and continuous improvement"
+        ]
+      }
     ],
     "advantagesTitle": "Why choose us?",
-    "advantages": ["Recognised expertise", "Personalised approach", "Measurable results", "Long-term support"],
+    "advantages": [
+      "Recognised expertise",
+      "Personalised approach",
+      "Measurable results",
+      "Long-term support"
+    ],
     "finalCta": {
       "title": "Start your transformation today",
       "subtitle": "Book a free first exchange with our experts",
@@ -6829,9 +7154,18 @@
       "title": "Intelligence at the service of decision",
       "description": "Every organisation is unique. That is why DecarboTech is built on an <strong>intelligent analysis</strong> that turns your data and goals into a clear, personalised trajectory.",
       "items": [
-        { "title": "Intelligent modelling", "description": "Reduction levers identified and quantified for your specific context" },
-        { "title": "Time projection", "description": "Visualise your carbon evolution over time with different scenarios" },
-        { "title": "Dynamic indicators", "description": "Pilot your performance and resilience with relevant KPIs" }
+        {
+          "title": "Intelligent modelling",
+          "description": "Reduction levers identified and quantified for your specific context"
+        },
+        {
+          "title": "Time projection",
+          "description": "Visualise your carbon evolution over time with different scenarios"
+        },
+        {
+          "title": "Dynamic indicators",
+          "description": "Pilot your performance and resilience with relevant KPIs"
+        }
       ]
     },
     "results": {
@@ -6849,10 +7183,22 @@
       "withoutHead": "Decarbonize without method",
       "withHead": "Decarbonize with DecarboTech",
       "rows": [
-        { "without": "Fragmented view", "with": "Structured and evolving strategy" },
-        { "without": "One-off actions", "with": "Coherent and measurable trajectory" },
-        { "without": "Intuitive decisions", "with": "Decisions backed by reliable data" },
-        { "without": "Time and resources wasted", "with": "Clear view, measurable return on action" }
+        {
+          "without": "Fragmented view",
+          "with": "Structured and evolving strategy"
+        },
+        {
+          "without": "One-off actions",
+          "with": "Coherent and measurable trajectory"
+        },
+        {
+          "without": "Intuitive decisions",
+          "with": "Decisions backed by reliable data"
+        },
+        {
+          "without": "Time and resources wasted",
+          "with": "Clear view, measurable return on action"
+        }
       ],
       "summary": "DecarboTech: the <span class=\"text-primary\">science of decarbonization</span> combined with the <span class=\"text-primary\">simplicity of a piloting tool</span>."
     },
@@ -6873,19 +7219,33 @@
       "subtitle": "Discover how CarboScan can help you measure and reduce your carbon footprint. Our experts will walk you through the solution in 30 minutes via a personalised video call."
     },
     "perks": {
-      "personalized": { "title": "Personalised session", "desc": "We adapt the demo to your specific needs" },
-      "duration": { "title": "30 minutes", "desc": "A complete demo in just 30 minutes" },
-      "free": { "title": "No commitment", "desc": "No commitment, just a presentation of our solutions" }
+      "personalized": {
+        "title": "Personalised session",
+        "desc": "We adapt the demo to your specific needs"
+      },
+      "duration": {
+        "title": "30 minutes",
+        "desc": "A complete demo in just 30 minutes"
+      },
+      "free": {
+        "title": "No commitment",
+        "desc": "No commitment, just a presentation of our solutions"
+      }
     },
     "form": {
       "title": "Schedule your demo",
-      "firstName": "First name", "firstNamePh": "Your first name",
-      "lastName": "Last name", "lastNamePh": "Your last name",
+      "firstName": "First name",
+      "firstNamePh": "Your first name",
+      "lastName": "Last name",
+      "lastNamePh": "Your last name",
       "email": "Business email",
-      "company": "Company", "companyPh": "Your company name",
+      "company": "Company",
+      "companyPh": "Your company name",
       "phone": "Phone",
-      "slot": "Preferred slot", "slotPh": "Select a slot",
-      "message": "Message (optional)", "messagePh": "Tell us about your specific needs...",
+      "slot": "Preferred slot",
+      "slotPh": "Select a slot",
+      "message": "Message (optional)",
+      "messagePh": "Tell us about your specific needs...",
       "submit": "Book my demo"
     },
     "timeSlots": {
@@ -6909,11 +7269,21 @@
       "title": "What to expect",
       "during": {
         "title": "During the demo:",
-        "items": ["Overview of key features", "Simulation with your company's data", "Personalised Q&A", "Recommendations tailored to your sector"]
+        "items": [
+          "Overview of key features",
+          "Simulation with your company's data",
+          "Personalised Q&A",
+          "Recommendations tailored to your sector"
+        ]
       },
       "after": {
         "title": "After the demo:",
-        "items": ["Email recap", "Personalised commercial proposal", "Access to additional resources", "Personalised follow-up based on your needs"]
+        "items": [
+          "Email recap",
+          "Personalised commercial proposal",
+          "Access to additional resources",
+          "Personalised follow-up based on your needs"
+        ]
       }
     }
   },
@@ -6941,7 +7311,12 @@
           "2 revisions per year",
           "Online debrief session – 1h"
         ],
-        "notIncluded": ["CBAM module (EU exporters)", "Detailed action plan", "Internal training", "10-year Net Zero trajectory"]
+        "notIncluded": [
+          "CBAM module (EU exporters)",
+          "Detailed action plan",
+          "Internal training",
+          "10-year Net Zero trajectory"
+        ]
       },
       "pro": {
         "name": "Pro",
@@ -6959,7 +7334,10 @@
           "3 revisions per year",
           "Online debrief session – 1h30 with Q&A"
         ],
-        "notIncluded": ["Internal team training", "Detailed 10-year Net Zero trajectory"]
+        "notIncluded": [
+          "Internal team training",
+          "Detailed 10-year Net Zero trajectory"
+        ]
       },
       "expert": {
         "name": "Expert",
@@ -6987,7 +7365,289 @@
         "notIncluded": []
       }
     }
+  },
+  "facteursEmissionLanding": {
+    "hero": {
+      "eyebrow": "Emission factor catalogue",
+      "title": "Carbon emission factors:\nfind the data that fits your calculation",
+      "subtitle": "Explore a catalogue of more than 10,000 emission factors that are referenced and documented to measure emissions from energy, transport, procurement and organisational activities.",
+      "ctaPrimary": "Discover CarboScan",
+      "ctaSecondary": "Explore emission factors"
+    },
+    "stats": {
+      "items": [
+        {
+          "value": "10,000+",
+          "label": "Referenced factors"
+        },
+        {
+          "value": "Multi-source",
+          "label": "Recognised datasets"
+        },
+        {
+          "value": "Traceability",
+          "label": "Source and version documented"
+        },
+        {
+          "value": "Multi-context",
+          "label": "Energy, transport, purchases…"
+        }
+      ]
+    },
+    "what": {
+      "title": "What is an emission factor?",
+      "body": "An emission factor converts an activity quantity into greenhouse-gas emissions. It links a physical or monetary quantity to an impact in kgCO₂e, within a given context.",
+      "disclaimer": "A factor value depends on country, year, source, technology, boundary and methodology. No single value is universal.",
+      "formula": {
+        "activity": "ACTIVITY DATA",
+        "factor": "EMISSION FACTOR",
+        "result": "GHG EMISSIONS"
+      },
+      "example": "Generic example: 1,000 kWh × suitable emission factor = emissions in kgCO₂e"
+    },
+    "catalog": {
+      "title": "More than 10,000 referenced emission factors",
+      "body": "CarboScan is building a multi-source catalogue to search and document the factors needed for carbon calculations.",
+      "metaIntro": "Depending on the source and available data, a factor may include:",
+      "metaItems": [
+        "Name and categories",
+        "Value and unit",
+        "Geography and year",
+        "Source and dataset version",
+        "Factor type",
+        "Methodological context",
+        "Traceability information"
+      ]
+    },
+    "search": {
+      "title": "Catalogue preview",
+      "subtitle": "Search by activity, filter by category and review documented context — without loading the full registry in the browser.",
+      "placeholder": "Search an emission factor…",
+      "chips": {
+        "electricity": "Electricity",
+        "transport": "Transport",
+        "fuels": "Fuels",
+        "freight": "Freight",
+        "purchases": "Purchases"
+      },
+      "rows": {
+        "electricity": "Grid electricity",
+        "diesel": "Diesel / gas oil",
+        "grid": "Location-based electricity"
+      },
+      "disclaimer": "Illustrative demo: representative units and sources, without invented numeric values."
+    },
+    "context": {
+      "title": "The same need can match several factors",
+      "subtitle": "Text search alone is not enough to select a relevant emission factor.",
+      "cards": [
+        {
+          "title": "Geography",
+          "body": "France, United Kingdom, Tunisia, Global… Geography determines whether a factor fits your activity."
+        },
+        {
+          "title": "Unit",
+          "body": "kWh, kg, tonne, km, passenger.km, tonne.km… The unit must match the activity quantity."
+        },
+        {
+          "title": "Boundary",
+          "body": "Direct emissions, upstream energy, life cycle… when documented. Do not infer a missing boundary."
+        },
+        {
+          "title": "Source & version",
+          "body": "A factor must stay attached to the dataset and version it comes from to remain auditable."
+        }
+      ]
+    },
+    "resolve": {
+      "title": "Finding a factor is not enough. You need the right one.",
+      "body": "CarboScan is developing resolution logic that uses available context to identify factors compatible with the activity under study.",
+      "items": [
+        "Activity and unit",
+        "Geography",
+        "Source and year",
+        "Methodological boundary",
+        "Energy context",
+        "Metadata availability"
+      ],
+      "disclaimer": "Not every catalogue factor is automatically selected for every calculation. Resolution depends on the provided context and applicable methodological rules."
+    },
+    "traceability": {
+      "title": "An emission factor must be justifiable",
+      "body": "A professional carbon assessment should not only return a result. It should make the contributing activity data and factors understandable.",
+      "steps": [
+        "Source",
+        "Version",
+        "Factor",
+        "Activity data",
+        "Optional conversion",
+        "Result"
+      ],
+      "itemsIntro": "Depending on available data, CarboScan may retain:",
+      "items": [
+        "Factor used and identifier",
+        "Source and version",
+        "Unit and quantity",
+        "Applied conversion when relevant",
+        "Calculated result"
+      ]
+    },
+    "sources": {
+      "title": "A multi-source catalogue that keeps evolving",
+      "subtitle": "CarboScan progressively gathers factors from recognised datasets to adapt calculations across sectors, countries and activities.",
+      "badges": {
+        "available": "Available",
+        "soon": "Coming soon",
+        "upcoming": "Planned",
+        "study": "Under review"
+      },
+      "available": {
+        "title": "Available",
+        "items": [
+          {
+            "name": "ADEME Base Carbone",
+            "description": "French emission-factor dataset widely used in carbon accounting workflows."
+          },
+          {
+            "name": "UK Government GHG Conversion Factors",
+            "description": "Conversion factors published by the UK government for multiple activity categories."
+          },
+          {
+            "name": "CarboScan / Tunisia",
+            "description": "Documented factors used for selected local contexts and CarboScan calculation needs."
+          }
+        ]
+      },
+      "soon": {
+        "title": "Coming soon",
+        "items": [
+          {
+            "name": "EPA",
+            "description": "US Environmental Protection Agency — GHG Emission Factors Hub."
+          },
+          {
+            "name": "INIES",
+            "description": "Environmental data for construction products and equipment."
+          },
+          {
+            "name": "PEP ecopassport",
+            "description": "Environmental data especially relevant for electrical, electronic and HVAC equipment."
+          },
+          {
+            "name": "IPCC",
+            "description": "Methodological references and factors from IPCC work."
+          },
+          {
+            "name": "Agribalyse",
+            "description": "Environmental data particularly relevant for food and agriculture."
+          }
+        ]
+      },
+      "upcoming": {
+        "title": "Planned",
+        "items": [
+          {
+            "name": "HBEFA",
+            "description": "Especially relevant for road-transport emissions."
+          },
+          {
+            "name": "Worldsteel",
+            "description": "Sector data related to steel."
+          },
+          {
+            "name": "Plastics Europe",
+            "description": "Sector data related to plastics."
+          }
+        ]
+      },
+      "study": {
+        "title": "Under review",
+        "items": [
+          {
+            "name": "ecoinvent",
+            "description": "Licence and usage conditions must be reviewed before any integration. No integration is promised at this stage."
+          }
+        ]
+      },
+      "roadmapNote": "The CarboScan catalogue evolves progressively. Source availability in the catalogue does not mean a factor is automatically applicable to every calculation. Geography, unit and methodological context remain decisive."
+    },
+    "useCases": {
+      "title": "Factors adapted to your activities",
+      "items": [
+        {
+          "title": "Energy",
+          "items": [
+            "Electricity",
+            "Heat",
+            "Fuels"
+          ]
+        },
+        {
+          "title": "Mobility",
+          "items": [
+            "Business travel",
+            "Trips",
+            "Vehicles"
+          ]
+        },
+        {
+          "title": "Freight",
+          "items": [
+            "Road transport",
+            "Maritime",
+            "Air — subject to factor availability"
+          ]
+        },
+        {
+          "title": "Purchases",
+          "items": [
+            "Goods",
+            "Services",
+            "Spend — subject to methodology and availability"
+          ]
+        },
+        {
+          "title": "Assets / Products",
+          "items": [
+            "To be developed progressively with suitable datasets"
+          ]
+        }
+      ]
+    },
+    "cta": {
+      "title": "Emission factors are only one part of a carbon assessment",
+      "body": "CarboScan helps organise activity data, calculations and reporting in a broader carbon-accounting workflow.",
+      "primary": "Start my carbon assessment",
+      "secondary": "Discover the platform"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "question": "What is an emission factor?",
+          "answer": "It is a coefficient that converts activity data (kWh, litre, km…) into greenhouse-gas emissions, usually expressed in kgCO₂e, within a given context."
+        },
+        {
+          "question": "How do you calculate CO₂ emissions with an emission factor?",
+          "answer": "Multiply the activity quantity by the suitable factor after checking that unit, geography and boundary are consistent. The result is usually expressed in kgCO₂e or tCO₂e."
+        },
+        {
+          "question": "Where can I find ADEME emission factors?",
+          "answer": "ADEME Base Carbone is a French emission-factor dataset. CarboScan references ADEME factors in its multi-source catalogue, with documented source and version."
+        },
+        {
+          "question": "Why does an emission factor vary by country?",
+          "answer": "Because energy mixes, technologies, practices and publication methods differ. A French factor is not automatically valid for the UK or Tunisia."
+        },
+        {
+          "question": "What is the difference between activity data and an emission factor?",
+          "answer": "Activity data describes what you consumed or did (e.g. 1,000 kWh). The emission factor converts that activity into GHG emissions."
+        },
+        {
+          "question": "How does CarboScan ensure traceability of used factors?",
+          "answer": "When a calculation follows the intended paths, CarboScan retains available provenance information: factor, source, version, quantities, conversions and result, to document the calculation."
+        }
+      ]
+    }
   }
 }
-
-

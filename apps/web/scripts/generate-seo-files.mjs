@@ -21,6 +21,7 @@ const PUBLIC_SITEMAP_ROUTES = [
   { path: "/faq", changefreq: "monthly", priority: 0.8 },
   { path: "/blog", changefreq: "weekly", priority: 0.8 },
   { path: "/bilan-carbone", changefreq: "monthly", priority: 0.9 },
+  { path: "/facteurs-emission", changefreq: "monthly", priority: 0.85 },
   { path: "/empreinte-produit", changefreq: "monthly", priority: 0.8 },
   { path: "/acv-landing", changefreq: "monthly", priority: 0.7 },
   { path: "/collect", changefreq: "monthly", priority: 0.8 },

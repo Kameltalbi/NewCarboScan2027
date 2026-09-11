@@ -291,7 +291,8 @@
       "tryFree": "Essayez gratuitement",
       "requestDemo": "Demander une démo",
       "login": "Connexion"
-    }
+    },
+    "emissionFactors": "Facteurs d'émission"
   },
   "hero": {
     "title": "Mesurez. Pilotez. Réduisez.",
@@ -6540,21 +6541,54 @@
       "metaDescription": "Réalisez votre bilan carbone industriel avec CarboScan. Mesurez les émissions Scope 1, 2, 3 de votre usine et identifiez les leviers de décarbonation.",
       "heroDescription": "L'industrie représente 21% des émissions mondiales de GES. CarboScan vous aide à cartographier vos émissions, identifier les postes les plus émetteurs et piloter votre trajectoire de décarbonation.",
       "stats": [
-        { "value": "21%", "label": "des émissions mondiales" },
-        { "value": "-30%", "label": "réduction potentielle d'ici 2030" },
-        { "value": "3", "label": "scopes analysés" },
-        { "value": "48h", "label": "rapport livré" }
+        {
+          "value": "21%",
+          "label": "des émissions mondiales"
+        },
+        {
+          "value": "-30%",
+          "label": "réduction potentielle d'ici 2030"
+        },
+        {
+          "value": "3",
+          "label": "scopes analysés"
+        },
+        {
+          "value": "48h",
+          "label": "rapport livré"
+        }
       ],
       "challenges": [
-        { "title": "Processus énergivores", "description": "Les procédés industriels consomment de grandes quantités d'énergie fossile, générant des émissions directes significatives." },
-        { "title": "Chaîne d'approvisionnement complexe", "description": "Le Scope 3 amont (matières premières, transport) représente souvent plus de 60% de l'empreinte totale." },
-        { "title": "Réglementations croissantes", "description": "CSRD, taxonomie européenne, CBAM : les obligations de reporting carbone se multiplient." }
+        {
+          "title": "Processus énergivores",
+          "description": "Les procédés industriels consomment de grandes quantités d'énergie fossile, générant des émissions directes significatives."
+        },
+        {
+          "title": "Chaîne d'approvisionnement complexe",
+          "description": "Le Scope 3 amont (matières premières, transport) représente souvent plus de 60% de l'empreinte totale."
+        },
+        {
+          "title": "Réglementations croissantes",
+          "description": "CSRD, taxonomie européenne, CBAM : les obligations de reporting carbone se multiplient."
+        }
       ],
       "benefits": [
-        { "title": "Analyse multi-sites", "description": "Consolidez les données de toutes vos usines et sites de production en un seul tableau de bord." },
-        { "title": "Facteurs d'émission industriels", "description": "Base de données spécialisée avec les facteurs d'émission pour les procédés industriels." },
-        { "title": "Conformité réglementaire", "description": "Rapports conformes aux normes ISO 14064, GHG Protocol et CSRD." },
-        { "title": "Plan de décarbonation", "description": "Identifiez les leviers de réduction les plus impactants et créez votre feuille de route climat." }
+        {
+          "title": "Analyse multi-sites",
+          "description": "Consolidez les données de toutes vos usines et sites de production en un seul tableau de bord."
+        },
+        {
+          "title": "Facteurs d'émission industriels",
+          "description": "Base de données spécialisée avec les facteurs d'émission pour les procédés industriels."
+        },
+        {
+          "title": "Conformité réglementaire",
+          "description": "Rapports conformes aux normes ISO 14064, GHG Protocol et CSRD."
+        },
+        {
+          "title": "Plan de décarbonation",
+          "description": "Identifiez les leviers de réduction les plus impactants et créez votre feuille de route climat."
+        }
       ]
     },
     "btp": {
@@ -6564,21 +6598,54 @@
       "metaDescription": "Évaluez l'empreinte carbone de vos chantiers et projets de construction. Réduisez l'impact environnemental du BTP avec CarboScan.",
       "heroDescription": "Le secteur du bâtiment et de la construction représente 38% des émissions de CO₂ liées à l'énergie. CarboScan vous aide à mesurer l'impact de vos chantiers et bâtiments.",
       "stats": [
-        { "value": "38%", "label": "des émissions liées à l'énergie" },
-        { "value": "RE2020", "label": "conformité réglementaire" },
-        { "value": "ACV", "label": "analyse cycle de vie intégrée" },
-        { "value": "50+", "label": "matériaux référencés" }
+        {
+          "value": "38%",
+          "label": "des émissions liées à l'énergie"
+        },
+        {
+          "value": "RE2020",
+          "label": "conformité réglementaire"
+        },
+        {
+          "value": "ACV",
+          "label": "analyse cycle de vie intégrée"
+        },
+        {
+          "value": "50+",
+          "label": "matériaux référencés"
+        }
       ],
       "challenges": [
-        { "title": "Matériaux à forte empreinte", "description": "Le ciment et l'acier représentent une part majeure des émissions dans la construction." },
-        { "title": "Chantiers dispersés", "description": "Consolider les données carbone de multiples chantiers et sous-traitants." },
-        { "title": "Cycle de vie long", "description": "Prendre en compte l'exploitation et la fin de vie du bâtiment dans le calcul." }
+        {
+          "title": "Matériaux à forte empreinte",
+          "description": "Le ciment et l'acier représentent une part majeure des émissions dans la construction."
+        },
+        {
+          "title": "Chantiers dispersés",
+          "description": "Consolider les données carbone de multiples chantiers et sous-traitants."
+        },
+        {
+          "title": "Cycle de vie long",
+          "description": "Prendre en compte l'exploitation et la fin de vie du bâtiment dans le calcul."
+        }
       ],
       "benefits": [
-        { "title": "ACV Bâtiment intégrée", "description": "Analyse du cycle de vie complète de vos projets de construction." },
-        { "title": "Suivi par chantier", "description": "Tableau de bord dédié pour suivre les émissions chantier par chantier." },
-        { "title": "Conformité RE2020", "description": "Calculs conformes à la réglementation environnementale des bâtiments." },
-        { "title": "Matériaux bas carbone", "description": "Comparez les alternatives matériaux et leur impact sur l'empreinte globale." }
+        {
+          "title": "ACV Bâtiment intégrée",
+          "description": "Analyse du cycle de vie complète de vos projets de construction."
+        },
+        {
+          "title": "Suivi par chantier",
+          "description": "Tableau de bord dédié pour suivre les émissions chantier par chantier."
+        },
+        {
+          "title": "Conformité RE2020",
+          "description": "Calculs conformes à la réglementation environnementale des bâtiments."
+        },
+        {
+          "title": "Matériaux bas carbone",
+          "description": "Comparez les alternatives matériaux et leur impact sur l'empreinte globale."
+        }
       ]
     },
     "agroalimentaire": {
@@ -6588,21 +6655,54 @@
       "metaDescription": "Mesurez l'empreinte carbone de votre chaîne alimentaire. De la production agricole à la distribution, réduisez vos émissions avec CarboScan.",
       "heroDescription": "L'agroalimentaire représente 26% des émissions mondiales de GES. De l'agriculture à la distribution, CarboScan vous accompagne pour mesurer et réduire l'empreinte de votre chaîne de valeur.",
       "stats": [
-        { "value": "26%", "label": "des émissions mondiales" },
-        { "value": "Scope 3", "label": "principal poste d'émission" },
-        { "value": "PCF", "label": "empreinte produit intégrée" },
-        { "value": "200+", "label": "facteurs agricoles" }
+        {
+          "value": "26%",
+          "label": "des émissions mondiales"
+        },
+        {
+          "value": "Scope 3",
+          "label": "principal poste d'émission"
+        },
+        {
+          "value": "PCF",
+          "label": "empreinte produit intégrée"
+        },
+        {
+          "value": "200+",
+          "label": "facteurs agricoles"
+        }
       ],
       "challenges": [
-        { "title": "Émissions agricoles", "description": "Méthane, protoxyde d'azote et CO₂ issus de l'élevage et des cultures à quantifier." },
-        { "title": "Chaîne du froid", "description": "La réfrigération et le transport frigorifique sont des postes d'émission majeurs." },
-        { "title": "Gaspillage alimentaire", "description": "Les pertes et déchets alimentaires ont un impact carbone significatif souvent sous-estimé." }
+        {
+          "title": "Émissions agricoles",
+          "description": "Méthane, protoxyde d'azote et CO₂ issus de l'élevage et des cultures à quantifier."
+        },
+        {
+          "title": "Chaîne du froid",
+          "description": "La réfrigération et le transport frigorifique sont des postes d'émission majeurs."
+        },
+        {
+          "title": "Gaspillage alimentaire",
+          "description": "Les pertes et déchets alimentaires ont un impact carbone significatif souvent sous-estimé."
+        }
       ],
       "benefits": [
-        { "title": "Facteurs agricoles spécialisés", "description": "Base de données complète incluant les émissions de l'agriculture, élevage et transformation." },
-        { "title": "Empreinte produit (PCF)", "description": "Calculez l'empreinte carbone produit de chaque référence de votre catalogue." },
-        { "title": "Affichage environnemental", "description": "Préparez la conformité avec l'affichage environnemental obligatoire." },
-        { "title": "Approvisionnement durable", "description": "Évaluez et comparez les fournisseurs en fonction de leur empreinte carbone." }
+        {
+          "title": "Facteurs agricoles spécialisés",
+          "description": "Base de données complète incluant les émissions de l'agriculture, élevage et transformation."
+        },
+        {
+          "title": "Empreinte produit (PCF)",
+          "description": "Calculez l'empreinte carbone produit de chaque référence de votre catalogue."
+        },
+        {
+          "title": "Affichage environnemental",
+          "description": "Préparez la conformité avec l'affichage environnemental obligatoire."
+        },
+        {
+          "title": "Approvisionnement durable",
+          "description": "Évaluez et comparez les fournisseurs en fonction de leur empreinte carbone."
+        }
       ]
     },
     "energie": {
@@ -6612,21 +6712,54 @@
       "metaDescription": "Mesurez l'empreinte carbone de votre activité énergétique. Production, distribution et consommation : pilotez votre transition avec CarboScan.",
       "heroDescription": "Le secteur énergétique est le premier contributeur aux émissions mondiales de GES. CarboScan accompagne les acteurs de l'énergie dans leur transition vers un mix décarboné.",
       "stats": [
-        { "value": "73%", "label": "des émissions mondiales (énergie au sens large)" },
-        { "value": "Net Zero", "label": "objectif 2050" },
-        { "value": "CBAM", "label": "conformité intégrée" },
-        { "value": "Multi-sites", "label": "consolidation automatique" }
+        {
+          "value": "73%",
+          "label": "des émissions mondiales (énergie au sens large)"
+        },
+        {
+          "value": "Net Zero",
+          "label": "objectif 2050"
+        },
+        {
+          "value": "CBAM",
+          "label": "conformité intégrée"
+        },
+        {
+          "value": "Multi-sites",
+          "label": "consolidation automatique"
+        }
       ],
       "challenges": [
-        { "title": "Mix énergétique", "description": "Quantifier les émissions de chaque source d'énergie : fossile, renouvelable, nucléaire." },
-        { "title": "Infrastructure lourde", "description": "Centrales, réseaux de distribution et stockage ont une empreinte carbone significative." },
-        { "title": "Transition en cours", "description": "Planifier le remplacement des actifs fossiles tout en maintenant la sécurité d'approvisionnement." }
+        {
+          "title": "Mix énergétique",
+          "description": "Quantifier les émissions de chaque source d'énergie : fossile, renouvelable, nucléaire."
+        },
+        {
+          "title": "Infrastructure lourde",
+          "description": "Centrales, réseaux de distribution et stockage ont une empreinte carbone significative."
+        },
+        {
+          "title": "Transition en cours",
+          "description": "Planifier le remplacement des actifs fossiles tout en maintenant la sécurité d'approvisionnement."
+        }
       ],
       "benefits": [
-        { "title": "Facteurs par source d'énergie", "description": "Facteurs d'émission détaillés pour chaque type de production énergétique." },
-        { "title": "Scénarios de transition", "description": "Modélisez l'impact de différents scénarios de mix énergétique sur vos émissions." },
-        { "title": "Reporting réglementaire", "description": "Génération automatique des rapports conformes CSRD, CBAM et taxonomie." },
-        { "title": "Feuille de route Net Zero", "description": "Créez votre trajectoire de décarbonation alignée sur les objectifs climatiques." }
+        {
+          "title": "Facteurs par source d'énergie",
+          "description": "Facteurs d'émission détaillés pour chaque type de production énergétique."
+        },
+        {
+          "title": "Scénarios de transition",
+          "description": "Modélisez l'impact de différents scénarios de mix énergétique sur vos émissions."
+        },
+        {
+          "title": "Reporting réglementaire",
+          "description": "Génération automatique des rapports conformes CSRD, CBAM et taxonomie."
+        },
+        {
+          "title": "Feuille de route Net Zero",
+          "description": "Créez votre trajectoire de décarbonation alignée sur les objectifs climatiques."
+        }
       ]
     },
     "transport": {
@@ -6636,21 +6769,54 @@
       "metaDescription": "Calculez l'empreinte carbone de votre flotte et chaîne logistique. Optimisez vos itinéraires et réduisez vos émissions de CO₂ avec CarboScan.",
       "heroDescription": "Le transport représente 25% des émissions de GES. CarboScan vous aide à mesurer les émissions de votre flotte, optimiser vos routes et planifier la transition vers une logistique bas carbone.",
       "stats": [
-        { "value": "25%", "label": "des émissions mondiales" },
-        { "value": "-45%", "label": "objectif UE 2030" },
-        { "value": "100+", "label": "facteurs d'émission transport" },
-        { "value": "24h", "label": "calcul automatisé" }
+        {
+          "value": "25%",
+          "label": "des émissions mondiales"
+        },
+        {
+          "value": "-45%",
+          "label": "objectif UE 2030"
+        },
+        {
+          "value": "100+",
+          "label": "facteurs d'émission transport"
+        },
+        {
+          "value": "24h",
+          "label": "calcul automatisé"
+        }
       ],
       "challenges": [
-        { "title": "Flotte véhicules", "description": "Émissions directes des camions, véhicules utilitaires et flottes d'entreprise à quantifier et optimiser." },
-        { "title": "Logistique multi-modale", "description": "Combinaison route, rail, maritime et aérien avec des facteurs d'émission très différents." },
-        { "title": "Dernier kilomètre", "description": "La livraison urbaine est le maillon le plus émetteur par tonne-kilomètre." }
+        {
+          "title": "Flotte véhicules",
+          "description": "Émissions directes des camions, véhicules utilitaires et flottes d'entreprise à quantifier et optimiser."
+        },
+        {
+          "title": "Logistique multi-modale",
+          "description": "Combinaison route, rail, maritime et aérien avec des facteurs d'émission très différents."
+        },
+        {
+          "title": "Dernier kilomètre",
+          "description": "La livraison urbaine est le maillon le plus émetteur par tonne-kilomètre."
+        }
       ],
       "benefits": [
-        { "title": "Calcul par mode de transport", "description": "Facteurs d'émission détaillés pour chaque mode : route, rail, maritime, aérien." },
-        { "title": "Suivi de flotte", "description": "Intégration des données de consommation pour un suivi précis des émissions par véhicule." },
-        { "title": "Conformité CSRD", "description": "Rapports conformes aux exigences réglementaires européennes pour le secteur transport." },
-        { "title": "Scénarios d'électrification", "description": "Simulez l'impact du passage aux véhicules électriques ou à l'hydrogène." }
+        {
+          "title": "Calcul par mode de transport",
+          "description": "Facteurs d'émission détaillés pour chaque mode : route, rail, maritime, aérien."
+        },
+        {
+          "title": "Suivi de flotte",
+          "description": "Intégration des données de consommation pour un suivi précis des émissions par véhicule."
+        },
+        {
+          "title": "Conformité CSRD",
+          "description": "Rapports conformes aux exigences réglementaires européennes pour le secteur transport."
+        },
+        {
+          "title": "Scénarios d'électrification",
+          "description": "Simulez l'impact du passage aux véhicules électriques ou à l'hydrogène."
+        }
       ]
     }
   },
@@ -6668,9 +6834,21 @@
       "ctaExpert": "Parler à un expert"
     },
     "kpis": [
-      { "icon": "TrendingDown", "value": "10-15%", "label": "de gaspillage énergétique détectable en moyenne" },
-      { "icon": "Gauge", "value": "< 6 mois", "label": "pour prioriser vos investissements (PV, LED, HVAC...)" },
-      { "icon": "Bell", "value": "24/7", "label": "de surveillance automatique des dérives" }
+      {
+        "icon": "TrendingDown",
+        "value": "10-15%",
+        "label": "de gaspillage énergétique détectable en moyenne"
+      },
+      {
+        "icon": "Gauge",
+        "value": "< 6 mois",
+        "label": "pour prioriser vos investissements (PV, LED, HVAC...)"
+      },
+      {
+        "icon": "Bell",
+        "value": "24/7",
+        "label": "de surveillance automatique des dérives"
+      }
     ],
     "roi": {
       "badge": "Simulateur ROI",
@@ -6701,24 +6879,72 @@
         "wbDesc": "Mesurez, détectez le gaspillage et valorisez vos économies."
       },
       "items": [
-        { "icon": "LineChart", "title": "Prouvez le ROI réel de votre PV", "desc": "kWh produits, auto-consommés, réinjectés. Chiffrez exactement ce que vos panneaux vous rapportent chaque mois." },
-        { "icon": "Moon", "title": "Éliminez le gaspillage nocturne", "desc": "PV ou pas, les lumières, clim et machines en veille consomment. WattBim repère les dérives 24h/24." },
-        { "icon": "Activity", "title": "Priorisez les bons investissements", "desc": "LED, HVAC, batteries ou extension PV : WattBim vous indique quel levier a le plus fort impact financier." },
-        { "icon": "Building2", "title": "Comparez site par site", "desc": "Classez vos bâtiments avec et sans PV. Identifiez ceux qui gaspillent encore malgré le solaire." },
-        { "icon": "Leaf", "title": "Valorisez vos économies carbone", "desc": "Synchronisez automatiquement les kWh économisés dans votre bilan CarboScan Scope 1 & 2." },
-        { "icon": "ShieldCheck", "title": "Audits & financements verts", "desc": "Rapports traçables pour STEG, ANME, banques et investisseurs ESG." }
+        {
+          "icon": "LineChart",
+          "title": "Prouvez le ROI réel de votre PV",
+          "desc": "kWh produits, auto-consommés, réinjectés. Chiffrez exactement ce que vos panneaux vous rapportent chaque mois."
+        },
+        {
+          "icon": "Moon",
+          "title": "Éliminez le gaspillage nocturne",
+          "desc": "PV ou pas, les lumières, clim et machines en veille consomment. WattBim repère les dérives 24h/24."
+        },
+        {
+          "icon": "Activity",
+          "title": "Priorisez les bons investissements",
+          "desc": "LED, HVAC, batteries ou extension PV : WattBim vous indique quel levier a le plus fort impact financier."
+        },
+        {
+          "icon": "Building2",
+          "title": "Comparez site par site",
+          "desc": "Classez vos bâtiments avec et sans PV. Identifiez ceux qui gaspillent encore malgré le solaire."
+        },
+        {
+          "icon": "Leaf",
+          "title": "Valorisez vos économies carbone",
+          "desc": "Synchronisez automatiquement les kWh économisés dans votre bilan CarboScan Scope 1 & 2."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Audits & financements verts",
+          "desc": "Rapports traçables pour STEG, ANME, banques et investisseurs ESG."
+        }
       ]
     },
     "features": {
       "title": "Tout ce qu'il faut pour piloter l'énergie de vos bâtiments",
       "subtitle": "Une plateforme complète, du compteur à la décarbonation.",
       "items": [
-        { "icon": "Building2", "title": "Multi-bâtiments, multi-compteurs", "desc": "Suivez chaque site, chaque compteur (élec, gaz, chaleur) et chaque contrat dans une seule vue." },
-        { "icon": "Moon", "title": "Détection gaspillage de nuit", "desc": "Repérage automatique des consommations anormales entre 22h et 6h." },
-        { "icon": "Activity", "title": "Alertes pics & dérives", "desc": "Soyez prévenu dès qu'une consommation dépasse vos seuils ou dérive vs N-1." },
-        { "icon": "LineChart", "title": "Suivi des économies", "desc": "Mesurez les gains réels mois après mois et prouvez vos résultats." },
-        { "icon": "Leaf", "title": "Sync bilan carbone", "desc": "Chaque relevé validé alimente automatiquement votre bilan Scope 1 & 2." },
-        { "icon": "ShieldCheck", "title": "Données sécurisées", "desc": "Hébergement européen, RLS multi-tenant, conformité GDPR." }
+        {
+          "icon": "Building2",
+          "title": "Multi-bâtiments, multi-compteurs",
+          "desc": "Suivez chaque site, chaque compteur (élec, gaz, chaleur) et chaque contrat dans une seule vue."
+        },
+        {
+          "icon": "Moon",
+          "title": "Détection gaspillage de nuit",
+          "desc": "Repérage automatique des consommations anormales entre 22h et 6h."
+        },
+        {
+          "icon": "Activity",
+          "title": "Alertes pics & dérives",
+          "desc": "Soyez prévenu dès qu'une consommation dépasse vos seuils ou dérive vs N-1."
+        },
+        {
+          "icon": "LineChart",
+          "title": "Suivi des économies",
+          "desc": "Mesurez les gains réels mois après mois et prouvez vos résultats."
+        },
+        {
+          "icon": "Leaf",
+          "title": "Sync bilan carbone",
+          "desc": "Chaque relevé validé alimente automatiquement votre bilan Scope 1 & 2."
+        },
+        {
+          "icon": "ShieldCheck",
+          "title": "Données sécurisées",
+          "desc": "Hébergement européen, RLS multi-tenant, conformité GDPR."
+        }
       ]
     },
     "iot": {
@@ -6726,9 +6952,21 @@
       "title": "Connectez vos compteurs en quelques étapes",
       "subtitle": "Saisie manuelle, import Excel, API ou capteurs IoT : WattBim s'adapte à votre niveau d'équipement. Aucun matériel propriétaire imposé.",
       "steps": [
-        { "icon": "Cpu", "title": "1. Capteur", "desc": "Un sous-compteur ou une pince ampèremétrique sur votre tableau électrique (Shelly EM, ESP32, Modbus…)." },
-        { "icon": "Wifi", "title": "2. Passerelle", "desc": "Wi-Fi, 4G ou Ethernet : la passerelle envoie les relevés en HTTPS à WattBim grâce à votre clé API." },
-        { "icon": "Activity", "title": "3. WattBim", "desc": "Stockage, calcul CO₂ automatique, alertes et synchro vers votre bilan carbone Scope 1 & 2." }
+        {
+          "icon": "Cpu",
+          "title": "1. Capteur",
+          "desc": "Un sous-compteur ou une pince ampèremétrique sur votre tableau électrique (Shelly EM, ESP32, Modbus…)."
+        },
+        {
+          "icon": "Wifi",
+          "title": "2. Passerelle",
+          "desc": "Wi-Fi, 4G ou Ethernet : la passerelle envoie les relevés en HTTPS à WattBim grâce à votre clé API."
+        },
+        {
+          "icon": "Activity",
+          "title": "3. WattBim",
+          "desc": "Stockage, calcul CO₂ automatique, alertes et synchro vers votre bilan carbone Scope 1 & 2."
+        }
       ],
       "guideTitle": "Guide stratégique — Pourquoi suivre l'énergie de vos bâtiments",
       "guideDesc": "Les bénéfices, le ROI typique et les bonnes questions à se poser avant de lancer un projet de suivi énergétique. Pour dirigeants, DAF et responsables RSE.",
@@ -6738,9 +6976,30 @@
     "audiences": {
       "title": "Pensé pour les organisations qui veulent agir",
       "groups": [
-        { "title": "Tertiaire & bureaux", "items": ["Bureaux, sièges, agences", "Chaînes de magasins", "Hôtels & restauration"] },
-        { "title": "Industrie & PME", "items": ["Sites de production", "Entrepôts logistiques", "Ateliers"] },
-        { "title": "Secteur public", "items": ["Bâtiments administratifs", "Écoles, hôpitaux", "Collectivités"] }
+        {
+          "title": "Tertiaire & bureaux",
+          "items": [
+            "Bureaux, sièges, agences",
+            "Chaînes de magasins",
+            "Hôtels & restauration"
+          ]
+        },
+        {
+          "title": "Industrie & PME",
+          "items": [
+            "Sites de production",
+            "Entrepôts logistiques",
+            "Ateliers"
+          ]
+        },
+        {
+          "title": "Secteur public",
+          "items": [
+            "Bâtiments administratifs",
+            "Écoles, hôpitaux",
+            "Collectivités"
+          ]
+        }
       ]
     },
     "finalCta": {
@@ -6762,35 +7021,72 @@
       {
         "title": "Collectez vos données",
         "description": "Choisissez votre mode de collecte adapté à vos besoins",
-        "features": ["Mode guidé (assistant pas à pas)", "Saisie directe (ajout manuel)", "Import Excel/CSV (données en masse)", "Téléversement de factures (preuve)"]
+        "features": [
+          "Mode guidé (assistant pas à pas)",
+          "Saisie directe (ajout manuel)",
+          "Import Excel/CSV (données en masse)",
+          "Téléversement de factures (preuve)"
+        ]
       },
       {
         "title": "Vos données sont centralisées",
         "description": "Toutes vos données sont stockées dans une base unique et sécurisée",
-        "features": ["Une donnée = plusieurs usages possibles", "Pas de double saisie", "Mise à jour en temps réel", "Historique complet"]
+        "features": [
+          "Une donnée = plusieurs usages possibles",
+          "Pas de double saisie",
+          "Mise à jour en temps réel",
+          "Historique complet"
+        ]
       },
       {
         "title": "Utilisez vos données",
         "description": "Vos données alimentent automatiquement tous vos modules",
-        "features": ["Bilan Carbone (Scopes 1, 2, 3)", "Empreinte Produit", "ACV Simple", "Dashboard global"]
+        "features": [
+          "Bilan Carbone (Scopes 1, 2, 3)",
+          "Empreinte Produit",
+          "ACV Simple",
+          "Dashboard global"
+        ]
       },
       {
         "title": "Améliorez votre score",
         "description": "Suivez la qualité de vos données et améliorez la fiabilité de vos calculs",
-        "features": ["Score de qualité visible", "Données réelles vs estimées", "Suggestions d'amélioration", "Traçabilité complète"]
+        "features": [
+          "Score de qualité visible",
+          "Données réelles vs estimées",
+          "Suggestions d'amélioration",
+          "Traçabilité complète"
+        ]
       }
     ],
     "modesTitle": "4 modes de collecte adaptés à vos besoins",
     "modesSubtitle": "Choisissez le mode qui vous convient le mieux selon votre contexte",
     "modes": [
-      { "title": "Mode guidé", "description": "Assistant pas à pas pour Bilan Carbone, Empreinte Produit ou ACV Simple" },
-      { "title": "Saisie directe", "description": "Ajoutez manuellement une donnée d'activité carbone" },
-      { "title": "Import Excel/CSV", "description": "Importez vos données en masse depuis un fichier" },
-      { "title": "Téléversement factures", "description": "Téléversez vos factures comme preuve et renseignez les données clés" }
+      {
+        "title": "Mode guidé",
+        "description": "Assistant pas à pas pour Bilan Carbone, Empreinte Produit ou ACV Simple"
+      },
+      {
+        "title": "Saisie directe",
+        "description": "Ajoutez manuellement une donnée d'activité carbone"
+      },
+      {
+        "title": "Import Excel/CSV",
+        "description": "Importez vos données en masse depuis un fichier"
+      },
+      {
+        "title": "Téléversement factures",
+        "description": "Téléversez vos factures comme preuve et renseignez les données clés"
+      }
     ],
     "benefits": {
       "title": "Pourquoi choisir notre collecte centralisée ?",
-      "items": ["Pas de double saisie", "Données réutilisables", "Score de qualité visible", "Mise à jour en temps réel"]
+      "items": [
+        "Pas de double saisie",
+        "Données réutilisables",
+        "Score de qualité visible",
+        "Mise à jour en temps réel"
+      ]
     },
     "finalCta": {
       "title": "Prêt à démarrer ?",
@@ -6806,13 +7102,42 @@
     },
     "stepsTitle": "Notre accompagnement étape par étape",
     "steps": [
-      { "title": "Définir vos objectifs", "bullets": ["Fixer des objectifs chiffrés et réalistes", "Prioriser les actions selon leur impact"] },
-      { "title": "Plan d'action détaillé", "bullets": ["Actions concrètes avec calendrier", "Budget prévisionnel et ROI"] },
-      { "title": "Mise en œuvre", "bullets": ["Accompagnement dans l'exécution", "Formation de vos équipes"] },
-      { "title": "Suivi et optimisation", "bullets": ["Mesure des résultats obtenus", "Ajustements et amélioration continue"] }
+      {
+        "title": "Définir vos objectifs",
+        "bullets": [
+          "Fixer des objectifs chiffrés et réalistes",
+          "Prioriser les actions selon leur impact"
+        ]
+      },
+      {
+        "title": "Plan d'action détaillé",
+        "bullets": [
+          "Actions concrètes avec calendrier",
+          "Budget prévisionnel et ROI"
+        ]
+      },
+      {
+        "title": "Mise en œuvre",
+        "bullets": [
+          "Accompagnement dans l'exécution",
+          "Formation de vos équipes"
+        ]
+      },
+      {
+        "title": "Suivi et optimisation",
+        "bullets": [
+          "Mesure des résultats obtenus",
+          "Ajustements et amélioration continue"
+        ]
+      }
     ],
     "advantagesTitle": "Pourquoi nous choisir ?",
-    "advantages": ["Expertise reconnue", "Approche personnalisée", "Résultats mesurables", "Accompagnement durable"],
+    "advantages": [
+      "Expertise reconnue",
+      "Approche personnalisée",
+      "Résultats mesurables",
+      "Accompagnement durable"
+    ],
     "finalCta": {
       "title": "Commencez votre transformation dès aujourd'hui",
       "subtitle": "Prenez rendez-vous pour un premier échange gratuit avec nos experts",
@@ -6838,9 +7163,18 @@
       "title": "L'intelligence au service de la décision",
       "description": "Chaque organisation est unique. C'est pourquoi DecarboTech repose sur une <strong>analyse intelligente</strong> qui transforme vos données et vos objectifs en une trajectoire claire et personnalisée.",
       "items": [
-        { "title": "Modélisation intelligente", "description": "Des leviers de réduction identifiés et quantifiés selon votre contexte spécifique" },
-        { "title": "Projection temporelle", "description": "Visualisez votre évolution carbone dans le temps avec différents scénarios" },
-        { "title": "Indicateurs dynamiques", "description": "Pilotez votre performance et votre résilience avec des KPIs pertinents" }
+        {
+          "title": "Modélisation intelligente",
+          "description": "Des leviers de réduction identifiés et quantifiés selon votre contexte spécifique"
+        },
+        {
+          "title": "Projection temporelle",
+          "description": "Visualisez votre évolution carbone dans le temps avec différents scénarios"
+        },
+        {
+          "title": "Indicateurs dynamiques",
+          "description": "Pilotez votre performance et votre résilience avec des KPIs pertinents"
+        }
       ]
     },
     "results": {
@@ -6858,10 +7192,22 @@
       "withoutHead": "Décarboner sans méthode",
       "withHead": "Décarboner avec DecarboTech",
       "rows": [
-        { "without": "Vision fragmentée", "with": "Stratégie structurée et évolutive" },
-        { "without": "Actions ponctuelles", "with": "Trajectoire cohérente et mesurable" },
-        { "without": "Décisions intuitives", "with": "Décisions appuyées sur des données fiables" },
-        { "without": "Temps et ressources perdus", "with": "Vision claire, retour sur action mesurable" }
+        {
+          "without": "Vision fragmentée",
+          "with": "Stratégie structurée et évolutive"
+        },
+        {
+          "without": "Actions ponctuelles",
+          "with": "Trajectoire cohérente et mesurable"
+        },
+        {
+          "without": "Décisions intuitives",
+          "with": "Décisions appuyées sur des données fiables"
+        },
+        {
+          "without": "Temps et ressources perdus",
+          "with": "Vision claire, retour sur action mesurable"
+        }
       ],
       "summary": "DecarboTech, c'est la <span class=\"text-primary\">science de la décarbonation</span> alliée à la <span class=\"text-primary\">simplicité d'un outil de pilotage</span>."
     },
@@ -6882,19 +7228,33 @@
       "subtitle": "Découvrez comment CarboScan peut vous aider à mesurer et réduire votre empreinte carbone. Nos experts vous présenteront la solution en 30 minutes via une vidéoconférence personnalisée."
     },
     "perks": {
-      "personalized": { "title": "Rendez-vous personnalisé", "desc": "Nous adaptons la démonstration à vos besoins spécifiques" },
-      "duration": { "title": "30 minutes", "desc": "Une démonstration complète en seulement 30 minutes" },
-      "free": { "title": "Sans engagement", "desc": "Aucun engagement, juste une présentation de nos solutions" }
+      "personalized": {
+        "title": "Rendez-vous personnalisé",
+        "desc": "Nous adaptons la démonstration à vos besoins spécifiques"
+      },
+      "duration": {
+        "title": "30 minutes",
+        "desc": "Une démonstration complète en seulement 30 minutes"
+      },
+      "free": {
+        "title": "Sans engagement",
+        "desc": "Aucun engagement, juste une présentation de nos solutions"
+      }
     },
     "form": {
       "title": "Planifiez votre démonstration",
-      "firstName": "Prénom", "firstNamePh": "Votre prénom",
-      "lastName": "Nom", "lastNamePh": "Votre nom",
+      "firstName": "Prénom",
+      "firstNamePh": "Votre prénom",
+      "lastName": "Nom",
+      "lastNamePh": "Votre nom",
       "email": "Email professionnel",
-      "company": "Entreprise", "companyPh": "Nom de votre entreprise",
+      "company": "Entreprise",
+      "companyPh": "Nom de votre entreprise",
       "phone": "Téléphone",
-      "slot": "Créneau préféré", "slotPh": "Sélectionner un créneau",
-      "message": "Message (optionnel)", "messagePh": "Parlez-nous de vos besoins spécifiques...",
+      "slot": "Créneau préféré",
+      "slotPh": "Sélectionner un créneau",
+      "message": "Message (optionnel)",
+      "messagePh": "Parlez-nous de vos besoins spécifiques...",
       "submit": "Réserver ma démonstration"
     },
     "timeSlots": {
@@ -6918,11 +7278,21 @@
       "title": "À quoi vous attendre",
       "during": {
         "title": "Pendant la démonstration :",
-        "items": ["Présentation des fonctionnalités principales", "Simulation avec vos données d'entreprise", "Questions & réponses personnalisées", "Recommandations adaptées à votre secteur"]
+        "items": [
+          "Présentation des fonctionnalités principales",
+          "Simulation avec vos données d'entreprise",
+          "Questions & réponses personnalisées",
+          "Recommandations adaptées à votre secteur"
+        ]
       },
       "after": {
         "title": "Après la démonstration :",
-        "items": ["Récapitulatif par email", "Proposition commerciale personnalisée", "Accès à des ressources complémentaires", "Suivi personnalisé selon vos besoins"]
+        "items": [
+          "Récapitulatif par email",
+          "Proposition commerciale personnalisée",
+          "Accès à des ressources complémentaires",
+          "Suivi personnalisé selon vos besoins"
+        ]
       }
     }
   },
@@ -6950,7 +7320,12 @@
           "2 révisions par an",
           "Session de restitution en ligne – 1h"
         ],
-        "notIncluded": ["Module CBAM (exportateurs Europe)", "Plan d'action détaillé", "Formations internes", "Trajectoire Net Zero 10 ans"]
+        "notIncluded": [
+          "Module CBAM (exportateurs Europe)",
+          "Plan d'action détaillé",
+          "Formations internes",
+          "Trajectoire Net Zero 10 ans"
+        ]
       },
       "pro": {
         "name": "Pro",
@@ -6968,7 +7343,10 @@
           "3 révisions par an",
           "Session de restitution en ligne – 1h30 avec Q&R"
         ],
-        "notIncluded": ["Formations internes équipes", "Trajectoire Net Zero détaillée sur 10 ans"]
+        "notIncluded": [
+          "Formations internes équipes",
+          "Trajectoire Net Zero détaillée sur 10 ans"
+        ]
       },
       "expert": {
         "name": "Expert",
@@ -6996,7 +7374,289 @@
         "notIncluded": []
       }
     }
+  },
+  "facteursEmissionLanding": {
+    "hero": {
+      "eyebrow": "Catalogue de facteurs d'émission",
+      "title": "Facteurs d'émission carbone :\ntrouvez la donnée adaptée à votre calcul",
+      "subtitle": "Explorez un catalogue de plus de 10 000 facteurs d'émission référencés et documentés pour mesurer les émissions liées à l'énergie, aux transports, aux achats et aux activités des organisations.",
+      "ctaPrimary": "Découvrir CarboScan",
+      "ctaSecondary": "Explorer les facteurs d'émission"
+    },
+    "stats": {
+      "items": [
+        {
+          "value": "10 000+",
+          "label": "Facteurs référencés"
+        },
+        {
+          "value": "Multi-sources",
+          "label": "Référentiels reconnus"
+        },
+        {
+          "value": "Traçabilité",
+          "label": "Source et version documentées"
+        },
+        {
+          "value": "Multi-contextes",
+          "label": "Énergie, transport, achats…"
+        }
+      ]
+    },
+    "what": {
+      "title": "Qu'est-ce qu'un facteur d'émission ?",
+      "body": "Un facteur d'émission permet de convertir une donnée d'activité en émissions de gaz à effet de serre. Il associe une quantité physique ou monétaire à un impact en kgCO₂e, dans un contexte donné.",
+      "disclaimer": "La valeur d'un facteur dépend notamment du pays, de l'année, de la source, de la technologie, du périmètre et de la méthodologie. Aucune valeur unique n'est universelle.",
+      "formula": {
+        "activity": "DONNÉE D'ACTIVITÉ",
+        "factor": "FACTEUR D'ÉMISSION",
+        "result": "ÉMISSIONS DE GES"
+      },
+      "example": "Exemple générique : 1 000 kWh × facteur d'émission adapté = émissions en kgCO₂e"
+    },
+    "catalog": {
+      "title": "Plus de 10 000 facteurs d'émission référencés",
+      "body": "CarboScan construit un catalogue multi-sources permettant de rechercher et documenter les facteurs nécessaires aux calculs carbone.",
+      "metaIntro": "Selon la source et les données disponibles, un facteur peut notamment contenir :",
+      "metaItems": [
+        "Nom et catégories",
+        "Valeur et unité",
+        "Géographie et année",
+        "Source et version du dataset",
+        "Type de facteur",
+        "Contexte méthodologique",
+        "Informations de traçabilité"
+      ]
+    },
+    "search": {
+      "title": "Aperçu du catalogue",
+      "subtitle": "Recherchez par activité, filtrez par catégorie et consultez le contexte documenté — sans charger tout le registry dans le navigateur.",
+      "placeholder": "Rechercher un facteur d'émission…",
+      "chips": {
+        "electricity": "Électricité",
+        "transport": "Transport",
+        "fuels": "Combustibles",
+        "freight": "Fret",
+        "purchases": "Achats"
+      },
+      "rows": {
+        "electricity": "Électricité réseau",
+        "diesel": "Diesel / gazole",
+        "grid": "Électricité location-based"
+      },
+      "disclaimer": "Démonstration illustrative : unités et sources représentatives, sans valeur numérique inventée."
+    },
+    "context": {
+      "title": "Un même besoin peut correspondre à plusieurs facteurs",
+      "subtitle": "Une recherche textuelle seule n'est pas suffisante pour choisir un facteur d'émission pertinent.",
+      "cards": [
+        {
+          "title": "Géographie",
+          "body": "France, Royaume-Uni, Tunisie, Global… La géographie conditionne la pertinence d'un facteur pour votre activité."
+        },
+        {
+          "title": "Unité",
+          "body": "kWh, kg, tonne, km, passager.km, tonne.km… L'unité doit être compatible avec la donnée d'activité."
+        },
+        {
+          "title": "Périmètre",
+          "body": "Émissions directes, amont énergétique, cycle de vie… lorsqu'ils sont documentés. Ne pas inférer un périmètre absent."
+        },
+        {
+          "title": "Source & version",
+          "body": "Le facteur doit rester rattaché au référentiel et à la version dont il provient pour rester justifiable."
+        }
+      ]
+    },
+    "resolve": {
+      "title": "Trouver un facteur ne suffit pas. Il faut choisir le bon.",
+      "body": "CarboScan développe une logique de résolution qui tient compte du contexte disponible afin d'identifier les facteurs compatibles avec l'activité étudiée.",
+      "items": [
+        "Activité et unité",
+        "Géographie",
+        "Source et année",
+        "Périmètre méthodologique",
+        "Contexte énergétique",
+        "Disponibilité des métadonnées"
+      ],
+      "disclaimer": "Tous les facteurs du catalogue ne sont pas automatiquement sélectionnés pour chaque calcul. La résolution dépend du contexte fourni et des règles méthodologiques applicables."
+    },
+    "traceability": {
+      "title": "Un facteur d'émission doit pouvoir être justifié",
+      "body": "Un bilan carbone professionnel ne doit pas seulement donner un résultat. Il doit permettre de comprendre les données et facteurs ayant contribué au calcul.",
+      "steps": [
+        "Source",
+        "Version",
+        "Facteur",
+        "Donnée d'activité",
+        "Conversion éventuelle",
+        "Résultat"
+      ],
+      "itemsIntro": "Selon les données disponibles, CarboScan conserve notamment :",
+      "items": [
+        "Facteur utilisé et identifiant",
+        "Source et version",
+        "Unité et quantité",
+        "Conversion appliquée le cas échéant",
+        "Résultat calculé"
+      ]
+    },
+    "sources": {
+      "title": "Un catalogue multi-sources en constante évolution",
+      "subtitle": "CarboScan rassemble progressivement des facteurs provenant de référentiels reconnus afin d'adapter les calculs aux différents secteurs, pays et activités.",
+      "badges": {
+        "available": "Disponible",
+        "soon": "Bientôt disponible",
+        "upcoming": "À venir",
+        "study": "À l'étude"
+      },
+      "available": {
+        "title": "Disponible",
+        "items": [
+          {
+            "name": "ADEME Base Carbone",
+            "description": "Référentiel français de facteurs d'émission utilisé dans de nombreuses démarches de comptabilité carbone."
+          },
+          {
+            "name": "UK Government GHG Conversion Factors",
+            "description": "Facteurs de conversion publiés par le gouvernement britannique pour différentes catégories d'activités."
+          },
+          {
+            "name": "CarboScan / Tunisie",
+            "description": "Facteurs documentés utilisés pour certains contextes locaux et besoins de calcul CarboScan."
+          }
+        ]
+      },
+      "soon": {
+        "title": "Bientôt disponible",
+        "items": [
+          {
+            "name": "EPA",
+            "description": "US Environmental Protection Agency — GHG Emission Factors Hub."
+          },
+          {
+            "name": "INIES",
+            "description": "Données environnementales des produits et équipements de construction."
+          },
+          {
+            "name": "PEP ecopassport",
+            "description": "Données environnementales liées notamment aux équipements électriques, électroniques et de génie climatique."
+          },
+          {
+            "name": "IPCC",
+            "description": "Références méthodologiques et facteurs disponibles via les travaux du GIEC/IPCC."
+          },
+          {
+            "name": "Agribalyse",
+            "description": "Données environnementales particulièrement pertinentes pour l'alimentation et l'agriculture."
+          }
+        ]
+      },
+      "upcoming": {
+        "title": "À venir",
+        "items": [
+          {
+            "name": "HBEFA",
+            "description": "Pertinent notamment pour les émissions liées au transport routier."
+          },
+          {
+            "name": "Worldsteel",
+            "description": "Données sectorielles liées à l'acier."
+          },
+          {
+            "name": "Plastics Europe",
+            "description": "Données sectorielles liées aux matières plastiques."
+          }
+        ]
+      },
+      "study": {
+        "title": "À l'étude",
+        "items": [
+          {
+            "name": "ecoinvent",
+            "description": "Les conditions de licence et d'utilisation doivent être étudiées avant toute intégration. Aucune intégration n'est promise à ce stade."
+          }
+        ]
+      },
+      "roadmapNote": "Le catalogue CarboScan évolue progressivement. La disponibilité d'une source dans le catalogue ne signifie pas qu'un facteur est automatiquement applicable à tous les calculs. La géographie, l'unité et le contexte méthodologique restent déterminants."
+    },
+    "useCases": {
+      "title": "Des facteurs adaptés à vos activités",
+      "items": [
+        {
+          "title": "Énergie",
+          "items": [
+            "Électricité",
+            "Chaleur",
+            "Combustibles"
+          ]
+        },
+        {
+          "title": "Mobilité",
+          "items": [
+            "Déplacements professionnels",
+            "Trajets",
+            "Véhicules"
+          ]
+        },
+        {
+          "title": "Fret",
+          "items": [
+            "Transport routier",
+            "Maritime",
+            "Aérien — selon disponibilité des facteurs"
+          ]
+        },
+        {
+          "title": "Achats",
+          "items": [
+            "Biens",
+            "Services",
+            "Dépenses — selon méthodologie et disponibilité"
+          ]
+        },
+        {
+          "title": "Immobilisations / Produits",
+          "items": [
+            "À développer progressivement avec les référentiels adaptés"
+          ]
+        }
+      ]
+    },
+    "cta": {
+      "title": "Les facteurs d'émission ne sont qu'une partie du bilan carbone",
+      "body": "CarboScan permet d'organiser les données d'activité, les calculs et la restitution dans une démarche globale de comptabilité carbone.",
+      "primary": "Réaliser mon bilan carbone",
+      "secondary": "Découvrir la plateforme"
+    },
+    "faq": {
+      "title": "Questions fréquentes",
+      "items": [
+        {
+          "question": "Qu'est-ce qu'un facteur d'émission ?",
+          "answer": "C'est un coefficient qui convertit une donnée d'activité (kWh, litre, km…) en émissions de gaz à effet de serre, généralement exprimées en kgCO₂e, dans un contexte donné."
+        },
+        {
+          "question": "Comment calculer les émissions de CO₂ avec un facteur d'émission ?",
+          "answer": "On multiplie la quantité d'activité par le facteur adapté, après s'être assuré que l'unité, la géographie et le périmètre sont cohérents. Le résultat s'exprime généralement en kgCO₂e ou tCO₂e."
+        },
+        {
+          "question": "Où trouver les facteurs d'émission de l'ADEME ?",
+          "answer": "La Base Carbone ADEME est un référentiel français de facteurs d'émission. CarboScan référence des facteurs ADEME dans son catalogue multi-sources, avec leur source et version documentées."
+        },
+        {
+          "question": "Pourquoi un facteur d'émission varie-t-il selon le pays ?",
+          "answer": "Parce que les mixes énergétiques, les technologies, les pratiques et les méthodes de publication diffèrent. Un facteur français n'est pas automatiquement applicable au Royaume-Uni ou à la Tunisie."
+        },
+        {
+          "question": "Quelle différence entre une donnée d'activité et un facteur d'émission ?",
+          "answer": "La donnée d'activité décrit ce que vous avez consommé ou réalisé (ex. 1 000 kWh). Le facteur d'émission convertit cette activité en émissions GES."
+        },
+        {
+          "question": "Comment CarboScan assure-t-il la traçabilité des facteurs utilisés ?",
+          "answer": "Lorsque un calcul est réalisé via les parcours prévus, CarboScan conserve les informations de provenance disponibles : facteur, source, version, quantités, conversions et résultat, afin de documenter le calcul."
+        }
+      ]
+    }
   }
 }
-
-
