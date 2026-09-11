@@ -14,6 +14,17 @@ export const REGISTRY_FACTOR_OVERRIDE_ERROR =
 export const UNAVAILABLE_EMISSION_FACTOR_ERROR =
   "Invalid or unavailable emission factor";
 
+/**
+ * Direct UUID calculation is restricted to Core TN (internal).
+ * ADEME/UK must never become calculable via /v1/calculate merely because
+ * their version calculation_status is enabled — use resolve-and-calculate.
+ */
+export const DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR =
+  "Direct calculation is restricted to Core TN (internal) factors; use POST /v1/factors/resolve-and-calculate for other sources";
+
+/** Sources allowed on legacy/direct POST /v1/calculate (factorId path). */
+export const DIRECT_CALCULATE_ALLOWED_SOURCE_KEYS = ["internal"] as const;
+
 type FactorMeta = {
   versionId: string;
   checksum: string | null;
@@ -79,6 +90,12 @@ export async function registerCalculateRoutes(app: FastifyInstance) {
             }
 
             const f = factor.rows[0];
+            // Harden: ADEME/UK (and any non-internal source) cannot bypass Resolver
+            // even if their version later becomes calculation_status=enabled.
+            if (f.source_key !== "internal") {
+              throw new Error(DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
+            }
+
             factorMeta.set(line.factorId, {
               versionId: f.version_id,
               checksum: f.checksum,

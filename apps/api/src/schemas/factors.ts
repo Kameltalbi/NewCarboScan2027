@@ -90,6 +90,49 @@ export const factorResolveBodySchema = z
 
 export type FactorResolveBody = z.infer<typeof factorResolveBodySchema>;
 
+/** Production resolve-and-calculate — no client factorId/value/conversion/resolverResult. */
+export const factorResolveAndCalculateBodySchema = z
+  .object({
+    method: z.enum(["ghg_protocol", "bilan_carbone", "cbam", "pcf"]),
+    periodStart: z.string().date().optional(),
+    periodEnd: z.string().date().optional(),
+    lineKey: z.string().min(1).max(200),
+    scope: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+    evidenceId: z.string().uuid().optional(),
+    activity: z.string().trim().min(1).max(200),
+    quantity: z.string().trim().min(1).max(64),
+    unit: z.string().trim().min(1).max(32),
+    country: z.string().trim().max(16).optional(),
+    region: z.string().trim().max(120).optional(),
+    reportingYear: z.number().int().min(1900).max(2100).optional(),
+    internalCategory: z.string().trim().max(64).optional(),
+    internalSubcategory: z.string().trim().max(64).optional(),
+    lifecycleBoundary: z
+      .enum([
+        "direct",
+        "wtt",
+        "td",
+        "wtw",
+        "cradle_to_gate",
+        "material_use",
+        "waste_treatment",
+        "outside_of_scopes",
+        "other",
+        "unknown",
+      ])
+      .optional(),
+    energyBasis: z.enum(["gross_cv", "net_cv"]).optional(),
+    gwpBasis: z.enum(["AR4", "AR5", "AR6", "mixed", "unknown"]).optional(),
+    preferredSource: z.string().trim().max(64).optional(),
+    methodology: z.string().trim().max(64).optional(),
+    factorTypeHint: z.enum(["physical", "monetary"]).optional(),
+  })
+  .strict();
+
+export type FactorResolveAndCalculateBody = z.infer<
+  typeof factorResolveAndCalculateBodySchema
+>;
+
 export type FactorSearchCursor = {
   r: number;
   id: string;

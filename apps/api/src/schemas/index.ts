@@ -11,27 +11,29 @@ export const calculateSchema = z.object({
   periodEnd: z.string().date().optional(),
   lines: z
     .array(
-      z.object({
-        lineKey: z.string().min(1),
-        scope: z.union([z.literal(1), z.literal(2), z.literal(3)]),
-        evidenceId: z.string().uuid().optional(),
-        /** Registry emission factor UUID. Custom org factors are not supported yet. */
-        factorId: z.string().uuid(),
-        activityQuantity: z.string().min(1),
-        activityUnit: z.string().min(1),
-        /** Ignored for registry factors (rejected). Reserved for future explicit custom factors. */
-        factorValue: z.string().min(1).optional(),
-        factorUnit: z.string().min(1).optional(),
-        allocationFactor: z.string().optional(),
-        uncertaintyPct: z.string().optional(),
-        activityUncertaintyPct: z.string().optional(),
-        factorUncertaintyPct: z.string().optional(),
-        formula: z.string().optional(),
-      }),
+      z
+        .object({
+          lineKey: z.string().min(1),
+          scope: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+          evidenceId: z.string().uuid().optional(),
+          /** Registry emission factor UUID. Custom org factors are not supported yet. */
+          factorId: z.string().uuid(),
+          activityQuantity: z.string().min(1),
+          activityUnit: z.string().min(1),
+          /** Ignored for registry factors (rejected). Reserved for future explicit custom factors. */
+          factorValue: z.string().min(1).optional(),
+          factorUnit: z.string().min(1).optional(),
+          allocationFactor: z.string().optional(),
+          uncertaintyPct: z.string().optional(),
+          activityUncertaintyPct: z.string().optional(),
+          factorUncertaintyPct: z.string().optional(),
+          formula: z.string().optional(),
+        })
+        .strict(),
     )
     .min(1)
     .max(10_000),
-});
+}).strict();
 
 export const evidenceValidateSchema = z.object({
   status: z.enum(["validated", "rejected", "submitted"]),

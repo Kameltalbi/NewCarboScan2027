@@ -3,6 +3,7 @@ import { pool } from "../db.js";
 import {
   factorFacetsQuerySchema,
   factorIdParamSchema,
+  factorResolveAndCalculateBodySchema,
   factorResolveBodySchema,
   factorSearchQuerySchema,
 } from "../schemas/factors.js";
@@ -18,6 +19,7 @@ import {
   searchFactors,
 } from "../services/factorSearch.js";
 import { resolveFactor } from "../services/factorResolver/index.js";
+import { resolveAndCalculate } from "../services/factorResolver/resolveAndCalculate.js";
 
 function isDraftCatalogRequest(status: string | undefined): boolean {
   return status === "draft" || status === "deprecated";
@@ -181,6 +183,88 @@ export async function registerFactorRoutes(app: FastifyInstance) {
       } catch (err) {
         request.log.error(err);
         return reply.code(500).send({ error: "Factor resolve failed" });
+      }
+    },
+  );
+
+  /**
+   * Production resolve-and-calculate.
+   * Gated by FACTOR_RESOLVER_CALCULATION_ENABLED (default off).
+   * Requires Resolver RESOLVED + DB calculation_status & resolver_status enabled.
+   * Never accepts client factorValue / conversion / resolverResult.
+   */
+  app.post(
+    "/v1/factors/resolve-and-calculate",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const parsed = factorResolveAndCalculateBodySchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.code(400).send({
+          error: "Invalid resolve-and-calculate payload",
+          details: parsed.error.flatten(),
+        });
+      }
+
+      const organizationId = request.user!.organizationId!;
+      const userId = request.user!.id;
+      const body = parsed.data;
+
+      try {
+        const result = await resolveAndCalculate(pool, {
+          organizationId,
+          userId,
+          ip: request.ip,
+          method: body.method,
+          periodStart: body.periodStart,
+          periodEnd: body.periodEnd,
+          lineKey: body.lineKey,
+          scope: body.scope,
+          evidenceId: body.evidenceId,
+          resolve: {
+            activity: body.activity,
+            quantity: body.quantity,
+            unit: body.unit,
+            country: body.country,
+            region: body.region,
+            reportingYear: body.reportingYear,
+            internalCategory: body.internalCategory,
+            internalSubcategory: body.internalSubcategory,
+            lifecycleBoundary: body.lifecycleBoundary,
+            energyBasis: body.energyBasis,
+            gwpBasis: body.gwpBasis,
+            preferredSource: body.preferredSource,
+            methodology: body.methodology,
+            factorTypeHint: body.factorTypeHint,
+          },
+        });
+
+        if (!result.ok) {
+          return reply.code(result.httpStatus).send({
+            error: result.error,
+            resolution: result.resolution,
+          });
+        }
+
+        return {
+          runId: result.runId,
+          engineVersion: result.engineVersion,
+          methodologyVersion: result.methodologyVersion,
+          totals: result.totals,
+          inputHash: result.inputHash,
+          resultHash: result.resultHash,
+          commentary: result.commentary,
+          lines: result.lines,
+          resolution: result.resolution,
+          originalQuantity: result.originalQuantity,
+          originalUnit: result.originalUnit,
+          normalizedQuantity: result.normalizedQuantity,
+          normalizedUnit: result.normalizedUnit,
+          unitConversion: result.unitConversion,
+        };
+      } catch (err) {
+        request.log.error(err);
+        const message = err instanceof Error ? err.message : "resolve-and-calculate failed";
+        return reply.code(500).send({ error: message });
       }
     },
   );
