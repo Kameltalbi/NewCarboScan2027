@@ -369,7 +369,14 @@ describe("factor search live DB", () => {
       assert.ok(facets.sources.some((s) => s.value === "internal" && s.count === 8));
       assert.ok(facets.sources.some((s) => s.value === "ademe" && s.count >= 7000));
       const total = facets.sources.reduce((sum, s) => sum + s.count, 0);
-      assert.equal(total, 7402);
+      const uk = facets.sources.find((s) => s.value === "uk_gov_ghg");
+      // After 023: UK visible → 10024; before 023: ADEME+Core only → 7402
+      if (uk) {
+        assert.equal(uk.count, 2622);
+        assert.equal(total, 10024);
+      } else {
+        assert.equal(total, 7402);
+      }
     } finally {
       await pool.end();
     }
