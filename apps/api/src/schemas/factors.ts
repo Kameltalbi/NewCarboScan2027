@@ -3,6 +3,7 @@ import { z } from "zod";
 export const FACTOR_STATUS_VALUES = ["approved", "draft", "deprecated"] as const;
 export const CATALOG_STATUS_VALUES = ["hidden", "visible"] as const;
 export const RESOLVER_STATUS_VALUES = ["disabled", "enabled"] as const;
+export const CALCULATION_STATUS_VALUES = ["disabled", "enabled"] as const;
 export const FACTOR_TYPE_VALUES = [
   "physical",
   "monetary",
@@ -34,6 +35,8 @@ export const factorSearchQuerySchema = z
     catalog_status: z.enum(CATALOG_STATUS_VALUES).optional(),
     /** Admin-only: resolver eligibility filter (no effect on calculations in 019). */
     resolver_status: z.enum(RESOLVER_STATUS_VALUES).optional(),
+    /** Admin-only: calculation eligibility filter. */
+    calculation_status: z.enum(CALCULATION_STATUS_VALUES).optional(),
     limit: z.coerce.number().int().min(1).max(100).optional().default(20),
     cursor: z.string().max(512).optional(),
   })

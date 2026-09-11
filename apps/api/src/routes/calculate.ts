@@ -8,9 +8,19 @@ import {
 import { withOrgClient } from "../db.js";
 import { calculateSchema } from "../schemas/index.js";
 
+export const REGISTRY_FACTOR_OVERRIDE_ERROR =
+  "Registry emission factors cannot override factorValue or factorUnit";
+
+export const UNAVAILABLE_EMISSION_FACTOR_ERROR =
+  "Invalid or unavailable emission factor";
+
 type FactorMeta = {
   versionId: string;
   checksum: string | null;
+  stableFactorId: string | null;
+  externalCode: string | null;
+  sourceKey: string | null;
+  datasetVersion: string | null;
 };
 
 export async function registerCalculateRoutes(app: FastifyInstance) {
@@ -41,25 +51,41 @@ export async function registerCalculateRoutes(app: FastifyInstance) {
               }
             }
 
+            if (line.factorValue !== undefined || line.factorUnit !== undefined) {
+              throw new Error(REGISTRY_FACTOR_OVERRIDE_ERROR);
+            }
+
             const factor = await client.query(
               `SELECT f.id, f.value::text AS value,
+                      f.unit_numerator,
+                      f.unit_denominator,
                       (f.unit_numerator || '/' || f.unit_denominator) AS unit,
                       f.uncertainty_pct::text AS uncertainty_pct,
-                      f.checksum, f.version_id
+                      f.checksum, f.version_id,
+                      f.stable_factor_id, f.external_code,
+                      v.dataset_version,
+                      s.source_key
                FROM emission_factors f
-               WHERE f.id = $1 AND f.status = 'approved'`,
+               JOIN emission_factor_versions v ON v.id = f.version_id
+               JOIN factor_sources s ON s.id = v.source_id
+               WHERE f.id = $1
+                 AND f.status = 'approved'
+                 AND v.status = 'approved'
+                 AND v.calculation_status = 'enabled'`,
               [line.factorId],
             );
             if (!factor.rows[0]) {
-              throw new Error(
-                `Approved emission factor not found: ${line.factorId}`,
-              );
+              throw new Error(UNAVAILABLE_EMISSION_FACTOR_ERROR);
             }
 
             const f = factor.rows[0];
             factorMeta.set(line.factorId, {
               versionId: f.version_id,
               checksum: f.checksum,
+              stableFactorId: f.stable_factor_id,
+              externalCode: f.external_code,
+              sourceKey: f.source_key,
+              datasetVersion: f.dataset_version,
             });
 
             lines.push({
@@ -69,21 +95,20 @@ export async function registerCalculateRoutes(app: FastifyInstance) {
               factorId: line.factorId,
               activityQuantity: line.activityQuantity,
               activityUnit: line.activityUnit,
-              factorValue: line.factorValue ?? f.value,
-              factorUnit: line.factorUnit ?? f.unit,
+              factorValue: f.value,
+              factorUnit: f.unit,
               allocationFactor: line.allocationFactor,
               uncertaintyPct: line.uncertaintyPct,
               activityUncertaintyPct: line.activityUncertaintyPct,
-              factorUncertaintyPct:
-                line.factorUncertaintyPct ?? f.uncertainty_pct ?? undefined,
+              factorUncertaintyPct: f.uncertainty_pct ?? undefined,
               formula: line.formula,
             });
           }
         });
       } catch (err) {
-        return reply.code(400).send({
-          error: err instanceof Error ? err.message : "Invalid calculation input",
-        });
+        const message =
+          err instanceof Error ? err.message : "Invalid calculation input";
+        return reply.code(400).send({ error: message });
       }
 
       const result = calculateCarbonBalance(lines, "ghg-corporate-1.0.0");
@@ -140,6 +165,11 @@ export async function registerCalculateRoutes(app: FastifyInstance) {
               JSON.stringify({
                 source: "api/v1/calculate",
                 factorResolvedFromDb: true,
+                stableFactorId: meta?.stableFactorId ?? null,
+                externalCode: meta?.externalCode ?? null,
+                sourceKey: meta?.sourceKey ?? null,
+                datasetVersion: meta?.datasetVersion ?? null,
+                clientOverride: false,
               }),
             ],
           );

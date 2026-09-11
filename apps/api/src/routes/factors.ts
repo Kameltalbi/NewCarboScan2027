@@ -25,7 +25,10 @@ async function requireCatalogAccess(
   app: FastifyInstance,
   request: FastifyRequest,
   reply: FastifyReply,
-  query: Pick<FactorCatalogFilters, "status" | "version_status" | "catalog_status" | "resolver_status">,
+  query: Pick<
+    FactorCatalogFilters,
+    "status" | "version_status" | "catalog_status" | "resolver_status" | "calculation_status"
+  >,
 ): Promise<void> {
   if (isDraftCatalogRequest(query.status) || hasGovernanceFilters(query)) {
     await app.requireSuperAdmin(request, reply);

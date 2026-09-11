@@ -214,6 +214,10 @@ export function buildVisibilityClause(query: FactorCatalogFilters): string[] {
     clauses.push(`v.resolver_status = '${query.resolver_status}'`);
   }
 
+  if (query.calculation_status) {
+    clauses.push(`v.calculation_status = '${query.calculation_status}'`);
+  }
+
   if (query.status === "approved") {
     clauses.push("f.status = 'approved'");
   } else if (query.status === "draft") {
@@ -227,7 +231,8 @@ export function hasGovernanceFilters(query: FactorCatalogFilters): boolean {
   return !!(
     query.version_status ||
     query.catalog_status ||
-    query.resolver_status
+    query.resolver_status ||
+    query.calculation_status
   );
 }
 
@@ -692,6 +697,7 @@ export async function getFactorById(pool: Queryable, id: string, allowAdmin: boo
        v.source_url,
        v.status AS version_status,
        v.catalog_status,
+       v.calculation_status,
        v.resolver_status,
        s.source_key,
        s.name AS source_name,
@@ -756,6 +762,7 @@ export async function getFactorById(pool: Queryable, id: string, allowAdmin: boo
       dataStatus: row.status,
       versionDataStatus: row.version_status,
       catalogStatus: row.catalog_status,
+      calculationStatus: row.calculation_status,
       resolverStatus: row.resolver_status,
     },
     validFrom: row.valid_from,

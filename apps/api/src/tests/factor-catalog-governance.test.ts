@@ -158,6 +158,7 @@ describe("factor catalog governance 019", () => {
       assert.equal(detail!.governance.dataStatus, "approved");
       assert.equal(detail!.governance.versionDataStatus, "approved");
       assert.equal(detail!.governance.catalogStatus, "visible");
+      assert.equal(detail!.governance.calculationStatus, "enabled");
       assert.equal(detail!.governance.resolverStatus, "disabled");
     } finally {
       await pool.end();
