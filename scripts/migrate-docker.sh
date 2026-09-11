@@ -3,14 +3,29 @@
 # et les bind-mounts Docker parfois vides sur /Volumes/...).
 #
 # SCHEMA bootstrap : db/migrations/0*.sql (enregistré dans schema_migrations.filename)
-# DATA bootstrap   : db/seeds/emission_factors_legacy.sql
-#   → chargé automatiquement une fois, avant 016, si 0 ligne ADEME v23.9 en legacy
+# DATA bootstrap   :
+#   - db/seeds/emission_factors_legacy.sql avant 016 si 0 ligne ADEME v23.9 en legacy
+#   - db/seeds/uk_gov_ghg_2026_flat_1_2.sql pour 022 (UK draft/hidden)
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
 CONTAINER=${POSTGRES_CONTAINER:-newcarboscan-postgres}
 PGUSER=${PGUSER:-newcarboscan}
 PGDATABASE=${PGDATABASE:-newcarboscan}
 SEED_LEGACY="$ROOT/db/seeds/emission_factors_legacy.sql"
+UK_SEED_SQL="$ROOT/db/seeds/uk_gov_ghg_2026_flat_1_2.sql"
+export UK_SEED_SQL
+
+# shellcheck disable=SC1091
+. "$ROOT/scripts/uk-bootstrap.sh"
+
+uk_psql() {
+  docker exec "$CONTAINER" psql -U "$PGUSER" -d "$PGDATABASE" "$@"
+}
+
+uk_psql_file() {
+  docker exec -i "$CONTAINER" psql -U "$PGUSER" -d "$PGDATABASE" -v ON_ERROR_STOP=1 < "$1"
+  return $?
+}
 
 if ! docker exec "$CONTAINER" pg_isready -U "$PGUSER" -d "$PGDATABASE" >/dev/null 2>&1; then
   echo "Container $CONTAINER not ready. Run: npm run db:up" >&2
@@ -25,7 +40,6 @@ CREATE TABLE IF NOT EXISTS schema_migrations (
 SQL
 
 ensure_legacy_seed() {
-  # DATA bootstrap before 016 — not recorded as a schema migration.
   if [ ! -f "$SEED_LEGACY" ]; then
     echo "ERROR: missing DATA seed $SEED_LEGACY (required before 016)" >&2
     exit 1
@@ -56,6 +70,10 @@ for f in $(ls "$ROOT"/db/migrations/0*.sql 2>/dev/null | sort); do
 
   if [ "$name" = "016_migrate_ademe_base_carbone_v239.sql" ]; then
     ensure_legacy_seed
+  fi
+
+  if [ "$name" = "022_bootstrap_uk_gov_ghg_2026.sql" ]; then
+    ensure_uk_gov_ghg_bootstrap
   fi
 
   echo "apply $name"

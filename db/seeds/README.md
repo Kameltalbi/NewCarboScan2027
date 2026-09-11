@@ -5,7 +5,7 @@
 | Couche | Emplacement | Enregistré dans `schema_migrations` ? |
 |--------|-------------|--------------------------------------|
 | **SCHEMA bootstrap** | `db/migrations/0*.sql` | Oui (`filename` = basename) |
-| **DATA bootstrap** | `db/seeds/*.sql` | **Non** — chargé avant `016` si besoin |
+| **DATA bootstrap** | `db/seeds/*.sql` | **Non** en soi — chargé par le runner autour d'une migration (016 / 022) |
 
 Les migrations 001–015 créent la table vide `emission_factors_legacy`.  
 Les 8135 facteurs legacy **ne sont pas** produits par les migrations SQL : ils viennent de ce seed.
@@ -27,17 +27,55 @@ Les 8135 facteurs legacy **ne sont pas** produits par les migrations SQL : ils v
 
 Note : ~25 libellés ADEME contiennent le caractère Unicode U+0085 (NEL) présent dans la source ; ce n'est pas un séparateur de ligne COPY (`\n`).
 
+## `uk_gov_ghg_2026_flat_1_2.sql`
+
+Seed **déterministe** UK Government GHG Conversion Factors 2026 (Flat File v1.2).
+
+| Champ | Valeur |
+|-------|--------|
+| **Facteurs** | 2622 (`kg CO2e` valués uniquement) |
+| **Format** | SQL `COPY` (comme ADEME legacy) — généré, jamais écrit à la main |
+| **SHA-256 seed (fichier complet)** | `228c0c2ebbfc4fc189314b8777c074cc8b2c1b0c2227b5718652b7a109b5f52d` |
+| **SHA-256 source XLSX officiel** | `a9a455ab396dae226d510c7be6233748416d490c41a5d20f3dc7a0c45feecd5e` |
+| **Licence** | OGL-3.0 |
+| **Gouvernance bootstrap** | `draft` / `hidden` / `calculation disabled` / `resolver disabled` |
+| **source_key** | `uk_gov_ghg` |
+| **dataset_version** | `2026-flat-1.2` |
+| **UUID source** | `a3000000-0000-4000-8000-000000000001` |
+| **UUID version** | `a3000000-0000-4000-8000-000000000002` |
+| **UUID facteurs** | UUID v5(namespace=version UUID, name=`stable_factor_id`) |
+
+**Deux checksums distincts (ne pas confondre) :**
+
+1. **Source officielle XLSX** — fichier DESNZ révisé  
+2. **Seed canonique** — artefact Git dérivé via l'adapter `apps/api/src/importers/ukGovGhg/`
+
+Le XLSX / PDF methodology **ne sont pas** versionnés dans Git.  
+Régénération (machine de génération uniquement) :
+
+```bash
+npm run generate:uk-ghg-seed -- /path/to/ghg-conversion-factors-2026-flat-format-revised.xlsx
+# écrit db/seeds/uk_gov_ghg_2026_flat_1_2.sql
+# SHA-256 XLSX doit être a9a455ab… sinon STOP
+```
+
+Fresh DB : le runner charge ce seed **sans** XLSX, sans Desktop, sans réseau.
+
 ## Rôle dans le runner
 
 `scripts/migrate-docker.sh` et `scripts/migrate.sh` :
 
 1. Appliquent les migrations `0*.sql` dans l'ordre lexicographique.
-2. **Avant** `016_migrate_ademe_base_carbone_v239.sql`, si `COUNT(*)` ADEME v23.9 en legacy = 0 → appliquent ce seed.
-3. Si des lignes ADEME v23.9 existent déjà → skip seed.
+2. **Avant** `016_migrate_ademe_base_carbone_v239.sql`, si `COUNT(*)` ADEME v23.9 en legacy = 0 → appliquent `emission_factors_legacy.sql`.
+3. **Avant** `022_bootstrap_uk_gov_ghg_2026.sql` :
+   - UK absent → apply `uk_gov_ghg_2026_flat_1_2.sql`
+   - UK = 2622 + draft/hidden/disabled/disabled → skip
+   - partial / mauvaise gouvernance / incohérent → **FAIL**
+4. `022_*.sql` exécute les post-checks (journal `schema_migrations`).
 
-Puis `016` migre les 7394 ADEME vers le registre versionné.
+Ordre attendu : `021` → DATA UK seed → `022` → (future `023` activation catalogue uniquement).
 
-## Régénération
+## Régénération ADEME legacy
 
 ```bash
 # Prérequis : dumps/supabase-export.json (hors git), même schéma entities.emission_factors

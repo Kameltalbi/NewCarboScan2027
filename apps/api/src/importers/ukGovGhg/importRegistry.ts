@@ -1,7 +1,7 @@
 import type { Pool, PoolClient } from "pg";
+import { buildUkFactorMetadata } from "./buildMetadata.js";
 import {
   UK_DATASET_VERSION,
-  UK_FLAT_VERSION,
   UK_REPORTING_YEAR,
   UK_SOURCE_KEY,
   UK_VERSION_LABEL,
@@ -9,6 +9,7 @@ import {
   type UkImportResult,
   type UkReconcileStats,
 } from "./types.js";
+import { UK_SOURCE_FILE_BASENAME } from "./fixedIds.js";
 
 type Queryable = Pool | PoolClient;
 
@@ -153,62 +154,7 @@ function buildMetadata(
   fileSha256: string,
   sourceFile: string,
 ): Record<string, unknown> {
-  return {
-    migration_id: "uk_gov_ghg_2026_flat_1_2",
-    checksum_algorithm: "sha256",
-    checksum_version: "v2",
-    normalization_status: dto.normalizationStatus,
-    units: {
-      original_unit: `${dto.originalGhgUnit} / ${dto.originalUom ?? ""}`.trim(),
-      normalization_status: dto.normalizationStatus,
-      qualifiers: dto.energyBasis ? [dto.energyBasis] : [],
-    },
-    taxonomy: {
-      mapping_status: dto.taxonomyStatus,
-      mapping_rule: dto.taxonomyRule,
-    },
-    temporal: {
-      dataset_version: UK_DATASET_VERSION,
-      reporting_year: UK_REPORTING_YEAR,
-      factor_year: null,
-    },
-    geography: {
-      mapping_rule: dto.geographyRule,
-      source_hint: dto.level3 ?? dto.level2 ?? null,
-    },
-    provenance: {
-      source_native_id: dto.externalCode,
-      source_file: sourceFile,
-      source_file_sha256: fileSha256,
-      dataset_version: UK_DATASET_VERSION,
-      flat_version: UK_FLAT_VERSION,
-      reporting_year: UK_REPORTING_YEAR,
-      source_scope: dto.sourceScope,
-      level_1: dto.level1,
-      level_2: dto.level2,
-      level_3: dto.level3,
-      level_4: dto.level4,
-      column_text: dto.columnText,
-      original_value: dto.originalValue,
-      original_uom: dto.originalUom,
-      original_ghg_unit: dto.originalGhgUnit,
-      lifecycle_mapping_rule: dto.lifecycleRule,
-      gwp_mapping_rule: dto.gwpRule,
-      geography_mapping_rule: dto.geographyRule,
-      stem: dto.stem,
-      transformations: [],
-    },
-    uk: {
-      source_scope: dto.sourceScope,
-      levels: {
-        level1: dto.level1,
-        level2: dto.level2,
-        level3: dto.level3,
-        level4: dto.level4,
-      },
-      ghg_components: dto.ghgComponents,
-    },
-  };
+  return buildUkFactorMetadata(dto, fileSha256, sourceFile || UK_SOURCE_FILE_BASENAME);
 }
 
 export async function upsertUkFactors(
