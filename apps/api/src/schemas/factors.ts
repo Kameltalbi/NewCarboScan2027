@@ -54,6 +54,42 @@ export const factorIdParamSchema = z.object({
   id: z.string().uuid(),
 });
 
+/** Shadow Factor Resolver V1 — production mode not accepted by API yet. */
+export const factorResolveBodySchema = z
+  .object({
+    activity: z.string().trim().min(1).max(200),
+    quantity: z.string().trim().max(64).optional(),
+    unit: z.string().trim().min(1).max(32),
+    country: z.string().trim().max(16).optional(),
+    region: z.string().trim().max(120).optional(),
+    reportingYear: z.number().int().min(1900).max(2100).optional(),
+    internalCategory: z.string().trim().max(64).optional(),
+    internalSubcategory: z.string().trim().max(64).optional(),
+    lifecycleBoundary: z
+      .enum([
+        "direct",
+        "wtt",
+        "td",
+        "wtw",
+        "cradle_to_gate",
+        "material_use",
+        "waste_treatment",
+        "outside_of_scopes",
+        "other",
+        "unknown",
+      ])
+      .optional(),
+    energyBasis: z.enum(["gross_cv", "net_cv"]).optional(),
+    gwpBasis: z.enum(["AR4", "AR5", "AR6", "mixed", "unknown"]).optional(),
+    preferredSource: z.string().trim().max(64).optional(),
+    methodology: z.string().trim().max(64).optional(),
+    factorTypeHint: z.enum(["physical", "monetary"]).optional(),
+    mode: z.literal("shadow").default("shadow"),
+  })
+  .strict();
+
+export type FactorResolveBody = z.infer<typeof factorResolveBodySchema>;
+
 export type FactorSearchCursor = {
   r: number;
   id: string;

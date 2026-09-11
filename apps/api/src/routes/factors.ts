@@ -3,6 +3,7 @@ import { pool } from "../db.js";
 import {
   factorFacetsQuerySchema,
   factorIdParamSchema,
+  factorResolveBodySchema,
   factorSearchQuerySchema,
 } from "../schemas/factors.js";
 import type { FactorCatalogFilters } from "../schemas/factors.js";
@@ -16,6 +17,7 @@ import {
   normalizeUnitNumerator,
   searchFactors,
 } from "../services/factorSearch.js";
+import { resolveFactor } from "../services/factorResolver/index.js";
 
 function isDraftCatalogRequest(status: string | undefined): boolean {
   return status === "draft" || status === "deprecated";
@@ -144,6 +146,42 @@ export async function registerFactorRoutes(app: FastifyInstance) {
         cacheKey: facetsCacheKey(query),
         ...facets,
       };
+    },
+  );
+
+  /**
+   * Factor Resolver V1 — shadow mode only.
+   * Evaluates catalog-visible factors without enabling resolver_status in DB.
+   * Never writes ledger / calculation_runs / activities.
+   */
+  app.post(
+    "/v1/factors/resolve",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const parsed = factorResolveBodySchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.code(400).send({
+          error: "Invalid resolve payload",
+          details: parsed.error.flatten(),
+        });
+      }
+
+      const organizationId = request.user!.organizationId!;
+      if (!organizationId) {
+        return reply.code(400).send({ error: "Organization required" });
+      }
+
+      try {
+        const result = await resolveFactor(pool, {
+          ...parsed.data,
+          mode: "shadow",
+          organizationId,
+        });
+        return result;
+      } catch (err) {
+        request.log.error(err);
+        return reply.code(500).send({ error: "Factor resolve failed" });
+      }
     },
   );
 
