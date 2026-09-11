@@ -5,11 +5,13 @@ import {
   factorIdParamSchema,
   factorSearchQuerySchema,
 } from "../schemas/factors.js";
+import type { FactorCatalogFilters } from "../schemas/factors.js";
 import {
   decodeSearchCursor,
   facetsCacheKey,
   getFactorById,
   getFactorFacets,
+  hasGovernanceFilters,
   normalizeUnitDenominator,
   normalizeUnitNumerator,
   searchFactors,
@@ -23,9 +25,9 @@ async function requireCatalogAccess(
   app: FastifyInstance,
   request: FastifyRequest,
   reply: FastifyReply,
-  status: string | undefined,
+  query: Pick<FactorCatalogFilters, "status" | "version_status" | "catalog_status" | "resolver_status">,
 ): Promise<void> {
-  if (isDraftCatalogRequest(status)) {
+  if (isDraftCatalogRequest(query.status) || hasGovernanceFilters(query)) {
     await app.requireSuperAdmin(request, reply);
     return;
   }
@@ -33,7 +35,11 @@ async function requireCatalogAccess(
 }
 
 export async function registerFactorRoutes(app: FastifyInstance) {
-  /** Legacy list — unchanged behaviour (approved factor + approved version only). */
+  /**
+   * Legacy list — BilanCarboneCalculator / listFactors().
+   * Intentionally decoupled from catalog visibility: internal Core Pack TN only.
+   * Stays at 8 FE even after ADEME catalog activation (019B).
+   */
   app.get(
     "/v1/factors",
     { preHandler: [app.requireOrgMember] },
@@ -62,7 +68,9 @@ export async function registerFactorRoutes(app: FastifyInstance) {
          FROM emission_factors f
          JOIN emission_factor_versions v ON v.id = f.version_id
          JOIN factor_sources s ON s.id = v.source_id
-         WHERE f.status = 'approved' AND v.status = 'approved'
+         WHERE f.status = 'approved'
+           AND v.status = 'approved'
+           AND s.source_key = 'internal'
          ORDER BY f.category, f.name`,
       );
       return { items: rows, total: rows.length };
@@ -86,7 +94,7 @@ export async function registerFactorRoutes(app: FastifyInstance) {
         unit_denominator: normalizeUnitDenominator(parsed.data.unit_denominator),
       };
 
-      await requireCatalogAccess(app, request, reply, query.status);
+      await requireCatalogAccess(app, request, reply, query);
       if (reply.sent) return;
 
       let cursor;
@@ -125,7 +133,7 @@ export async function registerFactorRoutes(app: FastifyInstance) {
         unit_denominator: normalizeUnitDenominator(parsed.data.unit_denominator),
       };
 
-      await requireCatalogAccess(app, request, reply, query.status);
+      await requireCatalogAccess(app, request, reply, query);
       if (reply.sent) return;
 
       const facets = await getFactorFacets(pool, query);
@@ -156,7 +164,9 @@ export async function registerFactorRoutes(app: FastifyInstance) {
 
       if (
         !isSuperAdmin &&
-        (factor.status !== "approved" || factor.version.status !== "approved")
+        (factor.status !== "approved" ||
+          factor.version.status !== "approved" ||
+          factor.governance.catalogStatus !== "visible")
       ) {
         return reply.code(404).send({ error: "Factor not found" });
       }

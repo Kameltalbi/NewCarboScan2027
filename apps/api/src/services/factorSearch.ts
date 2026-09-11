@@ -1,5 +1,7 @@
 import { createHash } from "node:crypto";
 import type { Pool } from "pg";
+
+type Queryable = Pick<Pool, "query">;
 import type {
   FactorCatalogFilters,
   FactorSearchCursor,
@@ -151,6 +153,7 @@ type SearchRow = {
   region: string | null;
   factor_year: number | null;
   status: string;
+  normalization_status: string | null;
   rank_score: string;
   ranking_reason: RankingReason;
 };
@@ -178,6 +181,7 @@ export function mapSearchRow(row: SearchRow, includeDebug = false) {
     region: row.region,
     factorYear: row.factor_year,
     status: row.status,
+    normalizationStatus: row.normalization_status,
     rankScore: Number(row.rank_score),
   };
   if (includeDebug) {
@@ -186,17 +190,45 @@ export function mapSearchRow(row: SearchRow, includeDebug = false) {
   return base;
 }
 
-function buildStatusClause(status: FactorCatalogFilters["status"]): string[] {
-  switch (status) {
-    case "approved":
-      return ["f.status = 'approved'", "v.status = 'approved'"];
-    case "draft":
-      return ["v.status = 'draft'", "f.status <> 'deprecated'"];
-    case "deprecated":
-      return ["(f.status = 'deprecated' OR v.status = 'deprecated')"];
-    default:
-      return ["f.status = 'approved'", "v.status = 'approved'"];
+/** Catalog visibility — normal search requires approved data + visible catalog. */
+export function buildVisibilityClause(query: FactorCatalogFilters): string[] {
+  const clauses: string[] = [];
+
+  if (query.version_status) {
+    clauses.push(`v.status = '${query.version_status}'`);
+  } else if (query.status === "approved") {
+    clauses.push("v.status = 'approved'");
+  } else if (query.status === "draft") {
+    clauses.push("v.status = 'draft'");
+  } else if (query.status === "deprecated") {
+    clauses.push("(f.status = 'deprecated' OR v.status = 'deprecated')");
   }
+
+  if (query.catalog_status) {
+    clauses.push(`v.catalog_status = '${query.catalog_status}'`);
+  } else if (query.status === "approved") {
+    clauses.push("v.catalog_status = 'visible'");
+  }
+
+  if (query.resolver_status) {
+    clauses.push(`v.resolver_status = '${query.resolver_status}'`);
+  }
+
+  if (query.status === "approved") {
+    clauses.push("f.status = 'approved'");
+  } else if (query.status === "draft") {
+    clauses.push("f.status <> 'deprecated'");
+  }
+
+  return clauses;
+}
+
+export function hasGovernanceFilters(query: FactorCatalogFilters): boolean {
+  return !!(
+    query.version_status ||
+    query.catalog_status ||
+    query.resolver_status
+  );
 }
 
 function buildFilterClauses(
@@ -411,13 +443,13 @@ function buildTextMatchClause(ctx: QueryContext, includeFuzzy: boolean, thrIdx?:
 }
 
 async function countPrimaryMatches(
-  pool: Pool,
+  pool: Queryable,
   query: FactorSearchQuery,
   q: string,
   limitPlusOne: number,
 ): Promise<number> {
   const params: unknown[] = [];
-  const statusClauses = buildStatusClause(query.status);
+  const visibilityClauses = buildVisibilityClause(query);
   const filterClauses = buildFilterClauses(query, params);
   const ctx = buildQueryContext(q, params);
   params.push(limitPlusOne);
@@ -429,7 +461,7 @@ async function countPrimaryMatches(
        FROM emission_factors f
        JOIN emission_factor_versions v ON v.id = f.version_id
        JOIN factor_sources s ON s.id = v.source_id
-       WHERE ${[...statusClauses, ...filterClauses].join(" AND ")}
+       WHERE ${[...visibilityClauses, ...filterClauses].join(" AND ")}
          AND (${buildPrimaryMatchClause(ctx)})
        LIMIT $${limitIdx}
      ) primary_sample`,
@@ -443,7 +475,7 @@ export type SearchFactorsOptions = {
 };
 
 export async function searchFactors(
-  pool: Pool,
+  pool: Queryable,
   query: FactorSearchQuery,
   cursor?: FactorSearchCursor,
   options: SearchFactorsOptions = {},
@@ -464,9 +496,9 @@ export async function searchFactors(
   }
 
   const params: unknown[] = [];
-  const statusClauses = buildStatusClause(query.status);
+  const visibilityClauses = buildVisibilityClause(query);
   const filterClauses = buildFilterClauses(query, params);
-  const baseWhere = [...statusClauses, ...filterClauses].join(" AND ");
+  const baseWhere = [...visibilityClauses, ...filterClauses].join(" AND ");
 
   let rankExpr = "0::numeric";
   let reasonExpr = "'filter_only'";
@@ -552,7 +584,8 @@ export async function searchFactors(
         f.internal_subcategory,
         f.country_code,
         f.factor_year,
-        f.status
+        f.status,
+        f.metadata->'units'->>'normalization_status' AS normalization_status
       FROM emission_factors f
       JOIN emission_factor_versions v ON v.id = f.version_id
       JOIN factor_sources s ON s.id = v.source_id
@@ -579,6 +612,7 @@ export async function searchFactors(
         f.region,
         f.factor_year,
         f.status,
+        f.normalization_status,
         ROUND((${rankExpr})::numeric, 6) AS rank_score,
         ${reasonExpr} AS ranking_reason
       FROM base f
@@ -619,10 +653,10 @@ export async function searchFactors(
   };
 }
 
-export async function getFactorById(pool: Pool, id: string, allowDraft: boolean) {
-  const statusClause = allowDraft
+export async function getFactorById(pool: Queryable, id: string, allowAdmin: boolean) {
+  const statusClause = allowAdmin
     ? "TRUE"
-    : "f.status = 'approved' AND v.status = 'approved'";
+    : "f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'";
 
   const { rows } = await pool.query(
     `SELECT
@@ -657,6 +691,8 @@ export async function getFactorById(pool: Pool, id: string, allowDraft: boolean)
        v.gwp_set,
        v.source_url,
        v.status AS version_status,
+       v.catalog_status,
+       v.resolver_status,
        s.source_key,
        s.name AS source_name,
        s.license AS source_license,
@@ -716,6 +752,12 @@ export async function getFactorById(pool: Pool, id: string, allowDraft: boolean)
     checksum: row.checksum,
     checksumVersion: meta.checksum_version ?? null,
     status: row.status,
+    governance: {
+      dataStatus: row.status,
+      versionDataStatus: row.version_status,
+      catalogStatus: row.catalog_status,
+      resolverStatus: row.resolver_status,
+    },
     validFrom: row.valid_from,
     validUntil: row.valid_until,
     provenance: {
@@ -743,10 +785,10 @@ export async function getFactorById(pool: Pool, id: string, allowDraft: boolean)
 type FacetRow = { value: string | null; count: string };
 
 function buildFacetWhere(query: FactorCatalogFilters, params: unknown[]): string {
-  const statusClauses = buildStatusClause(query.status);
+  const visibilityClauses = buildVisibilityClause(query);
   const filterClauses = buildFilterClauses(query, params);
   const q = normalizeSearchQuery(query.q);
-  const whereParts = [...statusClauses, ...filterClauses];
+  const whereParts = [...visibilityClauses, ...filterClauses];
   if (q) {
     const ctx = buildQueryContext(q, params);
     whereParts.push(`(${buildPrimaryMatchClause(ctx)})`);
@@ -755,7 +797,7 @@ function buildFacetWhere(query: FactorCatalogFilters, params: unknown[]): string
 }
 
 async function facetGroup(
-  pool: Pool,
+  pool: Queryable,
   column: string,
   baseWhere: string,
   params: unknown[],
@@ -780,7 +822,7 @@ async function facetGroup(
   }));
 }
 
-export async function getFactorFacets(pool: Pool, query: FactorCatalogFilters) {
+export async function getFactorFacets(pool: Queryable, query: FactorCatalogFilters) {
   const params: unknown[] = [];
   const baseWhere = buildFacetWhere(query, params);
 
