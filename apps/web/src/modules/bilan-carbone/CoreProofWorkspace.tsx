@@ -491,9 +491,50 @@ export const CoreProofWorkspace: React.FC = () => {
               </p>
             )}
             {runTotals && (
-              <p className="text-sm">
-                Total run : <strong>{runTotals.total} kgCO₂e</strong>
-              </p>
+              <div className="space-y-1 text-sm">
+                <p>
+                  Totaux scopes (1–3) :{" "}
+                  <strong>{runTotals.total} kgCO₂e</strong>
+                </p>
+                {runTotals.biogenicCo2 != null &&
+                  Number(runTotals.biogenicCo2) !== 0 && (
+                    <p className="text-muted-foreground">
+                      Mémo CO₂ biogénique (hors scopes) :{" "}
+                      <strong>{runTotals.biogenicCo2} kgCO₂</strong> — conservé
+                      et exclu des totaux de scopes.
+                    </p>
+                  )}
+                {(() => {
+                  const src = (
+                    lastResolution?.selectedFactor as
+                      | { source?: { key?: string }; factorKind?: string }
+                      | undefined
+                  )?.source?.key;
+                  const kind = (
+                    lastResolution?.selectedFactor as
+                      | { factorKind?: string }
+                      | undefined
+                  )?.factorKind;
+                  const bio =
+                    lastResolution?.provenance &&
+                    (lastResolution.provenance as { biogenicCo2?: boolean })
+                      .biogenicCo2 === true;
+                  const ipccCo2Only =
+                    src === "ipcc_efdb" &&
+                    (kind === "activity_emission_factor" || kind == null);
+                  if (!ipccCo2Only && !bio) return null;
+                  return (
+                    <p className="text-xs text-amber-800 dark:text-amber-300">
+                      {bio
+                        ? "CO₂ biogénique uniquement : hors totaux GES des scopes."
+                        : null}
+                      {ipccCo2Only
+                        ? " Résultat CO₂ seul (facteur IPCC). CH₄ et N₂O ne sont pas calculés dans ce run — ne pas présenter comme un total GES complet."
+                        : null}
+                    </p>
+                  );
+                })()}
+              </div>
             )}
           </CardContent>
         </Card>

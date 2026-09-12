@@ -32,6 +32,8 @@ services:
       MIG_DIR: /migrations
       SEED_LEGACY: /seeds/emission_factors_legacy.sql
       UK_SEED_SQL: /seeds/uk_gov_ghg_2026_flat_1_2.sql
+      EPA_SEED_SQL: /seeds/epa_ghg_emission_factors_hub_2025.sql
+      IPCC_EFDB_SEED_SQL: /seeds/ipcc_efdb.sql
     volumes:
       - ./db/migrations:/migrations:ro
       - ./db/seeds:/seeds:ro
@@ -56,6 +58,7 @@ services:
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-120}
       BODY_LIMIT_BYTES: ${BODY_LIMIT_BYTES:-1000000}
       IMPORT_ADMIN_TOKEN: ${IMPORT_ADMIN_TOKEN:-}
+      FACTOR_RESOLVER_CALCULATION_ENABLED: ${FACTOR_RESOLVER_CALCULATION_ENABLED:-true}
     expose:
       - "8080"
     healthcheck:
