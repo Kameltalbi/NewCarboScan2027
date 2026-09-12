@@ -6,7 +6,6 @@ import { signToken } from "../plugins/auth.js";
 import {
   buildVisibilityClause,
   getFactorById,
-  getFactorFacets,
   searchFactors,
 } from "../services/factorSearch.js";
 
