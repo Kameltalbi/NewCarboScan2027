@@ -13,6 +13,7 @@ ROOT=${ROOT:-$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)}
 MIG_DIR=${MIG_DIR:-"$ROOT/db/migrations"}
 SEED_LEGACY=${SEED_LEGACY:-"$ROOT/db/seeds/emission_factors_legacy.sql"}
 UK_SEED_SQL=${UK_SEED_SQL:-"$ROOT/db/seeds/uk_gov_ghg_2026_flat_1_2.sql"}
+EPA_SEED_SQL=${EPA_SEED_SQL:-"$ROOT/db/seeds/epa_ghg_emission_factors_hub_2025.sql"}
 
 PGHOST=${PGHOST:-localhost}
 PGPORT=${PGPORT:-5432}
@@ -21,10 +22,12 @@ PGDATABASE=${PGDATABASE:-newcarboscan}
 PGPASSWORD=${PGPASSWORD:-${POSTGRES_PASSWORD:-newcarboscan}}
 export PGPASSWORD
 export UK_SEED_SQL
+export EPA_SEED_SQL
 
 # shellcheck disable=SC1091
 # Source from this script's directory so Docker mount /scripts/migrate.sh works.
 . "$SCRIPT_DIR/uk-bootstrap.sh"
+. "$SCRIPT_DIR/epa-bootstrap.sh"
 
 uk_psql() {
   psql -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" "$@"
@@ -33,6 +36,9 @@ uk_psql() {
 uk_psql_file() {
   psql -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" -v ON_ERROR_STOP=1 -f "$1"
 }
+
+epa_psql() { uk_psql "$@"; }
+epa_psql_file() { uk_psql_file "$@"; }
 
 echo "Waiting for Postgres at $PGHOST:$PGPORT..."
 i=1
@@ -88,6 +94,9 @@ for f in $(ls "$MIG_DIR"/0*.sql 2>/dev/null | sort); do
   fi
   if [ "$name" = "022_bootstrap_uk_gov_ghg_2026.sql" ]; then
     ensure_uk_gov_ghg_bootstrap
+  fi
+  if [ "$name" = "025_bootstrap_epa_ghg_hub_2025.sql" ]; then
+    ensure_epa_hub_2025_bootstrap
   fi
   echo "apply $name"
   uk_psql -v ON_ERROR_STOP=1 -f "$f"

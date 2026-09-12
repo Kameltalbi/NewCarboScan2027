@@ -13,10 +13,13 @@ PGUSER=${PGUSER:-newcarboscan}
 PGDATABASE=${PGDATABASE:-newcarboscan}
 SEED_LEGACY="$ROOT/db/seeds/emission_factors_legacy.sql"
 UK_SEED_SQL="$ROOT/db/seeds/uk_gov_ghg_2026_flat_1_2.sql"
+EPA_SEED_SQL="$ROOT/db/seeds/epa_ghg_emission_factors_hub_2025.sql"
 export UK_SEED_SQL
+export EPA_SEED_SQL
 
 # shellcheck disable=SC1091
 . "$ROOT/scripts/uk-bootstrap.sh"
+. "$ROOT/scripts/epa-bootstrap.sh"
 
 uk_psql() {
   docker exec "$CONTAINER" psql -U "$PGUSER" -d "$PGDATABASE" "$@"
@@ -26,6 +29,9 @@ uk_psql_file() {
   docker exec -i "$CONTAINER" psql -U "$PGUSER" -d "$PGDATABASE" -v ON_ERROR_STOP=1 < "$1"
   return $?
 }
+
+epa_psql() { uk_psql "$@"; }
+epa_psql_file() { uk_psql_file "$@"; }
 
 if ! docker exec "$CONTAINER" pg_isready -U "$PGUSER" -d "$PGDATABASE" >/dev/null 2>&1; then
   echo "Container $CONTAINER not ready. Run: npm run db:up" >&2
@@ -74,6 +80,10 @@ for f in $(ls "$ROOT"/db/migrations/0*.sql 2>/dev/null | sort); do
 
   if [ "$name" = "022_bootstrap_uk_gov_ghg_2026.sql" ]; then
     ensure_uk_gov_ghg_bootstrap
+  fi
+
+  if [ "$name" = "025_bootstrap_epa_ghg_hub_2025.sql" ]; then
+    ensure_epa_hub_2025_bootstrap
   fi
 
   echo "apply $name"

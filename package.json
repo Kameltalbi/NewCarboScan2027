@@ -26,6 +26,7 @@
     "db:up": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres",
     "db:migrate": "bash scripts/migrate-docker.sh",
     "generate:uk-ghg-seed": "tsx apps/api/scripts/generate-uk-gov-ghg-seed.mts",
+    "generate:epa-hub-2025-seed": "tsx apps/api/scripts/generate-epa-hub-2025-seed.mts",
     "db:down": "docker compose down",
     "db:export-supabase": "node scripts/export-supabase-dump.mjs",
     "db:import-dump": "node scripts/import-client-dump.mjs",

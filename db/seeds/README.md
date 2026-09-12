@@ -72,8 +72,32 @@ Fresh DB : le runner charge ce seed **sans** XLSX, sans Desktop, sans réseau.
    - UK = 2622 + draft/hidden/disabled/disabled → skip
    - partial / mauvaise gouvernance / incohérent → **FAIL**
 4. `022_*.sql` exécute les post-checks (journal `schema_migrations`).
+5. **Avant** `025_bootstrap_epa_ghg_hub_2025.sql` :
+   - EPA absent → apply `epa_ghg_emission_factors_hub_2025.sql`
+   - EPA = 1421 + draft/hidden/disabled/disabled → skip
+   - partial / mauvaise gouvernance → **FAIL**
 
-Ordre attendu : `021` → DATA UK seed → `022` → (future `023` activation catalogue uniquement).
+## `epa_ghg_emission_factors_hub_2025.sql`
+
+Seed **déterministe** US EPA GHG Emission Factors Hub 2025.
+
+| Champ | Valeur |
+|-------|--------|
+| **Facteurs** | 1421 |
+| **Format** | SQL `COPY` — généré via `apps/api/src/importers/epaHub2025/` |
+| **SHA-256 seed (fichier complet)** | `8dace7ec6e486d7f1083802352f4037ebba3d0793342a3144d44f0b1279130ca` |
+| **SHA-256 source XLSX officiel** | `43afb91d79b2ae765b3a447549d9e1021a144a407cec5eb804be9fcf69a668a7` |
+| **Gouvernance bootstrap** | `draft` / `hidden` / `calculation disabled` / `resolver disabled` |
+| **source_key** | `epa_ghg_emission_factors_hub` |
+| **dataset_version** | `2025` |
+| **UUID source** | `a4000000-0000-4000-8000-000000000001` |
+| **UUID version** | `a4000000-0000-4000-8000-000000000002` |
+
+```bash
+EPA_XLSX=/path/to/ghg-emission-factors-hub-2025.xlsx npm run generate:epa-hub-2025-seed
+```
+
+Rapport : `docs/EPA_2025_IMPORT_REPORT.md`.
 
 ## Régénération ADEME legacy
 
