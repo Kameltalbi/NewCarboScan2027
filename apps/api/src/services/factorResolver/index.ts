@@ -23,6 +23,14 @@ export {
   type EpaSafeClass,
 } from "./epaSafeSubset.js";
 export {
+  IPCC_SAFE_SUBSET_RULESET,
+  IPCC_SAFE_SUBSET_EXPECTED_COUNTS,
+  IPCC_EFDB_SOURCE_KEY,
+  IPCC_AUTO_GLOBAL_ACTIVITY_SAFE_SQL,
+  classifyIpccSafeClass,
+  type IpccSafeClass,
+} from "./ipccSafeSubset.js";
+export {
   RESOLVER_VERSION,
   RULESET_VERSION,
   type ResolveFactorInput,

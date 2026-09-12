@@ -1,9 +1,10 @@
 /**
- * Factor Resolver V1 — live matrix against real registry (11445 total / 11445 visible after 026).
+ * Factor Resolver V1 — live matrix against real registry (REGISTRY_TOTAL total / REGISTRY_TOTAL visible after 026).
  * Shadow mode only. Does not write ledger.
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { REGISTRY_TOTAL, CATALOG_VISIBLE_TOTAL } from "./helpers/registryCounts.js";
 import pg from "pg";
 import { resolveFactor } from "../services/factorResolver/index.js";
 import type { ResolveFactorInput, ResolveFactorResult } from "../services/factorResolver/types.js";
@@ -40,7 +41,7 @@ describe("factor resolver live matrix", { skip: !DATABASE_URL }, () => {
 
   it("governance non-regression snapshot", async () => {
     const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-    assert.equal(registry.rows[0].n, 11445);
+    assert.equal(registry.rows[0].n, REGISTRY_TOTAL);
     const gov = await pool.query(
       `SELECT s.source_key, v.calculation_status, v.resolver_status, COUNT(f.id)::int AS n
        FROM emission_factor_versions v

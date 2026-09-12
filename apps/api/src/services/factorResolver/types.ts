@@ -1,8 +1,8 @@
 /** Factor Resolver V1 — shared types, versions, reason codes. */
 
 export const RESOLVER_VERSION = "1";
-/** Bumped for EPA AUTO_US controlled activation (027). */
-export const RULESET_VERSION = "2026-09-v4";
+/** Bumped for IPCC EFDB stationary combustion V1 activation (030). */
+export const RULESET_VERSION = "2026-09-v5";
 
 export type ResolveMode = "shadow" | "production";
 

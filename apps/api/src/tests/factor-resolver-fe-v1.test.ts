@@ -16,6 +16,7 @@ import {
 } from "../services/factorResolver/safeSubsets.js";
 import { RULESET_VERSION } from "../services/factorResolver/types.js";
 import { ensureTestOrgFixture } from "./helpers/ensureTestOrgFixture.js";
+import { REGISTRY_TOTAL } from "./helpers/registryCounts.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 const MARKER = "fe-v1-test";
@@ -71,7 +72,7 @@ describe("factor resolver FE V1", { skip: !DATABASE_URL }, () => {
 
   it("governance + safe subset counts after 024", async () => {
     const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-    assert.equal(registry.rows[0].n, 11445);
+    assert.equal(registry.rows[0].n, REGISTRY_TOTAL);
 
     const gov = await pool.query(
       `SELECT s.source_key, v.calculation_status, v.resolver_status, COUNT(f.id)::int AS n

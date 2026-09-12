@@ -1,5 +1,6 @@
 import type { FactorCandidate, ResolveFactorInput } from "./types.js";
 import { EPA_SOURCE_KEY, isEpaEgridFactor } from "./epaSafeSubset.js";
+import { IPCC_EFDB_SOURCE_KEY } from "./ipccSafeSubset.js";
 
 export type GeographyEval = {
   eligible: boolean;
@@ -36,6 +37,18 @@ export function evaluateGeography(
         eligible: false,
         rank: 999,
         reasonCode: "GEO_EPA_COUNTRY_REQUIRED",
+      };
+    }
+  }
+
+  // IPCC EFDB: empty region ≠ WORLD; still require an effective activity country
+  // for AUTO_GLOBAL defaults (Tier-1), never match bare WORLD/missing.
+  if (source === IPCC_EFDB_SOURCE_KEY) {
+    if (!requested || requested === "WORLD" || requested === "GLOBAL") {
+      return {
+        eligible: false,
+        rank: 999,
+        reasonCode: "GEO_IPCC_COUNTRY_REQUIRED",
       };
     }
   }
@@ -190,6 +203,26 @@ export function evaluateGeography(
         reasonCode: "GEO_UK_NULL_WEAK",
         warning: "UK factor missing country_code",
       };
+    }
+    // IPCC Tier-1 defaults: empty region stored as NULL country, NOT as WORLD.
+    if (source === IPCC_EFDB_SOURCE_KEY) {
+      const geoApp = candidate.geographicApplicability ?? null;
+      if (geoApp === "IPCC_DEFAULT_UNSPECIFIED") {
+        return {
+          eligible: true,
+          rank: 28,
+          reasonCode: "GEO_IPCC_DEFAULT_UNSPECIFIED",
+          warning:
+            "IPCC EFDB empty region is not WORLD; Tier-1 default applies with activity country context",
+        };
+      }
+      if (geoApp === "REQUIRES_REVIEW") {
+        return {
+          eligible: false,
+          rank: 999,
+          reasonCode: "GEO_IPCC_REQUIRES_REVIEW",
+        };
+      }
     }
     return {
       eligible: false,

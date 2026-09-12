@@ -4,6 +4,7 @@
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { REGISTRY_TOTAL, CATALOG_VISIBLE_TOTAL } from "./helpers/registryCounts.js";
 import { existsSync } from "node:fs";
 import pg from "pg";
 import { buildTestApp } from "./helpers/buildTestApp.js";
@@ -24,7 +25,7 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL });
     try {
       const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-      assert.equal(registry.rows[0].n, 11445);
+      assert.equal(registry.rows[0].n, REGISTRY_TOTAL);
 
       const uk = await pool.query(
         `SELECT COUNT(*)::int AS n,
@@ -265,9 +266,9 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
         [UK_SOURCE_KEY, UK_DATASET_VERSION],
       );
       const result = await importUkGovGhg2026(pool, WORKBOOK);
-      assert.equal(result.registryAfter, 11445);
+      assert.equal(result.registryAfter, REGISTRY_TOTAL);
       assert.equal(result.ukCount, 2622);
-      assert.equal(result.catalogVisible, 11445);
+      assert.equal(result.catalogVisible, REGISTRY_TOTAL);
       assert.equal(result.legacyInternal, 8);
       assert.equal(result.inserted, 0);
       const after = await pool.query(

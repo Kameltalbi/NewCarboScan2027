@@ -1,5 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { REGISTRY_TOTAL, CATALOG_VISIBLE_TOTAL } from "./helpers/registryCounts.js";
 import pg from "pg";
 import {
   decodeSearchCursor,
@@ -49,7 +50,7 @@ describe("factor search live DB", () => {
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(Number(count.rows[0].n), 11445);
+      assert.equal(Number(count.rows[0].n), REGISTRY_TOTAL);
     } finally {
       await pool.end();
     }
@@ -347,7 +348,7 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const all = await searchFactors(pool, { status: "approved", limit: 20 });
-      assert.equal(all.total, 11445); // public catalog includes EPA (026)
+      assert.equal(all.total, REGISTRY_TOTAL); // public catalog includes EPA (026)
       assert.equal(all.items.length, 20);
       assert.equal(all.hasMore, true);
 
@@ -380,7 +381,7 @@ describe("factor search live DB", () => {
         limit: 20,
       });
       assert.ok(tomate.total > 0);
-      assert.ok(tomate.total < 11445);
+      assert.ok(tomate.total < REGISTRY_TOTAL);
       assert.ok(tomate.total >= tomate.items.length);
     } finally {
       await pool.end();
@@ -424,10 +425,10 @@ describe("factor search live DB", () => {
       const total = facets.sources.reduce((sum, s) => sum + s.count, 0);
       const uk = facets.sources.find((s) => s.value === "uk_gov_ghg");
       const epa = facets.sources.find((s) => s.value === "epa_ghg_emission_factors_hub");
-      // After 026: EPA visible → 11445; after 023 only: 10024; before 023: 7402
+      // After 026: EPA visible → REGISTRY_TOTAL; after 023 only: 10024; before 023: 7402
       if (epa) {
         assert.equal(epa.count, 1421);
-        assert.equal(total, 11445);
+        assert.equal(total, REGISTRY_TOTAL);
       } else if (uk) {
         assert.equal(uk.count, 2622);
         assert.equal(total, 10024);

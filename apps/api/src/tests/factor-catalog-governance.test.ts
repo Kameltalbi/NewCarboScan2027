@@ -9,6 +9,7 @@ import {
   searchFactors,
 } from "../services/factorSearch.js";
 import { ensureTestOrgFixture } from "./helpers/ensureTestOrgFixture.js";
+import { CATALOG_VISIBLE_TOTAL } from "./helpers/registryCounts.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -85,7 +86,7 @@ describe("factor catalog governance 019", () => {
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(Number(catalogCount.rows[0].n), 11445);
+      assert.equal(Number(catalogCount.rows[0].n), CATALOG_VISIBLE_TOTAL);
 
       const approvedHidden = await searchFactors(pool, {
         status: "approved",
@@ -189,7 +190,7 @@ describe("factor catalog governance 019", () => {
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(Number(countRes.rows[0].n), 11445);
+      assert.equal(Number(countRes.rows[0].n), CATALOG_VISIBLE_TOTAL);
 
       const ademeState = await pool.query<{
         status: string;

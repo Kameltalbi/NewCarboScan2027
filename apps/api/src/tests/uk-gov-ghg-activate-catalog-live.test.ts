@@ -4,6 +4,7 @@
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { REGISTRY_TOTAL, CATALOG_VISIBLE_TOTAL } from "./helpers/registryCounts.js";
 import pg from "pg";
 import { buildTestApp } from "./helpers/buildTestApp.js";
 import { signToken } from "../plugins/auth.js";
@@ -18,7 +19,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
     const pool = new pg.Pool({ connectionString: DATABASE_URL });
     try {
       const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-      assert.equal(registry.rows[0].n, 11445);
+      assert.equal(registry.rows[0].n, REGISTRY_TOTAL);
 
       const gov = await pool.query(
         `SELECT v.status, v.catalog_status, v.calculation_status, v.resolver_status,
@@ -43,7 +44,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(visible.rows[0].n, 11445);
+      assert.equal(visible.rows[0].n, REGISTRY_TOTAL);
 
       const dist = await pool.query(
         `SELECT
@@ -131,7 +132,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
       assert.ok(ukFacet, "UK source missing from facets");
       assert.equal(ukFacet.count, 2622);
       const total = facets.sources.reduce((sum, s) => sum + s.count, 0);
-      assert.equal(total, 11445);
+      assert.equal(total, REGISTRY_TOTAL);
     } finally {
       await pool.end();
     }

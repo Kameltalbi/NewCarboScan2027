@@ -53,4 +53,6 @@ export const EXPECTED_SUBSET_COUNTS = {
   epaSafeUs: 258,
   epaGlobalGwp: 62,
   epaAutoGlobalActivity: 0,
+  /** IPCC EFDB CO2 stationary combustion Tier-1 defaults (empty region ≠ WORLD). */
+  ipccAutoGlobalActivity: 216,
 } as const;

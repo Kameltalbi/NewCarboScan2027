@@ -19,6 +19,7 @@ import {
 } from "../services/factorResolver/safeSubsets.js";
 import { resolveFactor } from "../services/factorResolver/index.js";
 import { ensureTestOrgFixture } from "./helpers/ensureTestOrgFixture.js";
+import { REGISTRY_TOTAL, CATALOG_VISIBLE_TOTAL } from "./helpers/registryCounts.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -92,13 +93,13 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
 
   it("non-regression governance + subset counts", async () => {
     const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-    assert.equal(registry.rows[0].n, 11445);
+    assert.equal(registry.rows[0].n, REGISTRY_TOTAL);
     const visible = await pool.query(
       `SELECT COUNT(*)::int AS n FROM emission_factors f
        JOIN emission_factor_versions v ON v.id = f.version_id
        WHERE f.status='approved' AND v.status='approved' AND v.catalog_status='visible'`,
     );
-    assert.equal(visible.rows[0].n, 11445); // EPA catalog-visible; calc+resolver enabled (027), AUTO_US gated
+    assert.equal(visible.rows[0].n, CATALOG_VISIBLE_TOTAL); // IPCC+EPA catalog-visible; safe subsets gated
 
     const gov = await pool.query(
       `SELECT s.source_key, v.calculation_status, v.resolver_status, COUNT(f.id)::int AS n
@@ -375,7 +376,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       const prov = led.rows[0].provenance;
       assert.equal(prov.source, "api/v1/factors/resolve-and-calculate");
       assert.equal(prov.resolverVersion, "1");
-      assert.equal(prov.rulesetVersion, "2026-09-v4");
+      assert.equal(prov.rulesetVersion, "2026-09-v5");
       assert.equal(prov.stableFactorId, "electricity_kwh");
       assert.equal(prov.sourceKey, "internal");
       assert.equal(prov.originalQuantity, "1000");

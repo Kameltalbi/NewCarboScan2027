@@ -14,6 +14,7 @@ import type {
 import { RESOLVER_VERSION, RULESET_VERSION } from "./types.js";
 import { isMonetaryUnit, normalizeResolverUnit } from "./unitCompatibility.js";
 import { EPA_SOURCE_KEY, buildEpaProvenanceFields } from "./epaSafeSubset.js";
+import { IPCC_EFDB_SOURCE_KEY, buildIpccProvenanceFields } from "./ipccSafeSubset.js";
 
 type Queryable = Pick<Pool, "query">;
 
@@ -416,6 +417,14 @@ function finalize(args: {
     args.topCandidate.sourceKey === EPA_SOURCE_KEY
   ) {
     Object.assign(provenance, buildEpaProvenanceFields(args.topCandidate));
+  }
+
+  if (
+    args.selectedFactor?.source.key === IPCC_EFDB_SOURCE_KEY &&
+    args.topCandidate &&
+    args.topCandidate.sourceKey === IPCC_EFDB_SOURCE_KEY
+  ) {
+    Object.assign(provenance, buildIpccProvenanceFields(args.topCandidate));
   }
 
   return {

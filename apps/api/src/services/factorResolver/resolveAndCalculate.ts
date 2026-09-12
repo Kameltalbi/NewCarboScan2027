@@ -235,6 +235,16 @@ export async function resolveAndCalculate(
           egrid: resolution.provenance.egrid,
         }
       : {}),
+    ...(resolution.provenance?.ipccSafeSubsetRuleset
+      ? {
+          ipccSafeSubsetRuleset: resolution.provenance.ipccSafeSubsetRuleset,
+          ipccSafeClass: resolution.provenance.ipccSafeClass,
+          geographicApplicability: resolution.provenance.geographicApplicability,
+          energyBasis: resolution.provenance.energyBasis,
+          lifecycleBoundary: resolution.provenance.lifecycleBoundary,
+          noteEmptyRegionIsNotWorld: resolution.provenance.noteEmptyRegionIsNotWorld,
+        }
+      : {}),
   };
 
   const unitConversionJson = conversion

@@ -10,6 +10,11 @@ import {
   EPA_SOURCE_KEY,
   isEpaAutoUsActivity,
 } from "./epaSafeSubset.js";
+import {
+  IPCC_AUTO_GLOBAL_ACTIVITY_SAFE_SQL,
+  IPCC_EFDB_SOURCE_KEY,
+  isIpccAutoGlobalActivity,
+} from "./ipccSafeSubset.js";
 
 const ADEME_ENERGY_DENOMS = new Set([
   "kWh",
@@ -72,6 +77,10 @@ export function isProductionSafeCandidate(c: FactorCandidate): boolean {
     return isEpaAutoUsActivity(c);
   }
 
+  if (c.sourceKey === IPCC_EFDB_SOURCE_KEY) {
+    return isIpccAutoGlobalActivity(c);
+  }
+
   return false;
 }
 
@@ -118,6 +127,10 @@ export const PRODUCTION_SAFE_FACTOR_SQL = `
     OR
     (
       ${EPA_AUTO_US_SAFE_SQL}
+    )
+    OR
+    (
+      ${IPCC_AUTO_GLOBAL_ACTIVITY_SAFE_SQL}
     )
   )
 `;

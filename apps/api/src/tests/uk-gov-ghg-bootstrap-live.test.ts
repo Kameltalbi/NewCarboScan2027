@@ -4,6 +4,7 @@
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { REGISTRY_TOTAL, CATALOG_VISIBLE_TOTAL } from "./helpers/registryCounts.js";
 import pg from "pg";
 import { buildTestApp } from "./helpers/buildTestApp.js";
 import { signToken } from "../plugins/auth.js";
@@ -17,7 +18,7 @@ describe("uk gov ghg 2026 bootstrap (live)", { skip: !DATABASE_URL }, () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL });
     try {
       const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-      assert.equal(registry.rows[0].n, 11445);
+      assert.equal(registry.rows[0].n, REGISTRY_TOTAL);
 
       const gov = await pool.query(
         `SELECT v.status, v.catalog_status, v.calculation_status, v.resolver_status, COUNT(f.id)::int AS n
