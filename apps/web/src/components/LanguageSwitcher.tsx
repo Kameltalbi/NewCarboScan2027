@@ -16,7 +16,7 @@ const LANGUAGES = [
 ] as const;
 
 const flagFrame =
-  "relative inline-flex h-6 w-6 overflow-hidden rounded-full ring-1 ring-black/10";
+  "relative inline-flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10";
 
 const FlagCircle: React.FC<{ code: string }> = ({ code }) => {
   if (code === "en") {
