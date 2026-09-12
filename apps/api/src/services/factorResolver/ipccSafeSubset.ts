@@ -34,7 +34,8 @@ export function classifyIpccSafeClass(input: {
     input.unitNumerator === "kgCO2e" &&
     input.unitDenominator === "TJ" &&
     input.energyBasis === "net_cv" &&
-    input.lifecycleBoundary === "direct" &&
+    (input.lifecycleBoundary === "direct" ||
+      input.lifecycleBoundary === "outside_of_scopes") &&
     input.countryCode == null &&
     input.geographicApplicability === "IPCC_DEFAULT_UNSPECIFIED"
   ) {
@@ -71,9 +72,13 @@ export const IPCC_AUTO_GLOBAL_ACTIVITY_SAFE_SQL = `
   AND f.unit_numerator = 'kgCO2e'
   AND f.unit_denominator = 'TJ'
   AND f.energy_basis = 'net_cv'
-  AND f.lifecycle_boundary = 'direct'
+  AND f.lifecycle_boundary IN ('direct', 'outside_of_scopes')
   AND f.country_code IS NULL
   AND f.metadata->'geography'->>'geographic_applicability' = 'IPCC_DEFAULT_UNSPECIFIED'
+  AND (
+    f.lifecycle_boundary = 'direct'
+    OR coalesce(f.metadata->'provenance'->>'biogenicCo2', '') = 'true'
+  )
 `;
 
 export function buildIpccProvenanceFields(c: FactorCandidate) {

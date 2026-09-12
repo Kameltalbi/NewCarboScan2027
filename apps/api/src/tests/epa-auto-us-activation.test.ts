@@ -75,7 +75,7 @@ describe("EPA AUTO_US activation (027)", { skip: !DATABASE_URL }, () => {
        WHERE ${EPA_AUTO_US_SAFE_SQL}`,
     );
     assert.equal(Number(autoUs.rows[0].n), EXPECTED_SUBSET_COUNTS.epaSafeUs);
-    assert.equal(RULESET_VERSION, "2026-09-v5");
+    assert.equal(RULESET_VERSION, "2026-09-v6");
 
     const egrid = await pool.query<{ id: string; value: string }>(
       `SELECT f.id, f.value::text AS value FROM emission_factors f

@@ -376,7 +376,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       const prov = led.rows[0].provenance;
       assert.equal(prov.source, "api/v1/factors/resolve-and-calculate");
       assert.equal(prov.resolverVersion, "1");
-      assert.equal(prov.rulesetVersion, "2026-09-v5");
+      assert.equal(prov.rulesetVersion, "2026-09-v6");
       assert.equal(prov.stableFactorId, "electricity_kwh");
       assert.equal(prov.sourceKey, "internal");
       assert.equal(prov.originalQuantity, "1000");

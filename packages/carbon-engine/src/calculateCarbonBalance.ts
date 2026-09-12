@@ -20,6 +20,11 @@ export interface CalculationInputLine {
   factorUncertaintyPct?: string;
   formula?: string;
   methodologyVersion?: string;
+  /**
+   * When "biogenic_co2", the line is calculated and ledgered but excluded from
+   * scope1/2/3/total (GHG Protocol biogenic CO2 memo / outside of scopes).
+   */
+  accountingClass?: "scope" | "biogenic_co2";
 }
 
 export interface LedgerLine {
@@ -37,6 +42,7 @@ export interface LedgerLine {
   uncertaintyPct?: string;
   engineVersion: string;
   methodologyVersion: string;
+  accountingClass: "scope" | "biogenic_co2";
 }
 
 export interface CalculationResult {
@@ -48,6 +54,8 @@ export interface CalculationResult {
     scope2: string;
     scope3: string;
     total: string;
+    /** Biogenic CO2 memo (outside scopes) — conserved, not in total. */
+    biogenicCo2: string;
   };
   inputHash: string;
   resultHash: string;
@@ -110,13 +118,18 @@ export function calculateCarbonBalance(
       uncertaintyPct,
       engineVersion: ENGINE_VERSION,
       methodologyVersion: method,
+      accountingClass: line.accountingClass ?? "scope",
     };
   });
 
   const sumScope = (s: Scope) =>
     ledger
-      .filter((l) => l.scope === s)
+      .filter((l) => l.scope === s && l.accountingClass !== "biogenic_co2")
       .reduce((acc, l) => add(acc, l.resultKgCo2e), add(0));
+
+  const biogenicCo2 = ledger
+    .filter((l) => l.accountingClass === "biogenic_co2")
+    .reduce((acc, l) => add(acc, l.resultKgCo2e), add(0));
 
   const scope1 = sumScope(1);
   const scope2 = sumScope(2);
@@ -132,6 +145,7 @@ export function calculateCarbonBalance(
       scope2: formatDecimal(scope2),
       scope3: formatDecimal(scope3),
       total: formatDecimal(total),
+      biogenicCo2: formatDecimal(biogenicCo2),
     },
     inputHash: stableHash(sorted),
     resultHash: stableHash(ledger),

@@ -65,6 +65,34 @@ describe("carbon-engine", () => {
     assert.ok(text.includes(result.totals.total));
   });
 
+  it("excludes biogenic CO2 from scope totals but conserves memo", () => {
+    const result = calculateCarbonBalance([
+      {
+        lineKey: "fossil",
+        scope: 1,
+        factorId: "f-fossil",
+        activityQuantity: "1",
+        activityUnit: "TJ",
+        factorValue: "74100",
+        factorUnit: "kgCO2e/TJ",
+      },
+      {
+        lineKey: "bio",
+        scope: 1,
+        factorId: "f-bio",
+        activityQuantity: "1",
+        activityUnit: "TJ",
+        factorValue: "112000",
+        factorUnit: "kgCO2e/TJ",
+        accountingClass: "biogenic_co2",
+      },
+    ]);
+    assert.equal(result.totals.scope1, "74100");
+    assert.equal(result.totals.total, "74100");
+    assert.equal(result.totals.biogenicCo2, "112000");
+    assert.equal(result.lines.find((l) => l.lineKey === "bio")?.accountingClass, "biogenic_co2");
+  });
+
   it("combines uncertainty via RSS", () => {
     assert.equal(combineUncertaintyPct("8", "12"), "14.4222");
   });

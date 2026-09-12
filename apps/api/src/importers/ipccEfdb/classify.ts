@@ -2,6 +2,7 @@
  * Semantic classification — Type of parameter ≠ factor_kind.
  * Empty region ≠ WORLD.
  */
+import { isIpccBiogenicCo2Fuel } from "./biogenicFuels.js";
 import { parseEfdbValue } from "./parseValue.js";
 import type {
   GeographicApplicability,
@@ -175,6 +176,7 @@ export function promoteOperationalFactors(
     if (gas !== "CO2" && gas !== "CH4" && gas !== "N2O") continue;
 
     const isCo2Activity = c.operationalRole === "activity_co2";
+    const biogenicCo2 = isCo2Activity && isIpccBiogenicCo2Fuel(fuel);
     const stableFactorId = `ipcc:efdb:${c.efId}:${slugCat(cat)}:${slugFuel(fuel)}:${gas.toLowerCase()}:kg_per_tj_ncv`;
 
     const name = isCo2Activity
@@ -190,7 +192,8 @@ export function promoteOperationalFactors(
       unitNumerator: isCo2Activity ? "kgCO2e" : `kg${gas}`,
       unitDenominator: "TJ",
       energyBasis: "net_cv",
-      lifecycleBoundary: "direct",
+      // Biogenic CO2 conserved as calculable value but outside scope totals (GHG Protocol memo).
+      lifecycleBoundary: biogenicCo2 ? "outside_of_scopes" : "direct",
       gwpBasis: null,
       factorKind: isCo2Activity ? "activity_emission_factor" : "ghg_component",
       factorType: "physical",
@@ -199,13 +202,14 @@ export function promoteOperationalFactors(
       sourceCategory: cat,
       sourceSubcategory: fuel,
       internalCategory: "energy",
-      internalSubcategory: "stationary_combustion",
+      internalSubcategory: biogenicCo2 ? "stationary_combustion_biogenic" : "stationary_combustion",
       geographicApplicability: c.geographicApplicability,
       gasCode: gas,
       efId: c.efId,
       typeOfParameter: c.typeOfParameter ?? "2006 IPCC default",
       fuel,
       semanticClass: c.semanticClass,
+      biogenicCo2,
     });
   }
   out.sort((a, b) => a.stableFactorId.localeCompare(b.stableFactorId));

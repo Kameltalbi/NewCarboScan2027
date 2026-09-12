@@ -72,7 +72,7 @@ describe("factor resolver HTTP shadow", { skip: !DATABASE_URL }, () => {
       };
       assert.ok(body.status);
       assert.equal(body.resolverVersion, "1");
-      assert.equal(body.rulesetVersion, "2026-09-v5");
+      assert.equal(body.rulesetVersion, "2026-09-v6");
       if (body.provenance) assert.equal(body.provenance.shadow, true);
 
       const ledgerAfter = await pool.query(

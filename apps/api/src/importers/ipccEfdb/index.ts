@@ -18,7 +18,10 @@ export {
   promoteOperationalFactors,
   summarizeClassification,
 } from "./classify.js";
-export { buildIpccEfdbSeedSqlFromWorkbook } from "./generateSeed.js";
+export {
+  isIpccBiogenicCo2Fuel,
+  IPCC_BIOGENIC_CO2_ACTIVITY_EXPECTED,
+} from "./biogenicFuels.js";
 export { assertIpccEfdbWorkbookSha256 } from "./sha256.js";
 export {
   IPCC_EFDB_SOURCE_UUID,

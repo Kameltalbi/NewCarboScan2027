@@ -83,7 +83,7 @@ describe("EPA Safe Subset V1 policy (unit)", () => {
     assert.equal(EXPECTED_SUBSET_COUNTS.epaSafeUs, 258);
     assert.equal(EXPECTED_SUBSET_COUNTS.epaAutoGlobalActivity, 0);
     assert.equal(EPA_SAFE_SUBSET_RULESET, "EPA_SAFE_SUBSET_V1_2026_09");
-    assert.equal(RULESET_VERSION, "2026-09-v5");
+    assert.equal(RULESET_VERSION, "2026-09-v6");
   });
 
   it("classifies GLOBAL_APPLICABLE gwp as GLOBAL_GWP only", () => {

@@ -57,6 +57,21 @@ Intervals / central values / inequalities keep `number = null` (no silent mid-po
 
 Empty region is stored as `country_code = NULL` + `geographic_applicability = IPCC_DEFAULT_UNSPECIFIED` — **never WORLD**.
 
+## Biogenic CO2 (031)
+
+Among the **216** CO2 stationary activity factors, **44** are biomass/biofuels
+(11 fuels × 4 categories). They remain calculable (value conserved) but are tagged:
+
+| Field | Value |
+|-------|-------|
+| `lifecycle_boundary` | `outside_of_scopes` |
+| `metadata.provenance.biogenicCo2` | `true` |
+| Engine `accountingClass` | `biogenic_co2` |
+| Scope totals | **excluded** |
+| `totals.biogenicCo2` | memo (Ledger provenance) |
+
+`Municipal Wastes (non-biomass fraction)` (**4**) stays fossil/`direct`.
+
 ## Operational subset V1 (`IPCC_STATIONARY_COMBUSTION_V1_2026_09`)
 
 Criteria: `2006 IPCC default` ∩ categories `1.A.1|1.A.2|1.A.4` ∩ unit `kg/TJ` ∩ single gas CO2/CH4/N2O ∩ numeric value.
@@ -79,6 +94,7 @@ TN eligibility: measured **216** AUTO_GLOBAL_ACTIVITY (Tier-1 defaults usable wi
 | `028_bootstrap_ipcc_efdb.sql` | post-checks draft/hidden |
 | `029_activate_ipcc_efdb_catalog.sql` | approved/visible |
 | `030_activate_ipcc_stationary_combustion_v1.sql` | calc+resolver enabled (app gate 216) |
+| `031_ipcc_biogenic_co2_v1.sql` | tag 44 biogenic CO2 outside scopes |
 
 ### Rollback 030
 

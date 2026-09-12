@@ -59,12 +59,17 @@ function buildFactorMetadata(dto: IpccFactorDto, sourceSha256: string) {
       efId: dto.efId,
       typeOfParameter: dto.typeOfParameter,
       gasCode: dto.gasCode,
+      fuel: dto.fuel,
       geographicApplicability: dto.geographicApplicability,
       energyBasis: dto.energyBasis,
       semanticClass: dto.semanticClass,
+      biogenicCo2: dto.biogenicCo2,
+      co2Accounting: dto.biogenicCo2 ? "biogenic_outside_scopes_memo" : "fossil_scope",
       co2eRule:
         dto.factorKind === "activity_emission_factor"
-          ? "CO2_identity_kgCO2_per_TJ_equals_kgCO2e_per_TJ_GWP1_no_blend"
+          ? dto.biogenicCo2
+            ? "biogenic_CO2_value_conserved_excluded_from_scope_totals"
+            : "CO2_identity_kgCO2_per_TJ_equals_kgCO2e_per_TJ_GWP1_no_blend"
           : null,
       noteEmptyRegionIsNotWorld: true,
     },

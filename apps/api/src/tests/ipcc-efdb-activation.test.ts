@@ -21,6 +21,10 @@ import {
   resolveFactor,
 } from "../services/factorResolver/index.js";
 import { evaluateGeography } from "../services/factorResolver/geographyPolicy.js";
+import {
+  IPCC_BIOGENIC_CO2_ACTIVITY_EXPECTED,
+  isIpccBiogenicCo2Fuel,
+} from "../importers/ipccEfdb/biogenicFuels.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -122,7 +126,7 @@ describe("IPCC EFDB stationary combustion V1", { skip: !DATABASE_URL }, () => {
     assert.equal(evaluateGeography({ country: "WORLD" }, cand).eligible, false);
     assert.equal(evaluateGeography({ country: "TN" }, cand).eligible, true);
     assert.equal(evaluateGeography({ country: "FR" }, cand).eligible, true);
-    assert.equal(RULESET_VERSION, "2026-09-v5");
+    assert.equal(RULESET_VERSION, "2026-09-v6");
   });
 
   it("US/TN diesel stationary CO2 resolve-and-calculate matches 74100 kgCO2e/TJ + ledger", async () => {
@@ -241,5 +245,82 @@ describe("IPCC EFDB stationary combustion V1", { skip: !DATABASE_URL }, () => {
       `SELECT COUNT(*)::text AS n FROM ipcc_efdb_records WHERE semantic_class = 'multi_gas_unsplit'`,
     );
     assert.equal(Number(multi.rows[0].n), 1807);
+  });
+
+  it("44 biogenic CO2 tagged outside_of_scopes; non-biomass MSW stays fossil", async () => {
+    if (!hasIpcc) return;
+    assert.equal(isIpccBiogenicCo2Fuel("Wood/Wood Waste"), true);
+    assert.equal(isIpccBiogenicCo2Fuel("Municipal Wastes (non-biomass fraction)"), false);
+    assert.equal(isIpccBiogenicCo2Fuel("Municipal Wastes (biomass fraction)"), true);
+
+    const bio = await pool.query<{ n: string }>(
+      `SELECT COUNT(*)::text AS n FROM emission_factors f
+       JOIN emission_factor_versions v ON v.id = f.version_id
+       JOIN factor_sources s ON s.id = v.source_id
+       WHERE s.source_key = $1
+         AND f.factor_kind = 'activity_emission_factor'
+         AND f.lifecycle_boundary = 'outside_of_scopes'
+         AND coalesce(f.metadata->'provenance'->>'biogenicCo2','') = 'true'`,
+      [IPCC_EFDB_SOURCE_KEY],
+    );
+    assert.equal(Number(bio.rows[0].n), IPCC_BIOGENIC_CO2_ACTIVITY_EXPECTED);
+
+    const fossilMsw = await pool.query<{ n: string }>(
+      `SELECT COUNT(*)::text AS n FROM emission_factors f
+       JOIN emission_factor_versions v ON v.id = f.version_id
+       JOIN factor_sources s ON s.id = v.source_id
+       WHERE s.source_key = $1
+         AND f.factor_kind = 'activity_emission_factor'
+         AND f.source_subcategory ILIKE '%non-biomass%'
+         AND f.lifecycle_boundary = 'direct'`,
+      [IPCC_EFDB_SOURCE_KEY],
+    );
+    assert.equal(Number(fossilMsw.rows[0].n), 4);
+  });
+
+  it("biogenic wood CO2: value conserved, excluded from scope totals, in Ledger memo", async () => {
+    if (!hasIpcc) return;
+    const wood = await pool.query<{ id: string; value: string }>(
+      `SELECT f.id, f.value::text AS value FROM emission_factors f
+       JOIN emission_factor_versions v ON v.id = f.version_id
+       JOIN factor_sources s ON s.id = v.source_id
+       WHERE s.source_key = $1
+         AND f.external_code = '117647'
+         AND f.lifecycle_boundary = 'outside_of_scopes'`,
+      [IPCC_EFDB_SOURCE_KEY],
+    );
+    assert.ok(wood.rows[0], "EF 117647 wood biogenic CO2");
+    const woodValue = Number(wood.rows[0].value);
+
+    const result = await resolveAndCalculate(pool, {
+      organizationId,
+      userId: (await ensureTestOrgFixture(pool)).userId,
+      method: "ghg_protocol",
+      lineKey: "ipcc-wood-biogenic",
+      scope: 1,
+      resolve: {
+        activity: "stationary combustion wood wood waste CO2",
+        unit: "TJ",
+        quantity: "1",
+        country: "TN",
+        preferredSource: IPCC_EFDB_SOURCE_KEY,
+        lifecycleBoundary: "outside_of_scopes",
+      },
+    });
+    assert.equal(result.ok, true);
+    if (!result.ok) return;
+    assert.equal(result.resolution.selectedFactor?.id, wood.rows[0].id);
+    assert.ok(Math.abs(Number(result.lines[0].resultKgCo2e) - woodValue) < 1e-6);
+    assert.equal(result.totals.scope1, "0");
+    assert.equal(result.totals.total, "0");
+    assert.ok(Math.abs(Number(result.totals.biogenicCo2) - woodValue) < 1e-6);
+    assert.equal(result.resolution.provenance.biogenicCo2, true);
+
+    const led = await pool.query<{ provenance: Record<string, unknown> }>(
+      `SELECT provenance FROM calculation_ledger WHERE run_id = $1`,
+      [result.runId],
+    );
+    assert.equal(led.rows[0].provenance.biogenicCo2, true);
+    assert.equal(led.rows[0].provenance.co2Accounting, "biogenic_outside_scopes_memo");
   });
 });

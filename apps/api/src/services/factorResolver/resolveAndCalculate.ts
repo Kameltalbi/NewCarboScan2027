@@ -116,6 +116,8 @@ export async function resolveAndCalculate(
     source_key: string;
     calculation_status: string;
     resolver_status: string;
+    lifecycle_boundary: string | null;
+    biogenic_co2: boolean;
   }>(
     `SELECT f.id, f.value::text AS value,
             f.unit_numerator, f.unit_denominator,
@@ -124,7 +126,9 @@ export async function resolveAndCalculate(
             f.checksum, f.version_id,
             f.stable_factor_id, f.external_code,
             v.dataset_version, s.source_key,
-            v.calculation_status, v.resolver_status
+            v.calculation_status, v.resolver_status,
+            f.lifecycle_boundary,
+            coalesce(f.metadata->'provenance'->>'biogenicCo2' = 'true', false) AS biogenic_co2
      FROM emission_factors f
      JOIN emission_factor_versions v ON v.id = f.version_id
      JOIN factor_sources s ON s.id = v.source_id
@@ -147,6 +151,8 @@ export async function resolveAndCalculate(
   }
 
   const f = loaded.rows[0];
+  const isBiogenicCo2 =
+    f.biogenic_co2 === true || f.lifecycle_boundary === "outside_of_scopes";
   const conversion = resolution.unitConversion;
   let normalizedQuantity = String(originalQuantity);
   let normalizedUnit = originalUnit;
@@ -198,6 +204,7 @@ export async function resolveAndCalculate(
     activityUnit: normalizedUnit,
     factorValue: f.value,
     factorUnit: f.unit,
+    accountingClass: isBiogenicCo2 ? "biogenic_co2" : "scope",
   };
 
   const result = calculateCarbonBalance([engineLine], "ghg-corporate-1.0.0");
@@ -221,6 +228,10 @@ export async function resolveAndCalculate(
     resolutionStatus: "RESOLVED",
     reasons: resolution.reasons,
     warnings: resolution.warnings,
+    biogenicCo2: isBiogenicCo2,
+    co2Accounting: isBiogenicCo2 ? "biogenic_outside_scopes_memo" : "fossil_scope",
+    lifecycleBoundary: f.lifecycle_boundary,
+    accountingClass: isBiogenicCo2 ? "biogenic_co2" : "scope",
     // Carry EPA Safe Subset V1 fields from resolution provenance when present
     ...(resolution.provenance?.epaSafeSubsetRuleset
       ? {
@@ -361,7 +372,16 @@ export async function resolveAndCalculate(
     resultHash: result.resultHash,
     commentary: buildFactualReportCommentary(result),
     lines: result.lines,
-    resolution,
+    resolution: {
+      ...resolution,
+      provenance: {
+        ...resolution.provenance,
+        biogenicCo2: isBiogenicCo2,
+        co2Accounting: isBiogenicCo2 ? "biogenic_outside_scopes_memo" : "fossil_scope",
+        accountingClass: isBiogenicCo2 ? "biogenic_co2" : "scope",
+        lifecycleBoundary: f.lifecycle_boundary,
+      },
+    },
     normalizedQuantity,
     normalizedUnit,
     originalQuantity: String(originalQuantity),

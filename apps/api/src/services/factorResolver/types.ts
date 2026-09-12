@@ -1,8 +1,8 @@
 /** Factor Resolver V1 — shared types, versions, reason codes. */
 
 export const RESOLVER_VERSION = "1";
-/** Bumped for IPCC EFDB stationary combustion V1 activation (030). */
-export const RULESET_VERSION = "2026-09-v5";
+/** Bumped for IPCC biogenic CO2 memo accounting (031). */
+export const RULESET_VERSION = "2026-09-v6";
 
 export type ResolveMode = "shadow" | "production";
 

@@ -144,7 +144,7 @@ export type IpccFactorDto = {
   unitNumerator: string;
   unitDenominator: string;
   energyBasis: "net_cv" | null;
-  lifecycleBoundary: "direct";
+  lifecycleBoundary: "direct" | "outside_of_scopes";
   gwpBasis: null;
   factorKind: "activity_emission_factor" | "ghg_component";
   factorType: "physical";
@@ -160,4 +160,6 @@ export type IpccFactorDto = {
   typeOfParameter: string;
   fuel: string | null;
   semanticClass: IpccSemanticClass;
+  /** True for biomass/biofuel CO2 — reported outside scopes (memo), value conserved. */
+  biogenicCo2: boolean;
 };
