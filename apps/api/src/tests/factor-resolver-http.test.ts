@@ -5,6 +5,7 @@ import { buildTestApp } from "./helpers/buildTestApp.js";
 import { signToken } from "../plugins/auth.js";
 import { DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR } from "../routes/calculate.js";
 import { ensureTestOrgFixture } from "./helpers/ensureTestOrgFixture.js";
+import { UK_SAFE_SUBSET_SQL } from "../services/factorResolver/safeSubsets.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -71,7 +72,7 @@ describe("factor resolver HTTP shadow", { skip: !DATABASE_URL }, () => {
       };
       assert.ok(body.status);
       assert.equal(body.resolverVersion, "1");
-      assert.equal(body.rulesetVersion, "2026-09-v3");
+      assert.equal(body.rulesetVersion, "2026-09-v4");
       if (body.provenance) assert.equal(body.provenance.shadow, true);
 
       const ledgerAfter = await pool.query(
@@ -92,12 +93,12 @@ describe("factor resolver HTTP shadow", { skip: !DATABASE_URL }, () => {
       assert.equal(factors.statusCode, 200);
       assert.equal(factors.json().total, 8);
 
-      // ADEME/UK still refused by calculate
+      // ADEME/UK still refused by calculate (safe-subset IDs → source-restricted)
       const uk = await pool.query<{ id: string }>(
         `SELECT f.id FROM emission_factors f
          JOIN emission_factor_versions v ON v.id = f.version_id
          JOIN factor_sources s ON s.id = v.source_id
-         WHERE s.source_key = 'uk_gov_ghg' LIMIT 1`,
+         WHERE ${UK_SAFE_SUBSET_SQL} LIMIT 1`,
       );
       const calc = await app.inject({
         method: "POST",

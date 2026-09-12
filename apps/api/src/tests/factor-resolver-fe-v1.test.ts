@@ -433,7 +433,7 @@ describe("factor resolver FE V1", { skip: !DATABASE_URL }, () => {
         `SELECT f.id FROM emission_factors f
          JOIN emission_factor_versions v ON v.id=f.version_id
          JOIN factor_sources s ON s.id=v.source_id
-         WHERE s.source_key='ademe' AND f.status='approved' LIMIT 1`,
+         WHERE ${ADEME_SAFE_SUBSET_SQL} LIMIT 1`,
       )
     ).rows[0]!.id;
     const ukId = (
@@ -441,7 +441,7 @@ describe("factor resolver FE V1", { skip: !DATABASE_URL }, () => {
         `SELECT f.id FROM emission_factors f
          JOIN emission_factor_versions v ON v.id=f.version_id
          JOIN factor_sources s ON s.id=v.source_id
-         WHERE s.source_key='uk_gov_ghg' AND f.status='approved' LIMIT 1`,
+         WHERE ${UK_SAFE_SUBSET_SQL} LIMIT 1`,
       )
     ).rows[0]!.id;
 

@@ -17,6 +17,7 @@ export {
 export {
   EPA_SAFE_SUBSET_RULESET,
   EPA_SAFE_SUBSET_EXPECTED_COUNTS,
+  EPA_SOURCE_KEY,
   classifyEpaSafeClass,
   isEpaEgridFactor,
   type EpaSafeClass,

@@ -9,12 +9,11 @@ export type GeographyEval = {
 };
 
 /**
- * Geography policy V1 (+ EPA Safe Subset V1).
+ * Geography policy V1 (+ EPA Safe Subset V1 activation).
  * ADEME NULL + requested FR → eligible (FR_IMPLIED_BY_SOURCE_POLICY).
- * ADEME NULL + other country → not eligible as geo match.
  * UK GB never auto-applies to FR/TN.
- * EPA US_SPECIFIC / eGRID never auto-applies to TN/FR/GB/etc.
- * EPA AUTO_GLOBAL_ACTIVITY does not exist in V1 (no world activity fallback).
+ * EPA AUTO_US requires effective country=US (never TN/FR/GB/WORLD/missing).
+ * eGRID requires matching US subregion — never pick arbitrary US region.
  */
 export function evaluateGeography(
   input: Pick<ResolveFactorInput, "country" | "region">,
@@ -30,7 +29,18 @@ export function evaluateGeography(
   const factorCountry = normalizeCountry(candidate.countryCode);
   const source = candidate.sourceKey;
 
-  // No requested country → weak geo; don't hard-reject, low specificity
+  // EPA: never auto-apply without an effective national geography
+  if (source === EPA_SOURCE_KEY) {
+    if (!requested || requested === "WORLD" || requested === "GLOBAL") {
+      return {
+        eligible: false,
+        rank: 999,
+        reasonCode: "GEO_EPA_COUNTRY_REQUIRED",
+      };
+    }
+  }
+
+  // No requested country → weak geo for non-EPA; don't hard-reject
   if (!requested) {
     if (factorCountry) {
       return {
@@ -41,6 +51,18 @@ export function evaluateGeography(
       };
     }
     return { eligible: true, rank: 45, reasonCode: "GEO_BOTH_UNSPECIFIED" };
+  }
+
+  // WORLD/GLOBAL activity geography: never match national EPA AUTO_US
+  if (
+    source === EPA_SOURCE_KEY &&
+    (requested === "WORLD" || requested === "GLOBAL")
+  ) {
+    return {
+      eligible: false,
+      rank: 999,
+      reasonCode: "GEO_EPA_COUNTRY_REQUIRED",
+    };
   }
 
   // Explicit contradiction: UK GB vs non-GB request
@@ -57,12 +79,30 @@ export function evaluateGeography(
     const geoApp = candidate.geographicApplicability ?? null;
     const egrid = isEpaEgridFactor(candidate);
 
-    if (egrid && requested !== "US") {
-      return {
-        eligible: false,
-        rank: 999,
-        reasonCode: "GEO_EPA_EGRID_US_ONLY",
-      };
+    if (egrid) {
+      if (requested !== "US") {
+        return {
+          eligible: false,
+          rank: 999,
+          reasonCode: "GEO_EPA_EGRID_US_ONLY",
+        };
+      }
+      const reqRegion = input.region?.trim() ?? "";
+      const facRegion = candidate.region?.trim() ?? "";
+      if (!reqRegion || !facRegion) {
+        return {
+          eligible: false,
+          rank: 999,
+          reasonCode: "GEO_EPA_EGRID_REGION_REQUIRED",
+        };
+      }
+      if (!sameRegion(reqRegion, facRegion)) {
+        return {
+          eligible: false,
+          rank: 999,
+          reasonCode: "GEO_EPA_EGRID_REGION_MISMATCH",
+        };
+      }
     }
 
     if (
@@ -85,15 +125,12 @@ export function evaluateGeography(
       };
     }
 
-    // GLOBAL_APPLICABLE on EPA is GWP-only in V1 — activity path never uses it.
-    // If somehow an activity row were tagged global, still weak and not preferred for TN.
-    if (geoApp === "GLOBAL_APPLICABLE" && requested !== "US") {
+    // GLOBAL_APPLICABLE on EPA is GWP-only — never activity auto geo-match
+    if (geoApp === "GLOBAL_APPLICABLE") {
       return {
-        eligible: true,
-        rank: 28,
-        reasonCode: "GEO_EPA_GLOBAL_WEAK",
-        warning:
-          "EPA GLOBAL_APPLICABLE is GWP-class in Safe Subset V1; not a TN activity substitute",
+        eligible: false,
+        rank: 999,
+        reasonCode: "GEO_EPA_GWP_NOT_ACTIVITY",
       };
     }
   }
@@ -117,16 +154,6 @@ export function evaluateGeography(
     let rank = 10;
     if (input.region && candidate.region && sameRegion(input.region, candidate.region)) {
       rank = 5;
-    } else if (
-      source === EPA_SOURCE_KEY &&
-      requested === "US" &&
-      isEpaEgridFactor(candidate) &&
-      input.region &&
-      candidate.region &&
-      !sameRegion(input.region, candidate.region)
-    ) {
-      // eGRID region mismatch: still eligible but weaker than exact subregion
-      rank = 18;
     }
     return { eligible: true, rank, reasonCode: "GEO_EXACT_COUNTRY" };
   }
@@ -143,7 +170,8 @@ export function evaluateGeography(
         eligible: true,
         rank: 15,
         reasonCode: "FR_IMPLIED_BY_SOURCE_POLICY",
-        warning: "ADEME country_code NULL interpreted as FR-eligible by source policy (not written to DB)",
+        warning:
+          "ADEME country_code NULL interpreted as FR-eligible by source policy (not written to DB)",
       };
     }
     return {
@@ -156,7 +184,6 @@ export function evaluateGeography(
   // Factor country NULL (non-ADEME)
   if (!factorCountry) {
     if (source === "uk_gov_ghg" && requested === "GB") {
-      // rare UK nulls — weak allow for GB only
       return {
         eligible: true,
         rank: 30,

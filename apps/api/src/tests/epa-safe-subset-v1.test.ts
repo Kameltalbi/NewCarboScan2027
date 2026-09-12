@@ -83,7 +83,7 @@ describe("EPA Safe Subset V1 policy (unit)", () => {
     assert.equal(EXPECTED_SUBSET_COUNTS.epaSafeUs, 258);
     assert.equal(EXPECTED_SUBSET_COUNTS.epaAutoGlobalActivity, 0);
     assert.equal(EPA_SAFE_SUBSET_RULESET, "EPA_SAFE_SUBSET_V1_2026_09");
-    assert.equal(RULESET_VERSION, "2026-09-v3");
+    assert.equal(RULESET_VERSION, "2026-09-v4");
   });
 
   it("classifies GLOBAL_APPLICABLE gwp as GLOBAL_GWP only", () => {
@@ -213,7 +213,7 @@ describe("EPA Safe Subset V1 live DB", { skip: !DATABASE_URL }, () => {
     assert.equal(Number(registry.rows[0].n), REGISTRY_TOTAL);
   });
 
-  it("governance: catalog may be visible; calc+resolver disabled", async () => {
+  it("governance: catalog visible; calc+resolver enabled (027)", async () => {
     const gov = await pool.query<{
       status: string;
       catalog_status: string;
@@ -227,8 +227,8 @@ describe("EPA Safe Subset V1 live DB", { skip: !DATABASE_URL }, () => {
       [EPA_SOURCE_KEY],
     );
     assert.ok(gov.rows[0]);
-    assert.equal(gov.rows[0].calculation_status, "disabled");
-    assert.equal(gov.rows[0].resolver_status, "disabled");
+    assert.equal(gov.rows[0].calculation_status, "enabled");
+    assert.equal(gov.rows[0].resolver_status, "enabled");
     if (gov.rows[0].catalog_status === "visible") {
       assert.equal(gov.rows[0].status, "approved");
       const visible = await pool.query<{ n: string }>(

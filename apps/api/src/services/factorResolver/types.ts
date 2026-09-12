@@ -1,8 +1,8 @@
 /** Factor Resolver V1 — shared types, versions, reason codes. */
 
 export const RESOLVER_VERSION = "1";
-/** Bumped for EPA Safe Subset V1 (catalog-visible policy; calc/resolver still off). */
-export const RULESET_VERSION = "2026-09-v3";
+/** Bumped for EPA AUTO_US controlled activation (027). */
+export const RULESET_VERSION = "2026-09-v4";
 
 export type ResolveMode = "shadow" | "production";
 

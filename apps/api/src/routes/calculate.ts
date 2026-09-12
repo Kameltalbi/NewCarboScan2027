@@ -7,6 +7,7 @@ import {
 } from "@newcarboscan/carbon-engine";
 import { withOrgClient } from "../db.js";
 import { calculateSchema } from "../schemas/index.js";
+import { PRODUCTION_SAFE_FACTOR_SQL } from "../services/factorResolver/productionSafeSubset.js";
 
 export const REGISTRY_FACTOR_OVERRIDE_ERROR =
   "Registry emission factors cannot override factorValue or factorUnit";
@@ -16,8 +17,9 @@ export const UNAVAILABLE_EMISSION_FACTOR_ERROR =
 
 /**
  * Direct UUID calculation is restricted to Core TN (internal).
- * ADEME/UK must never become calculable via /v1/calculate merely because
+ * ADEME/UK/EPA must never become calculable via /v1/calculate merely because
  * their version calculation_status is enabled — use resolve-and-calculate.
+ * Version enablement still cannot load factors outside PRODUCTION_SAFE_FACTOR_SQL.
  */
 export const DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR =
   "Direct calculation is restricted to Core TN (internal) factors; use POST /v1/factors/resolve-and-calculate for other sources";
@@ -66,6 +68,8 @@ export async function registerCalculateRoutes(app: FastifyInstance) {
               throw new Error(REGISTRY_FACTOR_OVERRIDE_ERROR);
             }
 
+            // Central safe-subset gate: enabling EPA/ADEME/UK versions never
+            // exposes REVIEW/GWP/components (or out-of-subset rows) by UUID.
             const factor = await client.query(
               `SELECT f.id, f.value::text AS value,
                       f.unit_numerator,
@@ -82,7 +86,8 @@ export async function registerCalculateRoutes(app: FastifyInstance) {
                WHERE f.id = $1
                  AND f.status = 'approved'
                  AND v.status = 'approved'
-                 AND v.calculation_status = 'enabled'`,
+                 AND v.calculation_status = 'enabled'
+                 AND ${PRODUCTION_SAFE_FACTOR_SQL}`,
               [line.factorId],
             );
             if (!factor.rows[0]) {
@@ -90,8 +95,7 @@ export async function registerCalculateRoutes(app: FastifyInstance) {
             }
 
             const f = factor.rows[0];
-            // Harden: ADEME/UK (and any non-internal source) cannot bypass Resolver
-            // even if their version later becomes calculation_status=enabled.
+            // Harden: non-internal cannot bypass Resolver via direct UUID.
             if (f.source_key !== "internal") {
               throw new Error(DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
             }

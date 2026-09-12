@@ -133,19 +133,53 @@ Wired into:
 - `sourcePolicy.ts` (US → EPA preference)
 - Resolver / resolve-and-calculate **provenance** (`epaSafeSubsetRuleset`, class, geo, lifecycle, GWP, derived, eGRID flag)
 
-## Governance after 026
+## Governance after 026 (catalog)
 
 | Field | Value |
 |-------|-------|
 | catalog_status | **visible** |
-| calculation_status | **disabled** |
-| resolver_status | **disabled** |
+| calculation_status | disabled |
+| resolver_status | disabled |
 
-Catalog shows all 1421 EPA factors. Auto-calc still off until a later activation (like ADEME/UK FE V1).
+## Governance after 027 (AUTO_US activation)
+
+| Field | Value |
+|-------|-------|
+| catalog_status | **visible** |
+| calculation_status | **enabled** |
+| resolver_status | **enabled** |
+
+Version flags enable the EPA **version**; app safe subset still limits auto-resolve/calc to **258 AUTO_US** activity factors. GWP / components / REVIEW stay out.
+
+`/v1/calculate` (direct UUID) remains **internal-only**. EPA AUTO_US is used via Resolver / `resolve-and-calculate`. Direct UUID load still applies `PRODUCTION_SAFE_FACTOR_SQL` so REVIEW/GWP/components are **unavailable** even when the version is enabled.
+
+### eGRID geography (activation)
+
+- `country` must be **US** (never TN/FR/GB/WORLD/missing).
+- Matching **region** (eGRID subregion) is required — no arbitrary US subregion pick.
+
+### Rollback 027
+
+```sql
+BEGIN;
+UPDATE emission_factor_versions v
+SET calculation_status = 'disabled',
+    resolver_status = 'disabled'
+FROM factor_sources s
+WHERE s.id = v.source_id
+  AND s.source_key = 'epa_ghg_emission_factors_hub'
+  AND v.dataset_version = '2025'
+  AND v.calculation_status = 'enabled'
+  AND v.resolver_status = 'enabled';
+-- Optionally delete from schema_migrations WHERE filename = '027_activate_epa_auto_us.sql';
+COMMIT;
+```
+
+Catalog stays visible (026). Re-apply 027 to re-enable.
 
 ## Non-regression
 
 - Registry remains **11445**.  
 - Core TN / ADEME / UK rules unchanged.  
-- Public catalog becomes **11445** once EPA is visible.  
+- Public catalog remains **11445**.  
 - EPA importer / scientific values / stable IDs untouched.

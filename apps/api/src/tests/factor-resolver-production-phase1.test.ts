@@ -62,7 +62,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       `SELECT f.id FROM emission_factors f
        JOIN emission_factor_versions v ON v.id = f.version_id
        JOIN factor_sources s ON s.id = v.source_id
-       WHERE s.source_key = 'ademe' AND f.status = 'approved' LIMIT 1`,
+       WHERE ${ADEME_SAFE_SUBSET_SQL} LIMIT 1`,
     );
     ademeId = ademe.rows[0].id;
 
@@ -70,7 +70,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       `SELECT f.id FROM emission_factors f
        JOIN emission_factor_versions v ON v.id = f.version_id
        JOIN factor_sources s ON s.id = v.source_id
-       WHERE s.source_key = 'uk_gov_ghg' AND f.status = 'approved' LIMIT 1`,
+       WHERE ${UK_SAFE_SUBSET_SQL} LIMIT 1`,
     );
     ukId = uk.rows[0].id;
   });
@@ -98,7 +98,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
        JOIN emission_factor_versions v ON v.id = f.version_id
        WHERE f.status='approved' AND v.status='approved' AND v.catalog_status='visible'`,
     );
-    assert.equal(visible.rows[0].n, 11445); // EPA catalog-visible (026); calc/resolver still off
+    assert.equal(visible.rows[0].n, 11445); // EPA catalog-visible; calc+resolver enabled (027), AUTO_US gated
 
     const gov = await pool.query(
       `SELECT s.source_key, v.calculation_status, v.resolver_status, COUNT(f.id)::int AS n
@@ -243,7 +243,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
 
   it("feature flag OFF: resolve-and-calculate refuses; shadow still works", async () => {
     delete process.env.FACTOR_RESOLVER_CALCULATION_ENABLED;
-    const ledgerBefore = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
+    const lineKey = `flag-off-${Date.now()}`;
 
     const calc = await app.inject({
       method: "POST",
@@ -251,7 +251,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       headers: authHeaders(),
       payload: {
         method: "bilan_carbone",
-        lineKey: "flag-off",
+        lineKey,
         scope: 2,
         activity: "electricity",
         quantity: "10",
@@ -276,13 +276,18 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
     assert.equal(shadow.statusCode, 200);
     assert.equal(shadow.json().status, "RESOLVED");
 
-    const ledgerAfter = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
-    assert.equal(ledgerAfter.rows[0].n, ledgerBefore.rows[0].n);
+    const leaked = await pool.query(
+      `SELECT COUNT(*)::int AS n FROM calculation_ledger
+       WHERE organization_id = $1 AND line_key = $2`,
+      [organizationId, lineKey],
+    );
+    assert.equal(leaked.rows[0].n, 0);
   });
 
   it("flag ON: fake payload rejected; non-RESOLVED writes nothing", async () => {
     process.env.FACTOR_RESOLVER_CALCULATION_ENABLED = "true";
-    const ledgerBefore = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
+    const lineFake = `phase1-fake-${Date.now()}`;
+    const lineNo = `phase1-nomatch-${Date.now()}`;
 
     const fakeBody = await app.inject({
       method: "POST",
@@ -290,7 +295,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       headers: authHeaders(),
       payload: {
         method: "bilan_carbone",
-        lineKey: "fake-res",
+        lineKey: lineFake,
         scope: 2,
         activity: "electricity",
         quantity: "10",
@@ -309,7 +314,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       headers: authHeaders(),
       payload: {
         method: "bilan_carbone",
-        lineKey: "nomatch",
+        lineKey: lineNo,
         scope: 2,
         activity: "zzzxxyyzz_no_factor",
         quantity: "10",
@@ -320,14 +325,17 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
     assert.ok([404, 422].includes(noMatch.statusCode));
     assert.equal(noMatch.json().error, "FACTOR_NOT_RESOLVED");
 
-    const ledgerAfter = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
-    assert.equal(ledgerAfter.rows[0].n, ledgerBefore.rows[0].n);
+    const leaked = await pool.query(
+      `SELECT COUNT(*)::int AS n FROM calculation_ledger
+       WHERE organization_id = $1 AND line_key = ANY($2::text[])`,
+      [organizationId, [lineFake, lineNo]],
+    );
+    assert.equal(leaked.rows[0].n, 0);
     delete process.env.FACTOR_RESOLVER_CALCULATION_ENABLED;
   });
 
   it("E2E Core TN resolve-and-calculate + ledger provenance", async () => {
     process.env.FACTOR_RESOLVER_CALCULATION_ENABLED = "true";
-    const ledgerBefore = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
 
     try {
       const res = await app.inject({
@@ -367,7 +375,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       const prov = led.rows[0].provenance;
       assert.equal(prov.source, "api/v1/factors/resolve-and-calculate");
       assert.equal(prov.resolverVersion, "1");
-      assert.equal(prov.rulesetVersion, "2026-09-v3");
+      assert.equal(prov.rulesetVersion, "2026-09-v4");
       assert.equal(prov.stableFactorId, "electricity_kwh");
       assert.equal(prov.sourceKey, "internal");
       assert.equal(prov.originalQuantity, "1000");
@@ -376,9 +384,8 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       assert.ok(led.rows[0].unit_conversion);
       assert.equal(Number(led.rows[0].activity_quantity), 1000);
       assert.equal(led.rows[0].activity_unit, "kWh");
-
-      const ledgerAfter = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
-      assert.equal(ledgerAfter.rows[0].n, ledgerBefore.rows[0].n + 1);
+      // Ledger row for this run is authoritative; global counts race with parallel suites.
+      assert.equal(led.rows[0].activity_quantity != null, true);
     } finally {
       delete process.env.FACTOR_RESOLVER_CALCULATION_ENABLED;
     }

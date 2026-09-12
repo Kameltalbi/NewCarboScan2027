@@ -228,9 +228,8 @@ describe("factor catalog governance 019", () => {
         resolver_status: "disabled",
         limit: 100,
       });
-      // After 026: EPA is catalog-visible but resolver_status=disabled → appear here.
-      assert.ok(disabled.items.length >= 1);
-      assert.ok(disabled.items.every((i) => i.source.key === "epa_ghg_emission_factors_hub"));
+      // After 027: Core/ADEME/UK/EPA all resolver-enabled → empty disabled slice
+      assert.equal(disabled.items.length, 0);
     } finally {
       await pool.end();
     }
