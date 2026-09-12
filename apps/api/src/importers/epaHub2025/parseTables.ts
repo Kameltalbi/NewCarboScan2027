@@ -28,7 +28,18 @@ function cell(row: unknown[] | undefined, idx: number): unknown {
 
 function pushComponent(
   out: EpaRawFactor[],
-  base: Omit<EpaRawFactor, "gas" | "factorKind" | "factorType" | "unitNumerator" | "stemParts" | "name" | "value" | "valueText"> & {
+  base: Omit<
+    EpaRawFactor,
+    | "gas"
+    | "factorKind"
+    | "factorType"
+    | "unitNumerator"
+    | "unitDenominator"
+    | "stemParts"
+    | "name"
+    | "value"
+    | "valueText"
+  > & {
     stemBase: string[];
     displayName: string;
   },

@@ -116,8 +116,7 @@ export function classifyIpccRecord(rec: IpccRawRecord): IpccClassifiedRecord {
     isKgPerTj(rec.unitRaw) &&
     valueParse.class === "number" &&
     valueParse.number !== null &&
-    (gasCode === "CO2" || gasCode === "CH4" || gasCode === "N2O") &&
-    gasCode !== "MULTI";
+    (gasCode === "CO2" || gasCode === "CH4" || gasCode === "N2O");
 
   let operationalPromote = false;
   let operationalRole: "activity_co2" | "ghg_component" | null = null;

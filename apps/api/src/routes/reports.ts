@@ -42,6 +42,22 @@ export async function registerReportRoutes(app: FastifyInstance) {
             [parsed.data.runId, orgId],
           );
 
+          const lineAccountingClass = (
+            row: (typeof lines.rows)[number],
+          ): "scope" | "biogenic_co2" => {
+            const prov = row.provenance as
+              | { accountingClass?: string; biogenicCo2?: boolean }
+              | null
+              | undefined;
+            if (
+              prov?.accountingClass === "biogenic_co2" ||
+              prov?.biogenicCo2 === true
+            ) {
+              return "biogenic_co2";
+            }
+            return "scope";
+          };
+
           const totals = lines.rows.reduce(
             (
               acc: {
@@ -49,17 +65,22 @@ export async function registerReportRoutes(app: FastifyInstance) {
                 scope2: number;
                 scope3: number;
                 total: number;
+                biogenicCo2: number;
               },
               row,
             ) => {
               const v = Number(row.result_kgco2e);
+              if (lineAccountingClass(row) === "biogenic_co2") {
+                acc.biogenicCo2 += v;
+                return acc;
+              }
               if (row.scope === 1) acc.scope1 += v;
               if (row.scope === 2) acc.scope2 += v;
               if (row.scope === 3) acc.scope3 += v;
               acc.total += v;
               return acc;
             },
-            { scope1: 0, scope2: 0, scope3: 0, total: 0 },
+            { scope1: 0, scope2: 0, scope3: 0, total: 0, biogenicCo2: 0 },
           );
 
           const methodologyVersion =
@@ -84,12 +105,14 @@ export async function registerReportRoutes(app: FastifyInstance) {
                 : undefined,
               engineVersion: r.engine_version,
               methodologyVersion: r.methodology_version ?? methodologyVersion,
+              accountingClass: lineAccountingClass(r),
             })),
             totals: {
               scope1: String(totals.scope1),
               scope2: String(totals.scope2),
               scope3: String(totals.scope3),
               total: String(totals.total),
+              biogenicCo2: String(totals.biogenicCo2),
             },
             inputHash: run.rows[0].input_hash,
             resultHash: run.rows[0].result_hash,
