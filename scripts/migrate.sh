@@ -8,7 +8,8 @@
 #   - db/seeds/uk_gov_ghg_2026_flat_1_2.sql pour 022 (UK draft, hidden)
 set -eu
 
-ROOT=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+ROOT=${ROOT:-$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)}
 MIG_DIR=${MIG_DIR:-"$ROOT/db/migrations"}
 SEED_LEGACY=${SEED_LEGACY:-"$ROOT/db/seeds/emission_factors_legacy.sql"}
 UK_SEED_SQL=${UK_SEED_SQL:-"$ROOT/db/seeds/uk_gov_ghg_2026_flat_1_2.sql"}
@@ -22,7 +23,8 @@ export PGPASSWORD
 export UK_SEED_SQL
 
 # shellcheck disable=SC1091
-. "$ROOT/scripts/uk-bootstrap.sh"
+# Source from this script's directory so Docker mount /scripts/migrate.sh works.
+. "$SCRIPT_DIR/uk-bootstrap.sh"
 
 uk_psql() {
   psql -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" "$@"

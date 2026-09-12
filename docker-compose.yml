@@ -30,10 +30,13 @@ services:
       PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
       PGDATABASE: ${POSTGRES_DB:-newcarboscan}
       MIG_DIR: /migrations
+      SEED_LEGACY: /seeds/emission_factors_legacy.sql
+      UK_SEED_SQL: /seeds/uk_gov_ghg_2026_flat_1_2.sql
     volumes:
       - ./db/migrations:/migrations:ro
-      - ./scripts/migrate.sh:/migrate.sh:ro
-    entrypoint: ["/bin/sh", "/migrate.sh"]
+      - ./db/seeds:/seeds:ro
+      - ./scripts:/scripts:ro
+    entrypoint: ["/bin/sh", "/scripts/migrate.sh"]
 
   api:
     build:
@@ -49,7 +52,7 @@ services:
       PORT: "8080"
       DATABASE_URL: postgresql://${POSTGRES_USER:-newcarboscan}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-newcarboscan}
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://127.0.0.1}
+      CORS_ORIGINS: ${CORS_ORIGINS:?Set CORS_ORIGINS in .env}
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-120}
       BODY_LIMIT_BYTES: ${BODY_LIMIT_BYTES:-1000000}
       IMPORT_ADMIN_TOKEN: ${IMPORT_ADMIN_TOKEN:-}
