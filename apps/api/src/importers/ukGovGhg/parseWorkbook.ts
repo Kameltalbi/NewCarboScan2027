@@ -2,7 +2,6 @@ import { createRequire } from "node:module";
 import type { UkRawRow, UkReconcileStats } from "./types.js";
 
 const require = createRequire(import.meta.url);
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const XLSX = require("xlsx") as typeof import("xlsx");
 
 const SHEET = "Factors by Category";

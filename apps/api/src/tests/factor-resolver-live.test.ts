@@ -233,7 +233,6 @@ describe("factor resolver live matrix", { skip: !DATABASE_URL }, () => {
       assert.ok(row.latencyMs < 5000, `${row.label} slow ${row.latencyMs}`);
     }
 
-    // eslint-disable-next-line no-console
     console.log(JSON.stringify({ matrix: report }, null, 2));
   });
 
