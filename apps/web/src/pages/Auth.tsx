@@ -5,13 +5,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/integrations/api/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,6 +13,8 @@ import { Eye, EyeOff, Mail, Lock, User, Building } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analytics } from "@/lib/analytics";
 import type { AuthUser } from "@/integrations/api/client";
+
+const AUTH_HERO_SRC = "/brand/auth-hero.jpg";
 
 const postLoginPath = (user?: AuthUser | null) => {
   const role = user?.role ?? user?.platformRole;
@@ -110,20 +105,60 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F7FAF8] p-4">
-      <Card className="w-full max-w-md border-[#DCE5E0] shadow-sm">
-        <CardHeader className="space-y-4">
-          <div className="flex justify-center">
-            <BrandLogo variant="light" className="h-11" priority />
+    <div className="min-h-screen grid lg:grid-cols-2 bg-[#F7FAF8]">
+      {/* Left visual panel */}
+      <aside className="relative hidden lg:block min-h-screen overflow-hidden">
+        <img
+          src={AUTH_HERO_SRC}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-[35%_70%]"
+          decoding="sync"
+          loading="eager"
+          draggable={false}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#073F35]/55 via-[#073F35]/15 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-10 text-white">
+          <p className="font-semibold text-xl tracking-tight max-w-md">
+            Mesurez, réduisez, agissez.
+          </p>
+          <p className="mt-2 text-sm text-white/85 max-w-sm leading-relaxed">
+            La plateforme carbone pour piloter votre trajectoire climatique.
+          </p>
+        </div>
+      </aside>
+
+      {/* Mobile hero strip */}
+      <div className="relative h-40 sm:h-48 lg:hidden overflow-hidden">
+        <img
+          src={AUTH_HERO_SRC}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-[40%_55%]"
+          decoding="sync"
+          loading="eager"
+          draggable={false}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#073F35]/40 to-transparent" />
+      </div>
+
+      {/* Right form panel */}
+      <main className="flex items-center justify-center px-4 py-10 sm:px-8 lg:px-12">
+        <div className="w-full max-w-md space-y-8">
+          <div className="space-y-3 text-center lg:text-left">
+            <div className="flex justify-center lg:justify-start">
+              <BrandLogo variant="light" className="h-11" priority />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight text-[#073F35]">
+                {t("auth.title", "Connexion")}
+              </h1>
+              <p className="mt-1 text-sm text-[#53645E]">
+                Accédez à votre espace CarboScan
+              </p>
+            </div>
           </div>
-          <CardTitle className="text-center text-[#073F35]">{t("auth.title", "Connexion")}</CardTitle>
-          <CardDescription className="text-center text-[#53645E]">
-            Accédez à votre espace CarboScan
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 w-full">
+            <TabsList className="grid grid-cols-2 w-full bg-[#E8F0EC]">
               <TabsTrigger value="signin">Connexion</TabsTrigger>
               <TabsTrigger value="signup">Inscription</TabsTrigger>
             </TabsList>
@@ -137,7 +172,7 @@ const Auth: React.FC = () => {
                     <Input
                       id="email"
                       type="email"
-                      className="pl-9"
+                      className="pl-9 bg-white border-[#DCE5E0]"
                       value={signInData.email}
                       onChange={(e) =>
                         setSignInData({ ...signInData, email: e.target.value })
@@ -153,7 +188,7 @@ const Auth: React.FC = () => {
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      className="pl-9 pr-10"
+                      className="pl-9 pr-10 bg-white border-[#DCE5E0]"
                       value={signInData.password}
                       onChange={(e) =>
                         setSignInData({ ...signInData, password: e.target.value })
@@ -163,8 +198,9 @@ const Auth: React.FC = () => {
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-3"
+                      className="absolute right-3 top-3 text-[#53645E]"
                       onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -174,7 +210,11 @@ const Auth: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-[#073F35] hover:bg-[#0A5246]"
+                  disabled={isLoading}
+                >
                   {isLoading ? "..." : "Se connecter"}
                 </Button>
               </form>
@@ -187,7 +227,7 @@ const Auth: React.FC = () => {
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
-                      className="pl-9"
+                      className="pl-9 bg-white border-[#DCE5E0]"
                       value={signUpData.fullName}
                       onChange={(e) =>
                         setSignUpData({ ...signUpData, fullName: e.target.value })
@@ -201,7 +241,7 @@ const Auth: React.FC = () => {
                   <div className="relative">
                     <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
-                      className="pl-9"
+                      className="pl-9 bg-white border-[#DCE5E0]"
                       value={signUpData.company}
                       onChange={(e) =>
                         setSignUpData({ ...signUpData, company: e.target.value })
@@ -214,6 +254,7 @@ const Auth: React.FC = () => {
                   <Label>Email</Label>
                   <Input
                     type="email"
+                    className="bg-white border-[#DCE5E0]"
                     value={signUpData.email}
                     onChange={(e) =>
                       setSignUpData({ ...signUpData, email: e.target.value })
@@ -225,6 +266,7 @@ const Auth: React.FC = () => {
                   <Label>Mot de passe</Label>
                   <Input
                     type="password"
+                    className="bg-white border-[#DCE5E0]"
                     value={signUpData.password}
                     onChange={(e) =>
                       setSignUpData({ ...signUpData, password: e.target.value })
@@ -237,6 +279,7 @@ const Auth: React.FC = () => {
                   <Label>Confirmer</Label>
                   <Input
                     type="password"
+                    className="bg-white border-[#DCE5E0]"
                     value={signUpData.confirmPassword}
                     onChange={(e) =>
                       setSignUpData({
@@ -248,14 +291,18 @@ const Auth: React.FC = () => {
                     minLength={8}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-[#073F35] hover:bg-[#0A5246]"
+                  disabled={isLoading}
+                >
                   {isLoading ? "..." : "Créer mon compte"}
                 </Button>
               </form>
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </div>
+      </main>
     </div>
   );
 };

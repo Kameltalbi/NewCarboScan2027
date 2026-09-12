@@ -403,7 +403,11 @@ const importers: Record<string, Importer> = {
       orgId = rows[0]?.organization_id ?? null;
     }
     if (!orgId) throw new Error("bilans_carbone: organization unresolved");
-    const year = Number(payload.year ?? payload.reference_year ?? new Date().getFullYear());
+    // Année de reporting (pas l'année d'import/création). Ne pas écraser des totaux déjà calculés.
+    const qYear = (payload.questionnaire_data as { year?: unknown } | undefined)?.year;
+    const year = Number(
+      payload.reference_year ?? qYear ?? payload.year ?? new Date().getFullYear(),
+    );
     const total = payload.total_kgco2e ?? payload.total_emission ?? null;
     const s1 = payload.scope1_kgco2e ?? payload.scope1_emission ?? null;
     const s2 = payload.scope2_kgco2e ?? payload.scope2_emission ?? null;
@@ -418,22 +422,24 @@ const importers: Record<string, Importer> = {
          legacy_source, legacy_id, import_batch_id, imported_at, raw_legacy)
        VALUES ($1,$2,$3,$4,COALESCE($5,'imported'),$6,$7,$8,$9,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,now(),$16)
        ON CONFLICT (id) DO UPDATE SET
-         total_kgco2e = EXCLUDED.total_kgco2e,
-         scope1_kgco2e = EXCLUDED.scope1_kgco2e,
-         scope2_kgco2e = EXCLUDED.scope2_kgco2e,
-         scope3_kgco2e = EXCLUDED.scope3_kgco2e,
-         total_emission = EXCLUDED.total_emission,
-         scope1_emission = EXCLUDED.scope1_emission,
-         scope2_emission = EXCLUDED.scope2_emission,
-         scope3_emission = EXCLUDED.scope3_emission,
+         year = EXCLUDED.year,
          date_bilan = COALESCE(EXCLUDED.date_bilan, bilans_carbone.date_bilan),
-         raw_legacy = EXCLUDED.raw_legacy,
+         total_kgco2e = COALESCE(bilans_carbone.total_kgco2e, EXCLUDED.total_kgco2e),
+         scope1_kgco2e = COALESCE(bilans_carbone.scope1_kgco2e, EXCLUDED.scope1_kgco2e),
+         scope2_kgco2e = COALESCE(bilans_carbone.scope2_kgco2e, EXCLUDED.scope2_kgco2e),
+         scope3_kgco2e = COALESCE(bilans_carbone.scope3_kgco2e, EXCLUDED.scope3_kgco2e),
+         total_emission = COALESCE(bilans_carbone.total_emission, EXCLUDED.total_emission),
+         scope1_emission = COALESCE(bilans_carbone.scope1_emission, EXCLUDED.scope1_emission),
+         scope2_emission = COALESCE(bilans_carbone.scope2_emission, EXCLUDED.scope2_emission),
+         scope3_emission = COALESCE(bilans_carbone.scope3_emission, EXCLUDED.scope3_emission),
+         questionnaire_data = COALESCE(bilans_carbone.questionnaire_data, EXCLUDED.questionnaire_data),
+         raw_legacy = COALESCE(bilans_carbone.raw_legacy, EXCLUDED.raw_legacy),
          imported_at = now(),
          updated_at = now()`,
       [
         id,
         orgId,
-        payload.name ?? `Bilan ${payload.year ?? year}`,
+        payload.name ?? `Bilan ${year}`,
         year,
         payload.status ?? "imported",
         total,

@@ -1,4 +1,3 @@
-import { SCOPE_COLORS as BRAND_SCOPE } from '@/brand/colors';
 // Hero-style dashboard: reproduces the marketing hero preview layout
 // while consuming real data from DashboardAggregator when available.
 import React, { useEffect, useMemo, useState } from 'react';
@@ -46,7 +45,8 @@ interface Props {
   selectedYear?: number;
 }
 
-const SCOPE_COLORS = [BRAND_SCOPE[1], BRAND_SCOPE[2], BRAND_SCOPE[3]];
+/** Donut scopes — keep the dashboard chart palette (green / blue / purple). */
+const SCOPE_COLORS = ['#22c55e', '#3b82f6', '#a78bfa'];
 const CATEGORY_COLORS = ['#22c55e', '#3b82f6', '#a78bfa', '#f59e0b', '#14b8a6'];
 
 const KG_TO_T = 0.001;
@@ -105,12 +105,14 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           const { items } = await api.listBilans();
           const byYear = new Map<number, number>();
           for (const row of items || []) {
-            const y = Number(row.year);
-            const year = Number.isInteger(y) && y >= 2000
-              ? y
-              : row.date_bilan
-                ? new Date(String(row.date_bilan)).getFullYear()
-                : null;
+            const qYear = Number((row as { questionnaire_data?: { year?: unknown } }).questionnaire_data?.year);
+            const rawRef = Number((row as { raw_legacy?: { reference_year?: unknown } }).raw_legacy?.reference_year);
+            const colYear = Number(row.year);
+            const year =
+              (Number.isInteger(qYear) && qYear >= 2000 && qYear)
+              || (Number.isInteger(rawRef) && rawRef >= 2000 && rawRef)
+              || (Number.isInteger(colYear) && colYear >= 2000 && colYear)
+              || (row.date_bilan ? new Date(String(row.date_bilan)).getFullYear() : null);
             if (year == null || !Number.isInteger(year)) continue;
             const tonnes = Number(row.total_emission ?? row.total_kgco2e ?? 0) || 0;
             byYear.set(year, Math.max(byYear.get(year) ?? 0, tonnes));

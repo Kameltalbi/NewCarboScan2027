@@ -486,6 +486,40 @@ export class BilanCarboneCalculator {
   /**
    * Calculer depuis les anciens bilans_carbone (compatibilité)
    */
+  /**
+   * Année de reporting d'un bilan déjà calculé.
+   * Priorité: questionnaire / reference_year legacy, puis colonne year, puis date_bilan.
+   * (Les imports ont parfois mis year=année de création au lieu de l'année de reporting.)
+   */
+  private static reportingYearOf(row: Record<string, unknown>): number | null {
+    const asYear = (v: unknown): number | null => {
+      const n = Number(v);
+      return Number.isInteger(n) && n >= 2000 && n <= 2100 ? n : null;
+    };
+    const q = row.questionnaire_data;
+    if (q && typeof q === "object") {
+      const qy = asYear((q as Record<string, unknown>).year);
+      if (qy != null) return qy;
+    }
+    const raw = row.raw_legacy;
+    if (raw && typeof raw === "object") {
+      const ry = asYear((raw as Record<string, unknown>).reference_year);
+      if (ry != null) return ry;
+      const rawDate = (raw as Record<string, unknown>).date_bilan;
+      if (rawDate) {
+        const fromRaw = asYear(String(rawDate).slice(0, 4));
+        if (fromRaw != null) return fromRaw;
+      }
+    }
+    const y = asYear(row.year);
+    if (y != null) return y;
+    if (row.date_bilan) {
+      const fromDate = asYear(new Date(String(row.date_bilan)).getFullYear());
+      if (fromDate != null) return fromDate;
+    }
+    return null;
+  }
+
   private static async calculateFromLegacyBilans(
     organizationId: string,
     periodStart: string,
@@ -496,16 +530,7 @@ export class BilanCarboneCalculator {
     const rows = (bilans || []) as Array<Record<string, unknown>>;
     const tonnesOf = (row: Record<string, unknown>) =>
       Number(row.total_emission ?? row.total_kgco2e ?? 0) || 0;
-    const yearOf = (row: Record<string, unknown>): number | null => {
-      const y = Number(row.year);
-      if (Number.isInteger(y) && y >= 2000) return y;
-      if (row.date_bilan) {
-        const fromDate = new Date(String(row.date_bilan)).getFullYear();
-        if (Number.isInteger(fromDate)) return fromDate;
-      }
-      return null;
-    };
-    const inPeriod = rows.filter((row) => yearOf(row) === requestedYear);
+    const inPeriod = rows.filter((row) => this.reportingYearOf(row) === requestedYear);
     const bilan = inPeriod.find((row) => tonnesOf(row) > 0) || inPeriod[0] || null;
     if (!bilan || tonnesOf(bilan) <= 0) {
       return this.getEmptyResult(periodStart, periodEnd);
