@@ -148,7 +148,7 @@ export const PersonalResultsScreen: React.FC<Props> = ({ results, firstName }) =
         <Button
           onClick={() => generatePersonalPdf(results, firstName)}
           variant="outline"
-          className="rounded-full px-6 h-11 gap-2 border-primary/30 text-primary hover:bg-primary/5"
+          className="rounded-[4px] px-6 h-11 gap-2 border-primary/30 text-primary hover:bg-primary/5"
         >
           <Download className="w-4 h-4" />
           {t(`${base}.downloadPdf`)}

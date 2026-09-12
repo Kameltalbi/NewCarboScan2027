@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="CarboScan">
+  <!-- Equal thirds (graphic only). Clockwise from top: Scope2 turquoise, Scope1 emerald, Scope3 orange -->
+  <!-- Top ’ right (turquoise / Scope 2) -->
+  <path
+    d="M32 8 A24 24 0 0 1 52.785 44"
+    stroke="#00BDCE"
+    stroke-width="12"
+    stroke-linecap="butt"
+  />
+  <!-- Right ’ bottom-left (emerald / Scope 1) -->
+  <path
+    d="M52.785 44 A24 24 0 0 1 11.215 44"
+    stroke="#00BF72"
+    stroke-width="12"
+    stroke-linecap="butt"
+  />
+  <!-- Bottom-left ’ top (orange / Scope 3) -->
+  <path
+    d="M11.215 44 A24 24 0 0 1 32 8"
+    stroke="#FF851B"
+    stroke-width="12"
+    stroke-linecap="butt"
+  />
+</svg>

@@ -1029,7 +1029,7 @@ export const BilanReportViewer: React.FC<BilanReportViewerProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-[4px] text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
             aria-label="Fermer"
           >
             <X className="h-4 w-4" />
@@ -1140,7 +1140,7 @@ export const BilanReportViewer: React.FC<BilanReportViewerProps> = ({
           type="button"
           onClick={handlePrevPage}
           disabled={currentPage === 1}
-          className="absolute left-3 top-1/2 z-30 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md transition hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-20"
+          className="absolute left-3 top-1/2 z-30 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[4px] border border-slate-200 bg-white text-slate-700 shadow-md transition hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-20"
           aria-label="Page précédente"
         >
           <ChevronLeft className="h-6 w-6" />
@@ -1163,7 +1163,7 @@ export const BilanReportViewer: React.FC<BilanReportViewerProps> = ({
           type="button"
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className="absolute right-3 top-1/2 z-30 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md transition hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-20"
+          className="absolute right-3 top-1/2 z-30 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[4px] border border-slate-200 bg-white text-slate-700 shadow-md transition hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-20"
           aria-label="Page suivante"
         >
           <ChevronRight className="h-6 w-6" />

@@ -1,7 +1,6 @@
 
 import React from "react";
-import { MainHeader } from "@/components/MainHeader";
-import { NewFooter } from "@/components/NewFooter";
+import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
 import { BilanCarboneLandingHero } from "@/components/bilan-carbone/BilanCarboneLandingHero";
 import { BilanCarboneWhySection } from "@/components/bilan-carbone/BilanCarboneWhySection";
 import { BilanCarboneBenefitsSection } from "@/components/bilan-carbone/BilanCarboneBenefitsSection";
@@ -12,10 +11,7 @@ import { BilanCarboneContactForm } from "@/components/bilan-carbone/BilanCarbone
 
 const BilanCarbone = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <MainHeader />
-      
-      <main className="flex-grow">
+    <SolutionLandingShell path="/bilan-carbone">
         <BilanCarboneLandingHero />
         <BilanCarboneWhySection />
         <BilanCarboneBenefitsSection />
@@ -23,10 +19,7 @@ const BilanCarbone = () => {
         <BilanCarboneResultsSection />
         <BilanCarboneIndustriesSection />
         <BilanCarboneContactForm />
-      </main>
-
-      <NewFooter />
-    </div>
+    </SolutionLandingShell>
   );
 };
 

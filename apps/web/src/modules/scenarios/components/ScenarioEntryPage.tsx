@@ -209,7 +209,7 @@ function SourceCard({ selected, onClick, icon: Icon, title, count, desc, meta, a
 }) {
   return (
     <button onClick={onClick} disabled={!available}
-      className={`p-4 rounded-lg border text-left transition-all ${selected ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : available ? 'border-border hover:border-primary/30' : 'border-border opacity-50 cursor-not-allowed'}`}>
+      className={`p-4 rounded-[4px] border text-left transition-all ${selected ? 'border-primary bg-primary/5 ring-1 ring-primary/20' : available ? 'border-border hover:border-primary/30' : 'border-border opacity-50 cursor-not-allowed'}`}>
       <div className="flex items-center gap-2 mb-2">
         <Icon className="h-5 w-5 text-primary" />
         <span className="font-medium text-sm">{title}</span>

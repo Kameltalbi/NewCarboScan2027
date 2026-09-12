@@ -68,7 +68,7 @@ export const SolutionsSection: React.FC = () => {
                   {t(`newHomepage.solutions.items.${solution.key}.description`)}
                 </p>
                 <Button
-                  className="w-full justify-between group text-white border-0 shadow-sm rounded-[10px]"
+                  className="w-full justify-between group text-white border-0 shadow-sm rounded-[4px]"
                   style={{ background: 'linear-gradient(135deg, #1ABC9C 0%, #0F172A 100%)' }}
                   onClick={() => navigate(solution.route)}
                 >

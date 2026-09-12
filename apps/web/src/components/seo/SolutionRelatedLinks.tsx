@@ -33,7 +33,7 @@ export const SolutionRelatedLinks: React.FC<Props> = ({
                 <Link
                   key={sector.path}
                   to={sector.path}
-                  className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/40 transition-colors"
+                  className="group rounded-[4px] border border-border bg-card p-5 hover:border-primary/40 transition-colors"
                 >
                   <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary">
                     {sector.label}
@@ -58,7 +58,7 @@ export const SolutionRelatedLinks: React.FC<Props> = ({
                 <Link
                   key={mod.path}
                   to={mod.path}
-                  className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/40 transition-colors"
+                  className="group rounded-[4px] border border-border bg-card p-5 hover:border-primary/40 transition-colors"
                 >
                   <h3 className="font-semibold text-foreground mb-1 inline-flex items-center gap-1 group-hover:text-primary">
                     {mod.label}

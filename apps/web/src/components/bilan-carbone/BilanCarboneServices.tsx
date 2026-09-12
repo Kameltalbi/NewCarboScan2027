@@ -79,7 +79,7 @@ const BilanCarboneServices = () => {
                   
                   <a
                     href={offer.link}
-                    className={`w-full inline-flex items-center justify-center px-4 py-3 text-sm font-medium rounded-md transition-all duration-300 ${
+                    className={`w-full inline-flex items-center justify-center px-4 py-3 text-sm font-medium rounded-[4px] transition-all duration-300 ${
                       offer.highlighted
                         ? 'bg-gradient-to-r from-[#9b87f5] to-[#D6BCFA] text-white hover:from-[#8b77e5] hover:to-[#C6ACFA]'
                         : 'border-2 border-[#9b87f5] text-[#9b87f5] hover:bg-[#9b87f5] hover:text-white'
@@ -98,7 +98,7 @@ const BilanCarboneServices = () => {
             </p>
             <a 
               href="/contact"
-              className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium text-[#9b87f5] border-2 border-[#9b87f5] rounded-md hover:bg-[#9b87f5] hover:text-white transition-all duration-300"
+              className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium text-[#9b87f5] border-2 border-[#9b87f5] rounded-[4px] hover:bg-[#9b87f5] hover:text-white transition-all duration-300"
             >
               Parler à un expert
             </a>

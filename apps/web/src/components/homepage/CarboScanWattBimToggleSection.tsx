@@ -69,7 +69,7 @@ export const CarboScanWattBimToggleSection: React.FC = () => {
                     role="tab"
                     aria-selected={active}
                     onClick={() => setTab(tb)}
-                    className={`px-5 py-2 text-sm font-semibold rounded-full transition-all flex items-center gap-2 ${
+                    className={`px-5 py-2 text-sm font-semibold rounded-[4px] transition-all flex items-center gap-2 ${
                       active
                         ? tb === "carboscan"
                           ? "bg-[hsl(160_70%_55%)] text-[hsl(160_55%_10%)] shadow"

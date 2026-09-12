@@ -483,7 +483,7 @@ export const CarboScanROIWizard: React.FC = () => {
 
                 <Link
                   to="/demo"
-                  className="inline-flex bg-[#4FD88C] text-[#0B0F0E] font-semibold px-6 py-3 rounded-md hover:bg-[#3FC77B] transition-colors"
+                  className="inline-flex bg-[#4FD88C] text-[#0B0F0E] font-semibold px-6 py-3 rounded-[4px] hover:bg-[#3FC77B] transition-colors"
                 >
                   Réserver une démo CarboScan
                 </Link>
@@ -507,7 +507,7 @@ export const CarboScanROIWizard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => canGoNext && setStepIndex(stepIndex + 1)}
-                  className="flex items-center gap-1 px-5 py-2.5 rounded-md text-sm font-medium bg-[#4FD88C] text-[#0B0F0E] hover:bg-[#3FC77B] transition-colors"
+                  className="flex items-center gap-1 px-5 py-2.5 rounded-[4px] text-sm font-medium bg-[#4FD88C] text-[#0B0F0E] hover:bg-[#3FC77B] transition-colors"
                 >
                   Continuer <ChevronRight size={16} />
                 </button>
@@ -578,7 +578,7 @@ function ToggleButton({
     <button
       type="button"
       onClick={onClick}
-      className={`py-2.5 rounded-md text-sm font-medium transition-colors border ${
+      className={`py-2.5 rounded-[4px] text-sm font-medium transition-colors border ${
         active
           ? 'bg-[#4FD88C] text-[#0B0F0E] border-[#4FD88C]'
           : 'bg-transparent text-[#8A9490] border-[#2A3330] hover:border-[#4FD88C]/50'

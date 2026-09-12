@@ -1,12 +1,14 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { MainHeader } from '@/components/MainHeader';
+import { HomeHeader } from '@/components/HomeHeader';
 import { NewFooter } from '@/components/NewFooter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Factory, Leaf } from 'lucide-react';
+import { ArrowRight, Leaf } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { MarketingBreadcrumbs } from '@/components/seo/MarketingBreadcrumbs';
+import { SolutionFaq, type FaqItem } from '@/components/seo/SolutionFaq';
+import { SolutionRelatedLinks } from '@/components/seo/SolutionRelatedLinks';
 
 interface SectorLandingProps {
   /** i18n key under `sectorLandings.<sectorKey>` containing sector, title, metaTitle, metaDescription, heroDescription, stats[], challenges[] */
@@ -19,34 +21,29 @@ interface SectorLandingProps {
 export const SectorLanding: React.FC<SectorLandingProps> = ({ sectorKey, sectorSlug, benefitIcons }) => {
   const { t } = useTranslation();
   const base = `sectorLandings.${sectorKey}`;
+  const path = `/bilan-carbone-${sectorSlug}`;
 
   const sector = t(`${base}.sector`);
   const stats = t(`${base}.stats`, { returnObjects: true }) as { value: string; label: string }[];
   const challenges = t(`${base}.challenges`, { returnObjects: true }) as { title: string; description: string }[];
   const benefits = t(`${base}.benefits`, { returnObjects: true }) as { title: string; description: string }[];
+  const faqs = t(`${base}.faqs`, { returnObjects: true }) as FaqItem[];
+  const faqList = Array.isArray(faqs) ? faqs : [];
 
   return (
     <>
-      <Helmet>
-        <title>{t(`${base}.metaTitle`)}</title>
-        <meta name="description" content={t(`${base}.metaDescription`)} />
-        <link rel="canonical" href={`https://carboscan.io/bilan-carbone-${sectorSlug}`} />
-        <meta property="og:title" content={t(`${base}.metaTitle`)} />
-        <meta property="og:description" content={t(`${base}.metaDescription`)} />
-        <meta property="og:url" content={`https://carboscan.io/bilan-carbone-${sectorSlug}`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://carboscan.io/logos/CarboScan-logo.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={t(`${base}.metaTitle`)} />
-        <meta name="twitter:description" content={t(`${base}.metaDescription`)} />
-      </Helmet>
-
-      <MainHeader />
+      <HomeHeader />
 
       <main id="main-content">
-        {/* Hero */}
         <section className="bg-gradient-hero py-20 lg:py-28">
           <div className="container mx-auto px-4 max-w-6xl">
+            <MarketingBreadcrumbs
+              items={[
+                { name: 'Accueil', path: '/' },
+                { name: 'Solutions', path: '/solutions' },
+                { name: sector },
+              ]}
+            />
             <div className="text-center max-w-3xl mx-auto">
               <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
                 {t('sectorLandings.common.sectorPill', { sector })}
@@ -72,7 +69,6 @@ export const SectorLanding: React.FC<SectorLandingProps> = ({ sectorKey, sectorS
           </div>
         </section>
 
-        {/* Stats */}
         <section className="py-12 bg-card border-y border-border">
           <div className="container mx-auto px-4 max-w-6xl">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -86,7 +82,6 @@ export const SectorLanding: React.FC<SectorLandingProps> = ({ sectorKey, sectorS
           </div>
         </section>
 
-        {/* Challenges */}
         <section className="py-20">
           <div className="container mx-auto px-4 max-w-6xl">
             <h2 className="text-3xl font-bold text-center text-foreground mb-12">
@@ -96,9 +91,6 @@ export const SectorLanding: React.FC<SectorLandingProps> = ({ sectorKey, sectorS
               {Array.isArray(challenges) && challenges.map((c, i) => (
                 <Card key={i} className="border-border">
                   <CardContent className="p-6">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                      <Factory className="h-5 w-5 text-primary" />
-                    </div>
                     <h3 className="font-semibold text-foreground mb-2">{c.title}</h3>
                     <p className="text-sm text-muted-foreground">{c.description}</p>
                   </CardContent>
@@ -108,7 +100,6 @@ export const SectorLanding: React.FC<SectorLandingProps> = ({ sectorKey, sectorS
           </div>
         </section>
 
-        {/* Benefits */}
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4 max-w-6xl">
             <h2 className="text-3xl font-bold text-center text-foreground mb-12">
@@ -130,7 +121,9 @@ export const SectorLanding: React.FC<SectorLandingProps> = ({ sectorKey, sectorS
           </div>
         </section>
 
-        {/* CTA */}
+        <SolutionFaq faqs={faqList} path={path} />
+        <SolutionRelatedLinks currentPath={path} />
+
         <section className="py-20">
           <div className="container mx-auto px-4 max-w-4xl text-center">
             <h2 className="text-3xl font-bold text-foreground mb-4">

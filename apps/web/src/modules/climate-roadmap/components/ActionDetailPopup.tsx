@@ -250,7 +250,7 @@ export const ActionDetailPopup: React.FC<ActionDetailPopupProps> = ({ action, pe
 
           <Separator />
 
-          <button className="w-full flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors">
+          <button className="w-full flex items-center justify-between p-3 border rounded-[4px] hover:bg-accent/50 transition-colors">
             <span className="text-sm font-bold text-foreground">Certifier cette action</span>
             <Check className="h-4 w-4 text-muted-foreground" />
           </button>

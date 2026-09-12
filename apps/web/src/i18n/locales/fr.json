@@ -157,6 +157,13 @@
     "regulatoryWatchDescription": "Actualités réglementaires environnementales",
     "cbamCalculator": "Calculateur CBAM",
     "login": "Connexion",
+    "platform": "Plateforme",
+    "freeDemo": "Démo gratuite",
+    "bySector": "Par secteurs",
+    "allSolutions": "Toutes les solutions",
+    "caseStudies": "Études de cas",
+    "openMenu": "Ouvrir le menu",
+    "cbamExport": "Export UE (CBAM)",
     "register": "Inscription",
     "logout": "Déconnexion",
     "dashboard": "Tableau de bord",
@@ -6589,6 +6596,20 @@
           "title": "Plan de décarbonation",
           "description": "Identifiez les leviers de réduction les plus impactants et créez votre feuille de route climat."
         }
+      ],
+      "faqs": [
+        {
+          "question": "Comment réaliser un bilan carbone industriel ?",
+          "answer": "On cadré le périmètre (sites, année, scopes), on collecte les données d’activité (énergie, procédés, achats, transport), on applique des facteurs d’émission, puis on produit un rapport d’inventaire. CarboScan structure cette collecte et le calcul."
+        },
+        {
+          "question": "Le Scope 3 est-il inclus pour l’industrie ?",
+          "answer": "Oui. Le Scope 3 amont (matières, transport, biens capitalisés) est souvent le poste le plus important. Le module Collect et le bilan organisationnel permettent de le documenter progressivement."
+        },
+        {
+          "question": "Quels rapports peut-on extraire ?",
+          "answer": "Des rapports d’inventaire GES destinés au pilotage interne, aux consultants et aux exigences clients. L’alignement méthodologique vise le GHG Protocol ; les mentions de conformité dépendent du périmètre réellement collecté."
+        }
       ]
     },
     "btp": {
@@ -6645,6 +6666,20 @@
         {
           "title": "Matériaux bas carbone",
           "description": "Comparez les alternatives matériaux et leur impact sur l'empreinte globale."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Un bilan carbone BTP couvre-t-il les chantiers ?",
+          "answer": "Oui, on peut rattacher les consommations d’engins, l’énergie de chantier, les matériaux et les déchets à chaque projet. WattBim peut ensuite suivre les bâtiments en exploitation."
+        },
+        {
+          "question": "Quelle différence avec une ACV bâtiment ?",
+          "answer": "Le bilan carbone organisationnel porte sur l’entreprise (année, sites). L’ACV / empreinte produit porte sur un ouvrage ou un matériau. Les deux modules sont complémentaires dans CarboScan."
+        },
+        {
+          "question": "Les données des sous-traitants peuvent-elles être intégrées ?",
+          "answer": "Oui, via la collecte multi-contributeurs : chaque intervenant saisit ses données d’activité, que vous validez avant calcul."
         }
       ]
     },
@@ -6703,6 +6738,20 @@
           "title": "Approvisionnement durable",
           "description": "Évaluez et comparez les fournisseurs en fonction de leur empreinte carbone."
         }
+      ],
+      "faqs": [
+        {
+          "question": "Peut-on calculer l’empreinte d’un produit alimentaire ?",
+          "answer": "Oui. Le module Empreinte Produit (PCF) s’appuie sur les mêmes données d’activité que le bilan organisationnel pour une référence donnée."
+        },
+        {
+          "question": "Comment traiter la chaîne du froid ?",
+          "answer": "Les consommations d’électricité et de fluides frigorigènes entrent en Scope 1 et 2 ; le transport frigorifique en Scope 3. La collecte distingue ces postes."
+        },
+        {
+          "question": "Les facteurs agricoles sont-ils disponibles ?",
+          "answer": "CarboScan s’appuie sur des facteurs d’émission documentés (dont bases publiques type ADEME selon le poste). Le rapport conserve la traçabilité du facteur utilisé."
+        }
       ]
     },
     "energie": {
@@ -6760,6 +6809,20 @@
           "title": "Feuille de route Net Zero",
           "description": "Créez votre trajectoire de décarbonation alignée sur les objectifs climatiques."
         }
+      ],
+      "faqs": [
+        {
+          "question": "Comment mesurer les émissions d’un producteur ou d’un distributeur d’énergie ?",
+          "answer": "On inventorie les consommations, les pertes réseau le cas échéant, et les postes amont. WattBim aide à suivre les sites ; le bilan consolide l’année."
+        },
+        {
+          "question": "Le CBAM concerne-t-il le secteur énergie ?",
+          "answer": "Certains flux (électricité, hydrogène, etc.) peuvent entrer dans le MACF européen. La page CBAM CarboScan détaille le reporting d’export vers l’UE."
+        },
+        {
+          "question": "Peut-on suivre plusieurs sites de production ?",
+          "answer": "Oui. La collecte et le bilan permettent une consolidation multi-sites, avec un détail par entité."
+        }
       ]
     },
     "transport": {
@@ -6816,6 +6879,166 @@
         {
           "title": "Scénarios d'électrification",
           "description": "Simulez l'impact du passage aux véhicules électriques ou à l'hydrogène."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Comment calculer le bilan carbone d’une flotte ?",
+          "answer": "À partir des consommations de carburant ou des distances et types de véhicules, avec des facteurs d’émission par mode. Les données peuvent être importées (Excel) ou saisies par site."
+        },
+        {
+          "question": "Le fret sous-traité est-il du Scope 3 ?",
+          "answer": "En général oui (transport amont/aval acheté). Les véhicules détenus relèvent du Scope 1. CarboScan permet de distinguer ces postes dans la collecte."
+        },
+        {
+          "question": "Peut-on comparer route, mer et air ?",
+          "answer": "Oui, chaque mode a des facteurs différents. Le rapport conserve le mode et l’unité d’activité utilisés."
+        }
+      ]
+    },
+    "finance": {
+      "sector": "Finance & Assurance",
+      "title": "Bilan Carbone, PCAF et émissions financées",
+      "metaTitle": "PCAF & émissions financées — bilan carbone banques et assurances | CarboScan",
+      "metaDescription": "Calculez les émissions financées de votre portefeuille selon le standard PCAF (contreparties, encours, score qualité 1–5) et l’empreinte opérationnelle Scopes 1, 2 et 3.",
+      "heroDescription": "Pour une banque, une assurance ou un fonds, le Scope 3 catégorie 15 (émissions financées) dépasse de loin les émissions des sièges et agences. CarboScan combine l’inventaire opérationnel et le module Portefeuille : contreparties, encours, émissions financées (tCO₂e) et score de qualité des données inspiré PCAF.",
+      "stats": [
+        {
+          "value": "PCAF",
+          "label": "émissions financées du portefeuille"
+        },
+        {
+          "value": "Cat. 15",
+          "label": "Scope 3 — investments & lending"
+        },
+        {
+          "value": "Score 1–5",
+          "label": "qualité des données (réel → proxy)"
+        },
+        {
+          "value": "Scopes 1–2",
+          "label": "empreinte opérationnelle des sites"
+        }
+      ],
+      "challenges": [
+        {
+          "title": "Émissions financées",
+          "description": "Les GES attribués aux prêts, investissements et polices pèsent infiniment plus que l’énergie des bureaux. Sans portefeuille structuré, le Scope 3 catégorie 15 reste une case vide."
+        },
+        {
+          "title": "Qualité des données PCAF",
+          "description": "Le standard PCAF exige de tracer si l’émission vient de données réelles de la contrepartie ou d’un proxy sectoriel (score 1 = réel, 5 = proxy)."
+        },
+        {
+          "title": "Attribution par encours",
+          "description": "Il faut relier chaque contrepartie à un encours (prêt, investissement) pour attribuer une part des émissions de l’entreprise financée."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Portefeuille de contreparties",
+          "description": "Le module Portefeuille traite emprunteurs et entreprises financées : secteur, pays, encours, dernier bilan."
+        },
+        {
+          "title": "Émissions financées (tCO₂e)",
+          "description": "Chaque contrepartie porte un calcul d’émissions financées, consolidé au niveau du portefeuille."
+        },
+        {
+          "title": "Score qualité PCAF",
+          "description": "Un score 1 à 5 distingue données réelles, estimées et proxy sectoriel — lisible pour la direction RSE et les commissaires."
+        },
+        {
+          "title": "Empreinte opérationnelle",
+          "description": "En parallèle : Scopes 1 et 2 des sièges, agences et data centers, plus le Scope 3 opérationnel (déplacements, achats)."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Qu’est-ce que le PCAF et les émissions financées ?",
+          "answer": "Le PCAF (Partnership for Carbon Accounting Financials) est le cadre de référence pour attribuer au bilan d’une institution financière les GES des entreprises qu’elle finance (prêts, investissements, assurances). Ces émissions, souvent classées en Scope 3 catégorie 15, constituent l’essentiel de l’empreinte d’une banque."
+        },
+        {
+          "question": "Comment CarboScan calcule-t-il les émissions financées ?",
+          "answer": "Via le module Portefeuille (contreparties) : vous référencez emprunteurs ou entreprises financées, saisissez l’encours et les données d’émissions disponibles. La plateforme calcule les émissions financées en tCO₂e et affiche un score de qualité des données (1 = données réelles, 5 = proxy sectoriel), selon la logique PCAF."
+        },
+        {
+          "question": "Faut-il aussi un bilan opérationnel ?",
+          "answer": "Oui. PCAF ne remplace pas l’inventaire des sites (énergie, fluides, déplacements). CarboScan couvre les deux : empreinte opérationnelle d’une part, portefeuille financé d’autre part."
+        },
+        {
+          "question": "CarboScan est-il un organisme certifié PCAF ?",
+          "answer": "Non : nous n’affichons pas de certification PCAF. Le module aligne le calcul portefeuille sur la méthode (contreparties, encours, score de qualité 1–5). Le cadrage d’actifs (listed equity, business loans, etc.) se fait avec vos équipes."
+        }
+      ]
+    },
+    "services": {
+      "sector": "Services & Tertiaire",
+      "title": "Bilan Carbone pour les Services & le Tertiaire",
+      "metaTitle": "Bilan carbone services & tertiaire — bureaux et sièges | CarboScan",
+      "metaDescription": "Bilan carbone pour cabinets, ESN, commerce et sièges tertiaires : énergie des bureaux, déplacements, achats de services et suivi multi-sites.",
+      "heroDescription": "Dans le tertiaire, les émissions viennent surtout de l’énergie des bâtiments, des déplacements et des achats. CarboScan aide à les collecter, les calculer et les suivre d’une année sur l’autre.",
+      "stats": [
+        {
+          "value": "Scope 2",
+          "label": "énergie des bâtiments"
+        },
+        {
+          "value": "Scope 3",
+          "label": "déplacements et achats"
+        },
+        {
+          "value": "WattBim",
+          "label": "suivi des consommations"
+        },
+        {
+          "value": "Multi-sites",
+          "label": "agences et filiales"
+        }
+      ],
+      "challenges": [
+        {
+          "title": "Bureaux et climatisation",
+          "description": "Factures d’électricité, de gaz et fuites de fluides : des données souvent éparpillées entre sites."
+        },
+        {
+          "title": "Mobilité des équipes",
+          "description": "Domicile-travail, missions et flotte légère représentent une part majeure du Scope 3 tertiaire."
+        },
+        {
+          "title": "Achats de services",
+          "description": "Prestataires, cloud, hébergement et fournitures sont difficiles à retracer sans collecte structurée."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Collecte simple",
+          "description": "Saisie guidée ou import Excel pour les postes tertiaires les plus fréquents."
+        },
+        {
+          "title": "Lien bâtiment",
+          "description": "WattBim peut suivre les consommations réelles et les injecter dans le bilan Scope 2."
+        },
+        {
+          "title": "Rapport annuel",
+          "description": "Un inventaire comparable d’une année sur l’autre pour le reporting RSE."
+        },
+        {
+          "title": "Plan d’actions",
+          "description": "Identifiez les leviers (énergie, mobilité, achats) puis suivez-les dans Monitoring & Réduction."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Un cabinet ou une ESN a-t-il besoin d’un bilan carbone ?",
+          "answer": "Oui dès lors que des clients, un groupe ou un reporting RSE demandent un inventaire GES. Le tertiaire a peu de Scope 1, mais un Scope 2 et 3 bien réels."
+        },
+        {
+          "question": "Comment traiter le télétravail et les déplacements ?",
+          "answer": "On s’appuie sur des données d’activité (jours, km, modes). La collecte CarboScan prévoit ces postes ; la qualité du résultat dépend des données fournies."
+        },
+        {
+          "question": "Peut-on commencer petit ?",
+          "answer": "Oui : sites et énergie d’abord, puis déplacements et achats. Le bilan gratuit donne un premier ordre de grandeur."
         }
       ]
     }
@@ -7375,6 +7598,78 @@
       }
     }
   },
+  "emissionFactorCatalog": {
+    "title": "Facteurs d'émission",
+    "subtitle": "Recherchez parmi 7 402 facteurs d'émission référencés.",
+    "searchPlaceholder": "Rechercher un facteur, un code ou une catégorie…",
+    "loading": "Chargement…",
+    "resultCount_one": "{{formatted}} facteur trouvé",
+    "resultCount_other": "{{formatted}} facteurs trouvés",
+    "page": "Page {{page}}",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "empty": "Aucun facteur d'émission ne correspond à votre recherche.",
+    "resetFilters": "Réinitialiser les filtres",
+    "errorLoad": "Impossible de charger le catalogue. Réessayez.",
+    "errorDetail": "Impossible de charger le détail de ce facteur.",
+    "endOfResults": "Fin des résultats",
+    "reviewRequired": "À vérifier",
+    "reviewRequiredHint": "Ce facteur nécessite une vérification de sa normalisation avant utilisation dans un calcul.",
+    "inCatalog": "Disponible dans le catalogue",
+    "filters": {
+      "source": "Source",
+      "category": "Catégorie",
+      "country": "Pays",
+      "type": "Type",
+      "more": "Plus de filtres",
+      "all": "Tous",
+      "subcategory": "Sous-catégorie",
+      "region": "Région",
+      "unit": "Unité",
+      "year": "Année",
+      "dataset": "Version dataset",
+      "allFeminine": "Toutes"
+    },
+    "columns": {
+      "factor": "Facteur",
+      "value": "Valeur",
+      "unit": "Unité",
+      "source": "Source",
+      "category": "Catégorie",
+      "geography": "Géographie",
+      "year": "Année"
+    },
+    "detail": {
+      "value": "Valeur",
+      "unit": "Unité",
+      "source": "Source",
+      "dataset": "Version dataset",
+      "externalCode": "Code source",
+      "factorType": "Type de facteur",
+      "sourceCategory": "Catégorie source",
+      "sourceSubcategory": "Sous-catégorie source",
+      "internalCategory": "Catégorie CarboScan",
+      "internalSubcategory": "Sous-catégorie CarboScan",
+      "country": "Pays",
+      "region": "Région",
+      "geography": "Géographie",
+      "year": "Année facteur",
+      "provenance": "Provenance",
+      "stableFactorId": "Stable Factor ID"
+    },
+    "categories": {
+      "purchased_goods": "Achats de biens",
+      "purchased_services": "Services achetés",
+      "energy": "Énergie",
+      "waste": "Déchets",
+      "transport": "Transport",
+      "freight": "Fret",
+      "land_use": "Utilisation des terres",
+      "process_fugitive": "Procédés et émissions fugitives",
+      "reference": "Référence",
+      "unknown": "Non classé"
+    }
+  },
   "facteursEmissionLanding": {
     "hero": {
       "titleLine1": "Le bon facteur d'émission.",
@@ -7455,6 +7750,65 @@
       "body": "Centralisez vos données, sélectionnez les facteurs adaptés et conservez la traçabilité de vos calculs dans CarboScan.",
       "primary": "Découvrir CarboScan",
       "secondary": "Demander une démonstration"
+    }
+  },
+  "engagementFournisseursLanding": {
+    "hero": {
+      "titleLine1": "Engagez vos fournisseurs.",
+      "titleLine2": "Maîtrisez votre Scope 3.",
+      "subtitle": "Invitez votre chaîne d'approvisionnement, collectez leurs données carbone et pilotez les émissions amont avec CarboScan.",
+      "ctaPrimary": "Demander une démo",
+      "ctaSecondary": "Voir le bilan carbone"
+    },
+    "preview": {
+      "title": "Engagement fournisseurs",
+      "subtitle": "Supply chain & Scope 3",
+      "items": {
+        "a": "Invitations et portail de collecte pour vos fournisseurs",
+        "b": "Suivi des réponses, scores et maturité carbone",
+        "c": "Données réutilisables dans votre bilan Scope 3"
+      }
+    },
+    "capabilities": {
+      "title": "Une chaîne d'approvisionnement plus transparente",
+      "subtitle": "Centralisez l'engagement fournisseurs pour fiabiliser les émissions amont, sans tableurs dispersés.",
+      "invite": {
+        "title": "Inviter",
+        "body": "Envoyez des invitations ciblées et suivez qui a répondu, en cours ou en retard."
+      },
+      "collect": {
+        "title": "Collecter",
+        "body": "Recueillez les données d'activité et preuves via un parcours guidé adapté à chaque fournisseur."
+      },
+      "score": {
+        "title": "Scorer",
+        "body": "Visualisez la maturité carbone, la confiance des données et les priorités d'engagement."
+      },
+      "trace": {
+        "title": "Tracer",
+        "body": "Conservez l'historique des échanges et des bilans pour documenter votre reporting Scope 3."
+      }
+    },
+    "why": {
+      "title": "Pourquoi engager vos fournisseurs avec CarboScan",
+      "scope3": {
+        "title": "Scope 3 sous contrôle",
+        "body": "Les achats et la chaîne de valeur pèsent souvent la majorité des émissions. Structurez cette part critique du bilan."
+      },
+      "supplyChain": {
+        "title": "Supply chain opérationnelle",
+        "body": "Passez d'une liste fournisseurs à un programme d'engagement mesurable, avec suivi et relances."
+      },
+      "reporting": {
+        "title": "Reporting crédible",
+        "body": "Appuyez vos déclarations sur des données collectées et traçables, prêtes pour audit et parties prenantes."
+      }
+    },
+    "cta": {
+      "title": "Démarrez l'engagement de votre supply chain",
+      "body": "Cadrez le périmètre, invitez vos fournisseurs stratégiques et intégrez leurs données à votre bilan carbone.",
+      "primary": "Demander une démo",
+      "secondary": "Découvrir la collecte"
     }
   }
 }

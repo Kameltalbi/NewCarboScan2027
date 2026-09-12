@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, Phone, MessageCircle, Clock, ArrowRight, Shield } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import carboScanLogoWhite from "@/assets/carboscan-logo-white.png";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { api } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -66,7 +66,7 @@ export const ContactContent: React.FC = () => {
             <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-forest-light/20 rounded-full blur-3xl" />
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-12">
-                <img src={carboScanLogoWhite} alt="CarboScan" className="h-12 w-auto" />
+                <BrandLogo variant="dark" className="h-12" />
               </div>
               <h1 className="text-4xl lg:text-5xl font-normal leading-tight mb-6 font-sora">
                 {t("contact.title")}
@@ -212,7 +212,7 @@ export const ContactContent: React.FC = () => {
                   />
                 </div>
 
-                <Button type="submit" disabled={loading} className="w-full rounded-xl">
+                <Button type="submit" disabled={loading} className="w-full rounded-[4px]">
                   {loading ? "..." : t("contact.form.submit")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

@@ -38,7 +38,7 @@ export const LocalSupportSection: React.FC = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-14">
-          <div className="inline-flex items-center gap-2 bg-[#E8F5E9] text-[#0E7C66] text-sm font-medium px-4 py-1.5 rounded-full mb-5">
+          <div className="inline-flex items-center gap-2 bg-[#E8F5E9] text-[#0E7C66] text-sm font-medium px-4 py-1.5 rounded-[4px] mb-5">
             <MapPin className="w-4 h-4" />
             {t("homepage.localSupport.badge")}
           </div>
@@ -90,7 +90,7 @@ export const LocalSupportSection: React.FC = () => {
           </div>
           <Link
             to="/contact"
-            className="inline-flex items-center gap-2 bg-white text-[#1B3A2D] font-semibold px-6 py-3 rounded-xl hover:bg-[#E8F5E9] transition-colors shrink-0"
+            className="inline-flex items-center gap-2 bg-white text-[#1B3A2D] font-semibold px-6 py-3 rounded-[4px] hover:bg-[#E8F5E9] transition-colors shrink-0"
           >
             {t("homepage.localSupport.ctaLabel")}
             <ArrowRight className="w-4 h-4" />

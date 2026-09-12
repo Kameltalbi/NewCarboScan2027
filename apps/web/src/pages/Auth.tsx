@@ -15,6 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/integrations/api/client";
 import { useAuth } from "@/hooks/useAuth";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Eye, EyeOff, Mail, Lock, User, Building } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { analytics } from "@/lib/analytics";
@@ -109,12 +110,15 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>{t("auth.title", "Connexion")}</CardTitle>
-          <CardDescription>
-            Newcarboscan 2027 — authentification PostgreSQL (sans Supabase)
+    <div className="min-h-screen flex items-center justify-center bg-[#F7FAF8] p-4">
+      <Card className="w-full max-w-md border-[#DCE5E0] shadow-sm">
+        <CardHeader className="space-y-4">
+          <div className="flex justify-center">
+            <BrandLogo variant="light" className="h-11" priority />
+          </div>
+          <CardTitle className="text-center text-[#073F35]">{t("auth.title", "Connexion")}</CardTitle>
+          <CardDescription className="text-center text-[#53645E]">
+            Accédez à votre espace CarboScan
           </CardDescription>
         </CardHeader>
         <CardContent>

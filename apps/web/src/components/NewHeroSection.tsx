@@ -71,14 +71,14 @@ export const NewHeroSection: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate("/calculateur-carbone")}
-              className="inline-flex h-[58px] items-center justify-center rounded-[10px] bg-[#075C43] px-8 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-[#054C37]"
+              className="inline-flex h-[58px] items-center justify-center rounded-[4px] bg-[#075C43] px-8 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-[#054C37]"
             >
               {t("homepage.hero.ctaPrimary")}
             </button>
             <button
               type="button"
               onClick={() => navigate("/bilan-carbone")}
-              className="inline-flex h-[58px] items-center justify-center rounded-[10px] border-[1.5px] border-[#075C43] bg-transparent px-8 text-[15px] font-semibold text-[#075C43] transition-colors duration-200 hover:bg-[#E8F4EE]"
+              className="inline-flex h-[58px] items-center justify-center rounded-[4px] border-[1.5px] border-[#075C43] bg-transparent px-8 text-[15px] font-semibold text-[#075C43] transition-colors duration-200 hover:bg-[#E8F4EE]"
             >
               {t("homepage.hero.ctaSecondary")}
             </button>

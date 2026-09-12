@@ -120,7 +120,7 @@ export const HSCodeField: React.FC<HSCodeFieldProps> = ({
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center rounded-full hover:bg-gray-100 p-1 transition-colors"
+                  className="inline-flex items-center justify-center rounded-[4px] hover:bg-gray-100 p-1 transition-colors"
                   aria-label="Information sur le code HS"
                 >
                   <Info className="h-4 w-4 text-gray-500" />
@@ -233,7 +233,7 @@ export const StandaloneHSCodeField: React.FC<StandaloneHSCodeFieldProps> = ({
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-full hover:bg-gray-100 p-1 transition-colors"
+              className="inline-flex items-center justify-center rounded-[4px] hover:bg-gray-100 p-1 transition-colors"
               aria-label="Information sur le code HS"
             >
               <Info className="h-4 w-4 text-gray-500" />

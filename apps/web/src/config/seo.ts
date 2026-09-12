@@ -1,6 +1,6 @@
 export const SITE_URL = 'https://carboscan.io';
 export const SITE_NAME = 'CarboScan';
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/logos/CarboScan-logo.png`;
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/brand/carboscan-logo-light.png`;
 export const TWITTER_HANDLE = '@carboscan';
 export const DEFAULT_LOCALE = 'fr_FR';
 
@@ -99,6 +99,7 @@ export const PAGE_SEO: Record<string, PageSEO> = {
       'Réalisez votre bilan carbone professionnel avec CarboScan : facteurs ADEME, scopes 1-2-3, traçabilité et rapports prêts pour consultants.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
       { name: 'Bilan carbone', path: '/bilan-carbone' },
     ],
   },
@@ -120,6 +121,7 @@ export const PAGE_SEO: Record<string, PageSEO> = {
       'Calculez l’empreinte carbone de vos produits (Product Carbon Footprint) : cradle-to-gate, données d’activité et rapports PCF.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
       { name: 'Empreinte produit', path: '/empreinte-produit' },
     ],
   },
@@ -130,6 +132,7 @@ export const PAGE_SEO: Record<string, PageSEO> = {
       'Module ACV CarboScan : analyse du cycle de vie produit, inventaires, impacts et export pour vos études environnementales.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
       { name: 'ACV', path: '/acv-landing' },
     ],
   },
@@ -140,7 +143,19 @@ export const PAGE_SEO: Record<string, PageSEO> = {
       'Centralisez énergie, déplacements, achats et déchets. Import Excel, saisie guidée et validation pour un bilan carbone fiable.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
       { name: 'Collecte', path: '/collect' },
+    ],
+  },
+  '/engagement-fournisseurs': {
+    path: '/engagement-fournisseurs',
+    title: 'Engagement fournisseurs — Scope 3 & supply chain | CarboScan',
+    description:
+      'Engagez votre chaîne d’approvisionnement : invitez vos fournisseurs, collectez leurs données carbone et fiabilisez votre Scope 3 avec CarboScan.',
+    breadcrumbs: [
+      { name: 'Accueil', path: '/' },
+      { name: 'Plateforme', path: '/bilan-carbone' },
+      { name: 'Engagement fournisseurs', path: '/engagement-fournisseurs' },
     ],
   },
   '/cbam': {
@@ -150,16 +165,18 @@ export const PAGE_SEO: Record<string, PageSEO> = {
       'Préparez vos déclarations CBAM : émissions embarquées, codes CN, exports et rapports pour le mécanisme d’ajustement carbone aux frontières.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
       { name: 'CBAM', path: '/cbam' },
     ],
   },
   '/wattbim': {
     path: '/wattbim',
-    title: 'WattBim — Suivi énergie IoT & carbone temps réel | CarboScan',
+    title: 'WattBim by CarboScan — Gérez vos bâtiments et vos économies d’énergie',
     description:
-      'Connectez vos compteurs et suivez la consommation énergétique en temps réel avec WattBim pour piloter vos émissions Scope 2.',
+      'WattBim, le module énergie & bâtiments de CarboScan : pilotez la consommation de chaque bâtiment et reliez-la à votre bilan Scope 2.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
       { name: 'WattBim', path: '/wattbim' },
     ],
   },
@@ -170,7 +187,8 @@ export const PAGE_SEO: Record<string, PageSEO> = {
       'Explorez Decarbotech : leviers technologiques et plan d’actions pour réduire l’empreinte carbone industrielle.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
-      { name: 'Decarbotech', path: '/decarbotech' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Monitoring & Réduction', path: '/decarbotech' },
     ],
   },
   '/bilan-gratuit': {
@@ -270,62 +288,111 @@ export const PAGE_SEO: Record<string, PageSEO> = {
   },
   '/solutions': {
     path: '/solutions',
-    title: 'Solutions carbone — CarboScan pour tous les secteurs',
+    title: 'Solutions bilan carbone par secteur | CarboScan',
     description:
-      'Solutions CarboScan pour mesurer et réduire l’empreinte carbone selon votre secteur et vos enjeux réglementaires.',
+      'Pages solutions CarboScan : industrie, transport, BTP, agroalimentaire, énergie, finance, services, plus bilan GES, collecte, PCF, ACV, CBAM et WattBim.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
       { name: 'Solutions', path: '/solutions' },
     ],
   },
-  '/bilan-carbone-industrie': {
-    path: '/bilan-carbone-industrie',
-    title: 'Bilan carbone industrie — CarboScan pour le secteur industriel',
+  '/solutions/solutions': {
+    path: '/solutions/solutions',
+    title: 'Catalogue solutions carbone — Scopes 1, 2 et 3 | CarboScan',
     description:
-      'Mesurez et réduisez les émissions industrielles : process, énergie, Scope 3 amont et plan de décarbonation.',
+      'Leviers de réduction par scope GHG Protocol : combustion, électricité, achats, transport et déchets. Catalogue des solutions CarboScan.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
-      { name: 'Bilan carbone industrie', path: '/bilan-carbone-industrie' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Catalogue', path: '/solutions/solutions' },
+    ],
+  },
+  '/solutions/accompagnement': {
+    path: '/solutions/accompagnement',
+    title: 'Accompagnement décarbonation — diagnostic et plan d’actions | CarboScan',
+    description:
+      'Accompagnement CarboScan : analyse des postes d’émissions, co-construction du plan, mise en œuvre et suivi des réductions.',
+    breadcrumbs: [
+      { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Accompagnement', path: '/solutions/accompagnement' },
+    ],
+  },
+  '/bilan-carbone-industrie': {
+    path: '/bilan-carbone-industrie',
+    title: 'Bilan Carbone Industrie | Réduire les émissions industrielles - CarboScan',
+    description:
+      'Réalisez votre bilan carbone industriel avec CarboScan. Mesurez les émissions Scope 1, 2, 3 de votre usine et identifiez les leviers de décarbonation.',
+    breadcrumbs: [
+      { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Industrie', path: '/bilan-carbone-industrie' },
     ],
   },
   '/bilan-carbone-transport': {
     path: '/bilan-carbone-transport',
-    title: 'Bilan carbone transport & logistique — CarboScan',
+    title: 'Bilan Carbone Transport & Logistique | Mesurer et réduire - CarboScan',
     description:
-      'Bilan carbone pour le transport et la logistique : flottes, fret, carburants et trajectoire de réduction.',
+      'Calculez l’empreinte carbone de votre flotte et chaîne logistique. Facteurs par mode et collecte d’activité avec CarboScan.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
-      { name: 'Bilan carbone transport', path: '/bilan-carbone-transport' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Transport', path: '/bilan-carbone-transport' },
     ],
   },
   '/bilan-carbone-btp': {
     path: '/bilan-carbone-btp',
-    title: 'Bilan carbone BTP & construction — CarboScan',
+    title: 'Bilan Carbone BTP & Construction | Mesurer l’impact chantier - CarboScan',
     description:
-      'Pilotez l’empreinte carbone du BTP : chantiers, matériaux, engins et reporting pour appels d’offres.',
+      'Évaluez l’empreinte carbone de vos chantiers et projets de construction. Matériaux, engins, énergie de site et reporting.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
-      { name: 'Bilan carbone BTP', path: '/bilan-carbone-btp' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Construction', path: '/bilan-carbone-btp' },
     ],
   },
   '/bilan-carbone-agroalimentaire': {
     path: '/bilan-carbone-agroalimentaire',
-    title: 'Bilan carbone agroalimentaire — CarboScan',
+    title: 'Bilan Carbone Agroalimentaire | Empreinte de la chaîne alimentaire - CarboScan',
     description:
-      'Bilan carbone pour l’agroalimentaire : agriculture, process, packaging, froid et Scope 3 chaîne d’approvisionnement.',
+      'Mesurez l’empreinte carbone de votre chaîne alimentaire. De la production agricole à la distribution, collecte et PCF avec CarboScan.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
-      { name: 'Bilan carbone agroalimentaire', path: '/bilan-carbone-agroalimentaire' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Agroalimentaire', path: '/bilan-carbone-agroalimentaire' },
     ],
   },
   '/bilan-carbone-energie': {
     path: '/bilan-carbone-energie',
-    title: 'Bilan carbone énergie & utilities — CarboScan',
+    title: 'Bilan Carbone Énergie | Transition énergétique et décarbonation - CarboScan',
     description:
-      'Mesurez les émissions du secteur énergie : production, réseaux, pertes et reporting réglementaire.',
+      'Mesurez l’empreinte carbone de votre activité énergétique. Production, distribution, sites et reporting avec CarboScan.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
-      { name: 'Bilan carbone énergie', path: '/bilan-carbone-energie' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Énergie', path: '/bilan-carbone-energie' },
+    ],
+  },
+  '/bilan-carbone-finance': {
+    path: '/bilan-carbone-finance',
+    title: 'PCAF & émissions financées — bilan carbone banques et assurances | CarboScan',
+    description:
+      'Calculez les émissions financées de votre portefeuille selon le standard PCAF (contreparties, encours, score qualité 1–5) et l’empreinte opérationnelle Scopes 1, 2 et 3.',
+    breadcrumbs: [
+      { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Finance', path: '/bilan-carbone-finance' },
+    ],
+  },
+  '/bilan-carbone-services': {
+    path: '/bilan-carbone-services',
+    title: 'Bilan carbone services & tertiaire — bureaux et sièges | CarboScan',
+    description:
+      'Bilan carbone pour cabinets, ESN, commerce et sièges tertiaires : énergie des bureaux, déplacements, achats de services et suivi multi-sites.',
+    breadcrumbs: [
+      { name: 'Accueil', path: '/' },
+      { name: 'Solutions', path: '/solutions' },
+      { name: 'Services', path: '/bilan-carbone-services' },
     ],
   },
 };

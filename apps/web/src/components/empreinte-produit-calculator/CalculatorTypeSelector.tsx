@@ -19,7 +19,7 @@ const Option: React.FC<{
 }> = ({ icon, title, description, duration, bullets, onClick, badge, startLabel }) => (
   <button
     onClick={onClick}
-    className="group text-left bg-card border border-border/60 hover:border-primary hover:shadow-lg rounded-2xl p-6 sm:p-8 transition-all duration-200 flex flex-col"
+    className="group text-left bg-card border border-border/60 hover:border-primary hover:shadow-lg rounded-[4px] p-6 sm:p-8 transition-all duration-200 flex flex-col"
   >
     {badge && (
       <span className="self-start mb-4 text-xs font-medium px-2.5 py-1 rounded-full bg-primary/10 text-primary">
@@ -68,7 +68,7 @@ export const CalculatorTypeSelector: React.FC<Props> = ({ onSelect }) => {
           {t("freeCalculators.selector.back")}
         </button>
         <div className="text-center mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[4px] bg-primary/10 text-primary text-xs font-medium mb-4">
             <BarChart3 className="w-3.5 h-3.5" />
             {t("freeCalculators.selector.badge")}
           </div>

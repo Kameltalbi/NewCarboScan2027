@@ -10,9 +10,9 @@ export const CarboScanCalculator: React.FC = () => {
   const { t } = useTranslation();
 
   const scopeData = [
-    { name: t("calculator.scope1"), value: 25, color: '#FF6B6B', icon: Factory },
-    { name: t("calculator.scope2"), value: 35, color: '#4ECDC4', icon: Zap },
-    { name: t("calculator.scope3"), value: 40, color: '#45B7D1', icon: Truck },
+    { name: t("calculator.scope1"), value: 25, color: '#00BF72', icon: Factory },
+    { name: t("calculator.scope2"), value: 35, color: '#00BDCE', icon: Zap },
+    { name: t("calculator.scope3"), value: 40, color: '#FF851B', icon: Truck },
   ];
 
 const CustomTooltip = ({ active, payload }: any) => {

@@ -13,6 +13,7 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from '@/components/ui/sidebar';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import {
   LayoutDashboard,
   Database,
@@ -22,10 +23,8 @@ import {
   Settings,
   LogOut,
   LucideIcon,
-  // Building2 removed — using Leaf for logo
   Lock,
   Users,
-  Leaf,
   GitBranch,
   Construction,
   Zap,
@@ -36,6 +35,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { api } from "@/integrations/api/client";
 import { useSupplierLabels } from '@/hooks/useSupplierLabels';
+import { useTranslation } from 'react-i18next';
 
 interface ModuleItem {
   id: string;
@@ -69,6 +69,12 @@ const sidebarGroups: SidebarGroup[] = [
         label: 'Collecte',
         path: '/app/collecte',
         icon: Database,
+      },
+      {
+        id: 'emission-factors',
+        label: "Facteurs d'émission",
+        path: '/app/emission-factors',
+        icon: Leaf,
       },
       {
         id: 'bilan-carbone',
@@ -155,6 +161,7 @@ interface SimplifiedSidebarProps {
 export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({ className }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const { modules, modulesLoading, organizationId, organizationLoading } = useAppData();
   const { signOut, user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -164,10 +171,14 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
   // Adapte le libellé du module "Fournisseurs" selon le secteur (banque -> Portefeuille)
   const displayGroups = React.useMemo(() => sidebarGroups.map(group => ({
     ...group,
-    items: group.items.map(item =>
-      item.id === 'fournisseurs' ? { ...item, label: supplierLabels.moduleTitle } : item
-    ),
-  })), [supplierLabels.moduleTitle]);
+    items: group.items.map(item => {
+      if (item.id === 'fournisseurs') return { ...item, label: supplierLabels.moduleTitle };
+      if (item.id === 'emission-factors') {
+        return { ...item, label: t('navigation.emissionFactors', { defaultValue: t('emissionFactorCatalog.title') }) };
+      }
+      return item;
+    }),
+  })), [supplierLabels.moduleTitle, t]);
 
   // Load organization logo
   useEffect(() => {
@@ -296,10 +307,7 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
               className="h-9 w-auto max-w-[140px] object-contain brightness-0 invert"
             />
           ) : (
-            <div className="flex items-center gap-2">
-              <Leaf className="w-7 h-7 text-[hsl(160,60%,50%)]" />
-              <span className="text-lg font-bold text-white tracking-tight">CarboScan</span>
-            </div>
+            <BrandLogo variant="dark" className="h-9" />
           )}
         </div>
       </SidebarHeader>

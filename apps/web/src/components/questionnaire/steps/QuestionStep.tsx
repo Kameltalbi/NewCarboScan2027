@@ -120,7 +120,7 @@ export const QuestionStep: React.FC<QuestionStepProps> = ({
     };
 
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-[4px] text-xs font-medium bg-indigo-100 text-indigo-800">
         {sectorLabels[question.sector] || question.sector}
       </span>
     );
@@ -131,7 +131,7 @@ export const QuestionStep: React.FC<QuestionStepProps> = ({
       {/* Question Header */}
       <div className="text-center">
         <div className="flex items-center justify-center space-x-4 mb-4">
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getCategoryColor(question.category)}`}>
+          <span className={`inline-flex items-center px-3 py-1 rounded-[4px] text-sm font-medium border ${getCategoryColor(question.category)}`}>
             <span className="mr-2">{getCategoryIcon(question.category)}</span>
             {question.category.charAt(0).toUpperCase() + question.category.slice(1)}
           </span>

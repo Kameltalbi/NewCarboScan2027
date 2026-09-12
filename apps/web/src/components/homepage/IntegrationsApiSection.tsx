@@ -43,7 +43,7 @@ export const IntegrationsApiSection: React.FC = () => {
                   return (
                     <span
                       key={tag}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 text-primary font-medium text-sm"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-[4px] bg-primary/5 text-primary font-medium text-sm"
                     >
                       <Icon className="w-4 h-4" />
                       {t(`homepage.integrationsApi.tags.${tag}`)}

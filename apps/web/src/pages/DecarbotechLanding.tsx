@@ -1,7 +1,6 @@
 
 import React from "react";
-import { MainHeader } from "@/components/MainHeader";
-import { NewFooter } from "@/components/NewFooter";
+import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
 import { DecarbotechLandingHero } from "@/components/decarbotech/DecarbotechLandingHero";
 import { DecarbotechLandingWhySection } from "@/components/decarbotech/DecarbotechLandingWhySection";
 import { DecarbotechLandingActionsSection } from "@/components/decarbotech/DecarbotechLandingActionsSection";
@@ -14,10 +13,7 @@ import { DecarbotechLandingContactForm } from "@/components/decarbotech/Decarbot
 
 const DecarbotechLanding = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <MainHeader />
-      
-      <main className="flex-grow">
+    <SolutionLandingShell path="/decarbotech">
         <DecarbotechLandingHero />
         <DecarbotechLandingWhySection />
         <DecarbotechLandingActionsSection />
@@ -27,10 +23,7 @@ const DecarbotechLanding = () => {
         <DecarbotechLandingTargetSection />
         <DecarbotechLandingIntegrationSection />
         <DecarbotechLandingContactForm />
-      </main>
-
-      <NewFooter />
-    </div>
+    </SolutionLandingShell>
   );
 };
 

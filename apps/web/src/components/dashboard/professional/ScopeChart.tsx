@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
+import { SCOPE_COLORS } from '@/brand/colors';
 
 interface ScopeChartProps {
   scope1: number;
@@ -8,17 +9,17 @@ interface ScopeChartProps {
   scope3: number;
 }
 
-const SCOPE_COLORS = {
-  scope1: '#0E7C66',
-  scope2: '#4FD1C5',
-  scope3: '#2563EB'
+const CHART_SCOPE_COLORS = {
+  scope1: SCOPE_COLORS[1],
+  scope2: SCOPE_COLORS[2],
+  scope3: SCOPE_COLORS[3],
 };
 
 export const ScopeChart: React.FC<ScopeChartProps> = ({ scope1, scope2, scope3 }) => {
   const data = [
-    { name: 'Scope 1', value: scope1, color: SCOPE_COLORS.scope1 },
-    { name: 'Scope 2', value: scope2, color: SCOPE_COLORS.scope2 },
-    { name: 'Scope 3', value: scope3, color: SCOPE_COLORS.scope3 },
+    { name: 'Scope 1', value: scope1, color: CHART_SCOPE_COLORS.scope1 },
+    { name: 'Scope 2', value: scope2, color: CHART_SCOPE_COLORS.scope2 },
+    { name: 'Scope 3', value: scope3, color: CHART_SCOPE_COLORS.scope3 },
   ];
 
   const total = scope1 + scope2 + scope3;

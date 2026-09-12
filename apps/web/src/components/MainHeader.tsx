@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Menu, X, ChevronDown, Leaf, BookOpen, Users, Phone, BarChart3, Calculator, FileText, Award, Shield, GraduationCap, CreditCard, PenTool, Package, Database, Zap, Target, HelpCircle } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAuth";
@@ -81,11 +82,7 @@ export const MainHeader = () => {
         <div className="container flex h-24 items-center justify-between px-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 transition-transform hover:scale-105">
-            <img 
-              src="/logos/CarboScan-logo.png"
-              alt="CarboScan - Bilan Carbone"
-              className="h-16 w-auto" 
-            />
+            <BrandLogo variant="light" className="h-16" priority />
           </Link>
 
           {/* Mobile Menu Trigger + Language Switcher */}
@@ -127,42 +124,42 @@ export const MainHeader = () => {
                         <AccordionContent className="pb-4">
                           <div className="space-y-3 ml-11">
                             <SheetClose asChild>
-                              <Link to="/bilan-carbone" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/bilan-carbone" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">Bilan Carbone</div>
                                 <p className="text-xs text-gray-600">Calculez l'empreinte carbone complète de votre entreprise (Scopes 1, 2 et 3)</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
-                              <Link to={getEmpreinteProduitUrl()} className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to={getEmpreinteProduitUrl()} className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">Empreinte Produit</div>
                                 <p className="text-xs text-gray-600">Calculez l'empreinte carbone de vos produits avec une ACV simplifiée</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
-                              <Link to="/acv-landing" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/acv-landing" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">Analyse du Cycle de Vie (ACV)</div>
                                 <p className="text-xs text-gray-600">ACV complète multi-indicateurs : GWP, ODP, AP, EP, POCP</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
-                              <Link to="/cbam" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/cbam" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">Calculateur CBAM (MACF)</div>
                                 <p className="text-xs text-gray-600">Calculez les émissions intrinsèques et le coût carbone de vos exportations vers l'Europe</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
-                              <Link to="/collect" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/collect" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">CarboScan Collect</div>
                                 <p className="text-xs text-gray-600">Collecte intelligente de données : import Excel, OCR PDF, validation IA</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
-                              <Link to="/decarbotech" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/decarbotech" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">Monitoring & Réduction</div>
                                 <p className="text-xs text-gray-600">Plan de réduction Net-Zero, intégration IoT, tableaux de bord de décarbonation</p>
                               </Link>
@@ -175,7 +172,7 @@ export const MainHeader = () => {
                       {/* Academy */}
                       <div className="py-4 border-b border-gray-100 bg-white">
                         <SheetClose asChild>
-                          <Link to="/carboscan-academy" className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                          <Link to="/carboscan-academy" className="flex items-center space-x-3 p-2 rounded-[4px] hover:bg-gray-50 transition-colors">
                             <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
                               <GraduationCap className="h-4 w-4 text-green-600" />
                             </div>
@@ -204,7 +201,7 @@ export const MainHeader = () => {
                       {/* Pricing */}
                       <div className="py-4 border-b border-gray-100 bg-white">
                         <SheetClose asChild>
-                          <Link to="/pricing" className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                          <Link to="/pricing" className="flex items-center space-x-3 p-2 rounded-[4px] hover:bg-gray-50 transition-colors">
                             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                               <CreditCard className="h-4 w-4 text-blue-600" />
                             </div>
@@ -226,48 +223,48 @@ export const MainHeader = () => {
                         <AccordionContent className="pb-4">
                           <div className="space-y-3 ml-11">
                             <SheetClose asChild>
-                              <Link to="/calculateur-carbone" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/calculateur-carbone" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900">Calculateur carbone</div>
                               </Link>
                             </SheetClose>
 
 
                             <SheetClose asChild>
-                              <Link to="/cbam-calculator" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/cbam-calculator" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900">Calculateur CBAM</div>
                               </Link>
                             </SheetClose>
 
                             <SheetClose asChild>
-                              <Link to="/calculateur-roi" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/calculateur-roi" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900">Calculateur de ROI climat</div>
                               </Link>
                             </SheetClose>
 
 
                             <SheetClose asChild>
-                              <Link to="/blog" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/blog" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.blog")}</div>
                                 <p className="text-xs text-gray-600">{t("navigation.blogDescription")}</p>
                               </Link>
                             </SheetClose>
 
                             <SheetClose asChild>
-                              <Link to="/faq" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/faq" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">FAQ</div>
                                 <p className="text-xs text-gray-600">Questions fréquemment posées</p>
                               </Link>
                             </SheetClose>
 
                             <SheetClose asChild>
-                              <Link to="/about" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/about" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">À propos</div>
                                 <p className="text-xs text-gray-600">Découvrez notre entreprise</p>
                               </Link>
                             </SheetClose>
 
                             <SheetClose asChild>
-                              <Link to="/team" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                              <Link to="/team" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
                                 <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.ourTeam.title")}</div>
                                 <p className="text-xs text-gray-600">{t("navigation.ourTeam.description")}</p>
                               </Link>
@@ -279,7 +276,7 @@ export const MainHeader = () => {
                       {/* Contact */}
                       <div className="py-4 border-b border-gray-100 bg-white">
                         <SheetClose asChild>
-                          <Link to="/contact" className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                          <Link to="/contact" className="flex items-center space-x-3 p-2 rounded-[4px] hover:bg-gray-50 transition-colors">
                             <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center">
                               <Phone className="h-4 w-4 text-teal-600" />
                             </div>
@@ -297,7 +294,7 @@ export const MainHeader = () => {
                       <SheetClose asChild>
                         <Button 
                           onClick={() => navigate("/inscription")}
-                          className="w-full bg-[#16585C] hover:bg-[#0F4144] text-white h-11 font-medium rounded-[10px]"
+                          className="w-full bg-[#16585C] hover:bg-[#0F4144] text-white h-11 font-medium rounded-[4px]"
                         >
                           S'inscrire
                         </Button>
@@ -307,7 +304,7 @@ export const MainHeader = () => {
                         <Button 
                           onClick={() => navigate("/auth")}
                           variant="outline"
-                          className="w-full border-[#16585C] text-[#16585C] bg-transparent hover:bg-[#16585C]/10 h-11 font-medium rounded-[10px]"
+                          className="w-full border-[#16585C] text-[#16585C] bg-transparent hover:bg-[#16585C]/10 h-11 font-medium rounded-[4px]"
                         >
                           {t("navigation.cta.login")}
                         </Button>
@@ -348,11 +345,7 @@ export const MainHeader = () => {
         <div className="flex h-24 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <img 
-              src="/logos/CarboScan-logo.png"
-              alt="CarboScan - Bilan Carbone"
-              className="h-16 w-auto" 
-            />
+            <BrandLogo variant="light" className="h-16" priority />
           </Link>
 
           {/* Navigation Menu */}
@@ -366,7 +359,7 @@ export const MainHeader = () => {
                 <NavigationMenuContent>
                   <div className="w-[700px] p-6">
                     <div className="grid grid-cols-2 gap-4">
-                      <Link to="/bilan-carbone" className="group block select-none rounded-lg p-4 hover:bg-gray-50 transition-colors border-0">
+                      <Link to="/bilan-carbone" className="group block select-none rounded-[4px] p-4 hover:bg-gray-50 transition-colors border-0">
                         <div className="flex items-start space-x-3">
                           <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center mt-0.5">
                             <BarChart3 className="h-5 w-5 text-emerald-600" />
@@ -382,7 +375,7 @@ export const MainHeader = () => {
                         </div>
                       </Link>
                       
-                      <Link to={getEmpreinteProduitUrl()} className="group block select-none rounded-lg p-4 hover:bg-gray-50 transition-colors border-0">
+                      <Link to={getEmpreinteProduitUrl()} className="group block select-none rounded-[4px] p-4 hover:bg-gray-50 transition-colors border-0">
                         <div className="flex items-start space-x-3">
                           <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mt-0.5">
                             <Package className="h-5 w-5 text-blue-600" />
@@ -398,7 +391,7 @@ export const MainHeader = () => {
                         </div>
                       </Link>
                       
-                      <Link to="/acv-landing" className="group block select-none rounded-lg p-4 hover:bg-gray-50 transition-colors border-0">
+                      <Link to="/acv-landing" className="group block select-none rounded-[4px] p-4 hover:bg-gray-50 transition-colors border-0">
                         <div className="flex items-start space-x-3">
                           <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center mt-0.5">
                             <Leaf className="h-5 w-5 text-purple-600" />
@@ -414,7 +407,7 @@ export const MainHeader = () => {
                         </div>
                       </Link>
                       
-                      <Link to="/cbam" className="group block select-none rounded-lg p-4 hover:bg-gray-50 transition-colors border-0">
+                      <Link to="/cbam" className="group block select-none rounded-[4px] p-4 hover:bg-gray-50 transition-colors border-0">
                         <div className="flex items-start space-x-3">
                           <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center mt-0.5">
                             <Shield className="h-5 w-5 text-orange-600" />
@@ -430,7 +423,7 @@ export const MainHeader = () => {
                         </div>
                       </Link>
                       
-                      <Link to="/collect" className="group block select-none rounded-lg p-4 hover:bg-gray-50 transition-colors border-0">
+                      <Link to="/collect" className="group block select-none rounded-[4px] p-4 hover:bg-gray-50 transition-colors border-0">
                         <div className="flex items-start space-x-3">
                           <div className="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mt-0.5">
                             <Database className="h-5 w-5 text-teal-600" />
@@ -446,7 +439,7 @@ export const MainHeader = () => {
                         </div>
                       </Link>
                       
-                      <Link to="/decarbotech" className="group block select-none rounded-lg p-4 hover:bg-gray-50 transition-colors border-0">
+                      <Link to="/decarbotech" className="group block select-none rounded-[4px] p-4 hover:bg-gray-50 transition-colors border-0">
                         <div className="flex items-start space-x-3">
                           <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center mt-0.5">
                             <Target className="h-5 w-5 text-green-600" />
@@ -630,14 +623,14 @@ export const MainHeader = () => {
             <div className="hidden md:flex items-center space-x-3">
               <Button 
                 onClick={() => navigate("/inscription")}
-                className={`font-medium px-5 py-2 h-10 rounded-[10px] ${transparent ? "bg-[#10B981] hover:bg-[#059669] text-white shadow-lg shadow-[#10B981]/20" : "bg-[#16585C] hover:bg-[#0F4144] text-white"}`}
+                className={`font-medium px-5 py-2 h-10 rounded-[4px] ${transparent ? "bg-[#10B981] hover:bg-[#059669] text-white shadow-lg shadow-[#10B981]/20" : "bg-[#16585C] hover:bg-[#0F4144] text-white"}`}
               >
                 S'inscrire
               </Button>
               <Button 
                 onClick={() => navigate("/auth")}
                 variant="outline"
-                className={`bg-transparent font-medium px-4 py-2 h-10 rounded-[10px] ${transparent ? "border-white/40 text-white hover:bg-white/10" : "border-[#16585C] text-[#16585C] hover:bg-[#16585C]/10"}`}
+                className={`bg-transparent font-medium px-4 py-2 h-10 rounded-[4px] ${transparent ? "border-white/40 text-white hover:bg-white/10" : "border-[#16585C] text-[#16585C] hover:bg-[#16585C]/10"}`}
               >
                 {t("navigation.cta.login")}
               </Button>

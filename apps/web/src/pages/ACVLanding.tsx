@@ -1,7 +1,6 @@
 
 import React from "react";
-import { MainHeader } from "@/components/MainHeader";
-import { NewFooter } from "@/components/NewFooter";
+import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
 import { ACVLandingHero } from "@/components/acv/ACVLandingHero";
 import { ACVLandingWhySection } from "@/components/acv/ACVLandingWhySection";
 import { ACVLandingBenefitsSection } from "@/components/acv/ACVLandingBenefitsSection";
@@ -13,10 +12,7 @@ import { ACVLandingContactForm } from "@/components/acv/ACVLandingContactForm";
 
 const ACVLanding = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <MainHeader />
-      
-      <main className="flex-grow">
+    <SolutionLandingShell path="/acv-landing">
         <ACVLandingHero />
         <ACVLandingWhySection />
         <ACVLandingBenefitsSection />
@@ -25,10 +21,7 @@ const ACVLanding = () => {
         <ACVLandingProductsSection />
         <ACVLandingWhyCarboScanSection />
         <ACVLandingContactForm />
-      </main>
-
-      <NewFooter />
-    </div>
+    </SolutionLandingShell>
   );
 };
 

@@ -58,7 +58,7 @@ export const ModernCTA: React.FC = () => {
             <Button 
               size="lg" 
               onClick={goToContact}
-              className="text-white px-8 py-3 text-lg font-semibold rounded-[10px] shadow-lg hover:shadow-xl transition-all"
+              className="text-white px-8 py-3 text-lg font-semibold rounded-[4px] shadow-lg hover:shadow-xl transition-all"
               style={{ background: 'linear-gradient(135deg, #1ABC9C 0%, #0F172A 100%)' }}
             >
               <Calculator className="w-5 h-5 mr-2" />
@@ -70,7 +70,7 @@ export const ModernCTA: React.FC = () => {
               variant="outline" 
               size="lg"
               onClick={goToContact}
-              className="border-2 border-white text-white bg-transparent hover:bg-white/10 px-8 py-3 text-lg font-semibold rounded-[10px] transition-all"
+              className="border-2 border-white text-white bg-transparent hover:bg-white/10 px-8 py-3 text-lg font-semibold rounded-[4px] transition-all"
             >
               {t('newHomepage.finalCTA.ctaSecondary')}
             </Button>

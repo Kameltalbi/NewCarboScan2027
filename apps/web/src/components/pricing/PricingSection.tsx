@@ -84,7 +84,7 @@ export const PricingSection: React.FC = () => {
         </div>
 
         <div className="text-center mt-8">
-          <a href="/contact" className="inline-flex items-center justify-center px-8 py-3 text-lg font-semibold text-white bg-primary hover:bg-primary/90 rounded-lg transition-colors duration-200">
+          <a href="/contact" className="inline-flex items-center justify-center px-8 py-3 text-lg font-semibold text-white bg-primary hover:bg-primary/90 rounded-[4px] transition-colors duration-200">
             {t('pricingSection.talkExpert')}
           </a>
         </div>

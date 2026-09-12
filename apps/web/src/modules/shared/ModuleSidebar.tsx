@@ -96,7 +96,7 @@ export const ModuleSidebar: React.FC<ModuleSidebarProps> = ({
                     <SidebarMenuItem key={module.slug}>
                       <SidebarMenuButton
                         onClick={() => navigate(module.route)}
-                        className={`w-full justify-start gap-3 px-4 py-2.5 rounded-lg transition-all ${
+                        className={`w-full justify-start gap-3 px-4 py-2.5 rounded-[4px] transition-all ${
                           isActive 
                             ? 'bg-teal-600 text-white' 
                             : 'hover:bg-slate-400 text-white'

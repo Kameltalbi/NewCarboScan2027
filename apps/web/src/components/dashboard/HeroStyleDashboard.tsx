@@ -1,3 +1,4 @@
+import { SCOPE_COLORS as BRAND_SCOPE } from '@/brand/colors';
 // Hero-style dashboard: reproduces the marketing hero preview layout
 // while consuming real data from DashboardAggregator when available.
 import React, { useEffect, useMemo, useState } from 'react';
@@ -45,7 +46,7 @@ interface Props {
   selectedYear?: number;
 }
 
-const SCOPE_COLORS = ['#22c55e', '#3b82f6', '#a78bfa'];
+const SCOPE_COLORS = [BRAND_SCOPE[1], BRAND_SCOPE[2], BRAND_SCOPE[3]];
 const CATEGORY_COLORS = ['#22c55e', '#3b82f6', '#a78bfa', '#f59e0b', '#14b8a6'];
 
 const KG_TO_T = 0.001;

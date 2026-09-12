@@ -1,28 +1,30 @@
 /**
  * Générateur de graphiques SVG inline pour les rapports PDF.
- *
- * Ces fonctions retournent des chaînes SVG pures (pas de React)
- * qui sont injectées directement dans le HTML des templates.
- * Avantage : html2canvas les capture parfaitement, zéro espace vide.
- *
- * Palette CarboScan :
- *   Scope 1 → #0EA5E9  (Bleu Énergie)
- *   Scope 2 → #F59E0B  (Ambre Électrique)
- *   Scope 3 → #6366F1  (Indigo Industriel)
+ * Palette : src/brand/colors.ts
  */
 
+import { BRAND, SCOPE_COLORS } from "@/brand/colors";
+
 const COLORS = {
-  scope1: '#0EA5E9',
-  scope2: '#F59E0B',
-  scope3: '#6366F1',
-  success: '#10B981',
-  alert: '#EF4444',
-  textPrimary: '#1E293B',
-  textSecondary: '#64748B',
-  textMuted: '#94A3B8',
-  border: '#E2E8F0',
-  bgLight: '#F8FAFC',
-  gradient: ['#0EA5E9', '#38BDF8', '#F59E0B', '#FBBF24', '#6366F1', '#818CF8', '#A5B4FC'],
+  scope1: SCOPE_COLORS[1],
+  scope2: SCOPE_COLORS[2],
+  scope3: SCOPE_COLORS[3],
+  success: SCOPE_COLORS[1],
+  alert: "#EF4444",
+  textPrimary: BRAND.primary,
+  textSecondary: BRAND.textSecondary,
+  textMuted: BRAND.textSecondary,
+  border: BRAND.separator,
+  bgLight: BRAND.surface,
+  gradient: [
+    SCOPE_COLORS[1],
+    "#33CC8E",
+    SCOPE_COLORS[2],
+    "#33CAD8",
+    SCOPE_COLORS[3],
+    "#FFA04D",
+    "#FFB87A",
+  ],
 };
 
 // ─── Helpers ────────────────────────────────────────────────

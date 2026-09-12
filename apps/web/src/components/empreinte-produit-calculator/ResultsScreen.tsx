@@ -36,7 +36,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, companyNa
         <Button
           onClick={handleDownloadPdf}
           variant="outline"
-          className="rounded-full px-6 h-11 gap-2 border-primary/30 text-primary hover:bg-primary/5"
+          className="rounded-[4px] px-6 h-11 gap-2 border-primary/30 text-primary hover:bg-primary/5"
         >
           <Download className="w-4 h-4" />
           {t("carbonCalculator.results.downloadPdf", "Télécharger le rapport PDF")}

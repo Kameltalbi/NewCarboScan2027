@@ -1,7 +1,6 @@
 
 import React from "react";
-import { MainHeader } from "@/components/MainHeader";
-import { NewFooter } from "@/components/NewFooter";
+import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
 import { CollectLandingHero } from "@/components/collect/CollectLandingHero";
 import { CollectLandingWhySection } from "@/components/collect/CollectLandingWhySection";
 import { CollectLandingBenefitsSection } from "@/components/collect/CollectLandingBenefitsSection";
@@ -13,10 +12,7 @@ import { CollectLandingContactForm } from "@/components/collect/CollectLandingCo
 
 const CollectLanding = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <MainHeader />
-      
-      <main className="flex-grow">
+    <SolutionLandingShell path="/collect">
         <CollectLandingHero />
         <CollectLandingWhySection />
         <CollectLandingBenefitsSection />
@@ -25,10 +21,7 @@ const CollectLanding = () => {
         <CollectLandingTargetSection />
         <CollectLandingIntegrationSection />
         <CollectLandingContactForm />
-      </main>
-
-      <NewFooter />
-    </div>
+    </SolutionLandingShell>
   );
 };
 

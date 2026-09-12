@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { 
   Award, 
@@ -224,15 +225,11 @@ export const ModernCarboScanSidebar: React.FC = () => {
                     className="h-10 max-w-[140px] w-auto object-contain transition-opacity"
                   />
                 ) : (
-                  <img 
-                    src="/logos/CarboScan-logo.png" 
-                    alt="CarboScan" 
-                    className="h-9 w-auto transition-opacity"
-                  />
+                  <BrandLogo variant="light" className="h-9" />
                 )}
               </div>
             ) : (
-              <div className="w-9 h-9 flex items-center justify-center mx-auto rounded-lg bg-primary/5 overflow-hidden">
+              <div className="w-9 h-9 flex items-center justify-center mx-auto rounded-[4px] bg-primary/5 overflow-hidden">
                 {orgLogoUrl ? (
                   <img 
                     src={orgLogoUrl} 
@@ -240,7 +237,7 @@ export const ModernCarboScanSidebar: React.FC = () => {
                     className="h-7 w-7 object-contain"
                   />
                 ) : (
-                  <Building2 className="h-5 w-5 text-primary" />
+                  <BrandLogo variant="symbol" className="h-7 w-7" />
                 )}
               </div>
             )}
@@ -351,7 +348,7 @@ export const ModernCarboScanSidebar: React.FC = () => {
           <Button
             variant="ghost"
             onClick={handleLogout}
-            className={`w-full justify-start text-gray-700 hover:text-red-600 hover:bg-red-50/50 transition-all duration-200 rounded-lg ${
+            className={`w-full justify-start text-gray-700 hover:text-red-600 hover:bg-red-50/50 transition-all duration-200 rounded-[4px] ${
               isCollapsed ? 'px-2 justify-center' : 'px-3'
             }`}
           >

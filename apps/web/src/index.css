@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -25,140 +25,154 @@
   }
 
   :root {
-    /* Forest & Moss palette — contact redesign tokens */
-    --forest-deep: 148 30% 17%;
-    --forest-mid: 148 30% 26%;
-    --forest-light: 128 25% 45%;
-    --forest-sage: 100 22% 70%;
-    --forest-bg: 100 10% 97%;
+    /* CarboScan brand 2026 — see src/brand/colors.ts */
+    --brand-primary: 169 80% 14%; /* #073F35 */
+    --brand-primary-dark: 171 74% 11%; /* #072F29 */
+    --brand-surface: 140 23% 97%; /* #F7FAF8 */
+    --brand-text-secondary: 159 9% 36%; /* #53645E */
+    --brand-separator: 147 15% 88%; /* #DCE5E0 */
 
-    /* Nature and turquoise colors */
-    --primary: 168 100% 27%; /* #0E7C66 Vert foncé du logo */
-    --primary-dark: 180 100% 27%; /* #008B8B Dark turquoise */
-    --primary-light: 180 100% 73%; /* #7FFFD4 Light turquoise */
-    --secondary: 147 50% 36%; /* #2E8B57 Sea green */
-    --accent: 123 100% 50%; /* #32CD32 Lime green */
-    --nature-green: 120 61% 34%; /* #228B22 Forest green */
-    --nature-blue: 207 44% 49%; /* #4682B4 Steel blue */
-    --nature-teal: 180 100% 25%; /* #008080 Teal */
-    
-    /* Dashboard B2B Professional Colors */
-    --dashboard-bg: 220 14% 96%; /* #F5F7FA */
-    --dashboard-header: 222 47% 11%; /* #0F172A */
-    --dashboard-text: 220 13% 18%; /* #1F2937 */
-    --dashboard-separator: 220 13% 91%; /* #E5E7EB */
-    
-    /* Carbon Impact Colors */
-    --carbon-impact: 168 76% 42%; /* #1ABC9C - Vert émeraude (CTA principal) */
-    --carbon-impact-hover: 168 76% 38%; /* #159A80 - Hover CTA */
-    --carbon-dark: 168 100% 27%; /* #0E7C66 */
-    --carbon-turquoise: 174 83% 56%; /* #4FD1C5 */
-    --carbon-blue: 224 76% 48%; /* #2563EB */
-    
-    /* Home Page Colors */
-    --home-emerald: 168 76% 42%; /* #1ABC9C - Vert émeraude (branding & CTA) */
-    --home-emerald-hover: 168 76% 38%; /* #159A80 - Hover CTA */
-    --home-blue-night: 222 47% 11%; /* #0F172A - Bleu nuit (header/footer/titres) */
-    --home-bg-alt: 220 14% 96%; /* #F5F7FA - Gris très clair (sections alternées) */
-    --home-text-primary: 217 33% 17%; /* #1F2937 - Gris foncé (texte principal) */
-    --home-text-secondary: 215 16% 47%; /* #6B7280 - Gris moyen (texte secondaire) */
-    
-    /* Scope Colors */
-    --scope-1: 168 100% 27%; /* #0E7C66 */
-    --scope-2: 174 83% 56%; /* #4FD1C5 */
-    --scope-3: 224 76% 48%; /* #2563EB */
-    
+    /* Forest aliases (aligned to brand) */
+    --forest-deep: 169 80% 14%;
+    --forest-mid: 169 45% 22%;
+    --forest-light: 156 40% 38%;
+    --forest-sage: 147 15% 70%;
+    --forest-bg: 140 23% 97%;
+
+    /* Primary UI */
+    --primary: 169 80% 14%; /* #073F35 */
+    --primary-dark: 171 74% 11%; /* #072F29 */
+    --primary-light: 156 50% 42%;
+    --secondary: 159 9% 36%; /* #53645E */
+    --accent: 156 100% 37%; /* Scope 1 emerald as accent */
+    --nature-green: 156 100% 37%;
+    --nature-blue: 185 100% 40%;
+    --nature-teal: 185 100% 36%;
+
+    /* Dashboard */
+    --dashboard-bg: 140 23% 97%; /* #F7FAF8 */
+    --dashboard-header: 171 74% 11%; /* #072F29 */
+    --dashboard-text: 169 80% 14%;
+    --dashboard-separator: 147 15% 88%; /* #DCE5E0 */
+
+    /* Carbon / home CTAs → brand primary (not turquoise) */
+    --carbon-impact: 169 80% 14%;
+    --carbon-impact-hover: 171 74% 11%;
+    --carbon-dark: 169 80% 14%;
+    --carbon-turquoise: 185 100% 40%; /* Scope 2 */
+    --carbon-blue: 185 100% 40%;
+
+    --home-emerald: 169 80% 14%;
+    --home-emerald-hover: 171 74% 11%;
+    --home-blue-night: 171 74% 11%;
+    --home-bg-alt: 140 23% 97%;
+    --home-text-primary: 169 80% 14%;
+    --home-text-secondary: 159 9% 36%;
+
+    /* GHG scopes — identity colors (not equal logo proportions) */
+    --scope-1: 156 100% 37%; /* #00BF72 */
+    --scope-2: 185 100% 40%; /* #00BDCE */
+    --scope-3: 28 100% 55%; /* #FF851B */
+    --scope-1-main: var(--scope-1);
+    --scope-2-main: var(--scope-2);
+    --scope-3-main: var(--scope-3);
+
+    /* Status tokens (distinct from scope palette) */
+    --status-success: 156 100% 32%;
+    --status-warning: 38 92% 50%;
+    --status-error: 0 72% 51%;
+    --status-info: 199 89% 40%;
+
     /* Maturity Score Colors */
-    --score-a: 142 71% 45%;
-    --score-b: 142 71% 55%;
+    --score-a: 156 100% 37%;
+    --score-b: 156 70% 45%;
     --score-c: 38 92% 50%;
     --score-d: 0 65% 51%;
-    
-    /* Sidebar – Dark forest green (Greenly-inspired) */
-    --sidebar: 150 30% 16%; /* Deep forest green #1B3A2D */
-    --sidebar-foreground: 140 15% 85%; /* Light sage text */
-    --sidebar-border: 150 20% 22%; /* Subtle green border */
-    --sidebar-accent: 150 25% 21%; /* Hover – slightly lighter green */
+
+    /* Sidebar — brand dark green */
+    --sidebar: 171 74% 11%; /* #072F29 */
+    --sidebar-foreground: 140 20% 90%;
+    --sidebar-border: 169 30% 18%;
+    --sidebar-accent: 169 35% 16%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-primary: 0 0% 100%; /* White for active text */
-    --sidebar-primary-foreground: 150 30% 16%;
-    --sidebar-ring: 160 60% 45%;
-    --sidebar-muted: 140 10% 55%; /* Muted sage text */
-    --sidebar-active-bg: 155 35% 25%; /* Highlighted green bg for active */
-    --sidebar-active-border: 160 60% 50%; /* Bright green accent bar */
-    
-    --background: 0 0% 100%;
-    --foreground: 180 25% 25%; /* #2F4F4F Dark slate gray */
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 171 74% 11%;
+    --sidebar-ring: 156 100% 37%;
+    --sidebar-muted: 147 10% 60%;
+    --sidebar-active-bg: 169 40% 18%;
+    --sidebar-active-border: 156 100% 37%;
+
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 169 80% 14%; /* #073F35 */
     --card: 0 0% 100%;
-    --card-foreground: 180 25% 25%;
+    --card-foreground: 169 80% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 180 25% 25%;
-    --primary-foreground: 0 0% 98%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 96%; /* #F5F5F5 */
-    --muted-foreground: 210 14% 53%; /* #708090 Slate gray */
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 174 70% 41% / 0.1;
-    --input: 174 70% 41% / 0.1;
-    --ring: 174 70% 41%;
-    --radius: 1.25rem;
+    --popover-foreground: 169 80% 14%;
+    --primary-foreground: 0 0% 100%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 140 23% 97%; /* #F7FAF8 */
+    --muted-foreground: 159 9% 36%; /* #53645E */
+    --accent-foreground: 169 80% 14%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 147 15% 88%; /* #DCE5E0 */
+    --input: 147 15% 88%;
+    --ring: 169 80% 14%;
+    --radius: 0.25rem; /* 4px — aligned with button radius */
   }
 
   .dark {
-    --background: 222 47% 8%;
-    --foreground: 0 0% 95%;
-    --card: 222 47% 11%;
-    --card-foreground: 0 0% 95%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 168 76% 42%;
-    --primary-dark: 168 76% 38%;
-    --primary-light: 168 76% 52%;
-    --primary-foreground: 222 47% 8%;
-    --secondary: 147 50% 42%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 222 30% 15%;
-    --muted-foreground: 220 13% 65%;
-    --accent: 168 76% 42%;
-    --accent-foreground: 222 47% 8%;
+    --background: 171 74% 8%;
+    --foreground: 140 20% 95%;
+    --card: 171 50% 11%;
+    --card-foreground: 140 20% 95%;
+    --popover: 171 50% 11%;
+    --popover-foreground: 140 20% 95%;
+    --primary: 156 100% 42%;
+    --primary-dark: 169 80% 20%;
+    --primary-light: 156 70% 50%;
+    --primary-foreground: 171 74% 8%;
+    --secondary: 159 9% 45%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 171 30% 14%;
+    --muted-foreground: 147 10% 65%;
+    --accent: 156 100% 42%;
+    --accent-foreground: 171 74% 8%;
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
-    --ring: 168 76% 42%;
-    
-    /* Dashboard B2B Dark Mode */
-    --dashboard-bg: 222 47% 8%;
-    --dashboard-header: 222 47% 6%;
+    --border: 169 25% 18%;
+    --input: 169 25% 18%;
+    --ring: 156 100% 42%;
+
+    --dashboard-bg: 171 74% 8%;
+    --dashboard-header: 171 74% 6%;
     --dashboard-text: 0 0% 95%;
-    --dashboard-separator: 222 30% 18%;
-    
-    /* Carbon Impact Colors - Dark */
-    --carbon-impact: 168 76% 48%;
-    --carbon-impact-hover: 168 76% 42%;
-    --carbon-dark: 168 76% 38%;
-    --carbon-turquoise: 174 83% 50%;
-    --carbon-blue: 224 76% 58%;
-    
-    /* Sidebar Dark */
-    --sidebar: 222 47% 6%;
-    --sidebar-foreground: 220 13% 75%;
-    --sidebar-border: 222 30% 15%;
-    --sidebar-accent: 222 30% 12%;
+    --dashboard-separator: 169 25% 18%;
+
+    --carbon-impact: 156 100% 42%;
+    --carbon-impact-hover: 156 100% 37%;
+    --carbon-dark: 169 80% 20%;
+    --carbon-turquoise: 185 100% 45%;
+    --carbon-blue: 185 100% 45%;
+
+    --sidebar: 171 74% 7%;
+    --sidebar-foreground: 140 15% 80%;
+    --sidebar-border: 169 25% 14%;
+    --sidebar-accent: 169 30% 12%;
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 222 47% 6%;
-    --sidebar-ring: 168 76% 42%;
-    --sidebar-muted: 220 13% 55%;
-    --sidebar-active-bg: 168 76% 20%;
-    --sidebar-active-border: 168 76% 42%;
-    
-    /* Scope Colors - Dark */
-    --scope-1: 168 76% 42%;
-    --scope-2: 174 83% 50%;
-    --scope-3: 224 76% 58%;
+    --sidebar-primary-foreground: 171 74% 7%;
+    --sidebar-ring: 156 100% 42%;
+    --sidebar-muted: 147 10% 55%;
+    --sidebar-active-bg: 156 40% 18%;
+    --sidebar-active-border: 156 100% 42%;
+
+    --scope-1: 156 100% 42%;
+    --scope-2: 185 100% 45%;
+    --scope-3: 28 100% 58%;
+    --scope-1-main: var(--scope-1);
+    --scope-2-main: var(--scope-2);
+    --scope-3-main: var(--scope-3);
   }
 }
 

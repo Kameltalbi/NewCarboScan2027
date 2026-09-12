@@ -49,6 +49,20 @@ export const SOLUTION_SECTORS: SolutionSector[] = [
     label: "Énergie",
     blurb: "Production, réseaux et reporting énergétique.",
   },
+  {
+    key: "finance",
+    slug: "finance",
+    path: "/bilan-carbone-finance",
+    label: "Finance",
+    blurb: "PCAF, émissions financées du portefeuille et empreinte opérationnelle.",
+  },
+  {
+    key: "services",
+    slug: "services",
+    path: "/bilan-carbone-services",
+    label: "Services",
+    blurb: "Bureaux, déplacements, achats de services et sites tertiaires.",
+  },
 ];
 
 /** Product / module marketing pages */
@@ -67,6 +81,11 @@ export const SOLUTION_MODULES: SolutionModule[] = [
     path: "/collect",
     label: "Collecte de données",
     blurb: "Centralisez énergie, déplacements, achats et preuves d’activité.",
+  },
+  {
+    path: "/engagement-fournisseurs",
+    label: "Engagement fournisseurs",
+    blurb: "Invitez votre supply chain et fiabilisez les émissions Scope 3 amont.",
   },
   {
     path: "/empreinte-produit",
@@ -109,7 +128,7 @@ export const SOLUTION_HUB_FAQS: { question: string; answer: string }[] = [
   {
     question: "Quels secteurs CarboScan couvre-t-il ?",
     answer:
-      "Des pages dédiées existent pour l’industrie, le transport, la construction, l’agroalimentaire et l’énergie. Les modules (bilan, collecte, empreinte produit, ACV, CBAM, WattBim) s’adaptent ensuite à votre organisation.",
+      "Des pages dédiées existent pour l’industrie, le transport, la construction, l’agroalimentaire, l’énergie, la finance et les services. Les modules (bilan, collecte, empreinte produit, ACV, CBAM, WattBim) s’adaptent ensuite à votre organisation.",
   },
   {
     question: "Quelle est la différence entre bilan carbone, empreinte produit et ACV ?",

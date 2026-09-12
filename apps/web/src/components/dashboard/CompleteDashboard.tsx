@@ -151,9 +151,9 @@ export const CompleteDashboard: React.FC = () => {
   const scope3 = dashboardData ? (dashboardData.scope3 / 1000) : 0;
 
   const emissionsData = dashboardData ? [
-    { name: 'Scope 1', value: scope1, color: '#3b82f6' },
-    { name: 'Scope 2', value: scope2, color: '#10b981' },
-    { name: 'Scope 3', value: scope3, color: '#f59e0b' },
+    { name: 'Scope 1', value: scope1, color: '#00BF72' },
+    { name: 'Scope 2', value: scope2, color: '#00BDCE' },
+    { name: 'Scope 3', value: scope3, color: '#FF851B' },
   ] : [];
 
   const topEmitters = dashboardData
@@ -390,7 +390,7 @@ export const CompleteDashboard: React.FC = () => {
                     <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip formatter={(value: any) => [`${(value / 1000).toFixed(1)} t CO₂e`]} />
-                    <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="value" fill="#00BF72" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>

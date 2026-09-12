@@ -27,7 +27,7 @@ const SECTORS = [
 export const GuideDownloadSection: React.FC = () => {
   const { i18n } = useTranslation();
   const { toast } = useToast();
-  const lang = i18n.language || "fr";
+  const lang = (i18n.language || "fr").slice(0, 2);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -101,7 +101,7 @@ export const GuideDownloadSection: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="max-w-5xl mx-auto text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-[#1ABC9C]/10 text-[#1ABC9C] px-4 py-2 rounded-full text-sm font-semibold mb-8">
+            <div className="inline-flex items-center gap-2 bg-[#1ABC9C]/10 text-[#1ABC9C] px-4 py-2 rounded-[4px] text-sm font-semibold mb-8">
               <BookOpen className="w-4 h-4" />
               <span>{lang === "fr" ? "Guide gratuit • 20 pages" : "Free guide • 20 pages"}</span>
             </div>
@@ -153,7 +153,7 @@ export const GuideDownloadSection: React.FC = () => {
             <Button
               onClick={() => setShowForm(true)}
               size="lg"
-              className="text-white px-10 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+              className="text-white px-10 py-6 text-lg font-semibold rounded-[4px] shadow-lg hover:shadow-xl transition-all"
               style={{ background: "linear-gradient(135deg, #1ABC9C 0%, #0F172A 100%)" }}
             >
               <FileDown className="w-5 h-5 mr-2" />
@@ -171,7 +171,7 @@ export const GuideDownloadSection: React.FC = () => {
             {/* Close button */}
             <button
               onClick={() => setShowForm(false)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#F5F7FA] hover:bg-[#E5E7EB] flex items-center justify-center transition-colors z-10"
+              className="absolute top-4 right-4 w-8 h-8 rounded-[4px] bg-[#F5F7FA] hover:bg-[#E5E7EB] flex items-center justify-center transition-colors z-10"
             >
               <X className="w-4 h-4 text-[#6B7280]" />
             </button>
@@ -290,7 +290,7 @@ export const GuideDownloadSection: React.FC = () => {
                   <Button
                     type="submit"
                     disabled={!isValid || loading}
-                    className="w-full text-white py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all mt-2"
+                    className="w-full text-white py-6 text-base font-semibold rounded-[4px] shadow-lg hover:shadow-xl transition-all mt-2"
                     style={{ background: "linear-gradient(135deg, #1ABC9C 0%, #0F172A 100%)" }}
                   >
                     {loading ? (

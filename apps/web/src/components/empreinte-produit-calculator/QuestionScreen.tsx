@@ -183,13 +183,13 @@ export const GroupedQuestionScreen: React.FC<GroupedQuestionScreenProps> = ({
           variant="outline"
           onClick={onPrevious}
           disabled={isFirstSection}
-          className="px-8 h-11 rounded-full border-border/60"
+          className="px-8 h-11 rounded-[4px] border-border/60"
         >
           {t("carbonCalculator.questions.previous", "Back")}
         </Button>
         <Button
           onClick={onNext}
-          className="px-8 h-11 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
+          className="px-8 h-11 rounded-[4px] bg-primary hover:bg-primary/90 text-primary-foreground"
         >
           {isLastSection ? t("carbonCalculator.questions.finalize") : t("carbonCalculator.questions.next", "Next")}
           {!isLastSection && <ArrowRight className="w-4 h-4 ml-2" />}

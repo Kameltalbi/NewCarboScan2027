@@ -54,7 +54,7 @@ export const CarboScanCollectSection: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Header Section */}
         <div className="text-center mb-16 lg:mb-20">
-          <div className="inline-flex items-center gap-2 bg-[#12B8A5]/10 text-[#12B8A5] px-4 py-2 rounded-full text-xs font-semibold mb-6 border border-[#12B8A5]/20">
+          <div className="inline-flex items-center gap-2 bg-[#12B8A5]/10 text-[#12B8A5] px-4 py-2 rounded-[4px] text-xs font-semibold mb-6 border border-[#12B8A5]/20">
             <Sparkles className="w-3.5 h-3.5" />
             <span>{t("newHomepage.collect.badge")}</span>
           </div>
@@ -120,7 +120,7 @@ export const CarboScanCollectSection: React.FC = () => {
           <Button 
             onClick={handleRequestDemo}
             size="lg"
-            className="bg-[#12B8A5] hover:bg-[#0E9E8B] text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            className="bg-[#12B8A5] hover:bg-[#0E9E8B] text-white px-8 py-6 text-lg font-semibold rounded-[4px] shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
             {t("newHomepage.collect.cta")}
             <ArrowRight className="ml-2 h-5 w-5" />

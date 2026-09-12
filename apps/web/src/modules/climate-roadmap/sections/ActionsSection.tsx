@@ -398,7 +398,7 @@ export const ActionsSection: React.FC<ActionsSectionProps> = ({ actions, levers,
             <React.Fragment key={step.id}>
               <button
                 onClick={() => { setCurrentStep(step.id); setActiveCategoryIdx(0); }}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-[4px] text-sm font-medium transition-all ${
                   isActive
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-muted-foreground hover:bg-muted'

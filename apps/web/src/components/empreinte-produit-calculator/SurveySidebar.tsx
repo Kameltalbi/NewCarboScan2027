@@ -69,7 +69,7 @@ export const SurveySidebar: React.FC<SurveySidebarProps> = ({ currentSectionKey,
       <div className="md:hidden fixed top-[64px] left-3 z-40">
         <Sheet>
           <SheetTrigger asChild>
-            <button className="p-2 rounded-lg bg-background border border-border/40 shadow-sm">
+            <button className="p-2 rounded-[4px] bg-background border border-border/40 shadow-sm">
               <Menu className="h-5 w-5 text-foreground" />
             </button>
           </SheetTrigger>

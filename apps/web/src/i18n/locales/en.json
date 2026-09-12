@@ -156,6 +156,14 @@
     "regulatoryWatch": "Regulatory Watch",
     "regulatoryWatchDescription": "Environmental regulatory news",
     "cbamCalculator": "CBAM Calculator",
+    "login": "Login",
+    "platform": "Platform",
+    "freeDemo": "Free demo",
+    "bySector": "By sector",
+    "allSolutions": "All solutions",
+    "caseStudies": "Case studies",
+    "openMenu": "Open menu",
+    "cbamExport": "EU export (CBAM)",
     "register": "Register",
     "logout": "Logout",
     "dashboard": "Dashboard",
@@ -291,7 +299,6 @@
       "requestDemo": "Request a demo",
       "login": "Login"
     },
-    "login": "Login",
     "emissionFactors": "Emission factors"
   },
   "hero": {
@@ -6580,6 +6587,20 @@
           "title": "Decarbonization plan",
           "description": "Identify the most impactful reduction levers and build your climate roadmap."
         }
+      ],
+      "faqs": [
+        {
+          "question": "How do you run an industrial carbon footprint?",
+          "answer": "Define the boundary (sites, year, scopes), collect activity data (energy, processes, purchases, transport), apply emission factors, then produce an inventory report. CarboScan structures that collection and calculation."
+        },
+        {
+          "question": "Is Scope 3 included for industry?",
+          "answer": "Yes. Upstream Scope 3 (materials, transport, capital goods) is often the largest item. Collect and the organisational inventory help you document it step by step."
+        },
+        {
+          "question": "Which reports can be exported?",
+          "answer": "GHG inventory reports for internal steering, consultants and customer requirements. Methodological alignment targets the GHG Protocol; compliance statements depend on the perimeter actually collected."
+        }
       ]
     },
     "btp": {
@@ -6636,6 +6657,20 @@
         {
           "title": "Low-carbon materials",
           "description": "Compare material alternatives and their impact on the overall footprint."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Does a construction carbon footprint cover sites?",
+          "answer": "Yes. Plant fuel, site energy, materials and waste can be tied to each project. WattBim can then track buildings in operation."
+        },
+        {
+          "question": "How is this different from a building LCA?",
+          "answer": "The organisational footprint covers the company (year, sites). LCA / product footprint covers a building or material. Both modules complement each other in CarboScan."
+        },
+        {
+          "question": "Can subcontractor data be included?",
+          "answer": "Yes, through multi-contributor collection: each party enters activity data that you validate before calculation."
         }
       ]
     },
@@ -6694,6 +6729,20 @@
           "title": "Sustainable sourcing",
           "description": "Assess and compare suppliers based on their carbon footprint."
         }
+      ],
+      "faqs": [
+        {
+          "question": "Can we calculate a food product footprint?",
+          "answer": "Yes. The Product Carbon Footprint module uses the same activity data as the organisational inventory for a given SKU."
+        },
+        {
+          "question": "How is the cold chain handled?",
+          "answer": "Electricity and refrigerants sit in Scopes 1 and 2; refrigerated transport in Scope 3. Collection keeps those items separate."
+        },
+        {
+          "question": "Are agricultural emission factors available?",
+          "answer": "CarboScan uses documented emission factors (including public bases such as ADEME depending on the item). The report keeps factor traceability."
+        }
       ]
     },
     "energie": {
@@ -6751,6 +6800,20 @@
           "title": "Net Zero roadmap",
           "description": "Build your decarbonization trajectory aligned with climate objectives."
         }
+      ],
+      "faqs": [
+        {
+          "question": "How do energy producers or distributors measure emissions?",
+          "answer": "Inventory consumption, network losses where relevant, and upstream items. WattBim helps track sites; the footprint consolidates the year."
+        },
+        {
+          "question": "Does CBAM apply to energy?",
+          "answer": "Some flows (electricity, hydrogen, etc.) may fall under the EU CBAM. The CarboScan CBAM page covers export reporting to the EU."
+        },
+        {
+          "question": "Can several production sites be tracked?",
+          "answer": "Yes. Collection and the inventory support multi-site consolidation with a breakdown by entity."
+        }
       ]
     },
     "transport": {
@@ -6807,6 +6870,166 @@
         {
           "title": "Electrification scenarios",
           "description": "Simulate the impact of switching to electric or hydrogen vehicles."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "How do you calculate a fleet carbon footprint?",
+          "answer": "From fuel use or distances and vehicle types, with per-mode emission factors. Data can be imported (Excel) or entered per site."
+        },
+        {
+          "question": "Is subcontracted freight Scope 3?",
+          "answer": "Usually yes (purchased upstream/downstream transport). Owned vehicles sit in Scope 1. CarboScan lets you separate those items in collection."
+        },
+        {
+          "question": "Can we compare road, sea and air?",
+          "answer": "Yes, each mode has different factors. The report keeps the mode and activity unit used."
+        }
+      ]
+    },
+    "finance": {
+      "sector": "Finance & Insurance",
+      "title": "Carbon footprint, PCAF and financed emissions",
+      "metaTitle": "PCAF & financed emissions — bank and insurer carbon footprint | CarboScan",
+      "metaDescription": "Calculate financed emissions for your portfolio using the PCAF approach (counterparties, outstanding, data-quality score 1–5) plus the operational Scopes 1, 2 and 3 inventory.",
+      "heroDescription": "For a bank, insurer or fund, Scope 3 category 15 (financed emissions) dwarfs HQ and branch emissions. CarboScan combines the operational inventory with the Portfolio module: counterparties, outstanding amounts, financed emissions (tCO₂e) and a PCAF-inspired data-quality score.",
+      "stats": [
+        {
+          "value": "PCAF",
+          "label": "financed emissions of the portfolio"
+        },
+        {
+          "value": "Cat. 15",
+          "label": "Scope 3 — investments & lending"
+        },
+        {
+          "value": "Score 1–5",
+          "label": "data quality (actual → proxy)"
+        },
+        {
+          "value": "Scopes 1–2",
+          "label": "operational footprint of sites"
+        }
+      ],
+      "challenges": [
+        {
+          "title": "Financed emissions",
+          "description": "GHG attributed to loans, investments and policies far outweigh office energy. Without a structured portfolio, Scope 3 category 15 stays empty."
+        },
+        {
+          "title": "PCAF data quality",
+          "description": "PCAF requires tracing whether an emission comes from the counterparty’s actual data or a sectoral proxy (score 1 = actual, 5 = proxy)."
+        },
+        {
+          "title": "Attribution by outstanding",
+          "description": "Each counterparty must be linked to an outstanding (loan, investment) to attribute a share of the financed company’s emissions."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Counterparty portfolio",
+          "description": "The Portfolio module handles borrowers and financed companies: sector, country, outstanding, latest footprint."
+        },
+        {
+          "title": "Financed emissions (tCO₂e)",
+          "description": "Each counterparty carries a financed-emissions calculation, rolled up at portfolio level."
+        },
+        {
+          "title": "PCAF quality score",
+          "description": "A 1-to-5 score distinguishes actual, estimated and sectoral-proxy data — readable for CSR and auditors."
+        },
+        {
+          "title": "Operational footprint",
+          "description": "In parallel: Scopes 1 and 2 of HQs, branches and data centres, plus operational Scope 3 (travel, purchases)."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "What are PCAF and financed emissions?",
+          "answer": "PCAF (Partnership for Carbon Accounting Financials) is the reference framework to attribute to a financial institution the GHG of the companies it finances (loans, investments, insurance). These emissions, often classified as Scope 3 category 15, make up most of a bank’s footprint."
+        },
+        {
+          "question": "How does CarboScan calculate financed emissions?",
+          "answer": "Through the Portfolio (counterparties) module: you register borrowers or financed companies, enter outstanding amounts and available emissions data. The platform calculates financed emissions in tCO₂e and shows a data-quality score (1 = actual data, 5 = sectoral proxy), following PCAF logic."
+        },
+        {
+          "question": "Do we still need an operational inventory?",
+          "answer": "Yes. PCAF does not replace the site inventory (energy, refrigerants, travel). CarboScan covers both: operational footprint and financed portfolio."
+        },
+        {
+          "question": "Is CarboScan a certified PCAF body?",
+          "answer": "No: we do not claim PCAF certification. The module aligns portfolio calculation with the method (counterparties, outstanding, quality score 1–5). Asset-class scoping (listed equity, business loans, etc.) is done with your teams."
+        }
+      ]
+    },
+    "services": {
+      "sector": "Services & Tertiary",
+      "title": "Carbon Footprint for Services & Offices",
+      "metaTitle": "Services & office carbon footprint — HQ and agencies | CarboScan",
+      "metaDescription": "Carbon footprint for consultancies, IT services, retail and office HQs: building energy, travel, purchased services and multi-site tracking.",
+      "heroDescription": "In services, emissions mainly come from building energy, travel and purchases. CarboScan helps you collect, calculate and compare them year after year.",
+      "stats": [
+        {
+          "value": "Scope 2",
+          "label": "building energy"
+        },
+        {
+          "value": "Scope 3",
+          "label": "travel and purchases"
+        },
+        {
+          "value": "WattBim",
+          "label": "consumption tracking"
+        },
+        {
+          "value": "Multi-site",
+          "label": "agencies and subsidiaries"
+        }
+      ],
+      "challenges": [
+        {
+          "title": "Offices and cooling",
+          "description": "Electricity, gas and refrigerant leaks: data often scattered across sites."
+        },
+        {
+          "title": "Team mobility",
+          "description": "Commuting, business travel and light fleets are a major share of tertiary Scope 3."
+        },
+        {
+          "title": "Purchased services",
+          "description": "Vendors, cloud, hosting and supplies are hard to trace without structured collection."
+        }
+      ],
+      "benefits": [
+        {
+          "title": "Simple collection",
+          "description": "Guided entry or Excel import for the most common tertiary items."
+        },
+        {
+          "title": "Building link",
+          "description": "WattBim can track real consumption and feed the Scope 2 inventory."
+        },
+        {
+          "title": "Annual report",
+          "description": "A comparable inventory year after year for CSR reporting."
+        },
+        {
+          "title": "Action plan",
+          "description": "Identify levers (energy, mobility, purchases) then track them in Monitoring & Reduction."
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Does a consultancy or IT firm need a carbon footprint?",
+          "answer": "Yes as soon as clients, a group or CSR reporting ask for a GHG inventory. Tertiary firms have little Scope 1, but real Scope 2 and 3."
+        },
+        {
+          "question": "How are remote work and travel handled?",
+          "answer": "From activity data (days, km, modes). CarboScan collection includes those items; result quality depends on the data provided."
+        },
+        {
+          "question": "Can we start small?",
+          "answer": "Yes: sites and energy first, then travel and purchases. The free assessment gives a first order of magnitude."
         }
       ]
     }
@@ -7366,6 +7589,78 @@
       }
     }
   },
+  "emissionFactorCatalog": {
+    "title": "Emission factors",
+    "subtitle": "Search across 7,402 referenced emission factors.",
+    "searchPlaceholder": "Search a factor, code or category…",
+    "loading": "Loading…",
+    "resultCount_one": "{{formatted}} factor found",
+    "resultCount_other": "{{formatted}} factors found",
+    "page": "Page {{page}}",
+    "prev": "Previous",
+    "next": "Next",
+    "empty": "No emission factor matches your search.",
+    "resetFilters": "Reset filters",
+    "errorLoad": "Could not load the catalog. Please try again.",
+    "errorDetail": "Could not load this factor’s details.",
+    "endOfResults": "End of results",
+    "reviewRequired": "Needs review",
+    "reviewRequiredHint": "This factor needs normalization review before use in a calculation.",
+    "inCatalog": "Available in catalog",
+    "filters": {
+      "source": "Source",
+      "category": "Category",
+      "country": "Country",
+      "type": "Type",
+      "more": "More filters",
+      "all": "All",
+      "subcategory": "Subcategory",
+      "region": "Region",
+      "unit": "Unit",
+      "year": "Year",
+      "dataset": "Dataset version",
+      "allFeminine": "All"
+    },
+    "columns": {
+      "factor": "Factor",
+      "value": "Value",
+      "unit": "Unit",
+      "source": "Source",
+      "category": "Category",
+      "geography": "Geography",
+      "year": "Year"
+    },
+    "detail": {
+      "value": "Value",
+      "unit": "Unit",
+      "source": "Source",
+      "dataset": "Dataset version",
+      "externalCode": "Source code",
+      "factorType": "Factor type",
+      "sourceCategory": "Source category",
+      "sourceSubcategory": "Source subcategory",
+      "internalCategory": "CarboScan category",
+      "internalSubcategory": "CarboScan subcategory",
+      "country": "Country",
+      "region": "Region",
+      "geography": "Geography",
+      "year": "Factor year",
+      "provenance": "Provenance",
+      "stableFactorId": "Stable Factor ID"
+    },
+    "categories": {
+      "purchased_goods": "Purchased goods",
+      "purchased_services": "Purchased services",
+      "energy": "Energy",
+      "waste": "Waste",
+      "transport": "Transport",
+      "freight": "Freight",
+      "land_use": "Land use",
+      "process_fugitive": "Process and fugitive emissions",
+      "reference": "Reference",
+      "unknown": "Unclassified"
+    }
+  },
   "facteursEmissionLanding": {
     "hero": {
       "titleLine1": "The right emission factor.",
@@ -7446,6 +7741,65 @@
       "body": "Centralise your data, select suitable factors and keep calculation traceability in CarboScan.",
       "primary": "Discover CarboScan",
       "secondary": "Request a demo"
+    }
+  },
+  "engagementFournisseursLanding": {
+    "hero": {
+      "titleLine1": "Engage your suppliers.",
+      "titleLine2": "Own your Scope 3.",
+      "subtitle": "Invite your supply chain, collect their carbon data, and manage upstream emissions with CarboScan.",
+      "ctaPrimary": "Request a demo",
+      "ctaSecondary": "See carbon accounting"
+    },
+    "preview": {
+      "title": "Supplier engagement",
+      "subtitle": "Supply chain & Scope 3",
+      "items": {
+        "a": "Invitations and collection portal for your suppliers",
+        "b": "Track responses, scores and carbon maturity",
+        "c": "Data reusable in your Scope 3 inventory"
+      }
+    },
+    "capabilities": {
+      "title": "A more transparent supply chain",
+      "subtitle": "Centralize supplier engagement to strengthen upstream emissions data—without scattered spreadsheets.",
+      "invite": {
+        "title": "Invite",
+        "body": "Send targeted invitations and track who replied, who is in progress, and who is late."
+      },
+      "collect": {
+        "title": "Collect",
+        "body": "Gather activity data and evidence through a guided flow tailored to each supplier."
+      },
+      "score": {
+        "title": "Score",
+        "body": "See carbon maturity, data confidence and engagement priorities at a glance."
+      },
+      "trace": {
+        "title": "Trace",
+        "body": "Keep an audit-ready history of exchanges and footprints for Scope 3 reporting."
+      }
+    },
+    "why": {
+      "title": "Why engage suppliers with CarboScan",
+      "scope3": {
+        "title": "Scope 3 under control",
+        "body": "Purchases and the value chain often dominate emissions. Structure this critical part of the inventory."
+      },
+      "supplyChain": {
+        "title": "Operational supply chain",
+        "body": "Move from a supplier list to a measurable engagement program with follow-ups."
+      },
+      "reporting": {
+        "title": "Credible reporting",
+        "body": "Back disclosures with collected, traceable data ready for audits and stakeholders."
+      }
+    },
+    "cta": {
+      "title": "Start engaging your supply chain",
+      "body": "Define the perimeter, invite strategic suppliers and fold their data into your carbon footprint.",
+      "primary": "Request a demo",
+      "secondary": "Explore data collection"
     }
   }
 }

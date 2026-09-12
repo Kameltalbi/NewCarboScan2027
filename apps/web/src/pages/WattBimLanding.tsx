@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
 import { useTranslation } from "react-i18next";
 import {
   Zap,
@@ -20,8 +20,6 @@ import {
   Download,
   Sun,
 } from "lucide-react";
-import { MainHeader } from "@/components/MainHeader";
-import { NewFooter } from "@/components/NewFooter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -69,16 +67,7 @@ const WattBimLanding: React.FC = () => {
   const audiences = t("wattbim.audiences.groups", { returnObjects: true }) as { title: string; items: string[] }[];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>{t("wattbim.meta.title")}</title>
-        <meta name="description" content={t("wattbim.meta.description")} />
-        <link rel="canonical" href="/wattbim" />
-      </Helmet>
-
-      <MainHeader />
-
-      <main className="flex-1">
+    <SolutionLandingShell path="/wattbim">
         {/* HERO */}
         <section
           className="relative overflow-hidden py-20 md:py-28"
@@ -443,10 +432,7 @@ const WattBimLanding: React.FC = () => {
             </div>
           </div>
         </section>
-      </main>
-
-      <NewFooter />
-    </div>
+    </SolutionLandingShell>
   );
 };
 

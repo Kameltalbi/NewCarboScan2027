@@ -7,27 +7,27 @@
    VARIABLES CSS
    ============================================ */
 :root {
-  /* Palette CarboScan – voir docs/DESIGN_VISUALISATION_CARBOSCAN.md */
-  --color-primary: #0EA5E9;
-  --color-primary-dark: #0284C7;
-  --color-secondary: #6366F1;
-  --color-secondary-light: #818CF8;
-  
-  /* Scopes – couleurs fixes (Bleu Énergie, Ambre Électrique, Indigo Industriel) */
-  --color-scope1: #0EA5E9;
-  --color-scope2: #F59E0B;
-  --color-scope3: #6366F1;
-  
-  /* Accent & alertes */
-  --color-accent-success: #10B981;
+  /* Palette CarboScan — synced with src/brand/colors.ts */
+  --color-primary: #073F35;
+  --color-primary-dark: #072F29;
+  --color-secondary: #00BDCE;
+  --color-secondary-light: #33CAD8;
+
+  /* GHG scopes */
+  --color-scope1: #00BF72;
+  --color-scope2: #00BDCE;
+  --color-scope3: #FF851B;
+
+  /* Status (distinct from scopes) */
+  --color-accent-success: #00BF72;
   --color-alert-hotspot: #EF4444;
-  
-  /* Structure (fond, cartes, texte) */
-  --color-text-primary: #1E293B;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
+
+  /* Structure */
+  --color-text-primary: #073F35;
+  --color-text-secondary: #53645E;
+  --color-text-muted: #53645E;
   --color-background: #FFFFFF;
-  --color-background-light: #F8FAFC;
+  --color-background-light: #F7FAF8;
   --color-background-medium: #F1F5F9;
   --color-border: #E2E8F0;
   

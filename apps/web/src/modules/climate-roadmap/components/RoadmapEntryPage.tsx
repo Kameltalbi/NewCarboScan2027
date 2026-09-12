@@ -433,7 +433,7 @@ function SourceCard({
   return (
     <button
       onClick={onClick}
-      className={`p-4 rounded-xl border-2 text-left transition-all h-full flex flex-col ${
+      className={`p-4 rounded-[4px] border-2 text-left transition-all h-full flex flex-col ${
         selected
           ? 'border-primary bg-primary/5 shadow-sm'
           : available

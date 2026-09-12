@@ -101,7 +101,7 @@ export const ActionsLifecycleTable: React.FC<ActionsLifecycleTableProps> = ({
             <button
               key={stage.key}
               onClick={() => onStageChange(stage.key)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] text-sm font-medium transition-all ${
                 isActive
                   ? 'bg-primary/10 text-primary border-2 border-primary/30'
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'

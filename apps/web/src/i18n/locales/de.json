@@ -7742,5 +7742,64 @@
       "primary": "CarboScan entdecken",
       "secondary": "Demo anfragen"
     }
+  },
+  "engagementFournisseursLanding": {
+    "hero": {
+      "titleLine1": "Binden Sie Ihre Lieferanten ein.",
+      "titleLine2": "Steuern Sie Scope 3.",
+      "subtitle": "Laden Sie Ihre Lieferkette ein, erfassen Sie deren CO₂-Daten und steuern Sie vorgelagerte Emissionen mit CarboScan.",
+      "ctaPrimary": "Demo anfordern",
+      "ctaSecondary": "CO₂-Bilanz ansehen"
+    },
+    "preview": {
+      "title": "Lieferantenengagement",
+      "subtitle": "Lieferkette & Scope 3",
+      "items": {
+        "a": "Einladungen und Erfassungsportal für Ihre Lieferanten",
+        "b": "Antworten, Scores und CO₂-Reife verfolgen",
+        "c": "Daten wiederverwendbar in Ihrer Scope-3-Inventur"
+      }
+    },
+    "capabilities": {
+      "title": "Eine transparentere Lieferkette",
+      "subtitle": "Zentralisieren Sie das Lieferantenengagement, um vorgelagerte Emissionsdaten zu absichern – ohne verstreute Tabellen.",
+      "invite": {
+        "title": "Einladen",
+        "body": "Senden Sie gezielte Einladungen und sehen Sie, wer geantwortet hat, in Bearbeitung oder im Verzug ist."
+      },
+      "collect": {
+        "title": "Erfassen",
+        "body": "Sammeln Sie Aktivitätsdaten und Nachweise über einen geführten Ablauf je Lieferant."
+      },
+      "score": {
+        "title": "Bewerten",
+        "body": "Sehen Sie CO₂-Reife, Datenvertrauen und Engagement-Prioritäten auf einen Blick."
+      },
+      "trace": {
+        "title": "Nachverfolgen",
+        "body": "Bewahren Sie den Verlauf von Austauschen und Bilanzen für das Scope-3-Reporting."
+      }
+    },
+    "why": {
+      "title": "Warum Lieferanten mit CarboScan einbinden",
+      "scope3": {
+        "title": "Scope 3 unter Kontrolle",
+        "body": "Einkauf und Wertschöpfungskette dominieren oft die Emissionen. Strukturieren Sie diesen kritischen Teil der Bilanz."
+      },
+      "supplyChain": {
+        "title": "Operative Lieferkette",
+        "body": "Vom Lieferantenverzeichnis zum messbaren Engagement-Programm mit Nachfassaktionen."
+      },
+      "reporting": {
+        "title": "Glaubwürdiges Reporting",
+        "body": "Stützen Sie Angaben auf erfasste, nachvollziehbare Daten – bereit für Audits und Stakeholder."
+      }
+    },
+    "cta": {
+      "title": "Starten Sie das Engagement Ihrer Lieferkette",
+      "body": "Definieren Sie den Umfang, laden Sie strategische Lieferanten ein und integrieren Sie deren Daten in Ihre CO₂-Bilanz.",
+      "primary": "Demo anfordern",
+      "secondary": "Datenerfassung entdecken"
+    }
   }
 }

@@ -39,7 +39,7 @@ export const ACVCTA = () => {
                   {/* CTA Button */}
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
+                    className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-8 py-6 text-lg font-semibold rounded-[4px] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
                     onClick={() => window.location.href = '/contact'}
                   >
                     <span className="mr-3">Demander une étude ACV</span>

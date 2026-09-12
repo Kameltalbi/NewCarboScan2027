@@ -25,7 +25,7 @@ const BilanCarboneHero = () => {
               <span className="absolute inset-0 bg-gradient-to-r from-[#9b87f5] to-[#D6BCFA] rounded-md blur-sm transform scale-105 opacity-70"></span>
               <a 
                 href="#nos-offres" 
-                className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-gradient-to-r from-[#9b87f5] to-[#D6BCFA] rounded-md hover:from-[#8b77e5] hover:to-[#C6ACFA] transition-all duration-300 shadow-lg"
+                className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-gradient-to-r from-[#9b87f5] to-[#D6BCFA] rounded-[4px] hover:from-[#8b77e5] hover:to-[#C6ACFA] transition-all duration-300 shadow-lg"
               >
                 Voir nos offres
               </a>
@@ -33,7 +33,7 @@ const BilanCarboneHero = () => {
             
             <a 
               href="/" 
-              className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium text-white border-2 border-white/30 rounded-md hover:bg-white/10 transition-all duration-300"
+              className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium text-white border-2 border-white/30 rounded-[4px] hover:bg-white/10 transition-all duration-300"
             >
               Test gratuit rapide
             </a>

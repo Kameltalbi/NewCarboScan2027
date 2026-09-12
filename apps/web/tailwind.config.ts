@@ -24,6 +24,7 @@ const config: Config = {
         lato: ['Lato', 'sans-serif'],
         sora: ['Sora', 'sans-serif'],
         manrope: ['Manrope', 'sans-serif'],
+        jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -94,15 +95,15 @@ const config: Config = {
         },
       },
       backgroundImage: {
-        'gradient-primary': 'linear-gradient(135deg, hsl(174 70% 41%) 0%, hsl(180 100% 27%) 100%)',
-        'gradient-secondary': 'linear-gradient(135deg, hsl(147 50% 36%) 0%, hsl(123 100% 50%) 100%)',
-        'gradient-nature': 'linear-gradient(135deg, hsl(180 100% 73%) 0%, hsl(174 70% 41%) 50%, hsl(147 50% 36%) 100%)',
-        'gradient-hero': 'linear-gradient(135deg, hsl(180 100% 94%) 0%, hsl(120 100% 97%) 50%, hsl(207 100% 97%) 100%)',
+        'gradient-primary': 'linear-gradient(135deg, hsl(169 80% 14%) 0%, hsl(171 74% 11%) 100%)',
+        'gradient-secondary': 'linear-gradient(135deg, hsl(156 100% 37%) 0%, hsl(185 100% 40%) 100%)',
+        'gradient-nature': 'linear-gradient(135deg, hsl(156 100% 37%) 0%, hsl(185 100% 40%) 50%, hsl(28 100% 55%) 100%)',
+        'gradient-hero': 'linear-gradient(135deg, hsl(140 23% 97%) 0%, hsl(0 0% 100%) 50%, hsl(147 15% 94%) 100%)',
       },
       boxShadow: {
-        'soft': '0 10px 40px hsl(174 70% 41% / 0.1)',
-        'medium': '0 20px 60px hsl(174 70% 41% / 0.15)',
-        'strong': '0 30px 80px hsl(174 70% 41% / 0.2)',
+        'soft': '0 10px 40px hsl(169 80% 14% / 0.08)',
+        'medium': '0 20px 60px hsl(169 80% 14% / 0.12)',
+        'strong': '0 30px 80px hsl(169 80% 14% / 0.16)',
       },
       borderRadius: {
         lg: "var(--radius)",

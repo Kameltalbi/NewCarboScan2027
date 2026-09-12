@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Award, BarChart3, FileText, Settings, Plus, LogOut, Shield, Database, TrendingUp, Euro, History, PlusCircle, Crown, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 import { useTranslation } from "react-i18next";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
@@ -96,18 +97,10 @@ export const CarboScanSidebar: React.FC = () => {
         <div className={`p-4 border-b border-white/20 ${isCollapsed ? 'px-2' : ''}`}>
           <div className="flex items-center gap-3">
             {!isCollapsed ? (
-              <img 
-                src="/logos/logo Carboscan.png" 
-                alt="CarboScan" 
-                className="h-12 w-auto"
-              />
+              <BrandLogo variant="dark" className="h-12" />
             ) : (
               <div className="w-8 h-8 flex items-center justify-center">
-                <img 
-                  src="/logos/logo Carboscan.png" 
-                  alt="CarboScan" 
-                  className="h-8 w-auto"
-                />
+                <BrandLogo variant="symbol" className="h-8 w-8" />
               </div>
             )}
           </div>

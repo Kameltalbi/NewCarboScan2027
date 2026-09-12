@@ -1,17 +1,19 @@
 /**
  * Palette éditoriale institutionnelle du rapport Bilan Carbone®.
- * Source unique de vérité pour toutes les couleurs des pages du rapport.
+ * Alignée sur src/brand/colors.ts
  */
+import { BRAND, SCOPE_COLORS } from "@/brand/colors";
+
 export const REPORT_PALETTE = {
-  deep: '#063F3A',        // Fond principal et titres de chapitre
-  institutional: '#0B6658', // Éléments secondaires, titres N3, indicateurs positifs
-  accent: '#B9F36A',      // Accents, chiffres clés, repères, numéros de chapitre
-  night: '#10243A',       // Titres sur fond clair (niveau 2)
-  body: '#40534F',        // Texte courant
-  muted: '#6D7D78',       // Texte secondaire
-  paper: '#F6F8F3',       // Fond des pages
-  divider: '#CDD9D2',     // Séparateurs
-  alert: '#D97706',       // Alertes / données critiques
+  deep: BRAND.primary,
+  institutional: BRAND.primaryDark,
+  accent: SCOPE_COLORS[1],
+  night: BRAND.primaryDark,
+  body: BRAND.textSecondary,
+  muted: BRAND.textSecondary,
+  paper: BRAND.surface,
+  divider: BRAND.separator,
+  alert: "#D97706",
 } as const;
 
 /**

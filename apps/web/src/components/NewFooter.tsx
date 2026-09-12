@@ -1,6 +1,7 @@
 import React from "react";
-import { Leaf, Twitter, Linkedin, Facebook, Instagram } from "lucide-react";
+import { Twitter, Linkedin, Facebook, Instagram } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 export const NewFooter: React.FC = () => {
   const { t } = useTranslation();
@@ -50,20 +51,16 @@ export const NewFooter: React.FC = () => {
   ];
 
   return (
-    <footer className="bg-[#0F172A] text-white py-20">
+    <footer className="bg-[#072F29] text-white py-20">
       <div className="container mx-auto px-6">
         {/* Footer Content */}
         <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-6 gap-4 md:gap-10 mb-12">
           {/* Company Info */}
           <div className="col-span-3 md:col-span-2 lg:col-span-2 mb-6 md:mb-0">
-            <div className="flex items-center gap-3 text-2xl font-bold text-[#1ABC9C] mb-4">
-              <img 
-                src="/logos/logo-carboscan-blanc.png?v=3"
-                alt="CarboScan - Bilan Carbone"
-                className="h-12 w-auto"
-              />
+            <div className="mb-4">
+              <BrandLogo variant="dark" className="h-12" />
             </div>
-            <p className="text-gray-400 leading-relaxed mb-5 max-w-md text-sm md:text-base">
+            <p className="text-white/70 leading-relaxed mb-5 max-w-md text-sm md:text-base">
               {t("newHomepage.footer.tagline")}
             </p>
             <div className="flex gap-4">
@@ -73,7 +70,7 @@ export const NewFooter: React.FC = () => {
                   href={social.href}
                   target={social.href.startsWith("http") ? "_blank" : undefined}
                   rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="w-10 h-10 bg-[#1ABC9C]/10 rounded-full flex items-center justify-center text-[#1ABC9C] transition-all duration-300 hover:bg-[#1ABC9C] hover:text-white hover:-translate-y-1"
+                  className="w-10 h-10 bg-white/10 rounded-[4px] flex items-center justify-center text-white transition-all duration-300 hover:bg-[#00BF72] hover:text-[#073F35] hover:-translate-y-1"
                   aria-label={social.name}
                 >
                   <social.icon className="w-5 h-5" />

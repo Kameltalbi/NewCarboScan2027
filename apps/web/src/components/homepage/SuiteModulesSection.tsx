@@ -85,7 +85,7 @@ export const SuiteModulesSection: React.FC = () => {
               </h3>
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-2 bg-[#1F2937] hover:bg-[#111827] text-white font-semibold px-5 py-3 rounded-xl transition-colors"
+                className="inline-flex items-center gap-2 bg-[#1F2937] hover:bg-[#111827] text-white font-semibold px-5 py-3 rounded-[4px] transition-colors"
               >
                 {t("homepage.suiteModules.featuredCta")}
               </Link>
@@ -121,7 +121,7 @@ export const SuiteModulesSection: React.FC = () => {
                   return (
                     <span
                       key={tag}
-                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 text-primary font-medium text-sm"
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-primary/5 text-primary font-medium text-sm"
                     >
                       <Icon className="w-4 h-4" />
                       {t(`homepage.integrationsApi.tags.${tag}`)}

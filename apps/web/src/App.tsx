@@ -49,6 +49,7 @@ const FacteursEmission = lazy(() => import("./pages/FacteursEmission"));
 const EmpreinteProduit = lazy(() => import("./pages/EmpreinteProduit"));
 const ACVLanding = lazy(() => import("./pages/ACVLanding"));
 const CollectLanding = lazy(() => import("./pages/CollectLanding"));
+const EngagementFournisseurs = lazy(() => import("./pages/EngagementFournisseurs"));
 const DecarbotechLanding = lazy(() => import("./pages/DecarbotechLanding"));
 const CBAM = lazy(() => import("./pages/CBAM"));
 const WattBimLanding = lazy(() => import("./pages/WattBimLanding"));
@@ -59,6 +60,8 @@ const BilanCarboneTransport = lazy(() => import("./pages/BilanCarboneTransport")
 const BilanCarboneBTP = lazy(() => import("./pages/BilanCarboneBTP"));
 const BilanCarboneAgroalimentaire = lazy(() => import("./pages/BilanCarboneAgroalimentaire"));
 const BilanCarboneEnergie = lazy(() => import("./pages/BilanCarboneEnergie"));
+const BilanCarboneFinance = lazy(() => import("./pages/BilanCarboneFinance"));
+const BilanCarboneServices = lazy(() => import("./pages/BilanCarboneServices"));
 
 const SuperAdmin = lazy(() => import("./pages/SuperAdmin"));
 
@@ -156,6 +159,7 @@ function App() {
               <Route path="/empreinte-produit" element={<EmpreinteProduit />} />
               <Route path="/acv-landing" element={<ACVLanding />} />
               <Route path="/collect" element={<CollectLanding />} />
+              <Route path="/engagement-fournisseurs" element={<EngagementFournisseurs />} />
               <Route path="/decarbotech" element={<DecarbotechLanding />} />
               <Route path="/cbam" element={<CBAM />} />
               <Route path="/wattbim" element={<WattBimLanding />} />
@@ -166,6 +170,8 @@ function App() {
               <Route path="/bilan-carbone-btp" element={<BilanCarboneBTP />} />
               <Route path="/bilan-carbone-agroalimentaire" element={<BilanCarboneAgroalimentaire />} />
               <Route path="/bilan-carbone-energie" element={<BilanCarboneEnergie />} />
+              <Route path="/bilan-carbone-finance" element={<BilanCarboneFinance />} />
+              <Route path="/bilan-carbone-services" element={<BilanCarboneServices />} />
 
               {/* Onboarding */}
               <Route path="/onboarding" element={

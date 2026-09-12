@@ -76,7 +76,7 @@ export default function ACVDashboard() {
       <div className="text-center relative">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-3xl"></div>
         <div className="relative py-16 px-8">
-          <div className="inline-flex items-center gap-3 bg-primary/10 px-4 py-2 rounded-full mb-6">
+          <div className="inline-flex items-center gap-3 bg-primary/10 px-4 py-2 rounded-[4px] mb-6">
             <span className="text-2xl">🌱</span>
             <span className="text-sm font-medium text-primary">ISO 14040/14044</span>
           </div>

@@ -7742,5 +7742,64 @@
       "primary": "Descubrir CarboScan",
       "secondary": "Solicitar una demostración"
     }
+  },
+  "engagementFournisseursLanding": {
+    "hero": {
+      "titleLine1": "Comprometa a sus proveedores.",
+      "titleLine2": "Controle su Alcance 3.",
+      "subtitle": "Invite a su cadena de suministro, recopile sus datos de carbono y gestione las emisiones upstream con CarboScan.",
+      "ctaPrimary": "Solicitar una demo",
+      "ctaSecondary": "Ver el balance de carbono"
+    },
+    "preview": {
+      "title": "Compromiso de proveedores",
+      "subtitle": "Cadena de suministro y Alcance 3",
+      "items": {
+        "a": "Invitaciones y portal de recogida para sus proveedores",
+        "b": "Seguimiento de respuestas, puntuaciones y madurez de carbono",
+        "c": "Datos reutilizables en su inventario de Alcance 3"
+      }
+    },
+    "capabilities": {
+      "title": "Una cadena de suministro más transparente",
+      "subtitle": "Centralice el compromiso de proveedores para fiabilizar las emisiones upstream, sin hojas de cálculo dispersas.",
+      "invite": {
+        "title": "Invitar",
+        "body": "Envíe invitaciones específicas y vea quién respondió, quién está en curso o con retraso."
+      },
+      "collect": {
+        "title": "Recoger",
+        "body": "Recopile datos de actividad y pruebas mediante un recorrido guiado adaptado a cada proveedor."
+      },
+      "score": {
+        "title": "Puntuar",
+        "body": "Visualice la madurez de carbono, la confianza de los datos y las prioridades de compromiso."
+      },
+      "trace": {
+        "title": "Trazar",
+        "body": "Conserve el historial de intercambios y balances para documentar su reporting de Alcance 3."
+      }
+    },
+    "why": {
+      "title": "Por qué comprometer a sus proveedores con CarboScan",
+      "scope3": {
+        "title": "Alcance 3 bajo control",
+        "body": "Las compras y la cadena de valor suelen concentrar la mayor parte de las emisiones. Estructure esta parte crítica del balance."
+      },
+      "supplyChain": {
+        "title": "Cadena operativa",
+        "body": "Pase de una lista de proveedores a un programa de compromiso medible, con seguimiento y recordatorios."
+      },
+      "reporting": {
+        "title": "Reporting creíble",
+        "body": "Apoye sus declaraciones con datos recogidos y trazables, listos para auditorías y partes interesadas."
+      }
+    },
+    "cta": {
+      "title": "Empiece el compromiso de su cadena de suministro",
+      "body": "Defina el perímetro, invite a proveedores estratégicos e integre sus datos en su balance de carbono.",
+      "primary": "Solicitar una demo",
+      "secondary": "Descubrir la recogida"
+    }
   }
 }

@@ -137,7 +137,7 @@ export const GreenlyPricingPage: React.FC = () => {
                     asChild
                     variant={offer.popular ? 'default' : 'outline'}
                     size="lg"
-                    className="w-full rounded-xl font-semibold group"
+                    className="w-full rounded-[4px] font-semibold group"
                   >
                     <Link to="/demo-steps">
                       Contactez-nous
@@ -179,7 +179,7 @@ export const GreenlyPricingPage: React.FC = () => {
                   asChild
                   size="lg"
                   variant="outline"
-                  className="w-full rounded-xl font-semibold bg-transparent border-background/60 text-background hover:bg-background hover:text-foreground group"
+                  className="w-full rounded-[4px] font-semibold bg-transparent border-background/60 text-background hover:bg-background hover:text-foreground group"
                 >
                   <Link to="/demo-steps">
                     Contactez-nous
@@ -243,7 +243,7 @@ export const GreenlyPricingPage: React.FC = () => {
             <p className="text-primary-foreground/85 text-lg mb-8 max-w-2xl mx-auto">
               30 minutes suffisent pour cadrer votre périmètre et vous proposer une offre chiffrée.
             </p>
-            <Button asChild size="lg" variant="secondary" className="rounded-xl font-semibold px-8">
+            <Button asChild size="lg" variant="secondary" className="rounded-[4px] font-semibold px-8">
               <Link to="/demo-steps">
                 Demander un devis
                 <ArrowRight className="ml-2 w-4 h-4" />

@@ -41,7 +41,7 @@ export const FreeBilanPopup: React.FC<FreeBilanPopupProps> = ({ onClose }) => {
           </div>
           
           <Button 
-            className="w-full bg-[#4CAF50] text-white hover:bg-[#45a049] border border-[#3d8b40] font-medium py-2 px-6 rounded-lg transition-colors"
+            className="w-full bg-[#4CAF50] text-white hover:bg-[#45a049] border border-[#3d8b40] font-medium py-2 px-6 rounded-[4px] transition-colors"
             onClick={() => {
               // Add action for the button
               onClose();

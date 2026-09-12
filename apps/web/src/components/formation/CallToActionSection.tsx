@@ -15,7 +15,7 @@ const CallToActionSection = () => {
           
           <Button 
             size="lg" 
-            className="bg-white text-[#1A1F2C] hover:bg-white/90 hover:text-[#6E59A5] px-8 text-lg rounded-md shadow-md"
+            className="bg-white text-[#1A1F2C] hover:bg-white/90 hover:text-[#6E59A5] px-8 text-lg rounded-[4px] shadow-md"
           >
             S'inscrire maintenant
           </Button>

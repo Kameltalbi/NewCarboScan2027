@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import {
   DEFAULT_OG_IMAGE,
   DEFAULT_LOCALE,
@@ -12,6 +13,13 @@ import {
   WEBSITE_SCHEMA,
   type PageSEO,
 } from '@/config/seo';
+
+const OG_LOCALES: Record<string, string> = {
+  fr: 'fr_FR',
+  en: 'en_US',
+  de: 'de_DE',
+  es: 'es_ES',
+};
 
 type SEOHeadProps = {
   title?: string;
@@ -43,6 +51,10 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
   jsonLd,
   includeGlobalSchemas = false,
 }) => {
+  const { i18n } = useTranslation();
+  const htmlLang = (i18n.language || 'fr').slice(0, 2);
+  const ogLocale = OG_LOCALES[htmlLang] ?? DEFAULT_LOCALE;
+
   const resolvedPath =
     path ?? (typeof window !== 'undefined' ? window.location.pathname : '/');
   const defaults: PageSEO = getPageSEO(resolvedPath);
@@ -66,14 +78,14 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
 
   return (
     <Helmet>
-      <html lang="fr" />
+      <html lang={htmlLang} />
       <title>{pageTitle}</title>
       <meta name="description" content={pageDescription} />
       <meta name="robots" content={robots} />
       <link rel="canonical" href={canonical} />
 
       <meta property="og:site_name" content={SITE_NAME} />
-      <meta property="og:locale" content={DEFAULT_LOCALE} />
+      <meta property="og:locale" content={ogLocale} />
       <meta property="og:type" content={type} />
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={pageDescription} />

@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MainHeader } from "@/components/MainHeader";
-import { NewFooter } from "@/components/NewFooter";
-import { PlanFeatureGuard } from "@/components/guards/PlanFeatureGuard";
+import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
 import { Calculator, TrendingUp, AlertTriangle, Target, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -41,16 +39,9 @@ const CBAM: React.FC = () => {
   ];
 
   return (
-    <PlanFeatureGuard 
-      feature="canAccessCBAM" 
-      featureName="le module CBAM"
-      description="Le module CBAM permet d'estimer les coûts carbone aux frontières et de préparer vos exportations vers l'Europe."
-      upgradeMessage="Le module CBAM est disponible à partir du Plan Complet. Contactez-nous pour une mise à niveau."
-    >
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-green-50">
-        <MainHeader />
-      
-      <main className="container mx-auto px-4 py-16">
+    <SolutionLandingShell path="/cbam">
+      <div className="bg-gradient-to-br from-slate-50 via-white to-green-50">
+      <div className="container mx-auto px-4 py-16">
         {/* Hero Section */}
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-blue-100 text-blue-800 px-4 py-2 text-sm font-medium">
@@ -277,11 +268,9 @@ const CBAM: React.FC = () => {
             </Link>
           </div>
         </section>
-      </main>
-
-        <NewFooter />
       </div>
-    </PlanFeatureGuard>
+      </div>
+    </SolutionLandingShell>
   );
 };
 

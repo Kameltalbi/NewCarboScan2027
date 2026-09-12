@@ -183,13 +183,13 @@ const FacteursEmission: React.FC = () => {
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <a
                 href="#catalogue"
-                className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#07563F] px-6 text-[15px] font-semibold text-white transition-colors hover:bg-[#054C36]"
+                className="inline-flex h-12 items-center justify-center rounded-[4px] bg-[#07563F] px-6 text-[15px] font-semibold text-white transition-colors hover:bg-[#054C36]"
               >
                 {t(`${NS}.hero.ctaPrimary`)}
               </a>
               <Link
                 to="/bilan-carbone"
-                className="inline-flex h-12 items-center justify-center rounded-2xl border border-[#073D30]/15 bg-white px-6 text-[15px] font-semibold text-[#073D30] transition-colors hover:border-[#073D30]/30 hover:bg-white"
+                className="inline-flex h-12 items-center justify-center rounded-[4px] border border-[#073D30]/15 bg-white px-6 text-[15px] font-semibold text-[#073D30] transition-colors hover:border-[#073D30]/30 hover:bg-white"
               >
                 {t(`${NS}.hero.ctaSecondary`)}
               </Link>
@@ -286,7 +286,7 @@ const FacteursEmission: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setCategory("all")}
-                  className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
+                  className={`rounded-[4px] px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
                     category === "all"
                       ? "bg-[#07563F] text-white"
                       : "bg-white text-[#073D30]/70 ring-1 ring-[#073D30]/10 hover:text-[#073D30]"
@@ -299,7 +299,7 @@ const FacteursEmission: React.FC = () => {
                     key={key}
                     type="button"
                     onClick={() => setCategory(key)}
-                    className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
+                    className={`rounded-[4px] px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
                       category === key
                         ? "bg-[#07563F] text-white"
                         : "bg-white text-[#073D30]/70 ring-1 ring-[#073D30]/10 hover:text-[#073D30]"
@@ -351,7 +351,7 @@ const FacteursEmission: React.FC = () => {
                   {CONTEXT_KEYS.map((key) => (
                     <span
                       key={key}
-                      className="rounded-full border border-[#073D30]/10 bg-white px-3.5 py-2 text-[13px] font-medium text-[#073D30]"
+                      className="rounded-[4px] border border-[#073D30]/10 bg-white px-3.5 py-2 text-[13px] font-medium text-[#073D30]"
                     >
                       {t(`${NS}.catalog.context.${key}`)}
                     </span>
@@ -438,14 +438,14 @@ const FacteursEmission: React.FC = () => {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/bilan-carbone"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-white px-6 text-[15px] font-semibold text-[#073D30] transition-colors hover:bg-[#F7FAF8]"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-[4px] bg-white px-6 text-[15px] font-semibold text-[#073D30] transition-colors hover:bg-[#F7FAF8]"
             >
               {t(`${NS}.cta.primary`)}
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
             <Link
               to="/demo"
-              className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/25 px-6 text-[15px] font-semibold text-white transition-colors hover:border-white/45 hover:bg-white/5"
+              className="inline-flex h-12 items-center justify-center rounded-[4px] border border-white/25 px-6 text-[15px] font-semibold text-white transition-colors hover:border-white/45 hover:bg-white/5"
             >
               {t(`${NS}.cta.secondary`)}
             </Link>

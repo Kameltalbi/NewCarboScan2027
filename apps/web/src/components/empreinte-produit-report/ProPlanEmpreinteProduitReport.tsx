@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, FileText } from 'lucide-react';
@@ -279,7 +280,7 @@ const ProPlanEmpreinteProduitReport: React.FC<{ data: ProductReportData }> = ({ 
         return (
           <div className="relative h-full flex flex-col items-center justify-center p-12 rounded-lg">
             <div className="absolute top-8 left-8">
-              <img src="/logos/logo-carboscan-blanc.png" alt="CarboScan" className="h-12 opacity-80" />
+              <BrandLogo variant="dark" className="h-12 opacity-80" />
             </div>
             <div className="text-center space-y-6 max-w-3xl">
               <p className="text-sm uppercase tracking-widest text-muted-foreground font-lato">
@@ -1387,7 +1388,7 @@ const ProPlanEmpreinteProduitReport: React.FC<{ data: ProductReportData }> = ({ 
 
               <div className="mt-8 flex items-center justify-center">
                 <div className="text-center space-y-2">
-                  <img src="/logos/CarboScan-logo.png" alt="CarboScan" className="h-12 mx-auto opacity-60" />
+                  <BrandLogo variant="light" className="h-12 mx-auto opacity-60" />
                   <p className="text-xs text-muted-foreground">CarboScan – La suite carbone pour les entreprises engagées</p>
                 </div>
               </div>

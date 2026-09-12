@@ -174,9 +174,9 @@ const BilanGratuit: React.FC = () => {
 
   if (step === 'results' && emissions) {
     const scopeData = [
-      { name: 'Scope 1', value: emissions.scope1, color: '#0EA5E9', descKey: 'scope1Desc' },
-      { name: 'Scope 2', value: emissions.scope2, color: '#F59E0B', descKey: 'scope2Desc' },
-      { name: 'Scope 3', value: emissions.scope3, color: '#6366F1', descKey: 'scope3Desc' },
+      { name: 'Scope 1', value: emissions.scope1, color: '#00BF72', descKey: 'scope1Desc' },
+      { name: 'Scope 2', value: emissions.scope2, color: '#00BDCE', descKey: 'scope2Desc' },
+      { name: 'Scope 3', value: emissions.scope3, color: '#FF851B', descKey: 'scope3Desc' },
     ];
     const categoryData = emissions.categories
       .sort((a, b) => b.value - a.value)

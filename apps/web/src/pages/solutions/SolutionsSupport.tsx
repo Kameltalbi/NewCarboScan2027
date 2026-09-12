@@ -2,8 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { MainHeader } from "@/components/MainHeader";
+import { HomeHeader } from "@/components/HomeHeader";
 import { NewFooter } from "@/components/NewFooter";
+import { MarketingBreadcrumbs } from "@/components/seo/MarketingBreadcrumbs";
+import { SolutionRelatedLinks } from "@/components/seo/SolutionRelatedLinks";
 import { Target, Users, Cog, BarChart3, Lightbulb, Zap, Car, ShoppingCart, Recycle, GraduationCap, ArrowRight } from "lucide-react";
 
 const SolutionsSupport: React.FC = () => {
@@ -20,7 +22,17 @@ const SolutionsSupport: React.FC = () => {
 
   return (
     <div className="min-w-full bg-background">
-      <MainHeader />
+      <HomeHeader />
+      <main id="main-content">
+        <div className="container mx-auto px-4 pt-6 max-w-5xl">
+          <MarketingBreadcrumbs
+            items={[
+              { name: "Accueil", path: "/" },
+              { name: "Solutions", path: "/solutions" },
+              { name: "Accompagnement" },
+            ]}
+          />
+        </div>
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-[#00A7A7] to-[#4DD0AE] text-white py-20">
@@ -219,6 +231,9 @@ const SolutionsSupport: React.FC = () => {
           </div>
         </div>
       </section>
+
+      <SolutionRelatedLinks currentPath="/solutions/accompagnement" />
+      </main>
 
       <NewFooter />
     </div>

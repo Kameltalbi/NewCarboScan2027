@@ -73,7 +73,7 @@ export const LanguageSwitcher: React.FC<{ className?: string }> = ({ className }
         <button
           type="button"
           aria-label={current.name}
-          className={`group inline-flex items-center gap-2 rounded-full py-1 text-[#073D30] outline-none transition-colors hover:opacity-80 ${className ?? ""}`}
+          className={`group inline-flex items-center gap-1.5 rounded-[4px] py-1 text-[#073D30] outline-none transition-colors hover:opacity-80 ${className ?? ""}`}
         >
           <FlagCircle code={current.code} />
           <span className="text-[14px] font-semibold tracking-[0.04em]">{current.short}</span>
@@ -85,8 +85,8 @@ export const LanguageSwitcher: React.FC<{ className?: string }> = ({ className }
           <DropdownMenuItem
             key={language.code}
             onClick={() => i18n.changeLanguage(language.code)}
-            className={`flex cursor-pointer items-center gap-3 ${
-              current.code === language.code ? "bg-accent" : ""
+            className={`flex cursor-pointer items-center gap-3 focus:bg-[#F4F7F5] ${
+              current.code === language.code ? "bg-[#EEF2F0]" : ""
             }`}
           >
             <FlagCircle code={language.code} />

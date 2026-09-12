@@ -17,7 +17,7 @@ export const TotalEmissionsCard: React.FC<TotalEmissionsCardProps> = ({ totalEmi
       )}
       <h1 className="text-2xl font-bold text-foreground">{t("carbonCalculator.results.title")}</h1>
 
-      <div className="inline-flex flex-col items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-12 py-8">
+      <div className="inline-flex flex-col items-center gap-3 rounded-[4px] border border-primary/20 bg-primary/5 px-12 py-8">
         <Leaf className="w-8 h-8 text-primary" />
         <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">
           {t("carbonCalculator.results.totalEmissions")}

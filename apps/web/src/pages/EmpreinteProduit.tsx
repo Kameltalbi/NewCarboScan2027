@@ -1,7 +1,6 @@
 
 import React from "react";
-import { MainHeader } from "@/components/MainHeader";
-import { NewFooter } from "@/components/NewFooter";
+import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
 import { EmpreinteProduitHero } from "@/components/empreinte-produit/EmpreinteProduitHero";
 import { EmpreinteProduitWhySection } from "@/components/empreinte-produit/EmpreinteProduitWhySection";
 import { EmpreinteProduitBenefitsSection } from "@/components/empreinte-produit/EmpreinteProduitBenefitsSection";
@@ -13,10 +12,7 @@ import { EmpreinteProduitContactForm } from "@/components/empreinte-produit/Empr
 
 const EmpreinteProduit = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <MainHeader />
-      
-      <main className="flex-grow">
+    <SolutionLandingShell path="/empreinte-produit">
         <EmpreinteProduitHero />
         <EmpreinteProduitWhySection />
         <EmpreinteProduitBenefitsSection />
@@ -25,10 +21,7 @@ const EmpreinteProduit = () => {
         <EmpreinteProduitProductsSection />
         <EmpreinteProduitWhyCarboScanSection />
         <EmpreinteProduitContactForm />
-      </main>
-
-      <NewFooter />
-    </div>
+    </SolutionLandingShell>
   );
 };
 

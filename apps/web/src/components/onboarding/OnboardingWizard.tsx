@@ -85,7 +85,7 @@ export const OnboardingWizard: React.FC = () => {
           {steps.map((s, i) => (
             <React.Fragment key={i}>
               <div
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-[4px] text-sm font-medium transition-colors ${
                   i <= step ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
                 }`}
                 aria-current={i === step ? 'step' : undefined}

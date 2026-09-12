@@ -11,38 +11,35 @@
  * Règles : max 2 graphiques par page, couleurs sobres, axes et légendes visibles.
  */
 
-// Palette CarboScan (voir docs/DESIGN_VISUALISATION_CARBOSCAN.md)
+// Palette CarboScan (src/brand/colors.ts)
+import { BRAND, SCOPE_COLORS } from "@/brand/colors";
+
 export const CHART_COLORS = {
-  // Scopes – couleurs fixes pour repérage instantané
-  scope1: '#0EA5E9',  // Bleu Énergie (Scope 1 – direct, fluides)
-  scope2: '#F59E0B',  // Ambre Électrique (Scope 2 – électricité)
-  scope3: '#6366F1',  // Indigo Industriel (Scope 3 – chaîne de valeur)
-  
-  // Couleurs principales (alignées Scopes)
-  primary: '#0EA5E9',
-  secondary: '#6366F1',
-  
-  // Accent & alertes
-  accentSuccess: '#10B981',  // Vert émeraude – succès, baisses d’émissions
-  alertHotspot: '#EF4444',   // Rouge soft – poste qui explose
-  
-  // Dégradés (nuances par scope pour sous-catégories)
+  scope1: SCOPE_COLORS[1],
+  scope2: SCOPE_COLORS[2],
+  scope3: SCOPE_COLORS[3],
+
+  primary: BRAND.primary,
+  secondary: SCOPE_COLORS[2],
+
+  accentSuccess: SCOPE_COLORS[1],
+  alertHotspot: "#EF4444",
+
   gradient: [
-    '#0EA5E9',  // Scope 1
-    '#38BDF8',  // Scope 1 clair
-    '#F59E0B',  // Scope 2
-    '#FBBF24',  // Scope 2 clair
-    '#6366F1',  // Scope 3
-    '#818CF8',  // Scope 3 clair
-    '#A5B4FC',  // Scope 3 très clair
+    SCOPE_COLORS[1],
+    "#33CC8E",
+    SCOPE_COLORS[2],
+    "#33CAD8",
+    SCOPE_COLORS[3],
+    "#FFA04D",
+    "#FFB87A",
   ],
-  
-  // Structure (fond, UI)
-  background: '#FFFFFF',
-  backgroundLight: '#F8FAFC',
-  grid: '#E2E8F0',
-  axis: '#64748B',
-  textPrimary: '#1E293B',
+
+  background: BRAND.white,
+  backgroundLight: BRAND.surface,
+  grid: BRAND.separator,
+  axis: BRAND.textSecondary,
+  textPrimary: BRAND.primary,
 };
 
 // Types de graphiques (alignés avec STRUCTURE_GRAPHIQUES_RAPPORT.md)

@@ -93,7 +93,7 @@ export const DashboardContextHeader: React.FC<DashboardContextHeaderProps> = ({
                 <div
                   key={scope}
                   className={cn(
-                    "flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium shrink-0",
+                    "flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] border text-xs font-medium shrink-0",
                     config.className
                   )}
                   title={config.label}

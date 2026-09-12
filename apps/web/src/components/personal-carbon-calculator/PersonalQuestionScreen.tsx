@@ -188,10 +188,10 @@ export const PersonalQuestionScreen: React.FC<Props> = ({
           </p>
         )}
         <div className="flex justify-center gap-3 sm:gap-4">
-          <Button variant="outline" onClick={onPrevious} disabled={isFirstSection} className="px-8 h-11 rounded-full border-border/60">
+          <Button variant="outline" onClick={onPrevious} disabled={isFirstSection} className="px-8 h-11 rounded-[4px] border-border/60">
             {t(`${base}.buttons.back`)}
           </Button>
-          <Button onClick={onNext} disabled={!canProceed} className="px-8 h-11 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button onClick={onNext} disabled={!canProceed} className="px-8 h-11 rounded-[4px] bg-primary hover:bg-primary/90 text-primary-foreground">
             {isLastSection ? t(`${base}.buttons.finalize`) : t(`${base}.buttons.next`)}
             {!isLastSection && <ArrowRight className="w-4 h-4 ml-2" />}
           </Button>

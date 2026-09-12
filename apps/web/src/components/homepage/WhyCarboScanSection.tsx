@@ -35,7 +35,7 @@ export const WhyCarboScanSection = () => {
               {t("homepage.whyCarboScan.card1.description")}
             </p>
             <div className="bg-background rounded-2xl p-5 shadow-sm border border-border space-y-3">
-              <div className="inline-flex items-center gap-2 bg-[#0E7C66] text-white text-xs font-medium px-3 py-1.5 rounded-full">
+              <div className="inline-flex items-center gap-2 bg-[#0E7C66] text-white text-xs font-medium px-3 py-1.5 rounded-[4px]">
                 <Sparkles className="w-3 h-3" />
                 {t("homepage.whyCarboScan.card1.assistantLabel")}
               </div>
@@ -61,7 +61,7 @@ export const WhyCarboScanSection = () => {
               {sectorTags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/10 text-white text-sm px-4 py-2 rounded-full backdrop-blur-sm"
+                  className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/10 text-white text-sm px-4 py-2 rounded-[4px] backdrop-blur-sm"
                 >
                   <Building2 className="w-3.5 h-3.5 text-[#22C55E]" />
                   {tag}
@@ -89,7 +89,7 @@ export const WhyCarboScanSection = () => {
             </p>
             <div className="flex flex-wrap gap-2">
               {card3Tags.map((s) => (
-                <span key={s} className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-medium px-3 py-1.5 rounded-full border border-border">
+                <span key={s} className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-medium px-3 py-1.5 rounded-[4px] border border-border">
                   <FileCheck className="w-3 h-3 text-[#0E7C66]" /> {s}
                 </span>
               ))}
@@ -109,7 +109,7 @@ export const WhyCarboScanSection = () => {
             </p>
             <div className="flex flex-wrap gap-2">
               {card4Tags.map((s) => (
-                <span key={s} className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-medium px-3 py-1.5 rounded-full border border-border">
+                <span key={s} className="inline-flex items-center gap-1.5 bg-white text-foreground text-xs font-medium px-3 py-1.5 rounded-[4px] border border-border">
                   <FileCheck className="w-3 h-3 text-[#E8A33D]" /> {s}
                 </span>
               ))}
