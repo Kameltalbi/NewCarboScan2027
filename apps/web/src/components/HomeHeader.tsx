@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const NAV_LINKS = [
   { label: "Solutions", to: "/solutions" },
@@ -118,7 +119,8 @@ export const HomeHeader: React.FC = () => {
           ))}
         </nav>
 
-        <div className="hidden items-center justify-self-end gap-6 lg:flex">
+        <div className="hidden items-center justify-self-end gap-5 lg:flex">
+          <LanguageSwitcher />
           <Link
             to="/auth"
             className="text-[15px] font-medium text-[#073D30]/85 transition-colors hover:text-[#073D30]"
@@ -134,11 +136,13 @@ export const HomeHeader: React.FC = () => {
           </button>
         </div>
 
-        <Sheet open={open} onOpenChange={setOpen}>
+        <div className="flex items-center justify-self-end gap-2 lg:hidden">
+          <LanguageSwitcher />
+          <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center justify-self-end rounded-[10px] text-[#073D30] lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] text-[#073D30]"
               aria-label="Ouvrir le menu"
             >
               <Menu className="h-5 w-5" />
@@ -189,6 +193,7 @@ export const HomeHeader: React.FC = () => {
             </nav>
           </SheetContent>
         </Sheet>
+        </div>
       </div>
     </header>
   );
