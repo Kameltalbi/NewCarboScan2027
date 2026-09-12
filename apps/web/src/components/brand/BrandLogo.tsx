@@ -13,9 +13,9 @@ type BrandLogoProps = {
 };
 
 const SRC: Record<BrandLogoVariant, string> = {
-  light: `${BRAND_ASSETS.logoLight}?v=7`,
-  dark: `${BRAND_ASSETS.logoDark}?v=7`,
-  symbol: `${BRAND_ASSETS.symbol}?v=7`,
+  light: `${BRAND_ASSETS.logoLight}?v=8`,
+  dark: `${BRAND_ASSETS.logoDark}?v=8`,
+  symbol: `${BRAND_ASSETS.symbol}?v=8`,
 };
 
 /**

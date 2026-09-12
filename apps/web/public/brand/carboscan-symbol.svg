@@ -1,23 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="CarboScan">
-  <!-- Equal thirds (graphic only). Clockwise from top: Scope2 turquoise, Scope1 emerald, Scope3 orange -->
-  <!-- Top ’ right (turquoise / Scope 2) -->
+  <!-- Equal thirds with white gaps at 12 / 4 / 8 o'clock.
+       Clockwise from top: emerald, orange, turquoise (matches current brand icon). -->
+  <!-- Top-right emerald -->
   <path
-    d="M32 8 A24 24 0 0 1 52.785 44"
-    stroke="#00BDCE"
+    d="M33.05 8.02 A24 24 0 0 1 52.68 43.05"
+    stroke="#41E179"
     stroke-width="12"
     stroke-linecap="butt"
   />
-  <!-- Right ’ bottom-left (emerald / Scope 1) -->
+  <!-- Bottom orange -->
   <path
-    d="M52.785 44 A24 24 0 0 1 11.215 44"
-    stroke="#00BF72"
+    d="M51.68 44.78 A24 24 0 0 1 12.32 44.78"
+    stroke="#FD881B"
     stroke-width="12"
     stroke-linecap="butt"
   />
-  <!-- Bottom-left ’ top (orange / Scope 3) -->
+  <!-- Top-left turquoise -->
   <path
-    d="M11.215 44 A24 24 0 0 1 32 8"
-    stroke="#FF851B"
+    d="M11.32 43.05 A24 24 0 0 1 30.95 8.02"
+    stroke="#13E7D8"
     stroke-width="12"
     stroke-linecap="butt"
   />

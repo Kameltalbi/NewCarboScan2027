@@ -2,10 +2,10 @@
  * CarboScan brand & Scope color tokens — single source of truth.
  * Prefer importing from here (or CSS vars synced in index.css) instead of raw hex.
  *
- * Scope ring in the logo (graphic equality, not emission proportions):
- * - Top-left orange  → Scope 3
- * - Right turquoise  → Scope 2
- * - Bottom emerald   → Scope 1
+ * Scope ring in the brand icon (graphic equality, not emission proportions):
+ * - Top-left turquoise → Scope 2
+ * - Top-right emerald  → Scope 1
+ * - Bottom orange      → Scope 3
  */
 
 export const BRAND = {
