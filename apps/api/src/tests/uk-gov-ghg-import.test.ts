@@ -1,5 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import {
   assertReconcileInvariants,
   isImportableKgCo2e,
@@ -17,7 +18,7 @@ const WORKBOOK =
   process.env.UK_GHG_XLSX ??
   "/Users/kameltalbi/Desktop/ghg-conversion-factors-2026-flat-format-revised.xlsx";
 
-describe("uk gov ghg 2026 adapter (offline)", () => {
+describe("uk gov ghg 2026 adapter (offline)", { skip: !existsSync(WORKBOOK) }, () => {
   it("verifies SHA-256", () => {
     const sha = assertUkWorkbookSha256(WORKBOOK);
     assert.equal(sha, UK_EXPECTED_SHA256);

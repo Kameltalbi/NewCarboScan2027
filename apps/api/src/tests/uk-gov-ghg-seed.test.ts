@@ -20,7 +20,7 @@ const VERSIONED_SEED = resolve(
   "../../../../db/seeds/uk_gov_ghg_2026_flat_1_2.sql",
 );
 
-describe("uk gov ghg 2026 seed generator (offline)", () => {
+describe("uk gov ghg 2026 seed generator (offline)", { skip: !existsSync(WORKBOOK) }, () => {
   it("verifies official XLSX SHA-256", () => {
     assert.equal(assertUkWorkbookSha256(WORKBOOK), UK_EXPECTED_SHA256);
   });

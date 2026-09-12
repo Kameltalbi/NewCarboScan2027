@@ -4,6 +4,7 @@
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import pg from "pg";
 import { buildTestApp } from "./helpers/buildTestApp.js";
 import { signToken } from "../plugins/auth.js";
@@ -247,7 +248,7 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
     }
   });
 
-  it("idempotent re-import keeps counts", async () => {
+  it("idempotent re-import keeps counts", { skip: !existsSync(WORKBOOK) }, async () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL });
     try {
       const before = await pool.query(
