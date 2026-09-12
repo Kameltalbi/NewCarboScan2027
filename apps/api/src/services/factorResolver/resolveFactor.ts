@@ -13,6 +13,7 @@ import type {
 } from "./types.js";
 import { RESOLVER_VERSION, RULESET_VERSION } from "./types.js";
 import { isMonetaryUnit, normalizeResolverUnit } from "./unitCompatibility.js";
+import { EPA_SOURCE_KEY, buildEpaProvenanceFields } from "./epaSafeSubset.js";
 
 type Queryable = Pick<Pool, "query">;
 
@@ -376,7 +377,7 @@ function finalize(args: {
   topCandidate?: FactorCandidate;
 }): ResolveFactorResult {
   const latencyMs = Date.now() - args.started;
-  const provenance = {
+  const provenance: Record<string, unknown> = {
     resolverVersion: RESOLVER_VERSION,
     rulesetVersion: RULESET_VERSION,
     mode: args.input.mode,
@@ -408,6 +409,14 @@ function finalize(args: {
     // Future: organization overrides reserved — not used in V1
     organizationOverride: null,
   };
+
+  if (
+    args.selectedFactor?.source.key === EPA_SOURCE_KEY &&
+    args.topCandidate &&
+    args.topCandidate.sourceKey === EPA_SOURCE_KEY
+  ) {
+    Object.assign(provenance, buildEpaProvenanceFields(args.topCandidate));
+  }
 
   return {
     status: args.status,

@@ -42,8 +42,15 @@ export const UK_SAFE_SUBSET_SQL = `
   AND f.country_code = 'GB'
 `;
 
+/** Re-export EPA AUTO_US SQL for count tests (see epaSafeSubset.ts). */
+export { EPA_AUTO_US_SAFE_SQL, EPA_GLOBAL_GWP_SQL } from "./epaSafeSubset.js";
+
 export const EXPECTED_SUBSET_COUNTS = {
   coreTn: 8,
   ademeSafe: 2570,
   ukSafe: 1260,
+  /** EPA AUTO_US activity only (not GWP, not components, not review). */
+  epaSafeUs: 258,
+  epaGlobalGwp: 62,
+  epaAutoGlobalActivity: 0,
 } as const;

@@ -1,8 +1,8 @@
 /** Factor Resolver V1 — shared types, versions, reason codes. */
 
 export const RESOLVER_VERSION = "1";
-/** Bumped when production safe-subset allowlist is enforced (FE V1). */
-export const RULESET_VERSION = "2026-09-v2";
+/** Bumped for EPA Safe Subset V1 (catalog-visible policy; calc/resolver still off). */
+export const RULESET_VERSION = "2026-09-v3";
 
 export type ResolveMode = "shadow" | "production";
 
@@ -134,6 +134,10 @@ export type FactorCandidate = {
   calculationStatus: string;
   resolverStatus: string;
   textScore: number;
+  /** EPA metadata (null for other sources). */
+  geographicApplicability: string | null;
+  epaTableNumber: number | null;
+  epaDerived: boolean;
 };
 
 export type EligibilityOutcome = {

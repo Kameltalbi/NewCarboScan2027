@@ -85,7 +85,7 @@ describe("factor catalog governance 019", () => {
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(Number(catalogCount.rows[0].n), 10024);
+      assert.equal(Number(catalogCount.rows[0].n), 11445);
 
       const approvedHidden = await searchFactors(pool, {
         status: "approved",
@@ -189,7 +189,7 @@ describe("factor catalog governance 019", () => {
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(Number(countRes.rows[0].n), 10024);
+      assert.equal(Number(countRes.rows[0].n), 11445);
 
       const ademeState = await pool.query<{
         status: string;
@@ -228,7 +228,9 @@ describe("factor catalog governance 019", () => {
         resolver_status: "disabled",
         limit: 100,
       });
-      assert.equal(disabled.items.length, 0);
+      // After 026: EPA is catalog-visible but resolver_status=disabled → appear here.
+      assert.ok(disabled.items.length >= 1);
+      assert.ok(disabled.items.every((i) => i.source.key === "epa_ghg_emission_factors_hub"));
     } finally {
       await pool.end();
     }

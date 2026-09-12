@@ -143,6 +143,9 @@ export async function retrieveCandidates(
       v.catalog_status,
       v.calculation_status,
       v.resolver_status,
+      f.metadata->'geography'->>'geographic_applicability' AS geographic_applicability,
+      NULLIF(f.metadata->'provenance'->>'table_number', '')::int AS epa_table_number,
+      coalesce(f.metadata->'epa'->>'derived' = 'true', false) AS epa_derived,
       GREATEST(
         similarity(coalesce(f.search_name_text, f.name), $${primaryIdx}),
         CASE WHEN f.name ILIKE '%' || $${primaryIdx} || '%' THEN 0.55 ELSE 0 END,
@@ -192,6 +195,10 @@ function mapRow(row: Record<string, unknown>): FactorCandidate {
     calculationStatus: String(row.calculation_status),
     resolverStatus: String(row.resolver_status),
     textScore: Number(row.text_score ?? 0),
+    geographicApplicability:
+      row.geographic_applicability != null ? String(row.geographic_applicability) : null,
+    epaTableNumber: row.epa_table_number != null ? Number(row.epa_table_number) : null,
+    epaDerived: Boolean(row.epa_derived),
   };
 }
 

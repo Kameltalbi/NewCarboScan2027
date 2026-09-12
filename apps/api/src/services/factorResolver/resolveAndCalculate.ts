@@ -221,6 +221,20 @@ export async function resolveAndCalculate(
     resolutionStatus: "RESOLVED",
     reasons: resolution.reasons,
     warnings: resolution.warnings,
+    // Carry EPA Safe Subset V1 fields from resolution provenance when present
+    ...(resolution.provenance?.epaSafeSubsetRuleset
+      ? {
+          epaSafeSubsetRuleset: resolution.provenance.epaSafeSubsetRuleset,
+          epaSafeClass: resolution.provenance.epaSafeClass,
+          geographicApplicability: resolution.provenance.geographicApplicability,
+          originalGeography: resolution.provenance.originalGeography,
+          lifecycleBoundary: resolution.provenance.lifecycleBoundary,
+          gwpBasis: resolution.provenance.gwpBasis,
+          derived: resolution.provenance.derived,
+          epaTableNumber: resolution.provenance.epaTableNumber,
+          egrid: resolution.provenance.egrid,
+        }
+      : {}),
   };
 
   const unitConversionJson = conversion

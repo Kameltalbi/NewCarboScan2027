@@ -43,7 +43,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(visible.rows[0].n, 10024);
+      assert.equal(visible.rows[0].n, 11445);
 
       const dist = await pool.query(
         `SELECT
@@ -131,7 +131,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
       assert.ok(ukFacet, "UK source missing from facets");
       assert.equal(ukFacet.count, 2622);
       const total = facets.sources.reduce((sum, s) => sum + s.count, 0);
-      assert.equal(total, 10024);
+      assert.equal(total, 11445);
     } finally {
       await pool.end();
     }

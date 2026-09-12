@@ -21,7 +21,9 @@ export function sourcePreferenceRank(
         ? "ademe"
         : country === "GB" || country === "UK"
           ? "uk_gov_ghg"
-          : null;
+          : country === "US" || country === "USA"
+            ? "epa_ghg_emission_factors_hub"
+            : null;
 
   if (preferred && source === preferred) {
     return { rank: 5, reasonCode: "SOURCE_POLICY_GEO" };

@@ -267,7 +267,7 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
       const result = await importUkGovGhg2026(pool, WORKBOOK);
       assert.equal(result.registryAfter, 11445);
       assert.equal(result.ukCount, 2622);
-      assert.equal(result.catalogVisible, 10024);
+      assert.equal(result.catalogVisible, 11445);
       assert.equal(result.legacyInternal, 8);
       assert.equal(result.inserted, 0);
       const after = await pool.query(

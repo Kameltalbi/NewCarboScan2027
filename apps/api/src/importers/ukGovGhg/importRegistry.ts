@@ -407,11 +407,25 @@ export async function runUkImport(
     if (after.uk !== opts.dtos.length) {
       throw new Error(`UK count ${after.uk} != dto count ${opts.dtos.length}`);
     }
-    // Public catalog never includes EPA. UK contributes only when catalog_status=visible.
-    const expectedVisible = 7402 + (after.ukCatalogVisible ? opts.dtos.length : 0);
+    // Catalog visible = Core+ADEME (+UK if visible) (+EPA if catalog-visible).
+    const epaVisible = Number(
+      (
+        await q<{ n: string }>(
+          client,
+          `SELECT COUNT(*)::text AS n FROM emission_factors f
+           JOIN emission_factor_versions v ON v.id = f.version_id
+           JOIN factor_sources s ON s.id = v.source_id
+           WHERE s.source_key = 'epa_ghg_emission_factors_hub'
+             AND f.status = 'approved' AND v.status = 'approved'
+             AND v.catalog_status = 'visible'`,
+        )
+      )[0]?.n ?? 0,
+    );
+    const expectedVisible =
+      7402 + (after.ukCatalogVisible ? opts.dtos.length : 0) + epaVisible;
     if (after.catalogVisible !== expectedVisible) {
       throw new Error(
-        `Catalog visible ${after.catalogVisible} != expected ${expectedVisible} (ukVisible=${after.ukCatalogVisible})`,
+        `Catalog visible ${after.catalogVisible} != expected ${expectedVisible} (ukVisible=${after.ukCatalogVisible}, epaVisible=${epaVisible})`,
       );
     }
     if (after.legacyInternal !== 8) {

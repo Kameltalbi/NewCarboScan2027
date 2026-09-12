@@ -98,7 +98,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
        JOIN emission_factor_versions v ON v.id = f.version_id
        WHERE f.status='approved' AND v.status='approved' AND v.catalog_status='visible'`,
     );
-    assert.equal(visible.rows[0].n, 10024); // EPA hidden
+    assert.equal(visible.rows[0].n, 11445); // EPA catalog-visible (026); calc/resolver still off
 
     const gov = await pool.query(
       `SELECT s.source_key, v.calculation_status, v.resolver_status, COUNT(f.id)::int AS n
@@ -367,7 +367,7 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
       const prov = led.rows[0].provenance;
       assert.equal(prov.source, "api/v1/factors/resolve-and-calculate");
       assert.equal(prov.resolverVersion, "1");
-      assert.equal(prov.rulesetVersion, "2026-09-v2");
+      assert.equal(prov.rulesetVersion, "2026-09-v3");
       assert.equal(prov.stableFactorId, "electricity_kwh");
       assert.equal(prov.sourceKey, "internal");
       assert.equal(prov.originalQuantity, "1000");

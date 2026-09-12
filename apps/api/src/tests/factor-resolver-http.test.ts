@@ -14,10 +14,23 @@ describe("factor resolver HTTP shadow", { skip: !DATABASE_URL }, () => {
     const app = await buildTestApp();
     try {
       const fixture = await ensureTestOrgFixture(pool);
-      const { userId: user_id, email, organizationId: organization_id } = fixture;
+      // Dedicated org so parallel resolve-and-calculate E2E cannot race ledger assertions.
+      const organization_id = "b1000000-0000-4000-8000-000000000011";
+      await pool.query(
+        `INSERT INTO organizations (id, name, slug)
+         VALUES ($1, 'CarboScan Shadow HTTP Org', 'carboscan-e2e-shadow-http')
+         ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, slug = EXCLUDED.slug`,
+        [organization_id],
+      );
+      await pool.query(
+        `INSERT INTO organization_members (organization_id, user_id, role)
+         VALUES ($1, $2, 'owner')
+         ON CONFLICT (organization_id, user_id) DO UPDATE SET role = 'owner'`,
+        [organization_id, fixture.userId],
+      );
       const token = signToken({
-        id: user_id,
-        email,
+        id: fixture.userId,
+        email: fixture.email,
         organizationId: organization_id,
         role: "member",
       });
@@ -29,7 +42,10 @@ describe("factor resolver HTTP shadow", { skip: !DATABASE_URL }, () => {
       });
       assert.ok(unauth.statusCode === 401 || unauth.statusCode === 403);
 
-      const ledgerBefore = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
+      const ledgerBefore = await pool.query(
+        `SELECT COUNT(*)::int AS n FROM calculation_ledger WHERE organization_id = $1`,
+        [organization_id],
+      );
 
       const res = await app.inject({
         method: "POST",
@@ -47,12 +63,21 @@ describe("factor resolver HTTP shadow", { skip: !DATABASE_URL }, () => {
         },
       });
       assert.equal(res.statusCode, 200);
-      const body = res.json() as { status: string; resolverVersion: string; rulesetVersion: string };
+      const body = res.json() as {
+        status: string;
+        resolverVersion: string;
+        rulesetVersion: string;
+        provenance?: { shadow?: boolean };
+      };
       assert.ok(body.status);
       assert.equal(body.resolverVersion, "1");
-      assert.equal(body.rulesetVersion, "2026-09-v2");
+      assert.equal(body.rulesetVersion, "2026-09-v3");
+      if (body.provenance) assert.equal(body.provenance.shadow, true);
 
-      const ledgerAfter = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
+      const ledgerAfter = await pool.query(
+        `SELECT COUNT(*)::int AS n FROM calculation_ledger WHERE organization_id = $1`,
+        [organization_id],
+      );
       assert.equal(ledgerAfter.rows[0].n, ledgerBefore.rows[0].n);
 
       // /v1/factors still 8

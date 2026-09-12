@@ -1,10 +1,15 @@
 /**
- * Production auto-resolution allowlist (FE V1).
- * Version-level calculation/resolver flags may cover whole ADEME/UK versions;
+ * Production auto-resolution allowlist (FE V1 + EPA Safe Subset V1).
+ * Version-level calculation/resolver flags may cover whole ADEME/UK/EPA versions;
  * only candidates matching these criteria may be auto-RESOLVED / calculated.
  * Shadow mode ignores this filter.
  */
 import type { FactorCandidate } from "./types.js";
+import {
+  EPA_AUTO_US_SAFE_SQL,
+  EPA_SOURCE_KEY,
+  isEpaAutoUsActivity,
+} from "./epaSafeSubset.js";
 
 const ADEME_ENERGY_DENOMS = new Set([
   "kWh",
@@ -30,8 +35,9 @@ const ADEME_TRANSPORT_DENOMS = new Set([
 const UK_GWP = new Set(["AR4", "AR5", "AR6"]);
 
 /**
- * Returns true if the candidate is in the FE V1 production safe subset.
+ * Returns true if the candidate is in the production safe subset.
  * Does not by itself imply RESOLVED — eligibility / ranking still apply.
+ * EPA GLOBAL_GWP / REVIEW_REQUIRED / components are never production-safe activities.
  */
 export function isProductionSafeCandidate(c: FactorCandidate): boolean {
   if (c.sourceKey === "internal") {
@@ -62,11 +68,15 @@ export function isProductionSafeCandidate(c: FactorCandidate): boolean {
     return true;
   }
 
+  if (c.sourceKey === EPA_SOURCE_KEY) {
+    return isEpaAutoUsActivity(c);
+  }
+
   return false;
 }
 
 /**
- * SQL predicate (alias f/v/s) matching Core TN + ADEME safe + UK safe.
+ * SQL predicate (alias f/v/s) matching Core TN + ADEME safe + UK safe + EPA AUTO_US.
  * Used for authoritative reload belt-and-suspenders.
  */
 export const PRODUCTION_SAFE_FACTOR_SQL = `
@@ -104,6 +114,10 @@ export const PRODUCTION_SAFE_FACTOR_SQL = `
       AND f.gwp_basis IN ('AR4', 'AR5', 'AR6')
       AND f.lifecycle_boundary = 'direct'
       AND f.country_code = 'GB'
+    )
+    OR
+    (
+      ${EPA_AUTO_US_SAFE_SQL}
     )
   )
 `;

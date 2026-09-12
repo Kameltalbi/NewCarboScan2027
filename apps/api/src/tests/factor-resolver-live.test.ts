@@ -1,5 +1,5 @@
 /**
- * Factor Resolver V1 — live matrix against real registry (11445 total / 10024 visible).
+ * Factor Resolver V1 — live matrix against real registry (11445 total / 11445 visible after 026).
  * Shadow mode only. Does not write ledger.
  */
 import { describe, it } from "node:test";
