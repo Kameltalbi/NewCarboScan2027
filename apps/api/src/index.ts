@@ -13,6 +13,22 @@ const CORS_ORIGINS = (process.env.CORS_ORIGINS ?? "http://localhost:5173")
   .map((s) => s.trim())
   .filter(Boolean);
 
+if (process.env.NODE_ENV === "production") {
+  if (CORS_ORIGINS.length === 0) {
+    throw new Error("CORS_ORIGINS must be set in production.");
+  }
+  for (const origin of CORS_ORIGINS) {
+    if (
+      origin === "*" ||
+      /localhost|127\.0\.0\.1/i.test(origin)
+    ) {
+      throw new Error(
+        "CORS_ORIGINS must not include * or localhost/127.0.0.1 in production.",
+      );
+    }
+  }
+}
+
 async function main() {
   const app = Fastify({
     logger: true,

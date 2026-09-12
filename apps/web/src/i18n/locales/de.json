@@ -299,7 +299,112 @@
       "requestDemo": "Demo anfragen",
       "login": "Anmelden"
     },
-    "emissionFactors": "Emissionsfaktoren"
+    "emissionFactors": "Emissionsfaktoren",
+    "sectors": "Branchen",
+    "academy": "Academy",
+    "academyDescription": "Schulungen und Zertifizierungen zum CO₂-Management",
+    "faqDescription": "Häufig gestellte Fragen",
+    "signUp": "Registrieren",
+    "company": "Unser Unternehmen",
+    "freeTools": "Kostenlose Tools",
+    "contents": "Inhalte",
+    "carbonCalculator": "CO₂-Rechner",
+    "roiCalculator": "Klima-ROI-Rechner",
+    "loading": "Wird geladen…",
+    "comingSoonShort": "Bald",
+    "comingSoonFull": "Demnächst verfügbar",
+    "moduleLocked": "Modul gesperrt",
+    "mainNavAria": "Hauptnavigation",
+    "modulesMenuAria": "Modulmenü",
+    "orgLogoAlt": "Organisationslogo",
+    "solutionsMenu": {
+      "bilanCarbone": {
+        "title": "CO₂-Bilanz",
+        "description": "Berechnen Sie den vollständigen CO₂-Fußabdruck Ihres Unternehmens (Scopes 1, 2 und 3)"
+      },
+      "empreinteProduit": {
+        "title": "Produktfußabdruck",
+        "description": "Berechnen Sie den CO₂-Fußabdruck Ihrer Produkte mit einer vereinfachten Ökobilanz"
+      },
+      "acv": {
+        "title": "Ökobilanz (LCA)",
+        "description": "Vollständige Multi-Indikator-Ökobilanz: GWP, ODP, AP, EP, POCP"
+      },
+      "cbam": {
+        "title": "CBAM-Rechner",
+        "description": "Berechnen Sie eingebettete Emissionen und die CO₂-Kosten Ihrer Exporte nach Europa"
+      },
+      "collect": {
+        "title": "CarboScan Collect",
+        "description": "Intelligente Datenerfassung: Excel-Import, PDF-OCR, KI-Validierung"
+      },
+      "monitoring": {
+        "title": "Monitoring & Reduktion",
+        "description": "Net-Zero-Reduktionsplan, IoT-Integration, Dekarbonisierungs-Dashboards"
+      }
+    },
+    "sectorsMenu": {
+      "industry": "Industrie & Fertigung",
+      "building": "Gebäude & Immobilien",
+      "agro": "Agrar- und Lebensmittelwirtschaft",
+      "services": "Dienstleistungen & Tertiärsektor",
+      "finance": "Finanzen & Versicherung",
+      "cbamExport": "EU-Export (CBAM)"
+    }
+  },
+  "homeHeader": {
+    "sections": {
+      "carbonManagement": "CO₂-Management",
+      "lca": "Ökobilanz & Faktoren"
+    },
+    "items": {
+      "bilanCarbone": {
+        "label": "CO₂-Bilanz®",
+        "description": "Messen Sie Ihre Scope-1-, 2- und 3-Emissionen"
+      },
+      "suppliers": {
+        "label": "Lieferantenengagement",
+        "description": "Beziehen Sie Ihre gesamte Lieferkette ein"
+      },
+      "decarbonation": {
+        "label": "Dekarbonisierungsstrategie",
+        "description": "Erstellen Sie einen konkreten Aktionsplan"
+      },
+      "emissionFactors": {
+        "label": "Emissionsfaktoren",
+        "description": "Greifen Sie auf unsere zertifizierte Datenbank zu"
+      },
+      "acv": {
+        "label": "Ökobilanz",
+        "description": "Analysieren Sie präzise die Auswirkungen Ihrer Produkte"
+      },
+      "wattbim": {
+        "label": "WattBim",
+        "description": "Gebäudeenergie steuern und Verschwendung erkennen"
+      }
+    }
+  },
+  "sidebarNav": {
+    "groups": {
+      "carbonAccounting": "CO₂-Bilanzierung",
+      "analysis": "Analyse",
+      "energyBuildings": "Energie & Gebäude",
+      "climateStrategy": "Klimastrategie",
+      "system": "System"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "collect": "Datenerfassung",
+      "emissionFactors": "Emissionsfaktoren",
+      "bilanCarbone": "CO₂-Bilanz",
+      "suppliers": "Lieferanten",
+      "empreinteProduit": "Produktfußabdruck",
+      "acv": "Ökobilanz",
+      "wattbim": "WattBim",
+      "actionPlan": "Maßnahmenplan",
+      "scenarios": "Szenariomodellierung",
+      "settings": "Einstellungen"
+    }
   },
   "hero": {
     "title": "Messen. Steuern. Reduzieren.",
@@ -7591,7 +7696,9 @@
   },
   "emissionFactorCatalog": {
     "title": "Emissionsfaktoren",
-    "subtitle": "Durchsuchen Sie 7.402 referenzierte Emissionsfaktoren.",
+    "subtitle": "Referenzierte Datenbanken und ein Multi-Quellen-Katalog für Ihre Berechnungen.",
+    "explorerTitle": "Katalog durchsuchen",
+    "explorerSubtitle": "Suchen Sie einen Faktor nach Name, Code, Quelle oder Kategorie.",
     "searchPlaceholder": "Faktor, Code oder Kategorie suchen…",
     "loading": "Wird geladen…",
     "resultCount_one": "{{formatted}} Faktor gefunden",
@@ -7607,6 +7714,40 @@
     "reviewRequired": "Zu prüfen",
     "reviewRequiredHint": "Dieser Faktor erfordert eine Normalisierungsprüfung vor der Verwendung in einer Berechnung.",
     "inCatalog": "Im Katalog verfügbar",
+    "dataSources": {
+      "title": "Datenquellen",
+      "subtitle": "In CarboScan integrierte Datenbanken mit Faktoranzahl, Lizenz, Datentyp und geografischer Abdeckung.",
+      "filteredHint": "Katalog gefiltert auf „{{source}}“. Erneutes Klicken entfernt den Filter.",
+      "columns": {
+        "source": "Quelle",
+        "factors": "Anzahl Faktoren",
+        "datasets": "Datasets",
+        "license": "Lizenz",
+        "dataType": "Datentyp",
+        "geography": "Geografie",
+        "description": "Beschreibung"
+      },
+      "license": {
+        "core": "Core"
+      },
+      "dataType": {
+        "activity": "Aktivitätsbasiert"
+      },
+      "geography": {
+        "multiple": "Mehrere Regionen",
+        "tunisia": "Tunesien",
+        "uk": "Vereinigtes Königreich",
+        "us": "Vereinigte Staaten",
+        "ipcc_defaults": "IPCC-Defaults (Region nicht spezifiziert)"
+      },
+      "descriptions": {
+        "ademe": "Französische Agentur für ökologischen Wandel. Base Carbone®-Emissionsfaktoren für THG-Bilanzen (Energie, Transport, Einkäufe, Abfall u. a.).",
+        "internal": "CarboScan Core-Tunesien-Referenzpaket, u. a. Netzstrom und lokal validierte Faktoren für den tunesischen Kontext.",
+        "uk_gov_ghg": "THG-Umrechnungsfaktoren der britischen Regierung (DESNZ) für Unternehmensreporting: Energie, Transport, Abfall und Prozesse.",
+        "epa_ghg_emission_factors_hub": "US-EPA GHG Emission Factors Hub. Operativer US-Aktivitäts-Subset (AUTO_US); nicht automatisch für Tunesien.",
+        "ipcc_efdb": "IPCC EFDB — Teilmenge stationäre Verbrennung (CO₂/CH₄/N₂O, kg/TJ NCV). Biogenes CO₂ bleibt außerhalb der Scope-Summen."
+      }
+    },
     "filters": {
       "source": "Quelle",
       "category": "Kategorie",

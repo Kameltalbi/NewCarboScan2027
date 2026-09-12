@@ -1,7 +1,7 @@
 // Sidebar simplifiée orientée parcours utilisateur
 // Groupée par responsabilité : Pilotage > Données > Analyse > Action > Système
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { logger } from '@/utils/logger';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppData } from '@/contexts/AppDataContext';
@@ -21,17 +21,16 @@ import {
   Package,
   Target,
   Settings,
-  LogOut,
   LucideIcon,
   Lock,
   Users,
   GitBranch,
   Construction,
   Zap,
+  Leaf,
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { api } from "@/integrations/api/client";
 import { useSupplierLabels } from '@/hooks/useSupplierLabels';
@@ -39,7 +38,7 @@ import { useTranslation } from 'react-i18next';
 
 interface ModuleItem {
   id: string;
-  label: string;
+  labelKey: string;
   path: string;
   icon: LucideIcon;
   requiresModule?: string;
@@ -47,45 +46,44 @@ interface ModuleItem {
   external?: boolean;
 }
 
-interface SidebarGroup {
-  label: string;
+interface SidebarGroupDef {
+  labelKey: string;
   items: ModuleItem[];
 }
 
-// Dashboard toujours visible, hors groupes
 const dashboardItem: ModuleItem = {
   id: 'dashboard',
-  label: 'Dashboard',
+  labelKey: 'sidebarNav.items.dashboard',
   path: '/app/dashboard',
   icon: LayoutDashboard,
 };
 
-const sidebarGroups: SidebarGroup[] = [
+const sidebarGroups: SidebarGroupDef[] = [
   {
-    label: 'Carbon Accounting',
+    labelKey: 'sidebarNav.groups.carbonAccounting',
     items: [
       {
         id: 'data-collection',
-        label: 'Collecte',
+        labelKey: 'sidebarNav.items.collect',
         path: '/app/collecte',
         icon: Database,
       },
       {
         id: 'emission-factors',
-        label: "Facteurs d'émission",
+        labelKey: 'sidebarNav.items.emissionFactors',
         path: '/app/emission-factors',
         icon: Leaf,
       },
       {
         id: 'bilan-carbone',
-        label: 'Bilan Carbone',
+        labelKey: 'sidebarNav.items.bilanCarbone',
         path: '/app/bilan-carbone',
         icon: BarChart3,
         requiresModule: 'bilan-carbone',
       },
       {
         id: 'fournisseurs',
-        label: 'Fournisseurs',
+        labelKey: 'sidebarNav.items.suppliers',
         path: '/app/fournisseurs',
         icon: Users,
         requiresModule: 'fournisseurs',
@@ -93,18 +91,18 @@ const sidebarGroups: SidebarGroup[] = [
     ],
   },
   {
-    label: 'Analysis',
+    labelKey: 'sidebarNav.groups.analysis',
     items: [
       {
         id: 'empreinte-produit',
-        label: 'Empreinte Produit',
+        labelKey: 'sidebarNav.items.empreinteProduit',
         path: '/app/empreinte-produit',
         icon: Package,
         requiresModule: 'empreinte-produit',
       },
       {
         id: 'acv',
-        label: 'ACV',
+        labelKey: 'sidebarNav.items.acv',
         path: '/app/acv',
         icon: Leaf,
         requiresModule: 'acv',
@@ -112,11 +110,11 @@ const sidebarGroups: SidebarGroup[] = [
     ],
   },
   {
-    label: 'Énergie & Bâtiments',
+    labelKey: 'sidebarNav.groups.energyBuildings',
     items: [
       {
         id: 'wattbim',
-        label: 'WattBim',
+        labelKey: 'sidebarNav.items.wattbim',
         path: '/app/wattbim',
         icon: Zap,
         comingSoon: true,
@@ -124,29 +122,29 @@ const sidebarGroups: SidebarGroup[] = [
     ],
   },
   {
-    label: 'Climate Strategy',
+    labelKey: 'sidebarNav.groups.climateStrategy',
     items: [
       {
         id: 'plan-net-zero',
-        label: "Plan d'actions",
+        labelKey: 'sidebarNav.items.actionPlan',
         path: '/app/net-zero',
         icon: Target,
         requiresModule: 'decarbotech',
       },
       {
         id: 'modelisation-scenario',
-        label: 'Modélisation Scénarios',
+        labelKey: 'sidebarNav.items.scenarios',
         path: '/app/scenarios',
         icon: GitBranch,
       },
     ],
   },
   {
-    label: 'System',
+    labelKey: 'sidebarNav.groups.system',
     items: [
       {
         id: 'settings',
-        label: 'Paramètres',
+        labelKey: 'sidebarNav.items.settings',
         path: '/app/parametres',
         icon: Settings,
       },
@@ -162,25 +160,36 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
-  const { modules, modulesLoading, organizationId, organizationLoading } = useAppData();
-  const { signOut, user } = useAuth();
+  const { modules, modulesLoading, organizationLoading } = useAppData();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [orgLogoUrl, setOrgLogoUrl] = useState<string | null>(null);
   const supplierLabels = useSupplierLabels();
 
-  // Adapte le libellé du module "Fournisseurs" selon le secteur (banque -> Portefeuille)
-  const displayGroups = React.useMemo(() => sidebarGroups.map(group => ({
-    ...group,
-    items: group.items.map(item => {
-      if (item.id === 'fournisseurs') return { ...item, label: supplierLabels.moduleTitle };
-      if (item.id === 'emission-factors') {
-        return { ...item, label: t('navigation.emissionFactors', { defaultValue: t('emissionFactorCatalog.title') }) };
-      }
-      return item;
-    }),
-  })), [supplierLabels.moduleTitle, t]);
+  const resolveLabel = (item: ModuleItem): string => {
+    if (item.id === 'fournisseurs') return supplierLabels.moduleTitle;
+    return t(item.labelKey);
+  };
 
-  // Load organization logo
+  const displayGroups = useMemo(
+    () =>
+      sidebarGroups.map((group) => ({
+        id: group.labelKey,
+        label: t(group.labelKey),
+        items: group.items.map((item) => ({
+          ...item,
+          label: resolveLabel(item),
+        })),
+      })),
+    // resolveLabel depends on t + supplierLabels
+    [supplierLabels.moduleTitle, t],
+  );
+
+  const dashboardDisplay = useMemo(
+    () => ({ ...dashboardItem, label: t(dashboardItem.labelKey) }),
+    [t],
+  );
+
   useEffect(() => {
     const loadOrgLogo = async () => {
       if (!user?.id) return;
@@ -203,11 +212,6 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
     }
   }, [organizationLoading]);
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
   const isActive = (path: string): boolean => {
     if (path === '/app/dashboard') {
       return location.pathname === path;
@@ -215,7 +219,7 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
     return location.pathname.startsWith(path);
   };
 
-  const activeModuleSlugs = modules.map(m => m.slug);
+  const activeModuleSlugs = modules.map((m) => m.slug);
 
   const isModuleLocked = (item: ModuleItem): boolean => {
     if (item.external) return false;
@@ -227,47 +231,55 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
     return (
       <Sidebar className={cn("border-r border-[hsl(var(--sidebar-border))]", className)}>
         <SidebarContent className="px-4 py-4 bg-[hsl(var(--sidebar))]">
-          <div className="text-[hsl(var(--sidebar-muted))] text-sm">Chargement...</div>
+          <div className="text-[hsl(var(--sidebar-muted))] text-sm">{t('navigation.loading')}</div>
         </SidebarContent>
       </Sidebar>
     );
   }
 
-  const renderItem = (item: ModuleItem) => {
+  const renderItem = (item: ModuleItem & { label: string }) => {
     const ItemIcon = item.icon;
     const active = isActive(item.path);
     const locked = isModuleLocked(item);
+    const lockedHint = item.comingSoon
+      ? t('navigation.comingSoonFull')
+      : t('navigation.moduleLocked');
 
     return (
       <SidebarMenuItem key={item.id}>
         <button
           onClick={() => {
             if (locked) return;
-            if (item.external) { window.open(item.path, '_blank', 'noopener'); return; }
+            if (item.external) {
+              window.open(item.path, '_blank', 'noopener');
+              return;
+            }
             navigate(item.path);
           }}
           disabled={locked}
           aria-current={active ? 'page' : undefined}
-          aria-label={locked ? `${item.label} — ${item.comingSoon ? 'Bientôt disponible' : 'Module verrouillé'}` : item.label}
+          aria-label={locked ? `${item.label} — ${lockedHint}` : item.label}
           role="menuitem"
           className={cn(
             "flex items-center w-full px-3 py-2 text-sm font-medium rounded transition-all duration-150 relative group",
-            locked ? [
-              "opacity-50 cursor-not-allowed",
-              "text-[hsl(var(--sidebar-muted))]"
-            ] : [
-              "hover:bg-[hsl(var(--sidebar-accent))]",
-              active && [
-                "bg-[hsl(var(--sidebar-active-bg))]",
-                "text-[hsl(var(--sidebar-primary))]",
-                "font-semibold",
-              ],
-              !active && "text-[hsl(var(--sidebar-foreground))]"
-            ]
+            locked
+              ? ["opacity-50 cursor-not-allowed", "text-[hsl(var(--sidebar-muted))]"]
+              : [
+                  "hover:bg-[hsl(var(--sidebar-accent))]",
+                  active && [
+                    "bg-[hsl(var(--sidebar-active-bg))]",
+                    "text-[hsl(var(--sidebar-primary))]",
+                    "font-semibold",
+                  ],
+                  !active && "text-[hsl(var(--sidebar-foreground))]",
+                ],
           )}
         >
           {active && !locked && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[hsl(var(--sidebar-primary))] rounded-r-full" aria-hidden="true" />
+            <div
+              className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[hsl(var(--sidebar-primary))] rounded-r-full"
+              aria-hidden="true"
+            />
           )}
           <ItemIcon
             className={cn(
@@ -276,15 +288,18 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
                 ? "text-[hsl(var(--sidebar-muted))]"
                 : active
                   ? "text-[hsl(var(--sidebar-primary))]"
-                  : "text-[hsl(var(--sidebar-muted))] group-hover:text-[hsl(var(--sidebar-foreground))]"
+                  : "text-[hsl(var(--sidebar-muted))] group-hover:text-[hsl(var(--sidebar-foreground))]",
             )}
             aria-hidden="true"
           />
           <span className="flex-1 text-left">{item.label}</span>
           {item.comingSoon && (
-            <span className="flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-muted))]" aria-label="Bientôt disponible">
+            <span
+              className="flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-muted))]"
+              aria-label={t('navigation.comingSoonFull')}
+            >
               <Construction className="h-2.5 w-2.5" aria-hidden="true" />
-              Bientôt
+              {t('navigation.comingSoonShort')}
             </span>
           )}
           {locked && !item.comingSoon && (
@@ -296,14 +311,13 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
   };
 
   return (
-    <Sidebar className={cn("border-r-0", className)} aria-label="Navigation principale">
-      {/* Header avec logo organisation */}
+    <Sidebar className={cn("border-r-0", className)} aria-label={t('navigation.mainNavAria')}>
       <SidebarHeader className="px-5 pt-6 pb-4 bg-[hsl(var(--sidebar))]">
         <div className="flex items-center gap-3">
           {orgLogoUrl ? (
             <img
               src={orgLogoUrl}
-              alt="Logo organisation"
+              alt={t('navigation.orgLogoAlt')}
               className="h-9 w-auto max-w-[140px] object-contain brightness-0 invert"
             />
           ) : (
@@ -312,27 +326,23 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
         </div>
       </SidebarHeader>
 
-      {/* Navigation */}
-      <SidebarContent className="px-3 py-2 bg-[hsl(var(--sidebar))] overflow-y-auto" role="navigation" aria-label="Menu des modules">
+      <SidebarContent
+        className="px-3 py-2 bg-[hsl(var(--sidebar))] overflow-y-auto"
+        role="navigation"
+        aria-label={t('navigation.modulesMenuAria')}
+      >
         <SidebarMenu>
-          {/* Dashboard — toujours visible en haut */}
-          <div className="mb-1">
-            {renderItem(dashboardItem)}
-          </div>
+          <div className="mb-1">{renderItem(dashboardDisplay)}</div>
 
-          {/* Groupes séparés par de fines lignes horizontales */}
-          {displayGroups.map((group, idx) => (
-            <div key={group.label}>
+          {displayGroups.map((group) => (
+            <div key={group.id}>
               <div className="mx-3 my-2 h-px bg-[hsl(var(--sidebar-border))]" />
-              <div className="space-y-0.5">
-                {group.items.map(renderItem)}
-              </div>
+              <div className="space-y-0.5">{group.items.map(renderItem)}</div>
             </div>
           ))}
         </SidebarMenu>
       </SidebarContent>
 
-      {/* Footer avec user info + déconnexion */}
       <SidebarFooter className="p-0 bg-[hsl(var(--sidebar))]" />
     </Sidebar>
   );

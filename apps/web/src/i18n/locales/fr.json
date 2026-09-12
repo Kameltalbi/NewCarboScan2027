@@ -299,7 +299,112 @@
       "requestDemo": "Demander une démo",
       "login": "Connexion"
     },
-    "emissionFactors": "Facteurs d'émission"
+    "emissionFactors": "Facteurs d'émission",
+    "sectors": "Secteurs",
+    "academy": "Academy",
+    "academyDescription": "Formations et certifications carbone",
+    "faqDescription": "Questions fréquemment posées",
+    "signUp": "S'inscrire",
+    "company": "Notre entreprise",
+    "freeTools": "Outils gratuits",
+    "contents": "Contenus",
+    "carbonCalculator": "Calculateur carbone",
+    "roiCalculator": "Calculateur de ROI climat",
+    "loading": "Chargement…",
+    "comingSoonShort": "Bientôt",
+    "comingSoonFull": "Bientôt disponible",
+    "moduleLocked": "Module verrouillé",
+    "mainNavAria": "Navigation principale",
+    "modulesMenuAria": "Menu des modules",
+    "orgLogoAlt": "Logo organisation",
+    "solutionsMenu": {
+      "bilanCarbone": {
+        "title": "Bilan Carbone",
+        "description": "Calculez l'empreinte carbone complète de votre entreprise (Scopes 1, 2 et 3)"
+      },
+      "empreinteProduit": {
+        "title": "Empreinte Produit",
+        "description": "Calculez l'empreinte carbone de vos produits avec une ACV simplifiée"
+      },
+      "acv": {
+        "title": "Analyse du Cycle de Vie (ACV)",
+        "description": "ACV complète multi-indicateurs : GWP, ODP, AP, EP, POCP"
+      },
+      "cbam": {
+        "title": "Calculateur CBAM (MACF)",
+        "description": "Calculez les émissions intrinsèques et le coût carbone de vos exportations vers l'Europe"
+      },
+      "collect": {
+        "title": "CarboScan Collect",
+        "description": "Collecte intelligente de données : import Excel, OCR PDF, validation IA"
+      },
+      "monitoring": {
+        "title": "Monitoring & Réduction",
+        "description": "Plan de réduction Net-Zero, intégration IoT, tableaux de bord de décarbonation"
+      }
+    },
+    "sectorsMenu": {
+      "industry": "Industrie & Manufacturing",
+      "building": "Bâtiment & Immobilier",
+      "agro": "Agroalimentaire",
+      "services": "Services & Tertiaire",
+      "finance": "Finance & Assurance",
+      "cbamExport": "Export UE (CBAM)"
+    }
+  },
+  "homeHeader": {
+    "sections": {
+      "carbonManagement": "Gestion carbone",
+      "lca": "ACV & facteurs"
+    },
+    "items": {
+      "bilanCarbone": {
+        "label": "Bilan Carbone®",
+        "description": "Mesurez vos émissions de portée 1, 2 et 3"
+      },
+      "suppliers": {
+        "label": "Engagement fournisseurs",
+        "description": "Intégrez l'ensemble de votre supply chain"
+      },
+      "decarbonation": {
+        "label": "Stratégie de décarbonation",
+        "description": "Élaborez un plan d'action concret"
+      },
+      "emissionFactors": {
+        "label": "Facteurs d'émission",
+        "description": "Accédez à notre base de données certifiée"
+      },
+      "acv": {
+        "label": "ACV",
+        "description": "Analysez précisément l'impact de vos produits"
+      },
+      "wattbim": {
+        "label": "WattBim",
+        "description": "Pilotez l'énergie et les bâtiments, détectez le gaspillage"
+      }
+    }
+  },
+  "sidebarNav": {
+    "groups": {
+      "carbonAccounting": "Comptabilité carbone",
+      "analysis": "Analyse",
+      "energyBuildings": "Énergie & bâtiments",
+      "climateStrategy": "Stratégie climat",
+      "system": "Système"
+    },
+    "items": {
+      "dashboard": "Tableau de bord",
+      "collect": "Collecte",
+      "emissionFactors": "Facteurs d'émission",
+      "bilanCarbone": "Bilan Carbone",
+      "suppliers": "Fournisseurs",
+      "empreinteProduit": "Empreinte Produit",
+      "acv": "ACV",
+      "wattbim": "WattBim",
+      "actionPlan": "Plan d'actions",
+      "scenarios": "Modélisation scénarios",
+      "settings": "Paramètres"
+    }
   },
   "hero": {
     "title": "Mesurez. Pilotez. Réduisez.",
@@ -7600,7 +7705,9 @@
   },
   "emissionFactorCatalog": {
     "title": "Facteurs d'émission",
-    "subtitle": "Recherchez parmi 7 402 facteurs d'émission référencés.",
+    "subtitle": "Bases de données référencées et catalogue multi-sources pour vos calculs.",
+    "explorerTitle": "Explorer le catalogue",
+    "explorerSubtitle": "Recherchez un facteur par nom, code, source ou catégorie.",
     "searchPlaceholder": "Rechercher un facteur, un code ou une catégorie…",
     "loading": "Chargement…",
     "resultCount_one": "{{formatted}} facteur trouvé",
@@ -7616,6 +7723,40 @@
     "reviewRequired": "À vérifier",
     "reviewRequiredHint": "Ce facteur nécessite une vérification de sa normalisation avant utilisation dans un calcul.",
     "inCatalog": "Disponible dans le catalogue",
+    "dataSources": {
+      "title": "Sources de données",
+      "subtitle": "Bases intégrées dans CarboScan, avec le nombre de facteurs disponibles, la licence, le type de données et le périmètre géographique.",
+      "filteredHint": "Catalogue filtré sur « {{source}} ». Cliquez à nouveau sur la source pour retirer le filtre.",
+      "columns": {
+        "source": "Source",
+        "factors": "Nb de facteurs",
+        "datasets": "Datasets",
+        "license": "Licence",
+        "dataType": "Type de données",
+        "geography": "Géographie",
+        "description": "Description"
+      },
+      "license": {
+        "core": "Core"
+      },
+      "dataType": {
+        "activity": "Basé sur l'activité"
+      },
+      "geography": {
+        "multiple": "Plusieurs régions",
+        "tunisia": "Tunisie",
+        "uk": "Royaume-Uni",
+        "us": "États-Unis",
+        "ipcc_defaults": "Défauts IPCC (région non spécifiée)"
+      },
+      "descriptions": {
+        "ademe": "Agence de la transition écologique (France). Base Carbone® : facteurs d'émission pour bilans GES (énergie, transport, achats, déchets, etc.).",
+        "internal": "Pack de référence CarboScan pour la Tunisie (Core TN), notamment l'électricité réseau et des facteurs locaux validés pour le contexte tunisien.",
+        "uk_gov_ghg": "Facteurs de conversion GES du gouvernement britannique (DESNZ) pour le reporting d'entreprise : énergie, transport, déchets et procédés.",
+        "epa_ghg_emission_factors_hub": "Hub EPA des facteurs d'émission GES (États-Unis). Sous-ensemble opérationnel orienté activités US (AUTO_US) ; non applicable automatiquement à la Tunisie.",
+        "ipcc_efdb": "Base IPCC EFDB — sous-ensemble combustion stationnaire (CO₂/CH₄/N₂O, kg/TJ PCI). Le CO₂ biogénique est conservé hors totaux de scopes."
+      }
+    },
     "filters": {
       "source": "Source",
       "category": "Catégorie",

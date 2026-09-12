@@ -1,8 +1,12 @@
 import pg from "pg";
 
-const connectionString =
-  process.env.DATABASE_URL ??
-  "postgresql://newcarboscan:newcarboscan@localhost:5432/newcarboscan";
+const connectionString = (() => {
+  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("DATABASE_URL must be set in production.");
+  }
+  return "postgresql://newcarboscan:newcarboscan@localhost:5432/newcarboscan";
+})();
 
 export const pool = new pg.Pool({
   connectionString,

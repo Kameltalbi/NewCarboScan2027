@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ChevronDown,
@@ -8,69 +8,74 @@ import {
   Menu,
   RefreshCcw,
   Truck,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
-const NAV_LINKS = [
-  { label: "Solutions", to: "/solutions" },
-  { label: "Ressources", to: "/blog" },
-  { label: "À propos", to: "/about" },
-] as const;
-
 type PlatformItem = {
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
   to: string;
   icon: LucideIcon;
-  tone: "green" | "purple";
+  tone: "green" | "purple" | "amber";
 };
 
-const PLATFORM_SECTIONS: {
-  title: string;
+type PlatformSection = {
+  titleKey: string;
   items: PlatformItem[];
-}[] = [
+};
+
+const PLATFORM_SECTIONS: PlatformSection[] = [
   {
-    title: "Gestion carbone",
+    titleKey: "homeHeader.sections.carbonManagement",
     items: [
       {
-        label: "Bilan Carbone®",
-        description: "Mesurez vos émissions de portée 1, 2 et 3",
+        labelKey: "homeHeader.items.bilanCarbone.label",
+        descriptionKey: "homeHeader.items.bilanCarbone.description",
         to: "/bilan-carbone",
         icon: Globe2,
         tone: "green",
       },
       {
-        label: "Engagement fournisseurs",
-        description: "Intégrez l'ensemble de votre supply chain",
+        labelKey: "homeHeader.items.suppliers.label",
+        descriptionKey: "homeHeader.items.suppliers.description",
         to: "/engagement-fournisseurs",
         icon: Truck,
         tone: "green",
       },
       {
-        label: "Stratégie de décarbonation",
-        description: "Élaborez un plan d'action concret",
+        labelKey: "homeHeader.items.decarbonation.label",
+        descriptionKey: "homeHeader.items.decarbonation.description",
         to: "/strategie-decarbonation",
         icon: Flag,
         tone: "green",
       },
+      {
+        labelKey: "homeHeader.items.wattbim.label",
+        descriptionKey: "homeHeader.items.wattbim.description",
+        to: "/wattbim",
+        icon: Zap,
+        tone: "amber",
+      },
     ],
   },
   {
-    title: "LCA",
+    titleKey: "homeHeader.sections.lca",
     items: [
       {
-        label: "Facteurs d'émissions",
-        description: "Accédez à notre base de données certifiée",
+        labelKey: "homeHeader.items.emissionFactors.label",
+        descriptionKey: "homeHeader.items.emissionFactors.description",
         to: "/facteurs-emission",
         icon: CloudFog,
         tone: "purple",
       },
       {
-        label: "ACV",
-        description: "Analysez précisément l'impact de vos produits",
+        labelKey: "homeHeader.items.acv.label",
+        descriptionKey: "homeHeader.items.acv.description",
         to: "/acv-landing",
         icon: RefreshCcw,
         tone: "purple",
@@ -82,13 +87,25 @@ const PLATFORM_SECTIONS: {
 const toneClass = {
   green: "text-[#0F9F6E]",
   purple: "text-[#7C3AED]",
+  amber: "text-amber-500",
 } as const;
 
 export const HomeHeader: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [platformOpen, setPlatformOpen] = useState(false);
   const platformCloseTimer = useRef<number>();
+
+  const navLinks = useMemo(
+    () =>
+      [
+        { label: t("navigation.solutions"), to: "/solutions" },
+        { label: t("navigation.resources"), to: "/blog" },
+        { label: t("navigation.about"), to: "/about" },
+      ] as const,
+    [t],
+  );
 
   const cancelPlatformClose = () => {
     window.clearTimeout(platformCloseTimer.current);
@@ -137,7 +154,7 @@ export const HomeHeader: React.FC = () => {
             to="/solutions"
             className="text-[15px] font-medium text-[#073D30]/85 transition-colors hover:text-[#073D30]"
           >
-            Solutions
+            {t("navigation.solutions")}
           </Link>
 
           <div className="relative" onMouseEnter={openPlatform}>
@@ -148,7 +165,7 @@ export const HomeHeader: React.FC = () => {
               onClick={() => setPlatformOpen(true)}
               className="inline-flex items-center gap-1 rounded-[4px] text-[15px] font-medium text-[#073D30]/85 transition-colors hover:text-[#073D30]"
             >
-              Plateforme
+              {t("navigation.platform")}
               <ChevronDown
                 className={`h-3.5 w-3.5 transition-transform duration-200 ${platformOpen ? "rotate-180" : ""}`}
                 aria-hidden="true"
@@ -162,9 +179,9 @@ export const HomeHeader: React.FC = () => {
                 <div className="rounded-[4px] border border-[#EEF2F0] bg-white p-5 shadow-[0_16px_40px_rgba(7,61,48,0.1)]">
                   <div className="grid grid-cols-2 divide-x divide-[#EEF2F0]">
                     {PLATFORM_SECTIONS.map((section) => (
-                      <div key={section.title} className="px-4 first:pl-0 last:pr-0">
+                      <div key={section.titleKey} className="px-4 first:pl-0 last:pr-0">
                         <p className="mb-3 text-[12px] font-medium text-[#6B7280]">
-                          {section.title}
+                          {t(section.titleKey)}
                         </p>
                         <div className="space-y-1">
                           {section.items.map((item) => {
@@ -177,16 +194,16 @@ export const HomeHeader: React.FC = () => {
                                 className="group flex items-start gap-3 rounded-[4px] p-2.5 transition-colors hover:bg-[#F4F7F5]"
                               >
                                 <Icon
-                                  className={`mt-0.5 h-5 w-5 shrink-0 ${toneClass[item.tone]}`}
+                                  className={`mt-0.5 h-5 w-5 shrink-0 ${toneClass[item.tone]}${item.tone === "amber" ? " fill-amber-300" : ""}`}
                                   strokeWidth={1.75}
                                   aria-hidden="true"
                                 />
                                 <span className="min-w-0">
                                   <span className="block text-[14px] font-semibold text-[#111827]">
-                                    {item.label}
+                                    {t(item.labelKey)}
                                   </span>
                                   <span className="mt-0.5 block text-[13px] leading-snug text-[#6B7280]">
-                                    {item.description}
+                                    {t(item.descriptionKey)}
                                   </span>
                                 </span>
                               </Link>
@@ -201,15 +218,25 @@ export const HomeHeader: React.FC = () => {
             )}
           </div>
 
-          {NAV_LINKS.filter((link) => link.to !== "/solutions").map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="text-[15px] font-medium text-[#073D30]/85 transition-colors hover:text-[#073D30]"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks
+            .filter((link) => link.to !== "/solutions")
+            .map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-[15px] font-medium text-[#073D30]/85 transition-colors hover:text-[#073D30]"
+              >
+                {link.label}
+              </Link>
+            ))}
+
+          <Link
+            to="/wattbim"
+            className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-emerald-600 transition-colors hover:text-emerald-700"
+          >
+            <Zap className="h-4 w-4 fill-amber-300 text-amber-500" aria-hidden="true" />
+            WattBim
+          </Link>
         </nav>
 
         <div className="hidden items-center justify-self-end gap-5 lg:flex">
@@ -218,14 +245,14 @@ export const HomeHeader: React.FC = () => {
             to="/auth"
             className="text-[15px] font-medium text-[#073D30]/85 transition-colors hover:text-[#073D30]"
           >
-            Se connecter
+            {t("navigation.cta.login")}
           </Link>
           <button
             type="button"
             onClick={() => navigate("/demo")}
             className="inline-flex h-11 items-center justify-center rounded-[4px] bg-[#07563F] px-5 text-[14px] font-semibold text-white transition-colors hover:bg-[#054C36]"
           >
-            Demander une démo
+            {t("navigation.cta.requestDemo")}
           </button>
         </div>
 
@@ -236,7 +263,7 @@ export const HomeHeader: React.FC = () => {
               <button
                 type="button"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-[4px] text-[#073D30]"
-                aria-label="Ouvrir le menu"
+                aria-label={t("navigation.openMenu")}
               >
                 <Menu className="h-5 w-5" />
               </button>
@@ -244,9 +271,9 @@ export const HomeHeader: React.FC = () => {
             <SheetContent side="right" className="w-80 bg-white pt-10">
               <nav className="flex flex-col gap-1">
                 {PLATFORM_SECTIONS.map((section) => (
-                  <div key={section.title} className="mb-3">
+                  <div key={section.titleKey} className="mb-3">
                     <p className="px-3 pb-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#073D30]/45">
-                      {section.title}
+                      {t(section.titleKey)}
                     </p>
                     {section.items.map((item) => {
                       const Icon = item.icon;
@@ -258,16 +285,16 @@ export const HomeHeader: React.FC = () => {
                           className="flex items-start gap-3 rounded-[4px] px-3 py-2.5 hover:bg-[#F4F7F5]"
                         >
                           <Icon
-                            className={`mt-0.5 h-5 w-5 shrink-0 ${toneClass[item.tone]}`}
+                            className={`mt-0.5 h-5 w-5 shrink-0 ${toneClass[item.tone]}${item.tone === "amber" ? " fill-amber-300" : ""}`}
                             strokeWidth={1.75}
                             aria-hidden="true"
                           />
                           <span>
                             <span className="block text-[14px] font-semibold text-[#111827]">
-                              {item.label}
+                              {t(item.labelKey)}
                             </span>
                             <span className="mt-0.5 block text-[12px] leading-snug text-[#6B7280]">
-                              {item.description}
+                              {t(item.descriptionKey)}
                             </span>
                           </span>
                         </Link>
@@ -275,7 +302,7 @@ export const HomeHeader: React.FC = () => {
                     })}
                   </div>
                 ))}
-                {NAV_LINKS.map((link) => (
+                {navLinks.map((link) => (
                   <Link
                     key={link.to}
                     to={link.to}
@@ -286,11 +313,19 @@ export const HomeHeader: React.FC = () => {
                   </Link>
                 ))}
                 <Link
+                  to="/wattbim"
+                  onClick={() => setOpen(false)}
+                  className="inline-flex items-center gap-1.5 rounded-[4px] px-3 py-3 text-[15px] font-semibold text-emerald-600 hover:bg-[#F4F7F5]"
+                >
+                  <Zap className="h-4 w-4 fill-amber-300 text-amber-500" aria-hidden="true" />
+                  WattBim
+                </Link>
+                <Link
                   to="/auth"
                   onClick={() => setOpen(false)}
                   className="rounded-[4px] px-3 py-3 text-[15px] font-medium text-[#073D30] hover:bg-[#F4F7F5]"
                 >
-                  Se connecter
+                  {t("navigation.cta.login")}
                 </Link>
                 <button
                   type="button"
@@ -300,7 +335,7 @@ export const HomeHeader: React.FC = () => {
                   }}
                   className="mt-3 inline-flex h-12 items-center justify-center rounded-[4px] bg-[#07563F] px-5 text-[14px] font-semibold text-white"
                 >
-                  Demander une démo
+                  {t("navigation.cta.requestDemo")}
                 </button>
               </nav>
             </SheetContent>

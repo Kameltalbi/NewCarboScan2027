@@ -299,7 +299,112 @@
       "requestDemo": "Request a demo",
       "login": "Login"
     },
-    "emissionFactors": "Emission factors"
+    "emissionFactors": "Emission factors",
+    "sectors": "Sectors",
+    "academy": "Academy",
+    "academyDescription": "Carbon training and certifications",
+    "faqDescription": "Frequently asked questions",
+    "signUp": "Sign up",
+    "company": "Our company",
+    "freeTools": "Free tools",
+    "contents": "Content",
+    "carbonCalculator": "Carbon calculator",
+    "roiCalculator": "Climate ROI calculator",
+    "loading": "Loading…",
+    "comingSoonShort": "Soon",
+    "comingSoonFull": "Coming soon",
+    "moduleLocked": "Module locked",
+    "mainNavAria": "Main navigation",
+    "modulesMenuAria": "Modules menu",
+    "orgLogoAlt": "Organization logo",
+    "solutionsMenu": {
+      "bilanCarbone": {
+        "title": "Carbon Footprint",
+        "description": "Calculate your company’s full carbon footprint (Scopes 1, 2 and 3)"
+      },
+      "empreinteProduit": {
+        "title": "Product Footprint",
+        "description": "Calculate your products’ carbon footprint with a simplified LCA"
+      },
+      "acv": {
+        "title": "Life Cycle Assessment (LCA)",
+        "description": "Full multi-indicator LCA: GWP, ODP, AP, EP, POCP"
+      },
+      "cbam": {
+        "title": "CBAM calculator",
+        "description": "Calculate embedded emissions and the carbon cost of your exports to Europe"
+      },
+      "collect": {
+        "title": "CarboScan Collect",
+        "description": "Smart data collection: Excel import, PDF OCR, AI validation"
+      },
+      "monitoring": {
+        "title": "Monitoring & Reduction",
+        "description": "Net-Zero reduction plan, IoT integration, decarbonization dashboards"
+      }
+    },
+    "sectorsMenu": {
+      "industry": "Industry & Manufacturing",
+      "building": "Buildings & Real Estate",
+      "agro": "Agri-food",
+      "services": "Services & Tertiary",
+      "finance": "Finance & Insurance",
+      "cbamExport": "EU export (CBAM)"
+    }
+  },
+  "homeHeader": {
+    "sections": {
+      "carbonManagement": "Carbon management",
+      "lca": "LCA & factors"
+    },
+    "items": {
+      "bilanCarbone": {
+        "label": "Carbon Footprint®",
+        "description": "Measure your Scope 1, 2 and 3 emissions"
+      },
+      "suppliers": {
+        "label": "Supplier engagement",
+        "description": "Bring your entire supply chain on board"
+      },
+      "decarbonation": {
+        "label": "Decarbonization strategy",
+        "description": "Build a concrete action plan"
+      },
+      "emissionFactors": {
+        "label": "Emission factors",
+        "description": "Access our certified database"
+      },
+      "acv": {
+        "label": "LCA",
+        "description": "Precisely analyze your products’ impact"
+      },
+      "wattbim": {
+        "label": "WattBim",
+        "description": "Manage building energy use and detect waste"
+      }
+    }
+  },
+  "sidebarNav": {
+    "groups": {
+      "carbonAccounting": "Carbon accounting",
+      "analysis": "Analysis",
+      "energyBuildings": "Energy & buildings",
+      "climateStrategy": "Climate strategy",
+      "system": "System"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "collect": "Data collection",
+      "emissionFactors": "Emission factors",
+      "bilanCarbone": "Carbon Footprint",
+      "suppliers": "Suppliers",
+      "empreinteProduit": "Product Footprint",
+      "acv": "LCA",
+      "wattbim": "WattBim",
+      "actionPlan": "Action plan",
+      "scenarios": "Scenario modeling",
+      "settings": "Settings"
+    }
   },
   "hero": {
     "title": "Measure. Monitor. Reduce.",
@@ -7591,7 +7696,9 @@
   },
   "emissionFactorCatalog": {
     "title": "Emission factors",
-    "subtitle": "Search across 7,402 referenced emission factors.",
+    "subtitle": "Referenced databases and a multi-source catalog for your calculations.",
+    "explorerTitle": "Browse the catalog",
+    "explorerSubtitle": "Search a factor by name, code, source, or category.",
     "searchPlaceholder": "Search a factor, code or category…",
     "loading": "Loading…",
     "resultCount_one": "{{formatted}} factor found",
@@ -7607,6 +7714,40 @@
     "reviewRequired": "Needs review",
     "reviewRequiredHint": "This factor needs normalization review before use in a calculation.",
     "inCatalog": "Available in catalog",
+    "dataSources": {
+      "title": "Data sources",
+      "subtitle": "Databases integrated in CarboScan, with factor counts, license, data type, and geographic coverage.",
+      "filteredHint": "Catalog filtered to “{{source}}”. Click the source again to clear the filter.",
+      "columns": {
+        "source": "Source",
+        "factors": "No. of factors",
+        "datasets": "Datasets",
+        "license": "License",
+        "dataType": "Type of data",
+        "geography": "Geography",
+        "description": "Description"
+      },
+      "license": {
+        "core": "Core"
+      },
+      "dataType": {
+        "activity": "Activity-based"
+      },
+      "geography": {
+        "multiple": "Multiple regions",
+        "tunisia": "Tunisia",
+        "uk": "United Kingdom",
+        "us": "United States",
+        "ipcc_defaults": "IPCC defaults (unspecified region)"
+      },
+      "descriptions": {
+        "ademe": "French Agency for Ecological Transition. Base Carbone® emission factors for GHG inventories (energy, transport, purchases, waste, and more).",
+        "internal": "CarboScan Core Tunisia reference pack, including grid electricity and locally validated factors for the Tunisian context.",
+        "uk_gov_ghg": "UK government GHG conversion factors (DESNZ) for company reporting: energy, transport, waste, and processes.",
+        "epa_ghg_emission_factors_hub": "US EPA GHG Emission Factors Hub. Operational US-oriented activity subset (AUTO_US); not auto-applied for Tunisia.",
+        "ipcc_efdb": "IPCC EFDB — stationary combustion subset (CO₂/CH₄/N₂O, kg/TJ NCV). Biogenic CO₂ is kept outside scope totals."
+      }
+    },
     "filters": {
       "source": "Source",
       "category": "Category",

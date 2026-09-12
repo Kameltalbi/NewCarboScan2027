@@ -118,50 +118,50 @@ export const MainHeader = () => {
                             <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
                               <BarChart3 className="h-4 w-4 text-emerald-600" />
                             </div>
-                            <span className="font-medium text-gray-900">Solutions</span>
+                            <span className="font-medium text-gray-900">{t("navigation.solutions")}</span>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent className="pb-4">
                           <div className="space-y-3 ml-11">
                             <SheetClose asChild>
                               <Link to="/bilan-carbone" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900 mb-1">Bilan Carbone</div>
-                                <p className="text-xs text-gray-600">Calculez l'empreinte carbone complète de votre entreprise (Scopes 1, 2 et 3)</p>
+                                <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.solutionsMenu.bilanCarbone.title")}</div>
+                                <p className="text-xs text-gray-600">{t("navigation.solutionsMenu.bilanCarbone.description")}</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
                               <Link to={getEmpreinteProduitUrl()} className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900 mb-1">Empreinte Produit</div>
-                                <p className="text-xs text-gray-600">Calculez l'empreinte carbone de vos produits avec une ACV simplifiée</p>
+                                <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.solutionsMenu.empreinteProduit.title")}</div>
+                                <p className="text-xs text-gray-600">{t("navigation.solutionsMenu.empreinteProduit.description")}</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
                               <Link to="/acv-landing" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900 mb-1">Analyse du Cycle de Vie (ACV)</div>
-                                <p className="text-xs text-gray-600">ACV complète multi-indicateurs : GWP, ODP, AP, EP, POCP</p>
+                                <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.solutionsMenu.acv.title")}</div>
+                                <p className="text-xs text-gray-600">{t("navigation.solutionsMenu.acv.description")}</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
                               <Link to="/cbam" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900 mb-1">Calculateur CBAM (MACF)</div>
-                                <p className="text-xs text-gray-600">Calculez les émissions intrinsèques et le coût carbone de vos exportations vers l'Europe</p>
+                                <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.solutionsMenu.cbam.title")}</div>
+                                <p className="text-xs text-gray-600">{t("navigation.solutionsMenu.cbam.description")}</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
                               <Link to="/collect" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900 mb-1">CarboScan Collect</div>
-                                <p className="text-xs text-gray-600">Collecte intelligente de données : import Excel, OCR PDF, validation IA</p>
+                                <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.solutionsMenu.collect.title")}</div>
+                                <p className="text-xs text-gray-600">{t("navigation.solutionsMenu.collect.description")}</p>
                               </Link>
                             </SheetClose>
                             
                             <SheetClose asChild>
                               <Link to="/decarbotech" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900 mb-1">Monitoring & Réduction</div>
-                                <p className="text-xs text-gray-600">Plan de réduction Net-Zero, intégration IoT, tableaux de bord de décarbonation</p>
+                                <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.solutionsMenu.monitoring.title")}</div>
+                                <p className="text-xs text-gray-600">{t("navigation.solutionsMenu.monitoring.description")}</p>
                               </Link>
                             </SheetClose>
                             
@@ -176,7 +176,7 @@ export const MainHeader = () => {
                             <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
                               <GraduationCap className="h-4 w-4 text-green-600" />
                             </div>
-                            <span className="font-medium text-gray-900">Academy</span>
+                            <span className="font-medium text-gray-900">{t("navigation.academy")}</span>
                           </Link>
                         </SheetClose>
                       </div>
@@ -205,7 +205,7 @@ export const MainHeader = () => {
                             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                               <CreditCard className="h-4 w-4 text-blue-600" />
                             </div>
-                            <span className="font-medium text-gray-900">Pricing</span>
+                            <span className="font-medium text-gray-900">{t("navigation.pricing")}</span>
                           </Link>
                         </SheetClose>
                       </div>
@@ -217,27 +217,27 @@ export const MainHeader = () => {
                             <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
                               <BookOpen className="h-4 w-4 text-purple-600" />
                             </div>
-                            <span className="font-medium text-gray-900">Ressources</span>
+                            <span className="font-medium text-gray-900">{t("navigation.resources")}</span>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent className="pb-4">
                           <div className="space-y-3 ml-11">
                             <SheetClose asChild>
                               <Link to="/calculateur-carbone" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900">Calculateur carbone</div>
+                                <div className="text-sm font-medium text-gray-900">{t("navigation.carbonCalculator")}</div>
                               </Link>
                             </SheetClose>
 
 
                             <SheetClose asChild>
                               <Link to="/cbam-calculator" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900">Calculateur CBAM</div>
+                                <div className="text-sm font-medium text-gray-900">{t("navigation.cbamCalculator")}</div>
                               </Link>
                             </SheetClose>
 
                             <SheetClose asChild>
                               <Link to="/calculateur-roi" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900">Calculateur de ROI climat</div>
+                                <div className="text-sm font-medium text-gray-900">{t("navigation.roiCalculator")}</div>
                               </Link>
                             </SheetClose>
 
@@ -251,15 +251,15 @@ export const MainHeader = () => {
 
                             <SheetClose asChild>
                               <Link to="/faq" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900 mb-1">FAQ</div>
-                                <p className="text-xs text-gray-600">Questions fréquemment posées</p>
+                                <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.faq")}</div>
+                                <p className="text-xs text-gray-600">{t("navigation.faqDescription")}</p>
                               </Link>
                             </SheetClose>
 
                             <SheetClose asChild>
                               <Link to="/about" className="block p-3 rounded-[4px] hover:bg-gray-50 transition-colors">
-                                <div className="text-sm font-medium text-gray-900 mb-1">À propos</div>
-                                <p className="text-xs text-gray-600">Découvrez notre entreprise</p>
+                                <div className="text-sm font-medium text-gray-900 mb-1">{t("navigation.about")}</div>
+                                <p className="text-xs text-gray-600">{t("navigation.company")}</p>
                               </Link>
                             </SheetClose>
 
@@ -296,7 +296,7 @@ export const MainHeader = () => {
                           onClick={() => navigate("/inscription")}
                           className="w-full bg-[#16585C] hover:bg-[#0F4144] text-white h-11 font-medium rounded-[4px]"
                         >
-                          S'inscrire
+                          {t("navigation.signUp")}
                         </Button>
                       </SheetClose>
                       
@@ -354,7 +354,7 @@ export const MainHeader = () => {
               {/* Solutions */}
               <NavigationMenuItem>
                 <NavigationMenuTrigger className={`h-10 px-4 py-2 text-base font-semibold ${transparent ? "text-white/90 hover:text-white data-[state=open]:text-white" : "text-gray-700 hover:text-gray-900 data-[state=open]:text-gray-900"} bg-transparent hover:bg-transparent data-[state=open]:bg-transparent`}>
-                  Solutions
+                  {t("navigation.solutions")}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[700px] p-6">
@@ -366,10 +366,10 @@ export const MainHeader = () => {
                           </div>
                           <div className="flex-1">
                             <div className="text-sm font-medium text-gray-900 group-hover:text-emerald-600 mb-1">
-                              Bilan Carbone
+                              {t("navigation.solutionsMenu.bilanCarbone.title")}
                             </div>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                              Calculez l'empreinte carbone complète de votre entreprise (Scopes 1, 2 et 3)
+                              {t("navigation.solutionsMenu.bilanCarbone.description")}
                             </p>
                           </div>
                         </div>
@@ -382,10 +382,10 @@ export const MainHeader = () => {
                           </div>
                           <div className="flex-1">
                             <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600 mb-1">
-                              Empreinte Produit
+                              {t("navigation.solutionsMenu.empreinteProduit.title")}
                             </div>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                              Calculez l'empreinte carbone de vos produits avec une ACV simplifiée
+                              {t("navigation.solutionsMenu.empreinteProduit.description")}
                             </p>
                           </div>
                         </div>
@@ -398,10 +398,10 @@ export const MainHeader = () => {
                           </div>
                           <div className="flex-1">
                             <div className="text-sm font-medium text-gray-900 group-hover:text-purple-600 mb-1">
-                              Analyse du Cycle de Vie (ACV)
+                              {t("navigation.solutionsMenu.acv.title")}
                             </div>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                              ACV complète multi-indicateurs : GWP, ODP, AP, EP, POCP
+                              {t("navigation.solutionsMenu.acv.description")}
                             </p>
                           </div>
                         </div>
@@ -414,10 +414,10 @@ export const MainHeader = () => {
                           </div>
                           <div className="flex-1">
                             <div className="text-sm font-medium text-gray-900 group-hover:text-orange-600 mb-1">
-                              Calculateur CBAM (MACF)
+                              {t("navigation.solutionsMenu.cbam.title")}
                             </div>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                              Calculez les émissions intrinsèques et le coût carbone de vos exportations vers l'Europe
+                              {t("navigation.solutionsMenu.cbam.description")}
                             </p>
                           </div>
                         </div>
@@ -430,10 +430,10 @@ export const MainHeader = () => {
                           </div>
                           <div className="flex-1">
                             <div className="text-sm font-medium text-gray-900 group-hover:text-teal-600 mb-1">
-                              CarboScan Collect
+                              {t("navigation.solutionsMenu.collect.title")}
                             </div>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                              Collecte intelligente de données : import Excel, OCR PDF, validation IA
+                              {t("navigation.solutionsMenu.collect.description")}
                             </p>
                           </div>
                         </div>
@@ -446,10 +446,10 @@ export const MainHeader = () => {
                           </div>
                           <div className="flex-1">
                             <div className="text-sm font-medium text-gray-900 group-hover:text-green-600 mb-1">
-                              Monitoring & Réduction
+                              {t("navigation.solutionsMenu.monitoring.title")}
                             </div>
                             <p className="text-sm text-gray-500 leading-relaxed">
-                              Plan de réduction Net-Zero, intégration IoT, tableaux de bord de décarbonation
+                              {t("navigation.solutionsMenu.monitoring.description")}
                             </p>
                           </div>
                         </div>
@@ -462,21 +462,21 @@ export const MainHeader = () => {
               {/* Secteurs */}
               <NavigationMenuItem>
                 <NavigationMenuTrigger className={`h-10 px-4 py-2 text-base font-semibold ${transparent ? "text-white/90 hover:text-white data-[state=open]:text-white" : "text-gray-700 hover:text-gray-900 data-[state=open]:text-gray-900"} bg-transparent hover:bg-transparent data-[state=open]:bg-transparent`}>
-                  Secteurs
+                  {t("navigation.sectors")}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[360px] p-4">
                     <div className="space-y-1">
                       {[
-                        { label: "Industrie & Manufacturing", to: "/contact?secteur=industrie" },
-                        { label: "Bâtiment & Immobilier", to: "/wattbim" },
-                        { label: "Agroalimentaire", to: "/contact?secteur=agro" },
-                        { label: "Services & Tertiaire", to: "/contact?secteur=services" },
-                        { label: "Finance & Assurance", to: "/contact?secteur=finance" },
-                        { label: "Export UE (CBAM)", to: "/cbam" },
+                        { id: "industry", to: "/contact?secteur=industrie" },
+                        { id: "building", to: "/wattbim" },
+                        { id: "agro", to: "/contact?secteur=agro" },
+                        { id: "services", to: "/contact?secteur=services" },
+                        { id: "finance", to: "/contact?secteur=finance" },
+                        { id: "cbamExport", to: "/cbam" },
                       ].map((s) => (
-                        <Link key={s.label} to={s.to} className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-                          {s.label}
+                        <Link key={s.id} to={s.to} className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
+                          {t(`navigation.sectorsMenu.${s.id}`)}
                         </Link>
                       ))}
                     </div>
@@ -490,40 +490,40 @@ export const MainHeader = () => {
                   to="/pricing" 
                   className={`h-10 px-4 py-2 text-base font-semibold transition-colors flex items-center ${transparent ? "text-white/90 hover:text-white" : "text-gray-700 hover:text-gray-900"}`}
                 >
-                  Pricing
+                  {t("navigation.pricing")}
                 </Link>
               </NavigationMenuItem>
 
               {/* Ressources */}
               <NavigationMenuItem>
                 <NavigationMenuTrigger className={`h-10 px-4 py-2 text-base font-semibold ${transparent ? "text-white/90 hover:text-white data-[state=open]:text-white" : "text-gray-700 hover:text-gray-900 data-[state=open]:text-gray-900"} bg-transparent hover:bg-transparent data-[state=open]:bg-transparent`}>
-                  Ressources
+                  {t("navigation.resources")}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[680px] p-6">
                     <div className="grid grid-cols-2 gap-6">
                       {/* Colonne calculateurs */}
                       <div className="space-y-3">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Outils gratuits</p>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t("navigation.freeTools")}</p>
                         <Link to="/calculateur-carbone" className="group flex items-center gap-3 select-none rounded-lg p-3 hover:bg-gray-50 transition-colors border-0">
                           <Calculator className="h-5 w-5 text-emerald-600" />
-                          <span className="text-sm font-medium text-gray-900 group-hover:text-emerald-600">Calculateur carbone</span>
+                          <span className="text-sm font-medium text-gray-900 group-hover:text-emerald-600">{t("navigation.carbonCalculator")}</span>
                         </Link>
 
                         <Link to="/cbam-calculator" className="group flex items-center gap-3 select-none rounded-lg p-3 hover:bg-gray-50 transition-colors border-0">
                           <Shield className="h-5 w-5 text-emerald-600" />
-                          <span className="text-sm font-medium text-gray-900 group-hover:text-emerald-600">Calculateur CBAM</span>
+                          <span className="text-sm font-medium text-gray-900 group-hover:text-emerald-600">{t("navigation.cbamCalculator")}</span>
                         </Link>
 
                         <Link to="/calculateur-roi" className="group flex items-center gap-3 select-none rounded-lg p-3 hover:bg-gray-50 transition-colors border-0">
                           <Zap className="h-5 w-5 text-emerald-600" />
-                          <span className="text-sm font-medium text-gray-900 group-hover:text-emerald-600">Calculateur de ROI climat</span>
+                          <span className="text-sm font-medium text-gray-900 group-hover:text-emerald-600">{t("navigation.roiCalculator")}</span>
                         </Link>
                       </div>
 
                       {/* Colonne contenus */}
                       <div className="space-y-3">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Contenus</p>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{t("navigation.contents")}</p>
                         <Link to="/blog" className="group block select-none rounded-lg p-3 hover:bg-gray-50 transition-colors border-0">
                           <div className="flex items-start space-x-3">
                             <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center mt-0.5">
@@ -547,10 +547,10 @@ export const MainHeader = () => {
                             </div>
                             <div className="flex-1">
                               <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600 mb-1">
-                                FAQ
+                                {t("navigation.faq")}
                               </div>
                               <p className="text-xs text-gray-500 leading-relaxed">
-                                Questions fréquemment posées
+                                {t("navigation.faqDescription")}
                               </p>
                             </div>
                           </div>
@@ -563,10 +563,10 @@ export const MainHeader = () => {
                             </div>
                             <div className="flex-1">
                               <div className="text-sm font-medium text-gray-900 group-hover:text-green-600 mb-1">
-                                Academy
+                                {t("navigation.academy")}
                               </div>
                               <p className="text-xs text-gray-500 leading-relaxed">
-                                Formations et certifications carbone
+                                {t("navigation.academyDescription")}
                               </p>
                             </div>
                           </div>
@@ -580,18 +580,18 @@ export const MainHeader = () => {
               {/* À propos */}
               <NavigationMenuItem>
                 <NavigationMenuTrigger className={`h-10 px-4 py-2 text-base font-semibold ${transparent ? "text-white/90 hover:text-white data-[state=open]:text-white" : "text-gray-700 hover:text-gray-900 data-[state=open]:text-gray-900"} bg-transparent hover:bg-transparent data-[state=open]:bg-transparent`}>
-                  À propos
+                  {t("navigation.about")}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-[320px] p-4 space-y-1">
                     <Link to="/about" className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-                      Notre entreprise
+                      {t("navigation.company")}
                     </Link>
                     <Link to="/team" className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
                       {t("navigation.ourTeam.title")}
                     </Link>
                     <Link to="/contact" className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-                      Contact
+                      {t("navigation.contact")}
                     </Link>
                   </div>
                 </NavigationMenuContent>
@@ -625,7 +625,7 @@ export const MainHeader = () => {
                 onClick={() => navigate("/inscription")}
                 className={`font-medium px-5 py-2 h-10 rounded-[4px] ${transparent ? "bg-[#10B981] hover:bg-[#059669] text-white shadow-lg shadow-[#10B981]/20" : "bg-[#16585C] hover:bg-[#0F4144] text-white"}`}
               >
-                S'inscrire
+                {t("navigation.signUp")}
               </Button>
               <Button 
                 onClick={() => navigate("/auth")}

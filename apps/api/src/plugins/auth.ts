@@ -34,18 +34,25 @@ declare module "fastify" {
   }
 }
 
+const WEAK_JWT_SECRETS = new Set([
+  "change-me-in-production",
+  "dev-only-change-me",
+  "change-me-long-random-jwt-secret",
+]);
+
 const JWT_SECRET = (() => {
   const secret = process.env.JWT_SECRET;
   const isProd = process.env.NODE_ENV === "production";
-  if (!secret || secret === "change-me-in-production" || secret === "dev-only-change-me") {
-    if (isProd) {
-      throw new Error(
-        "JWT_SECRET must be set to a strong secret in production (not the example placeholder).",
-      );
-    }
+  const weak = !secret || WEAK_JWT_SECRETS.has(secret);
+  if (isProd && (weak || (secret && secret.length < 32))) {
+    throw new Error(
+      "JWT_SECRET must be set to a strong secret in production (not an example placeholder, ≥32 chars).",
+    );
+  }
+  if (weak) {
     return secret || "dev-only-change-me";
   }
-  return secret;
+  return secret as string;
 })();
 
 export function signToken(

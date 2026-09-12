@@ -62,6 +62,7 @@ const ScenariosModule = lazy(() => import('@/modules/scenarios/ScenariosModule')
 
 // Paramètres routes
 const ParametresApp = lazy(() => import('@/app/parametres/ParametresApp').then(m => ({ default: m.ParametresApp })));
+const EmissionFactorCatalogPage = lazy(() => import('@/app/emission-factors/EmissionFactorCatalogPage'));
 
 // Module apps
 const CollectApp = lazy(() => import('@/modules/collect/CollectApp').then(m => ({ default: m.default })));
@@ -270,6 +271,17 @@ export const AppRouter: React.FC = () => {
         </ModuleProtectedRoute>
       } />
 
+
+      {/* Catalogue FE registry (search + facets + detail) */}
+      <Route path="emission-factors" element={
+        <ModuleProtectedRoute>
+          <Suspense fallback={<LoadingFallback />}>
+            <ModuleLayout moduleSlug="bilan-carbone">
+              <EmissionFactorCatalogPage />
+            </ModuleLayout>
+          </Suspense>
+        </ModuleProtectedRoute>
+      } />
 
       {/* Paramètres - utilise ParametresApp avec son propre HorizontalNav */}
       <Route path="parametres/*" element={

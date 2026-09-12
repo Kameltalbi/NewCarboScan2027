@@ -13,7 +13,13 @@ dist-ssr
 *.local
 .env
 .env.local
+.env.production
+.env.development
+.env.staging
 .env.*.local
+*.pem
+id_rsa
+id_ed25519
 
 # Editor directories and files
 .vscode/*
@@ -32,4 +38,6 @@ dist-ssr
 apps/api/dist
 **/node_modules
 dumps/*.json
+dumps/*.dump
+dumps/*.sql
 !dumps/.gitkeep
