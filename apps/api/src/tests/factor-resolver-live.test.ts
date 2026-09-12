@@ -1,5 +1,5 @@
 /**
- * Factor Resolver V1 — live matrix against real registry (10024).
+ * Factor Resolver V1 — live matrix against real registry (11445 total / 10024 visible).
  * Shadow mode only. Does not write ledger.
  */
 import { describe, it } from "node:test";
@@ -9,7 +9,8 @@ import { resolveFactor } from "../services/factorResolver/index.js";
 import type { ResolveFactorInput, ResolveFactorResult } from "../services/factorResolver/types.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
-const ORG = "00000000-0000-4000-8000-000000000001";
+/** Distinct from E2E calculate fixture org so parallel ledger writes cannot race this assertion. */
+const ORG = "b1000000-0000-4000-8000-000000000099";
 
 function base(partial: Partial<ResolveFactorInput> & Pick<ResolveFactorInput, "activity" | "unit">): ResolveFactorInput {
   return {
@@ -39,7 +40,7 @@ describe("factor resolver live matrix", { skip: !DATABASE_URL }, () => {
 
   it("governance non-regression snapshot", async () => {
     const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-    assert.equal(registry.rows[0].n, 10024);
+    assert.equal(registry.rows[0].n, 11445);
     const gov = await pool.query(
       `SELECT s.source_key, v.calculation_status, v.resolver_status, COUNT(f.id)::int AS n
        FROM emission_factor_versions v
@@ -237,9 +238,15 @@ describe("factor resolver live matrix", { skip: !DATABASE_URL }, () => {
   });
 
   it("shadow does not write ledger", async () => {
-    const before = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
+    const before = await pool.query(
+      `SELECT COUNT(*)::int AS n FROM calculation_ledger WHERE organization_id = $1`,
+      [ORG],
+    );
     await resolveFactor(pool, base({ activity: "electricity", unit: "kWh", country: "TN" }));
-    const after = await pool.query(`SELECT COUNT(*)::int AS n FROM calculation_ledger`);
+    const after = await pool.query(
+      `SELECT COUNT(*)::int AS n FROM calculation_ledger WHERE organization_id = $1`,
+      [ORG],
+    );
     assert.equal(after.rows[0].n, before.rows[0].n);
   });
 

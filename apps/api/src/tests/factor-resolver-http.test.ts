@@ -4,27 +4,17 @@ import pg from "pg";
 import { buildTestApp } from "./helpers/buildTestApp.js";
 import { signToken } from "../plugins/auth.js";
 import { DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR } from "../routes/calculate.js";
+import { ensureTestOrgFixture } from "./helpers/ensureTestOrgFixture.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
 describe("factor resolver HTTP shadow", { skip: !DATABASE_URL }, () => {
-  it("auth + shadow resolve + calculate non-regression", async (t) => {
+  it("auth + shadow resolve + calculate non-regression", async () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL });
     const app = await buildTestApp();
     try {
-      const member = await pool.query<{
-        user_id: string;
-        email: string;
-        organization_id: string;
-      }>(
-        `SELECT om.user_id, u.email, om.organization_id
-         FROM organization_members om JOIN users u ON u.id = om.user_id LIMIT 1`,
-      );
-      if (!member.rows[0]) {
-        t.skip("no org member");
-        return;
-      }
-      const { user_id, email, organization_id } = member.rows[0];
+      const fixture = await ensureTestOrgFixture(pool);
+      const { userId: user_id, email, organizationId: organization_id } = fixture;
       const token = signToken({
         id: user_id,
         email,

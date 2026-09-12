@@ -321,22 +321,30 @@ type QueryContext = {
 
 function buildQueryContext(q: string, params: unknown[]): QueryContext {
   const qIdx = pushQueryParam(params, q);
-  const qNormIdx = pushQueryParam(params, q);
   const numericCode = isNumericCodeQuery(q);
-  const mode = numericCode ? "prefix" : getQuerySearchMode(q);
+  const mode: QuerySearchMode = numericCode ? "prefix" : getQuerySearchMode(q);
   const tokens = numericCode ? [] : splitQueryTokens(q);
 
+  // Allocate only the bind params that the match/rank SQL will reference.
+  // Pushing unused params breaks node-pg ("supplies N parameters, but requires M").
+  let qNormIdx = qIdx;
+  let ftsQueryIdx = qIdx;
   let allTokensInName = "FALSE";
-  if (tokens.length > 1) {
-    allTokensInName = tokens
-      .map((token) => {
-        const tIdx = pushQueryParam(params, token);
-        return `ef_immutable_unaccent(lower(f.name)) LIKE '%' || ef_immutable_unaccent(lower($${tIdx})) || '%'`;
-      })
-      .join(" AND ");
-  }
 
-  const ftsQueryIdx = pushQueryParam(params, q);
+  if (!numericCode) {
+    qNormIdx = pushQueryParam(params, q);
+    if (mode === "full") {
+      if (tokens.length > 1) {
+        allTokensInName = tokens
+          .map((token) => {
+            const tIdx = pushQueryParam(params, token);
+            return `ef_immutable_unaccent(lower(f.name)) LIKE '%' || ef_immutable_unaccent(lower($${tIdx})) || '%'`;
+          })
+          .join(" AND ");
+      }
+      ftsQueryIdx = pushQueryParam(params, q);
+    }
+  }
 
   return {
     qIdx,
@@ -475,6 +483,31 @@ async function countPrimaryMatches(
   return Number(rows[0]?.n ?? 0);
 }
 
+/** Exact total for non-fuzzy searches — cheap COUNT (no ranked materialization). */
+async function countMatchingFactors(
+  pool: Queryable,
+  query: FactorSearchQuery,
+  q: string | undefined,
+): Promise<number> {
+  const params: unknown[] = [];
+  const visibilityClauses = buildVisibilityClause(query);
+  const filterClauses = buildFilterClauses(query, params);
+  const whereParts = [...visibilityClauses, ...filterClauses];
+  if (q) {
+    const ctx = buildQueryContext(q, params);
+    whereParts.push(`(${buildPrimaryMatchClause(ctx)})`);
+  }
+  const { rows } = await pool.query<{ n: string }>(
+    `SELECT COUNT(*)::text AS n
+     FROM emission_factors f
+     JOIN emission_factor_versions v ON v.id = f.version_id
+     JOIN factor_sources s ON s.id = v.source_id
+     WHERE ${whereParts.join(" AND ")}`,
+    params,
+  );
+  return Number(rows[0]?.n ?? 0);
+}
+
 export type SearchFactorsOptions = {
   debug?: boolean;
 };
@@ -565,7 +598,8 @@ export async function searchFactors(
 
   const rankedWhere = textMatchClause ?? "TRUE";
 
-  const sql = `
+  // Shared CTE body for page (and fuzzy total).
+  const rankedCte = `
     WITH base AS (
       SELECT
         f.id,
@@ -623,16 +657,51 @@ export async function searchFactors(
       FROM base f
       ${fuzzyJoin}
       WHERE ${rankedWhere}
+    )`;
+
+  // Fuzzy: COUNT(ranked) in the same SQL so KNN is paid once (PERF-SEARCH-01).
+  // Non-fuzzy: keep LIMIT-friendly page plan + cheap separate COUNT (avoids materializing all rows).
+  const sql = includeFuzzy
+    ? `${rankedCte},
+    meta AS (
+      SELECT COUNT(*)::int AS total FROM ranked
+    ),
+    page AS (
+      SELECT * FROM ranked
+      ${cursorWhere}
+      ORDER BY rank_score DESC, id ASC
+      LIMIT $${limitIdx}
     )
+    SELECT p.*, m.total AS _total
+    FROM meta m
+    LEFT JOIN page p ON TRUE
+    ORDER BY p.rank_score DESC NULLS LAST, p.id ASC NULLS LAST`
+    : `${rankedCte}
     SELECT * FROM ranked
     ${cursorWhere}
     ORDER BY rank_score DESC, id ASC
-    LIMIT $${limitIdx}
-  `;
+    LIMIT $${limitIdx}`;
 
-  const { rows } = await pool.query<SearchRow>(sql, params);
-  const hasMore = rows.length > query.limit;
-  const pageRows = hasMore ? rows.slice(0, query.limit) : rows;
+  type SearchRowWithTotal = SearchRow & { _total?: number | null };
+  const pagePromise = pool.query<SearchRowWithTotal>(sql, params);
+  const totalPromise = includeFuzzy
+    ? Promise.resolve(null)
+    : countMatchingFactors(pool, query, q);
+
+  const [{ rows }, cheapTotal] = await Promise.all([pagePromise, totalPromise]);
+
+  let total: number;
+  let dataRows: SearchRow[];
+  if (includeFuzzy) {
+    total = Number(rows[0]?._total ?? 0);
+    dataRows = rows.filter((row): row is SearchRowWithTotal & SearchRow => row.id != null);
+  } else {
+    total = cheapTotal ?? 0;
+    dataRows = rows;
+  }
+
+  const hasMore = dataRows.length > query.limit;
+  const pageRows = hasMore ? dataRows.slice(0, query.limit) : dataRows;
   const items = pageRows.map((row) => mapSearchRow(row, options.debug));
   const lastRow = pageRows[pageRows.length - 1];
   const nextCursor =
@@ -655,6 +724,7 @@ export async function searchFactors(
     }),
     nextCursor,
     hasMore,
+    total,
   };
 }
 

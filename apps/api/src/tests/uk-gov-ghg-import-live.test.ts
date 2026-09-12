@@ -20,11 +20,11 @@ const WORKBOOK =
   "/Users/kameltalbi/Desktop/ghg-conversion-factors-2026-flat-format-revised.xlsx";
 
 describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
-  it("registry / governance / catalog / legacy invariants", async () => {
+  it("registry / governance / catalog / legacy invariants", async (t) => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL });
     try {
       const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-      assert.equal(registry.rows[0].n, 10024);
+      assert.equal(registry.rows[0].n, 11445);
 
       const uk = await pool.query(
         `SELECT COUNT(*)::int AS n,
@@ -45,6 +45,11 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
          WHERE s.source_key = $1 AND v.dataset_version = $2`,
         [UK_SOURCE_KEY, UK_DATASET_VERSION],
       );
+      // After 023/024 activation this suite no longer applies — use activate-catalog-live.
+      if (gov.rows[0].status !== "draft" || gov.rows[0].catalog_status !== "hidden") {
+        t.skip("UK already catalog-activated (023); see uk-gov-ghg-activate-catalog-live");
+        return;
+      }
       assert.equal(gov.rows[0].status, "draft");
       assert.equal(gov.rows[0].catalog_status, "hidden");
       assert.equal(gov.rows[0].calculation_status, "enabled");
@@ -260,9 +265,9 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
         [UK_SOURCE_KEY, UK_DATASET_VERSION],
       );
       const result = await importUkGovGhg2026(pool, WORKBOOK);
-      assert.equal(result.registryAfter, 10024);
+      assert.equal(result.registryAfter, 11445);
       assert.equal(result.ukCount, 2622);
-      assert.equal(result.catalogVisible, 7402);
+      assert.equal(result.catalogVisible, 10024);
       assert.equal(result.legacyInternal, 8);
       assert.equal(result.inserted, 0);
       const after = await pool.query(
@@ -283,33 +288,26 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL });
     const app = await buildTestApp();
     try {
-      const member = await pool.query<{
-        user_id: string;
-        email: string;
-        organization_id: string;
-      }>(
-        `SELECT om.user_id, u.email, om.organization_id
-         FROM organization_members om JOIN users u ON u.id = om.user_id LIMIT 1`,
-      );
-      if (!member.rows[0]) {
-        // No tenant fixture — still assert SQL gate
-        const ukId = await pool.query<{ id: string }>(
-          `SELECT f.id FROM emission_factors f
-           JOIN emission_factor_versions v ON v.id = f.version_id
-           JOIN factor_sources s ON s.id = v.source_id
-           WHERE s.source_key = $1 LIMIT 1`,
-          [UK_SOURCE_KEY],
-        );
-        assert.ok(ukId.rows[0]?.id);
-        return;
-      }
-      const { user_id, email, organization_id } = member.rows[0];
+      const { ensureTestOrgFixture } = await import("./helpers/ensureTestOrgFixture.js");
+      const fixture = await ensureTestOrgFixture(pool);
       const token = signToken({
-        id: user_id,
-        email,
-        organizationId: organization_id,
+        id: fixture.userId,
+        email: fixture.email,
+        organizationId: fixture.organizationId,
         role: "member",
       });
+
+      const ukGov = await pool.query<{
+        status: string;
+        catalog_status: string;
+        calculation_status: string;
+      }>(
+        `SELECT v.status, v.catalog_status, v.calculation_status
+         FROM emission_factor_versions v
+         JOIN factor_sources s ON s.id = v.source_id
+         WHERE s.source_key = $1 AND v.dataset_version = $2`,
+        [UK_SOURCE_KEY, UK_DATASET_VERSION],
+      );
 
       const ukFactor = await pool.query<{ id: string }>(
         `SELECT f.id FROM emission_factors f
@@ -325,7 +323,7 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
         url: "/v1/calculate",
         headers: {
           authorization: `Bearer ${token}`,
-          "x-organization-id": organization_id,
+          "x-organization-id": fixture.organizationId,
           "content-type": "application/json",
         },
         payload: {
@@ -342,14 +340,27 @@ describe("uk gov ghg 2026 import (live)", { skip: !DATABASE_URL }, () => {
         },
       });
       assert.equal(calc.statusCode, 400);
-      assert.equal(calc.json().error, UNAVAILABLE_EMISSION_FACTOR_ERROR);
+      // Draft/hidden → unavailable; post-023 approved+enabled → direct-calc source gate
+      const err = calc.json().error as string;
+      if (
+        ukGov.rows[0]?.status === "draft" ||
+        ukGov.rows[0]?.catalog_status === "hidden" ||
+        ukGov.rows[0]?.calculation_status !== "enabled"
+      ) {
+        assert.equal(err, UNAVAILABLE_EMISSION_FACTOR_ERROR);
+      } else {
+        const { DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR } = await import(
+          "../routes/calculate.js"
+        );
+        assert.equal(err, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
+      }
 
       const factors = await app.inject({
         method: "GET",
         url: "/v1/factors",
         headers: {
           authorization: `Bearer ${token}`,
-          "x-organization-id": organization_id,
+          "x-organization-id": fixture.organizationId,
         },
       });
       assert.equal(factors.statusCode, 200);

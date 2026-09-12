@@ -8,6 +8,7 @@ import {
   getFactorById,
   searchFactors,
 } from "../services/factorSearch.js";
+import { ensureTestOrgFixture } from "./helpers/ensureTestOrgFixture.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -44,20 +45,11 @@ describe("factor catalog governance 019", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     const app = await buildTestApp();
     try {
-      const member = await pool.query<{ user_id: string; email: string; organization_id: string }>(
-        `SELECT om.user_id, u.email, om.organization_id
-         FROM organization_members om
-         JOIN users u ON u.id = om.user_id
-         LIMIT 1`,
-      );
-      if (!member.rows[0]) {
-        t.skip("need org member fixture");
-        return;
-      }
+      const fixture = await ensureTestOrgFixture(pool);
       const token = signToken({
-        id: member.rows[0].user_id,
-        email: member.rows[0].email,
-        organizationId: member.rows[0].organization_id,
+        id: fixture.userId,
+        email: fixture.email,
+        organizationId: fixture.organizationId,
         role: "member",
       });
       const res = await app.inject({
@@ -65,7 +57,7 @@ describe("factor catalog governance 019", () => {
         url: "/v1/factors",
         headers: {
           authorization: `Bearer ${token}`,
-          "x-organization-id": member.rows[0].organization_id,
+          "x-organization-id": fixture.organizationId,
         },
       });
       assert.equal(res.statusCode, 200);

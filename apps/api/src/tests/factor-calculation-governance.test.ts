@@ -4,6 +4,7 @@ import pg from "pg";
 import { buildTestApp } from "./helpers/buildTestApp.js";
 import { signToken } from "../plugins/auth.js";
 import {
+  DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR,
   REGISTRY_FACTOR_OVERRIDE_ERROR,
   UNAVAILABLE_EMISSION_FACTOR_ERROR,
 } from "../routes/calculate.js";
@@ -11,7 +12,7 @@ import { getFactorById, searchFactors } from "../services/factorSearch.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
-const ADEME_FACTOR_ID = "71daca92-31e7-4188-b124-f8e26f8f84a1";
+const ADEME_EXTERNAL_CODE = "15319";
 
 const RESOLVABLE_FACTOR_SQL = `
   SELECT f.id, f.value::text AS value,
@@ -34,29 +35,31 @@ type AuthCtx = {
   userId: string;
 };
 
-async function loadAuth(pool: pg.Pool): Promise<AuthCtx | null> {
-  const member = await pool.query<{
-    user_id: string;
-    email: string;
-    organization_id: string;
-  }>(
-    `SELECT om.user_id, u.email, om.organization_id
-     FROM organization_members om
-     JOIN users u ON u.id = om.user_id
-     LIMIT 1`,
-  );
-  if (!member.rows[0]) return null;
-  const { user_id, email, organization_id } = member.rows[0];
+async function loadAuth(pool: pg.Pool): Promise<AuthCtx> {
+  const { ensureTestOrgFixture } = await import("./helpers/ensureTestOrgFixture.js");
+  const fixture = await ensureTestOrgFixture(pool);
   return {
-    userId: user_id,
-    orgId: organization_id,
+    userId: fixture.userId,
+    orgId: fixture.organizationId,
     token: signToken({
-      id: user_id,
-      email,
-      organizationId: organization_id,
+      id: fixture.userId,
+      email: fixture.email,
+      organizationId: fixture.organizationId,
       role: "member",
     }),
   };
+}
+
+async function getAdemeFactorId(pool: pg.Pool): Promise<string | null> {
+  const { rows } = await pool.query<{ id: string }>(
+    `SELECT f.id FROM emission_factors f
+     JOIN emission_factor_versions v ON v.id = f.version_id
+     JOIN factor_sources s ON s.id = v.source_id
+     WHERE s.source_key = 'ademe' AND f.external_code = $1
+     LIMIT 1`,
+    [ADEME_EXTERNAL_CODE],
+  );
+  return rows[0]?.id ?? null;
 }
 
 async function postCalculate(
@@ -107,10 +110,6 @@ describe("factor calculation governance 019C", () => {
     }
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     const auth = await loadAuth(pool);
-    if (!auth) {
-      t.skip("need org member");
-      return;
-    }
     const tn = await getCoreTnFactor(pool, "electricity_kwh");
     if (!tn) {
       t.skip("electricity_kwh not found");
@@ -175,15 +174,16 @@ describe("factor calculation governance 019C", () => {
     }
   });
 
-  it("B: ADEME draft + calculation disabled → refus", async (t) => {
+  it("B: ADEME direct calculate refused (source gate)", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
     }
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     const auth = await loadAuth(pool);
-    if (!auth) {
-      t.skip("need org member");
+    const ademeId = await getAdemeFactorId(pool);
+    if (!ademeId) {
+      t.skip("ADEME 15319 not found");
       return;
     }
     const app = await buildTestApp();
@@ -194,14 +194,15 @@ describe("factor calculation governance 019C", () => {
           {
             lineKey: "ademe-blocked",
             scope: 1,
-            factorId: ADEME_FACTOR_ID,
+            factorId: ademeId,
             activityQuantity: "100",
             activityUnit: "Nm3",
           },
         ],
       });
       assert.equal(res.statusCode, 400);
-      assert.equal(res.json().error, UNAVAILABLE_EMISSION_FACTOR_ERROR);
+      // Post-024 ADEME is calculation-enabled but direct /v1/calculate stays internal-only.
+      assert.equal(res.json().error, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
     } finally {
       await app.close();
       await pool.end();
@@ -244,14 +245,15 @@ describe("factor calculation governance 019C", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     const auth = await loadAuth(pool);
     const tn = await getCoreTnFactor(pool, "gas_m3");
-    if (!auth || !tn) {
+    if (!tn) {
       t.skip("fixtures missing");
       return;
     }
     const app = await buildTestApp();
     try {
       await pool.query(
-        `UPDATE emission_factor_versions SET calculation_status = 'disabled'
+        `UPDATE emission_factor_versions
+         SET calculation_status = 'disabled', resolver_status = 'disabled'
          WHERE version_label = 'core-tn-2027.1'`,
       );
       const res = await postCalculate(app, auth, {
@@ -270,7 +272,8 @@ describe("factor calculation governance 019C", () => {
       assert.equal(res.json().error, UNAVAILABLE_EMISSION_FACTOR_ERROR);
     } finally {
       await pool.query(
-        `UPDATE emission_factor_versions SET calculation_status = 'enabled'
+        `UPDATE emission_factor_versions
+         SET calculation_status = 'enabled', resolver_status = 'enabled'
          WHERE version_label = 'core-tn-2027.1'`,
       );
       await app.close();
@@ -286,7 +289,7 @@ describe("factor calculation governance 019C", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     const auth = await loadAuth(pool);
     const tn = await getCoreTnFactor(pool, "gas_m3");
-    if (!auth || !tn) {
+    if (!tn) {
       t.skip("fixtures missing");
       return;
     }
@@ -355,7 +358,7 @@ describe("factor calculation governance 019C", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     const auth = await loadAuth(pool);
     const tn = await getCoreTnFactor(pool, "fuel_liters");
-    if (!auth || !tn) {
+    if (!tn) {
       t.skip("fixtures missing");
       return;
     }
@@ -408,26 +411,24 @@ describe("factor calculation governance 019C", () => {
     }
   });
 
-  it("019B active: ADEME visible in catalog but calculate refused", async (t) => {
+  it("019B/024 active: ADEME visible in catalog but direct calculate refused", async (t) => {
     if (!DATABASE_URL) {
       t.skip("DATABASE_URL unset");
       return;
     }
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     const auth = await loadAuth(pool);
-    if (!auth) {
-      t.skip("need org member");
-      return;
-    }
     const app = await buildTestApp();
     try {
       const search = await searchFactors(pool, { status: "approved", q: "15319", limit: 5 });
       assert.ok(search.items.some((i) => i.externalCode === "15319"));
 
-      const detail = await getFactorById(pool, ADEME_FACTOR_ID, false);
+      const ademeId = await getAdemeFactorId(pool);
+      assert.ok(ademeId);
+      const detail = await getFactorById(pool, ademeId!, false);
       assert.ok(detail);
       assert.equal(detail!.governance.catalogStatus, "visible");
-      assert.equal(detail!.governance.calculationStatus, "disabled");
+      assert.equal(detail!.governance.calculationStatus, "enabled");
 
       const calc = await postCalculate(app, auth, {
         method: "bilan_carbone",
@@ -435,14 +436,14 @@ describe("factor calculation governance 019C", () => {
           {
             lineKey: "ademe-019b-active",
             scope: 1,
-            factorId: ADEME_FACTOR_ID,
+            factorId: ademeId,
             activityQuantity: "1",
             activityUnit: "Nm3",
           },
         ],
       });
       assert.equal(calc.statusCode, 400);
-      assert.equal(calc.json().error, UNAVAILABLE_EMISSION_FACTOR_ERROR);
+      assert.equal(calc.json().error, DIRECT_CALCULATE_SOURCE_RESTRICTED_ERROR);
 
       const legacy = await pool.query<{ n: string }>(
         `SELECT COUNT(*)::text AS n

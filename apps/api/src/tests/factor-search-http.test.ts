@@ -4,6 +4,7 @@ import pg from "pg";
 import { buildTestApp } from "./helpers/buildTestApp.js";
 import { signToken } from "../plugins/auth.js";
 import { searchFactors } from "../services/factorSearch.js";
+import { ensureTestOrgFixture } from "./helpers/ensureTestOrgFixture.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -17,24 +18,7 @@ type AuthFixtures = {
 };
 
 async function loadAuthFixtures(pool: pg.Pool): Promise<AuthFixtures | null> {
-  const sa = await pool.query<{ user_id: string; email: string }>(
-    `SELECT ur.user_id, u.email
-     FROM user_roles ur
-     JOIN users u ON u.id = ur.user_id
-     WHERE ur.role = 'superadmin'
-     LIMIT 1`,
-  );
-  const member = await pool.query<{ user_id: string; email: string; organization_id: string }>(
-    `SELECT om.user_id, u.email, om.organization_id
-     FROM organization_members om
-     JOIN users u ON u.id = om.user_id
-     WHERE NOT EXISTS (
-       SELECT 1 FROM user_roles ur
-       WHERE ur.user_id = om.user_id AND ur.role = 'superadmin'
-     )
-     LIMIT 1`,
-  );
-  if (!sa.rows[0] || !member.rows[0]) return null;
+  const fixture = await ensureTestOrgFixture(pool);
 
   const draftList = await searchFactors(pool, {
     status: "approved",
@@ -44,11 +28,11 @@ async function loadAuthFixtures(pool: pg.Pool): Promise<AuthFixtures | null> {
   if (!draftList.items[0]) return null;
 
   return {
-    orgId: member.rows[0].organization_id,
-    memberUserId: member.rows[0].user_id,
-    memberEmail: member.rows[0].email,
-    superadminUserId: sa.rows[0].user_id,
-    superadminEmail: sa.rows[0].email,
+    orgId: fixture.organizationId,
+    memberUserId: fixture.userId,
+    memberEmail: fixture.email,
+    superadminUserId: fixture.superadminUserId,
+    superadminEmail: fixture.superadminEmail,
     ademeFactorId: draftList.items[0].id,
   };
 }

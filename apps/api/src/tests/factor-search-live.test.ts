@@ -49,7 +49,7 @@ describe("factor search live DB", () => {
          JOIN emission_factor_versions v ON v.id = f.version_id
          WHERE f.status = 'approved' AND v.status = 'approved' AND v.catalog_status = 'visible'`,
       );
-      assert.equal(Number(count.rows[0].n), 7402);
+      assert.equal(Number(count.rows[0].n), 10024);
     } finally {
       await pool.end();
     }
@@ -347,7 +347,7 @@ describe("factor search live DB", () => {
     const pool = new pg.Pool({ connectionString: DATABASE_URL, max: 3 });
     try {
       const all = await searchFactors(pool, { status: "approved", limit: 20 });
-      assert.equal(all.total, 10024);
+      assert.equal(all.total, 10024); // public catalog (EPA hidden)
       assert.equal(all.items.length, 20);
       assert.equal(all.hasMore, true);
 

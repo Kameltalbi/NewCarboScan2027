@@ -15,6 +15,7 @@ import {
   UK_SAFE_SUBSET_SQL,
 } from "../services/factorResolver/safeSubsets.js";
 import { RULESET_VERSION } from "../services/factorResolver/types.js";
+import { ensureTestOrgFixture } from "./helpers/ensureTestOrgFixture.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 const MARKER = "fe-v1-test";
@@ -33,19 +34,11 @@ describe("factor resolver FE V1", { skip: !DATABASE_URL }, () => {
     pool = new pg.Pool({ connectionString: DATABASE_URL });
     app = await buildTestApp();
 
-    const member = await pool.query<{
-      user_id: string;
-      email: string;
-      organization_id: string;
-    }>(
-      `SELECT om.user_id, u.email, om.organization_id
-       FROM organization_members om JOIN users u ON u.id = om.user_id LIMIT 1`,
-    );
-    if (!member.rows[0]) throw new Error("no org member");
-    organizationId = member.rows[0].organization_id;
+    const fixture = await ensureTestOrgFixture(pool);
+    organizationId = fixture.organizationId;
     token = signToken({
-      id: member.rows[0].user_id,
-      email: member.rows[0].email,
+      id: fixture.userId,
+      email: fixture.email,
       organizationId,
       role: "member",
     });
@@ -78,7 +71,7 @@ describe("factor resolver FE V1", { skip: !DATABASE_URL }, () => {
 
   it("governance + safe subset counts after 024", async () => {
     const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-    assert.equal(registry.rows[0].n, 10024);
+    assert.equal(registry.rows[0].n, 11445);
 
     const gov = await pool.query(
       `SELECT s.source_key, v.calculation_status, v.resolver_status, COUNT(f.id)::int AS n

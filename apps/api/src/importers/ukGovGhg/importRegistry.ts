@@ -248,10 +248,12 @@ export async function upsertUkFactors(
 export async function countRegistry(db: Queryable): Promise<{
   registry: number;
   uk: number;
+  epa: number;
   catalogVisible: number;
   legacyInternal: number;
   ademe: number;
   internal: number;
+  ukCatalogVisible: boolean;
 }> {
   const registry = Number(
     (await q<{ n: string }>(db, `SELECT COUNT(*)::text AS n FROM emission_factors`))[0]?.n ?? 0,
@@ -265,6 +267,17 @@ export async function countRegistry(db: Queryable): Promise<{
          JOIN factor_sources s ON s.id = v.source_id
          WHERE s.source_key = $1 AND v.dataset_version = $2`,
         [UK_SOURCE_KEY, UK_DATASET_VERSION],
+      )
+    )[0]?.n ?? 0,
+  );
+  const epa = Number(
+    (
+      await q<{ n: string }>(
+        db,
+        `SELECT COUNT(*)::text AS n FROM emission_factors f
+         JOIN emission_factor_versions v ON v.id = f.version_id
+         JOIN factor_sources s ON s.id = v.source_id
+         WHERE s.source_key = 'epa_ghg_emission_factors_hub'`,
       )
     )[0]?.n ?? 0,
   );
@@ -311,7 +324,17 @@ export async function countRegistry(db: Queryable): Promise<{
       )
     )[0]?.n ?? 0,
   );
-  return { registry, uk, catalogVisible, legacyInternal, ademe, internal };
+  const ukGov = await q<{ catalog_status: string }>(
+    db,
+    `SELECT v.catalog_status
+     FROM emission_factor_versions v
+     JOIN factor_sources s ON s.id = v.source_id
+     WHERE s.source_key = $1 AND v.dataset_version = $2
+     LIMIT 1`,
+    [UK_SOURCE_KEY, UK_DATASET_VERSION],
+  );
+  const ukCatalogVisible = ukGov[0]?.catalog_status === "visible";
+  return { registry, uk, epa, catalogVisible, legacyInternal, ademe, internal, ukCatalogVisible };
 }
 
 export async function runUkImport(
@@ -331,12 +354,14 @@ export async function runUkImport(
   try {
     await client.query("BEGIN");
     const before = await countRegistry(client);
-    if (before.registry !== 7402 && before.uk === 0) {
-      // Allow only clean 7402 before first import, or re-run with existing UK
-      throw new Error(`Unexpected registry before import: ${before.registry} (uk=${before.uk})`);
+    const baseWithoutUk = 7402 + before.epa; // Core TN + ADEME + optional EPA (hidden)
+    if (before.uk === 0 && before.registry !== baseWithoutUk) {
+      throw new Error(
+        `Registry must be ${baseWithoutUk} before first UK import, got ${before.registry} (epa=${before.epa})`,
+      );
     }
-    if (before.uk === 0 && before.registry !== 7402) {
-      throw new Error(`Registry must be 7402 before first UK import, got ${before.registry}`);
+    if (before.uk > 0 && before.uk !== opts.dtos.length) {
+      throw new Error(`Unexpected existing UK count before re-import: ${before.uk}`);
     }
 
     const { versionId } = await ensureUkSourceAndVersion(client);
@@ -382,8 +407,12 @@ export async function runUkImport(
     if (after.uk !== opts.dtos.length) {
       throw new Error(`UK count ${after.uk} != dto count ${opts.dtos.length}`);
     }
-    if (after.catalogVisible !== 7402) {
-      throw new Error(`Catalog visible changed: ${after.catalogVisible}`);
+    // Public catalog never includes EPA. UK contributes only when catalog_status=visible.
+    const expectedVisible = 7402 + (after.ukCatalogVisible ? opts.dtos.length : 0);
+    if (after.catalogVisible !== expectedVisible) {
+      throw new Error(
+        `Catalog visible ${after.catalogVisible} != expected ${expectedVisible} (ukVisible=${after.ukCatalogVisible})`,
+      );
     }
     if (after.legacyInternal !== 8) {
       throw new Error(`Legacy internal changed: ${after.legacyInternal}`);
@@ -391,7 +420,7 @@ export async function runUkImport(
     if (after.ademe !== 7394 || after.internal !== 8) {
       throw new Error(`ADEME/Core TN counts changed: ademe=${after.ademe} internal=${after.internal}`);
     }
-    const expectedRegistry = 7402 + opts.dtos.length;
+    const expectedRegistry = 7402 + opts.dtos.length + after.epa;
     if (after.registry !== expectedRegistry) {
       throw new Error(`Registry ${after.registry} != expected ${expectedRegistry}`);
     }

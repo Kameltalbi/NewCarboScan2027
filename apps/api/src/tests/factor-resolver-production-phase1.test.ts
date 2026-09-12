@@ -18,6 +18,7 @@ import {
   EXPECTED_SUBSET_COUNTS,
 } from "../services/factorResolver/safeSubsets.js";
 import { resolveFactor } from "../services/factorResolver/index.js";
+import { ensureTestOrgFixture } from "./helpers/ensureTestOrgFixture.js";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -39,20 +40,12 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
     pool = new pg.Pool({ connectionString: DATABASE_URL });
     app = await buildTestApp();
 
-    const member = await pool.query<{
-      user_id: string;
-      email: string;
-      organization_id: string;
-    }>(
-      `SELECT om.user_id, u.email, om.organization_id
-       FROM organization_members om JOIN users u ON u.id = om.user_id LIMIT 1`,
-    );
-    if (!member.rows[0]) throw new Error("no org member fixture");
-    userId = member.rows[0].user_id;
-    organizationId = member.rows[0].organization_id;
+    const fixture = await ensureTestOrgFixture(pool);
+    userId = fixture.userId;
+    organizationId = fixture.organizationId;
     token = signToken({
       id: userId,
-      email: member.rows[0].email,
+      email: fixture.email,
       organizationId,
       role: "member",
     });
@@ -99,13 +92,13 @@ describe("factor resolver production phase 1", { skip: !DATABASE_URL }, () => {
 
   it("non-regression governance + subset counts", async () => {
     const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-    assert.equal(registry.rows[0].n, 10024);
+    assert.equal(registry.rows[0].n, 11445);
     const visible = await pool.query(
       `SELECT COUNT(*)::int AS n FROM emission_factors f
        JOIN emission_factor_versions v ON v.id = f.version_id
        WHERE f.status='approved' AND v.status='approved' AND v.catalog_status='visible'`,
     );
-    assert.equal(visible.rows[0].n, 10024);
+    assert.equal(visible.rows[0].n, 10024); // EPA hidden
 
     const gov = await pool.query(
       `SELECT s.source_key, v.calculation_status, v.resolver_status, COUNT(f.id)::int AS n

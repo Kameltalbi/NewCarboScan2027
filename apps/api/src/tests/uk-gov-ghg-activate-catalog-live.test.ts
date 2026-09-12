@@ -18,7 +18,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
     const pool = new pg.Pool({ connectionString: DATABASE_URL });
     try {
       const registry = await pool.query(`SELECT COUNT(*)::int AS n FROM emission_factors`);
-      assert.equal(registry.rows[0].n, 10024);
+      assert.equal(registry.rows[0].n, 11445);
 
       const gov = await pool.query(
         `SELECT v.status, v.catalog_status, v.calculation_status, v.resolver_status,
@@ -145,23 +145,12 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
     const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
     const app = await buildTestApp();
     try {
-      const member = await pool.query<{
-        user_id: string;
-        email: string;
-        organization_id: string;
-      }>(
-        `SELECT om.user_id, u.email, om.organization_id
-         FROM organization_members om JOIN users u ON u.id = om.user_id LIMIT 1`,
-      );
-      if (!member.rows[0]) {
-        t.skip("no org member");
-        return;
-      }
-      const { user_id, email, organization_id } = member.rows[0];
+      const { ensureTestOrgFixture } = await import("./helpers/ensureTestOrgFixture.js");
+      const fixture = await ensureTestOrgFixture(pool);
       const token = signToken({
-        id: user_id,
-        email,
-        organizationId: organization_id,
+        id: fixture.userId,
+        email: fixture.email,
+        organizationId: fixture.organizationId,
         role: "member",
       });
       const ukFactor = await pool.query<{ id: string }>(
@@ -180,7 +169,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
         url: "/v1/calculate",
         headers: {
           authorization: `Bearer ${token}`,
-          "x-organization-id": organization_id,
+          "x-organization-id": fixture.organizationId,
           "content-type": "application/json",
         },
         payload: {
@@ -204,7 +193,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
         url: "/v1/factors",
         headers: {
           authorization: `Bearer ${token}`,
-          "x-organization-id": organization_id,
+          "x-organization-id": fixture.organizationId,
         },
       });
       assert.equal(factors.statusCode, 200);
@@ -215,7 +204,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
         url: `/v1/factors/search?status=approved&source=${UK_SOURCE_KEY}&q=Butane&limit=5`,
         headers: {
           authorization: `Bearer ${token}`,
-          "x-organization-id": organization_id,
+          "x-organization-id": fixture.organizationId,
         },
       });
       assert.equal(searchHttp.statusCode, 200);
@@ -230,7 +219,7 @@ describe("uk gov ghg 2026 catalog activation (live)", { skip: !DATABASE_URL }, (
         url: "/v1/factors/facets?status=approved",
         headers: {
           authorization: `Bearer ${token}`,
-          "x-organization-id": organization_id,
+          "x-organization-id": fixture.organizationId,
         },
       });
       assert.equal(facetsHttp.statusCode, 200);
