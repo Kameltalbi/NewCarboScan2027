@@ -1,14 +1,32 @@
 #!/usr/bin/env bash
 # Sauvegarde Postgres NewCarboScan — dump custom + chiffrement optionnel (AES-256-CBC).
 # Usage (cron recommandé quotidien) :
-#   0 2 * * * cd /opt/newcarboscan-2027 && ./scripts/backup-postgres.sh
+#   0 2 * * * cd /opt/newcarboscan-2027 && ./scripts/backup-postgres.sh >> /var/log/ncs-backup.log 2>&1
 #
 # Variables :
 #   BACKUP_DIR     (défaut: ./dumps)
 #   BACKUP_KEEP    (défaut: 14 dumps)
 #   BACKUP_ENCRYPT_KEY  si défini → produit .dump.enc (openssl aes-256-cbc)
+#   (chargé depuis .env si absent de l'environnement)
 set -euo pipefail
 cd "$(dirname "$0")/.."
+
+if [[ -z "${BACKUP_ENCRYPT_KEY:-}" && -f .env ]]; then
+  # shellcheck disable=SC1091
+  set -a
+  # shellcheck disable=SC1091
+  source .env
+  set +a
+fi
+
+if docker compose version >/dev/null 2>&1; then
+  dc() { docker compose "$@"; }
+elif command -v docker-compose >/dev/null 2>&1; then
+  dc() { docker-compose "$@"; }
+else
+  echo "docker compose / docker-compose introuvable" >&2
+  exit 1
+fi
 
 STAMP=$(date +%Y%m%d-%H%M)
 DEST_DIR="${BACKUP_DIR:-dumps}"
@@ -17,7 +35,7 @@ mkdir -p "$DEST_DIR"
 RAW="${DEST_DIR}/ncs-${STAMP}.dump"
 
 set -o noclobber
-docker compose exec -T postgres \
+dc exec -T postgres \
   sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" --no-owner --format=custom' \
   > "$RAW"
 set +o noclobber
@@ -45,6 +63,6 @@ for f in "${OLD[@]:-}"; do
 done
 
 # Purge retention applicative (login_attempts 1 an, tokens expirés)
-docker compose exec -T postgres \
+dc exec -T postgres \
   sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT ncs_run_retention();"' \
   >/dev/null || true
