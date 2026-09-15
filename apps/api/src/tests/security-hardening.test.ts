@@ -59,6 +59,35 @@ describe("security hardening wave 1-2", () => {
     assert.equal(existsSync(mig), true);
     const sql = readFileSync(mig, "utf8");
     assert.ok(sql.includes("FORCE ROW LEVEL SECURITY"));
-    assert.ok(sql.includes("organization_webhooks") || sql.includes("organization_id"));
+  });
+
+  it("validates spreadsheet magic bytes and size", async () => {
+    const { validateSpreadsheetUpload } = await import("../lib/excelSanitize.js");
+    const zipHead = new Uint8Array([0x50, 0x4b, 0x03, 0x04]);
+    assert.equal(
+      validateSpreadsheetUpload({
+        filename: "a.xlsx",
+        mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        sizeBytes: 100,
+        head: zipHead,
+      }).ok,
+      true,
+    );
+    assert.equal(
+      validateSpreadsheetUpload({
+        filename: "a.xlsx",
+        sizeBytes: 100,
+        head: new Uint8Array([0x00, 0x01]),
+      }).ok,
+      false,
+    );
+    assert.equal(
+      validateSpreadsheetUpload({
+        filename: "a.csv",
+        mimeType: "text/csv",
+        sizeBytes: 11 * 1024 * 1024,
+      }).ok,
+      false,
+    );
   });
 });

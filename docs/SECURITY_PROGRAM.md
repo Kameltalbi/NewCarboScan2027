@@ -28,6 +28,8 @@ BACKUP_PASSPHRASE='…' ./scripts/backup-encrypted.sh
 
 Planifier un cron quotidien + copie hors site. Tester une restauration (`docs/RUNBOOK_RESTORE.md`) au moins une fois par trimestre.
 
+Copie hors-site (optionnelle) via `BACKUP_OFFSITE_DIR` dans `.env` VPS — le script `scripts/backup-postgres.sh` copie le `.dump.enc` après chiffrement.
+
 ## Sous-traitants / DPA
 
 | Prestataire | Données | Action |

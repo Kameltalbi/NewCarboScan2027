@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -28,7 +28,7 @@ import {
 
 export const AdvancedSettings: React.FC = () => {
   const { toast } = useToast();
-  const { signOut } = useAuth();
+  const { signOut, user, refresh } = useAuth();
   const [settings, setSettings] = useState({
     units: "tonnes",
     dateFormat: "dd/mm/yyyy",
@@ -43,9 +43,79 @@ export const AdvancedSettings: React.FC = () => {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [mfaEnabled, setMfaEnabled] = useState(Boolean(user?.mfaEnabled));
+  const [mfaSecret, setMfaSecret] = useState<string | null>(null);
+  const [mfaOtpauth, setMfaOtpauth] = useState<string | null>(null);
+  const [mfaCode, setMfaCode] = useState("");
+  const [mfaPassword, setMfaPassword] = useState("");
+  const [mfaBusy, setMfaBusy] = useState(false);
+
+  useEffect(() => {
+    setMfaEnabled(Boolean(user?.mfaEnabled));
+  }, [user?.mfaEnabled]);
 
   const handleSettingChange = (key: string, value: any) => {
     setSettings(prev => ({ ...prev, [key]: value }));
+  };
+
+  const startMfaSetup = async () => {
+    setMfaBusy(true);
+    try {
+      const res = await api.setupMfa();
+      setMfaSecret(res.secret);
+      setMfaOtpauth(res.otpauthUrl);
+      setMfaCode("");
+      toast({ title: "Scannez le secret dans votre application TOTP" });
+    } catch (error) {
+      toast({
+        title: "Impossible de démarrer le MFA",
+        description: error instanceof Error ? error.message : "",
+        variant: "destructive",
+      });
+    } finally {
+      setMfaBusy(false);
+    }
+  };
+
+  const confirmMfaEnable = async () => {
+    setMfaBusy(true);
+    try {
+      await api.enableMfa(mfaCode);
+      setMfaEnabled(true);
+      setMfaSecret(null);
+      setMfaOtpauth(null);
+      setMfaCode("");
+      await refresh();
+      toast({ title: "MFA activé" });
+    } catch (error) {
+      toast({
+        title: "Code MFA invalide",
+        description: error instanceof Error ? error.message : "",
+        variant: "destructive",
+      });
+    } finally {
+      setMfaBusy(false);
+    }
+  };
+
+  const confirmMfaDisable = async () => {
+    setMfaBusy(true);
+    try {
+      await api.disableMfa(mfaPassword, mfaCode);
+      setMfaEnabled(false);
+      setMfaPassword("");
+      setMfaCode("");
+      await refresh();
+      toast({ title: "MFA désactivé" });
+    } catch (error) {
+      toast({
+        title: "Désactivation MFA impossible",
+        description: error instanceof Error ? error.message : "",
+        variant: "destructive",
+      });
+    } finally {
+      setMfaBusy(false);
+    }
   };
 
   const handleExportData = async () => {
@@ -264,6 +334,90 @@ export const AdvancedSettings: React.FC = () => {
               />
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* MFA */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-emerald-50 to-emerald-100 border-b border-emerald-200">
+          <CardTitle className="flex items-center gap-3 text-xl text-emerald-800">
+            <Shield className="h-6 w-6" />
+            Authentification à deux facteurs (MFA)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Statut MFA</p>
+              <p className="text-sm text-gray-600">
+                {mfaEnabled
+                  ? "Activé — un code TOTP est exigé à la connexion"
+                  : "Désactivé — recommandé pour les comptes admin"}
+              </p>
+            </div>
+            <Badge variant={mfaEnabled ? "default" : "secondary"}>
+              {mfaEnabled ? "Actif" : "Inactif"}
+            </Badge>
+          </div>
+
+          {!mfaEnabled && !mfaSecret && (
+            <Button onClick={startMfaSetup} disabled={mfaBusy}>
+              <Lock className="h-4 w-4 mr-2" />
+              Configurer le MFA
+            </Button>
+          )}
+
+          {mfaSecret && (
+            <div className="space-y-3 rounded-lg border border-emerald-200 bg-emerald-50/50 p-4">
+              <p className="text-sm text-gray-700">
+                Ajoutez ce secret dans Google Authenticator / Authy, puis saisissez le code à 6 chiffres.
+              </p>
+              <code className="block break-all rounded bg-white px-3 py-2 text-sm border">
+                {mfaSecret}
+              </code>
+              {mfaOtpauth && (
+                <p className="text-xs text-gray-500 break-all">URI : {mfaOtpauth}</p>
+              )}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Input
+                  placeholder="Code à 6 chiffres"
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value)}
+                  maxLength={8}
+                />
+                <Button onClick={confirmMfaEnable} disabled={mfaBusy || mfaCode.length < 6}>
+                  Activer
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {mfaEnabled && (
+            <div className="space-y-3 rounded-lg border border-amber-200 bg-amber-50/40 p-4">
+              <p className="text-sm text-gray-700">
+                Pour désactiver le MFA, confirmez avec votre mot de passe et un code TOTP.
+              </p>
+              <Input
+                type="password"
+                placeholder="Mot de passe actuel"
+                value={mfaPassword}
+                onChange={(e) => setMfaPassword(e.target.value)}
+              />
+              <Input
+                placeholder="Code MFA"
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+                maxLength={8}
+              />
+              <Button
+                variant="outline"
+                onClick={confirmMfaDisable}
+                disabled={mfaBusy || !mfaPassword || mfaCode.length < 6}
+              >
+                Désactiver le MFA
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

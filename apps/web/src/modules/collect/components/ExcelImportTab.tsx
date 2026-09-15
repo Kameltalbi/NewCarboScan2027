@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { validateSpreadsheetFile } from '@/lib/spreadsheetValidate';
 
 export const ExcelImportTab: React.FC = () => {
   const { organizationId } = useOrganizationId();
@@ -50,13 +51,11 @@ export const ExcelImportTab: React.FC = () => {
   };
 
   const handleFile = async (file: File) => {
-    const validExtensions = ['.xlsx', '.xls', '.csv'];
-    const fileExt = '.' + file.name.split('.').pop()?.toLowerCase();
-    
-    if (!validExtensions.includes(fileExt)) {
+    const guard = await validateSpreadsheetFile(file);
+    if (!guard.ok) {
       toast({
-        title: 'Format non supporté',
-        description: 'Veuillez sélectionner un fichier Excel (.xlsx, .xls) ou CSV (.csv)',
+        title: 'Fichier refusé',
+        description: guard.error,
         variant: 'destructive',
       });
       return;

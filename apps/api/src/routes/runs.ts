@@ -173,6 +173,13 @@ export async function registerRunRoutes(app: FastifyInstance) {
       });
 
       if (!result) return { error: "Not found" };
+      if (result && !result.alreadyPublished) {
+        const { dispatchOrgWebhooks } = await import("./webhooks.js");
+        void dispatchOrgWebhooks(orgId, "run.published", {
+          runId,
+          resultHash: result.run?.result_hash ?? null,
+        });
+      }
       return result;
     },
   );

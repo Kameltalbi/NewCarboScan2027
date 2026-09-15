@@ -66,3 +66,12 @@ done
 dc exec -T postgres \
   sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT ncs_run_retention();"' \
   >/dev/null || true
+
+# Copie hors-site optionnelle (répertoire monté, NFS, ou chemin scp déjà monté)
+# Ex. BACKUP_OFFSITE_DIR=/mnt/offsite/ncs-backups
+ENC_FILE="${RAW}.enc"
+if [[ -n "${BACKUP_OFFSITE_DIR:-}" && -f "$ENC_FILE" ]]; then
+  mkdir -p "$BACKUP_OFFSITE_DIR"
+  cp -f "$ENC_FILE" "$BACKUP_OFFSITE_DIR/"
+  echo "OK offsite copy → $BACKUP_OFFSITE_DIR/$(basename "$ENC_FILE")"
+fi

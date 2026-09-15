@@ -13,6 +13,7 @@ export type AuthUser = {
   organizationId?: string;
   role?: string;
   platformRole?: string;
+  mfaEnabled?: boolean;
 };
 
 /** Compat types for legacy imports */
@@ -344,6 +345,12 @@ export const api = {
     request<{ ok: true }>("/auth/mfa/enable", {
       method: "POST",
       body: JSON.stringify({ code }),
+    }),
+
+  disableMfa: (password: string, code: string) =>
+    request<{ ok: true }>("/auth/mfa/disable", {
+      method: "POST",
+      body: JSON.stringify({ password, code }),
     }),
 
   exportOrgData: () => request<{ exportedAt: string; organizationId: string; tables: Record<string, unknown[]> }>(
