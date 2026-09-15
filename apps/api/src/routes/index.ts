@@ -19,10 +19,14 @@ import { registerCbamRoutes } from "./cbam.js";
 import { registerAcvRoutes } from "./acv.js";
 import { registerClimateRoutes } from "./climate.js";
 import { registerPcfRoutes } from "./pcf.js";
+import { registerPrivacyRoutes } from "./privacy.js";
+import { registerWebhookRoutes } from "./webhooks.js";
 
 export async function registerRoutes(app: FastifyInstance) {
   await registerAuthRoutes(app);
   await registerPublicRoutes(app);
+  await registerWebhookRoutes(app);
+  await registerPrivacyRoutes(app);
   await registerImportRoutes(app);
   await registerCalculateRoutes(app);
   await registerEvidenceRoutes(app);

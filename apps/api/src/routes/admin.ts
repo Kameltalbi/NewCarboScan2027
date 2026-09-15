@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { pool } from "../db.js";
+import { clientSafeError } from "../lib/safeError.js";
 import {
   adminModuleToggleSchema,
   adminPlanSchema,
@@ -513,7 +514,7 @@ export async function registerAdminRoutes(app: FastifyInstance) {
         return { year: rows[0] };
       } catch (err) {
         return reply.code(400).send({
-          error: err instanceof Error ? err.message : "Year insert failed",
+          error: clientSafeError(err, "Year insert failed"),
         });
       }
     },
@@ -650,6 +651,49 @@ export async function registerAdminRoutes(app: FastifyInstance) {
         );
       }
       return { organization: rows[0] };
+    },
+  );
+
+  app.get(
+    "/v1/admin/security-settings",
+    { preHandler: [app.requireSuperAdmin] },
+    async () => {
+      const { rows } = await pool.query(
+        `SELECT value FROM platform_settings WHERE key = 'security'`,
+      );
+      return { settings: rows[0]?.value ?? {} };
+    },
+  );
+
+  app.put(
+    "/v1/admin/security-settings",
+    { preHandler: [app.requireSuperAdmin] },
+    async (request, reply) => {
+      const body = request.body as Record<string, unknown>;
+      const settings = {
+        require_mfa: Boolean(body.require_mfa),
+        session_timeout_hours: Number(body.session_timeout_hours ?? 8),
+        max_login_attempts: Number(body.max_login_attempts ?? 5),
+        password_min_length: Number(body.password_min_length ?? 8),
+        idle_timeout_minutes: Number(body.idle_timeout_minutes ?? 30),
+      };
+      await pool.query(
+        `INSERT INTO platform_settings (key, value, updated_by, updated_at)
+         VALUES ('security', $1::jsonb, $2, now())
+         ON CONFLICT (key) DO UPDATE
+           SET value = EXCLUDED.value, updated_by = EXCLUDED.updated_by, updated_at = now()`,
+        [JSON.stringify(settings), request.user!.id],
+      );
+      return { settings };
+    },
+  );
+
+  app.post(
+    "/v1/admin/retention-run",
+    { preHandler: [app.requireSuperAdmin] },
+    async () => {
+      const { rows } = await pool.query(`SELECT ncs_run_retention() AS result`);
+      return { result: rows[0]?.result };
     },
   );
 }

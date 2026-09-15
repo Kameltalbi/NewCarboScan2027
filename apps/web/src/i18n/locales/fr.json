@@ -3988,6 +3988,8 @@
     "subtitle": "Connectez-vous ou créez votre compte",
     "authentication": "Authentification",
     "accessDashboard": "Accédez à votre tableau de bord carbone",
+    "forgotPassword": "Mot de passe oublié ?",
+    "forgotPasswordHint": "Contactez le support CarboScan pour réinitialiser votre accès.",
     "signIn": "Connexion",
     "signUp": "Inscription",
     "email": "Email",
@@ -4675,12 +4677,13 @@
         "title": "Mesures de sécurité",
         "description": "Nous mettons en œuvre des mesures techniques et organisationnelles appropriées :",
         "items": [
-          "Chiffrement des données en transit et au repos (AES-256)",
-          "Authentification multi-facteurs pour l'accès aux données",
-          "Surveillance continue des systèmes et détection d'intrusion",
-          "Sauvegardes sécurisées et chiffrées",
-          "Formation régulière du personnel à la sécurité",
-          "Audits de sécurité annuels"
+          "HTTPS/TLS en transit (Let’s Encrypt) et cookies de session HttpOnly",
+          "Hachage des mots de passe (bcrypt) et chiffrement AES-256-GCM des secrets MFA",
+          "Authentification à deux facteurs TOTP disponible",
+          "Isolation des organisations (contrôles API + RLS PostgreSQL)",
+          "Journalisation des connexions et des opérations sensibles",
+          "Sauvegardes PostgreSQL chiffrées AES-256 (procédure opérationnelle)",
+          "Révocation de session, lockout anti brute-force, export et suppression d’organisation"
         ]
       },
       "rights": {

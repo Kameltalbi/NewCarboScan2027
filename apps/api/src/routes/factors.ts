@@ -1,5 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { pool } from "../db.js";
+import { clientSafeError } from "../lib/safeError.js";
 import {
   factorFacetsQuerySchema,
   factorIdParamSchema,
@@ -263,7 +264,7 @@ export async function registerFactorRoutes(app: FastifyInstance) {
         };
       } catch (err) {
         request.log.error(err);
-        const message = err instanceof Error ? err.message : "resolve-and-calculate failed";
+        const message = clientSafeError(err, "resolve-and-calculate failed");
         return reply.code(500).send({ error: message });
       }
     },

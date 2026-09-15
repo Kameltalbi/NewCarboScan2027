@@ -7,20 +7,8 @@ import {
   getImportBatch,
   listImportCatalog,
 } from "../services/importPipeline.js";
-import { pool } from "../db.js";
-
-const stageSchema = z.object({
-  entityType: z.string().min(1).max(100),
-  rows: z
-    .array(
-      z.object({
-        legacyId: z.string().optional().nullable(),
-        payload: z.record(z.unknown()),
-      }),
-    )
-    .min(1)
-    .max(5000),
-});
+import { beginTenantTx, pool, tenantAls } from "../db.js";
+import { sanitizeImportPayload } from "../lib/excelSanitize.js";
 
 async function requireImportAccess(
   request: FastifyRequest,
@@ -28,29 +16,43 @@ async function requireImportAccess(
 ) {
   const expected = process.env.IMPORT_ADMIN_TOKEN;
   const headerToken = request.headers["x-import-token"];
-  if (expected && typeof headerToken === "string" && headerToken === expected) {
+  const tokenOk =
+    Boolean(expected) &&
+    typeof headerToken === "string" &&
+    headerToken === expected &&
+    (process.env.NODE_ENV !== "production" ||
+      process.env.ALLOW_IMPORT_IN_PROD === "true");
+
+  if (tokenOk) {
+    if (!request.tenantStore) request.tenantStore = {};
+    tenantAls.enterWith(request.tenantStore);
     request.user = {
       id: "00000000-0000-4000-8000-000000000001",
       email: "import-bot@local",
-      role: "admin",
+      role: "superadmin",
+      platformRole: "superadmin",
+      organizationId: request.headers["x-organization-id"] as string | undefined,
     };
+    await beginTenantTx({
+      superadmin: true,
+      userId: request.user.id,
+      organizationId: request.user.organizationId,
+    });
     return;
   }
 
-  await request.server.requireAuth(request, reply);
-  if (reply.sent) return;
-  const role = request.user?.role;
-  if (role === "owner" || role === "admin") return;
-  return reply.code(403).send({
-    error: "Import admin required (owner/admin JWT or X-Import-Token)",
-  });
+  await request.server.requireOrgAdmin(request, reply);
 }
 
 export async function registerImportRoutes(app: FastifyInstance) {
-  app.get("/v1/import/catalog", async () => ({
-    items: await listImportCatalog(),
-    note: "Importer les entités dans l'ordre sort_order (dépendances respectées).",
-  }));
+  app.get(
+    "/v1/import/catalog",
+    { preHandler: [app.requireOrgAdmin] },
+    async () => ({
+      items: await listImportCatalog(),
+      note: "Importer les entités dans l'ordre sort_order (dépendances respectées).",
+    }),
+  );
 
   app.post(
     "/v1/import/batches",
@@ -66,9 +68,14 @@ export async function registerImportRoutes(app: FastifyInstance) {
       if (!body.success) {
         return reply.code(400).send({ error: body.error.flatten() });
       }
+      const target =
+        body.data.targetOrganizationId ?? request.user?.organizationId;
+      if (target && request.user?.role !== "superadmin" && target !== request.user?.organizationId) {
+        return reply.code(403).send({ error: "Cannot import into another organization" });
+      }
       const batch = await createImportBatch({
         label: body.data.label,
-        targetOrganizationId: body.data.targetOrganizationId,
+        targetOrganizationId: target,
         createdBy:
           request.user?.id === "00000000-0000-4000-8000-000000000001"
             ? undefined
@@ -84,14 +91,31 @@ export async function registerImportRoutes(app: FastifyInstance) {
     { preHandler: [requireImportAccess] },
     async (request, reply) => {
       const { batchId } = request.params as { batchId: string };
-      const parsed = stageSchema.safeParse(request.body);
+      const parsed = z
+        .object({
+          entityType: z.string().min(1).max(100),
+          rows: z
+            .array(
+              z.object({
+                legacyId: z.string().optional().nullable(),
+                payload: z.record(z.unknown()),
+              }),
+            )
+            .min(1)
+            .max(5000),
+        })
+        .safeParse(request.body);
       if (!parsed.success) {
         return reply.code(400).send({ error: parsed.error.flatten() });
       }
+      const rows = parsed.data.rows.map((row) => ({
+        ...row,
+        payload: sanitizeImportPayload(row.payload) as Record<string, unknown>,
+      }));
       const result = await stageEntityRows(
         batchId,
         parsed.data.entityType,
-        parsed.data.rows,
+        rows,
       );
       return { batchId, entityType: parsed.data.entityType, ...result };
     },

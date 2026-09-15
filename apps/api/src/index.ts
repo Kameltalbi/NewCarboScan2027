@@ -3,9 +3,11 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
-import { pool } from "./db.js";
+import cookie from "@fastify/cookie";
+import { rawPool, tenantAls } from "./db.js";
 import { authPlugin } from "./plugins/auth.js";
 import { registerRoutes } from "./routes/index.js";
+import { clientSafeError } from "./lib/safeError.js";
 
 const PORT = Number(process.env.PORT ?? 8080);
 const CORS_ORIGINS = (process.env.CORS_ORIGINS ?? "http://localhost:5173")
@@ -34,8 +36,16 @@ async function main() {
     logger: true,
     bodyLimit: Number(process.env.BODY_LIMIT_BYTES ?? 1_000_000),
     ignoreTrailingSlash: true,
+    trustProxy: true,
   });
 
+  app.addHook("onRequest", (request, _reply, done) => {
+    request.tenantStore = {};
+    tenantAls.enterWith(request.tenantStore);
+    done();
+  });
+
+  await app.register(cookie);
   await app.register(helmet, {
     contentSecurityPolicy: {
       directives: {
@@ -63,7 +73,17 @@ async function main() {
     timeWindow: "1 minute",
   });
 
-  // Auth decorators must live on the root instance (no encapsulation)
+  app.setErrorHandler((err, request, reply) => {
+    request.log.error(err);
+    const status = (err as { statusCode?: number }).statusCode ?? 500;
+    if (status >= 500) {
+      return reply.code(status).send({ error: clientSafeError(err) });
+    }
+    const message =
+      err instanceof Error ? err.message : clientSafeError(err, "Bad request");
+    return reply.code(status).send({ error: message });
+  });
+
   await authPlugin(app, {});
   await registerRoutes(app);
 
@@ -85,28 +105,28 @@ async function main() {
 
   app.get("/health", async (_request, reply) => {
     try {
-      await pool.query("SELECT 1");
+      await rawPool.query("SELECT 1");
       return {
         ok: true,
         service: "newcarboscan-api",
         year: 2027,
         db: true,
       };
-    } catch (err) {
+    } catch {
       reply.code(503);
       return {
         ok: false,
         service: "newcarboscan-api",
         year: 2027,
         db: false,
-        error: err instanceof Error ? err.message : "db_unavailable",
+        error: "db_unavailable",
       };
     }
   });
 
   const shutdown = async () => {
     await app.close();
-    await pool.end();
+    await rawPool.end();
     process.exit(0);
   };
   process.on("SIGINT", shutdown);

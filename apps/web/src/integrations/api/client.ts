@@ -26,8 +26,10 @@ const TOKEN_KEY = "ncs_token";
 const ORG_KEY = "ncs_org_id";
 const USER_KEY = "ncs_user";
 
+let memoryToken: string | null = null;
+
 export function getStoredToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  return memoryToken;
 }
 
 export function getStoredOrgId(): string | null {
@@ -49,7 +51,8 @@ export function persistSession(input: {
   user: AuthUser;
   organizationId?: string;
 }) {
-  localStorage.setItem(TOKEN_KEY, input.token);
+  memoryToken = input.token;
+  localStorage.removeItem(TOKEN_KEY);
   localStorage.setItem(USER_KEY, JSON.stringify(input.user));
   if (input.organizationId) {
     localStorage.setItem(ORG_KEY, input.organizationId);
@@ -57,6 +60,7 @@ export function persistSession(input: {
 }
 
 export function clearSession() {
+  memoryToken = null;
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem(ORG_KEY);
@@ -79,7 +83,11 @@ async function request<T>(
     if (orgId) headers.set("X-Organization-Id", orgId);
   }
 
-  const res = await fetch(`${API_URL}${path}`, { ...init, headers });
+  const res = await fetch(`${API_URL}${path}`, {
+    ...init,
+    headers,
+    credentials: "include",
+  });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
     const message =
@@ -265,12 +273,40 @@ export const api = {
 
   login: async (email: string, password: string) => {
     const data = await request<{
-      token: string;
+      token?: string;
+      mfaRequired?: boolean;
+      mfaToken?: string;
+      mustResetPassword?: boolean;
       user: AuthUser;
       organizations: MyOrganization[];
     }>(
       "/auth/login",
       { method: "POST", body: JSON.stringify({ email, password }) },
+      { auth: false },
+    );
+    if (data.mfaRequired) {
+      return data;
+    }
+    persistSession({
+      token: data.token ?? "",
+      user: {
+        ...data.user,
+        organizationId: data.user.organizationId ?? data.organizations[0]?.organization_id,
+        role: data.user.role ?? data.organizations[0]?.role,
+      },
+      organizationId: data.user.organizationId ?? data.organizations[0]?.organization_id,
+    });
+    return data;
+  },
+
+  verifyMfa: async (mfaToken: string, code: string) => {
+    const data = await request<{
+      token: string;
+      user: AuthUser;
+      organizations: MyOrganization[];
+    }>(
+      "/auth/mfa/verify",
+      { method: "POST", body: JSON.stringify({ mfaToken, code }) },
       { auth: false },
     );
     persistSession({
@@ -284,6 +320,41 @@ export const api = {
     });
     return data;
   },
+
+  forgotPassword: (email: string) =>
+    request<{ ok: true; resetToken?: string }>(
+      "/auth/forgot-password",
+      { method: "POST", body: JSON.stringify({ email }) },
+      { auth: false },
+    ),
+
+  resetPassword: (token: string, newPassword: string) =>
+    request<{ ok: true }>(
+      "/auth/reset-password",
+      { method: "POST", body: JSON.stringify({ token, newPassword }) },
+      { auth: false },
+    ),
+
+  setupMfa: () =>
+    request<{ secret: string; otpauthUrl: string }>("/auth/mfa/setup", {
+      method: "POST",
+    }),
+
+  enableMfa: (code: string) =>
+    request<{ ok: true }>("/auth/mfa/enable", {
+      method: "POST",
+      body: JSON.stringify({ code }),
+    }),
+
+  exportOrgData: () => request<{ exportedAt: string; organizationId: string; tables: Record<string, unknown[]> }>(
+    "/v1/org/data-export",
+  ),
+
+  deleteOrgAccount: () =>
+    request<{ ok: true }>("/v1/org/account", {
+      method: "DELETE",
+      body: JSON.stringify({ confirm: "SUPPRIMER" }),
+    }),
 
   register: async (payload: {
     email: string;
@@ -317,7 +388,12 @@ export const api = {
   me: () =>
     request<{ user: AuthUser; organizations: MyOrganization[] }>("/auth/me"),
 
-  logout: () => {
+  logout: async () => {
+    try {
+      await request("/auth/logout", { method: "POST" });
+    } catch {
+      /* still clear locally */
+    }
     clearSession();
   },
 
@@ -580,6 +656,29 @@ export const api = {
     request<{ ok: boolean }>(`/v1/admin/users/${id}/password`, {
       method: "POST",
       body: JSON.stringify({ password }),
+    }),
+
+  adminSecuritySettings: () =>
+    request<{
+      settings: {
+        require_mfa?: boolean;
+        session_timeout_hours?: number;
+        max_login_attempts?: number;
+        password_min_length?: number;
+        idle_timeout_minutes?: number;
+      };
+    }>("/v1/admin/security-settings"),
+
+  adminSaveSecuritySettings: (settings: {
+    require_mfa: boolean;
+    session_timeout_hours: number;
+    max_login_attempts: number;
+    password_min_length: number;
+    idle_timeout_minutes: number;
+  }) =>
+    request<{ settings: Record<string, unknown> }>("/v1/admin/security-settings", {
+      method: "PUT",
+      body: JSON.stringify(settings),
     }),
 
   adminDeleteUser: (id: string) =>

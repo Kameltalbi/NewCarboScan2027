@@ -52,7 +52,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: "8080"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-newcarboscan}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-newcarboscan}
+      DATABASE_URL: postgresql://ncs_app:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-newcarboscan}
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       CORS_ORIGINS: ${CORS_ORIGINS:?Set CORS_ORIGINS in .env}
       RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-120}

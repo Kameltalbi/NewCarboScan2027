@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SafeHtml } from "@/components/SafeHtml";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Save, Upload, Loader2, Eye } from "lucide-react";
 import { toast } from "sonner";
@@ -118,7 +119,7 @@ export const BlogPostEditor: React.FC<Props> = ({ post, userId, userEmail, onClo
               <h1>{title}</h1>
               {featuredImage && <img src={featuredImage} alt={title} className="rounded-lg" />}
               {excerpt && <p className="lead italic text-muted-foreground">{excerpt}</p>}
-              <div dangerouslySetInnerHTML={{ __html: content }} />
+              <SafeHtml html={content} />
             </CardContent>
           </Card>
         ) : (

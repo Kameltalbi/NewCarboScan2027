@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import bcrypt from "bcryptjs";
-import { pool } from "../db.js";
+import { beginTenantTx, pool } from "../db.js";
 import {
   entitySchema,
   inviteMemberSchema,
@@ -696,6 +696,16 @@ export async function registerOrgRoutes(app: FastifyInstance) {
       if ((count.rows[0]?.n ?? 0) <= 1) {
         return reply.code(400).send({ error: "Impossible de supprimer votre seule organisation" });
       }
+      await beginTenantTx({
+        organizationId: params.data.id,
+        userId: request.user!.id,
+        superadmin: false,
+      });
+      await pool.query(
+        `INSERT INTO audit_events (organization_id, user_id, action, resource_type, resource_id, ip, payload)
+         VALUES ($1,$2,'org.self_delete','organization',$1,$3,'{}')`,
+        [params.data.id, request.user!.id, request.ip],
+      );
       await pool.query(`DELETE FROM organizations WHERE id = $1`, [params.data.id]);
       return { ok: true };
     },

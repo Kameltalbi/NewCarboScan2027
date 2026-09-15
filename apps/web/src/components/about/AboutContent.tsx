@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { BarChart3, TrendingDown, Zap, Target, CheckCircle2, ArrowRight } from "lucide-react";
+import { SafeHtml } from "@/components/SafeHtml";
 
 const FEATURE_ICONS = [TrendingDown, Target, BarChart3];
 
@@ -41,9 +41,9 @@ export const AboutContent: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">{t('aboutPage.strategy.title')}</h2>
-              <p
+              <SafeHtml
                 className="text-lg text-muted-foreground mb-6 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: t('aboutPage.strategy.description') }}
+                html={t('aboutPage.strategy.description')}
               />
               <ul className="space-y-4">
                 {strategyBullets.map((b, i) => (
@@ -77,9 +77,9 @@ export const AboutContent: React.FC = () => {
           <div className="text-center mb-12">
             <Zap className="h-12 w-12 text-primary mx-auto mb-4" />
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">{t('aboutPage.intelligence.title')}</h2>
-            <p
+            <SafeHtml
               className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: t('aboutPage.intelligence.description') }}
+              html={t('aboutPage.intelligence.description')}
             />
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -165,9 +165,9 @@ export const AboutContent: React.FC = () => {
             </table>
           </div>
           <div className="mt-12 text-center">
-            <p
+            <SafeHtml
               className="text-xl text-foreground font-semibold"
-              dangerouslySetInnerHTML={{ __html: t('aboutPage.comparison.summary') }}
+              html={t('aboutPage.comparison.summary')}
             />
           </div>
         </div>
@@ -177,9 +177,9 @@ export const AboutContent: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center">
           <Target className="h-16 w-16 text-primary mx-auto mb-6" />
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">{t('aboutPage.netZero.title')}</h2>
-          <p
+          <SafeHtml
             className="text-lg text-muted-foreground leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: t('aboutPage.netZero.description') }}
+            html={t('aboutPage.netZero.description')}
           />
         </div>
       </section>

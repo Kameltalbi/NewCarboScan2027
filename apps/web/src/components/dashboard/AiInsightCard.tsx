@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import aiInsightAvatar from '@/assets/ai-insight-avatar.png';
+import { SafeHtml } from '@/components/SafeHtml';
 
 const AI_AVATAR_SRC = aiInsightAvatar;
 
@@ -47,9 +47,9 @@ export const AiInsightCard: React.FC<AiInsightCardProps> = ({
 
       <div className="flex items-start gap-6">
         <div className="flex-1 space-y-3 text-sm text-[#334155] leading-relaxed max-w-2xl">
-          <p dangerouslySetInnerHTML={{ __html: evoLine.replace(/(\d+[.,]?\d*%)/, '<strong>$1</strong>') }} />
+          <SafeHtml html={evoLine.replace(/(\d+[.,]?\d*%)/, '<strong>$1</strong>')} />
           {catLine && (
-            <p dangerouslySetInnerHTML={{ __html: catLine.replace(/(\d+%)/, '<strong>$1</strong>') }} />
+            <SafeHtml html={catLine.replace(/(\d+%)/, '<strong>$1</strong>')} />
           )}
           <p>
             Nous recommandons d'analyser vos postes prioritaires pour identifier

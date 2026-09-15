@@ -7,6 +7,7 @@ import {
 } from "@newcarboscan/carbon-engine";
 import { withOrgClient } from "../db.js";
 import { calculateSchema } from "../schemas/index.js";
+import { clientSafeError } from "../lib/safeError.js";
 import { PRODUCTION_SAFE_FACTOR_SQL } from "../services/factorResolver/productionSafeSubset.js";
 
 export const REGISTRY_FACTOR_OVERRIDE_ERROR =
@@ -128,7 +129,9 @@ export async function registerCalculateRoutes(app: FastifyInstance) {
         });
       } catch (err) {
         const message =
-          err instanceof Error ? err.message : "Invalid calculation input";
+          err instanceof Error && process.env.NODE_ENV !== "production"
+            ? err.message
+            : clientSafeError(err, "Invalid calculation input");
         return reply.code(400).send({ error: message });
       }
 

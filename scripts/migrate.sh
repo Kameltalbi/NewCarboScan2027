@@ -113,3 +113,22 @@ for f in $(ls "$MIG_DIR"/0*.sql 2>/dev/null | sort); do
 done
 
 echo "Migrations complete."
+
+echo "Configure role ncs_app..."
+uk_psql -v ON_ERROR_STOP=1 <<SQL
+DO \$\$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'ncs_app') THEN
+    CREATE ROLE ncs_app LOGIN PASSWORD '${PGPASSWORD}';
+  ELSE
+    ALTER ROLE ncs_app LOGIN PASSWORD '${PGPASSWORD}';
+  END IF;
+END
+\$\$;
+GRANT CONNECT ON DATABASE ${PGDATABASE} TO ncs_app;
+GRANT USAGE ON SCHEMA public TO ncs_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO ncs_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ncs_app;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO ncs_app;
+SQL
+

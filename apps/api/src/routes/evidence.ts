@@ -180,6 +180,14 @@ export async function registerEvidenceRoutes(app: FastifyInstance) {
         return rows[0];
       });
 
+      if (row && parsed.data.status === "validated") {
+        const { dispatchOrgWebhooks } = await import("./webhooks.js");
+        void dispatchOrgWebhooks(orgId, "evidence.validated", {
+          evidenceId: id,
+          status: parsed.data.status,
+        });
+      }
+
       if (!row) return { error: "Not found" };
       return { evidence: row };
     },

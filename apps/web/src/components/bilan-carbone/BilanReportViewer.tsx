@@ -4,6 +4,7 @@ import { X, ChevronLeft, ChevronRight, Download, Loader2, ZoomIn, ZoomOut, Maxim
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ReportGeneratorService } from '@/lib/services/ReportGeneratorService';
+import DOMPurify from 'dompurify';
 import { useAuth } from '@/hooks/useAuth';
 import { 
   ReportPieChart, 
@@ -458,7 +459,7 @@ export const BilanReportViewer: React.FC<BilanReportViewerProps> = ({
           {html ? (
             <div
               className={isCover ? 'h-full w-full' : 'report-paged-sheet h-full w-full'}
-              dangerouslySetInnerHTML={{ __html: html }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html ?? '') }}
             />
           ) : null}
           {chartConfig?.charts && chartConfig.charts.length > 0 ? (

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isStrongPassword, PASSWORD_POLICY_MESSAGE } from "../lib/passwordPolicy.js";
 
 export const loginSchema = z.object({
   email: z.string().email(),
@@ -102,12 +103,20 @@ export const patchUserSchema = z.object({
 });
 
 export const setUserPasswordSchema = z.object({
-  password: z.string().min(8).max(200),
+  password: z
+    .string()
+    .min(8)
+    .max(200)
+    .refine(isStrongPassword, PASSWORD_POLICY_MESSAGE),
 });
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1).max(200),
-  newPassword: z.string().min(8).max(200),
+  newPassword: z
+    .string()
+    .min(8)
+    .max(200)
+    .refine(isStrongPassword, PASSWORD_POLICY_MESSAGE),
 });
 
 export const patchProfileSchema = z.object({
@@ -159,7 +168,12 @@ export const patchMemberSchema = z.object({
 
 export const inviteMemberSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8).max(200).optional(),
+  password: z
+    .string()
+    .min(8)
+    .max(200)
+    .refine(isStrongPassword, PASSWORD_POLICY_MESSAGE)
+    .optional(),
   firstName: z.string().max(100).optional(),
   lastName: z.string().max(100).optional(),
   fullName: z.string().max(200).optional(),

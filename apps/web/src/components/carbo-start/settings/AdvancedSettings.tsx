@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { api } from "@/integrations/api/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Settings, 
   Globe, 
@@ -24,6 +27,8 @@ import {
 } from "lucide-react";
 
 export const AdvancedSettings: React.FC = () => {
+  const { toast } = useToast();
+  const { signOut } = useAuth();
   const [settings, setSettings] = useState({
     units: "tonnes",
     dateFormat: "dd/mm/yyyy",
@@ -43,15 +48,39 @@ export const AdvancedSettings: React.FC = () => {
     setSettings(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleExportData = () => {
-    // TODO: implement data export
+  const handleExportData = async () => {
+    try {
+      const data = await api.exportOrgData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `carboscan-export-${data.organizationId}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: "Export téléchargé" });
+    } catch (error) {
+      toast({
+        title: "Export impossible",
+        description: error instanceof Error ? error.message : "",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDeleteAccount = () => {
-    if (deleteConfirmation === "SUPPRIMER") {
-      // TODO: implement account deletion
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmation !== "SUPPRIMER") return;
+    try {
+      await api.deleteOrgAccount();
       setShowDeleteDialog(false);
       setDeleteConfirmation("");
+      await signOut();
+    } catch (error) {
+      toast({
+        title: "Suppression impossible",
+        description: error instanceof Error ? error.message : "",
+        variant: "destructive",
+      });
     }
   };
 

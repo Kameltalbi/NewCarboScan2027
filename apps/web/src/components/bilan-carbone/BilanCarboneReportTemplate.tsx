@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Download, Loader2 } from 'lucide-react';
 import { generateEmpreinteProduitReportSections } from '@/lib/empreinteProduitReportTemplates';
+import { SafeHtml } from '@/components/SafeHtml';
 import { generateAutomaticProfessionalRecommendations } from '@/shared/services/professionalRecommendations';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -344,7 +345,7 @@ export const BilanCarboneReportTemplate: React.FC<BilanCarboneReportTemplateProp
               <h2 className="text-3xl font-bold text-[#5F9E6B] mb-6 border-b-2 border-[#5F9E6B] pb-2">
                 Contexte de l'entreprise
               </h2>
-              <div className="prose max-w-none text-justify leading-relaxed" dangerouslySetInnerHTML={{ __html: sections.introduction_contexte }} />
+              <SafeHtml className="prose max-w-none text-justify leading-relaxed" html={sections.introduction_contexte} />
             </div>
 
             {/* Page 4 : Méthodologie */}
@@ -352,7 +353,7 @@ export const BilanCarboneReportTemplate: React.FC<BilanCarboneReportTemplateProp
               <h2 className="text-3xl font-bold text-[#5F9E6B] mb-6 border-b-2 border-[#5F9E6B] pb-2">
                 Méthodologie
               </h2>
-              <div className="prose max-w-none text-justify leading-relaxed" dangerouslySetInnerHTML={{ __html: sections.methodologie_perimetre }} />
+              <SafeHtml className="prose max-w-none text-justify leading-relaxed" html={sections.methodologie_perimetre} />
             </div>
 
             {/* Page 5 : Principaux postes d'émission */}
@@ -373,17 +374,17 @@ export const BilanCarboneReportTemplate: React.FC<BilanCarboneReportTemplateProp
               
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-[#5F9E6B] mb-3">Scope 1 - Émissions directes</h3>
-                <div className="prose max-w-none text-justify leading-relaxed" dangerouslySetInnerHTML={{ __html: sections.resultats_scopes }} />
+                <SafeHtml className="prose max-w-none text-justify leading-relaxed" html={sections.resultats_scopes} />
               </div>
 
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-[#4C7D7F] mb-3">Scope 2 - Émissions indirectes énergétiques</h3>
-                <div className="prose max-w-none text-justify leading-relaxed" dangerouslySetInnerHTML={{ __html: sections.analyse_postes_emetteurs }} />
+                <SafeHtml className="prose max-w-none text-justify leading-relaxed" html={sections.analyse_postes_emetteurs} />
               </div>
 
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-[#87C6A0] mb-3">Plan d'actions</h3>
-                <div className="prose max-w-none text-justify leading-relaxed" dangerouslySetInnerHTML={{ __html: sections.plan_actions }} />
+                <SafeHtml className="prose max-w-none text-justify leading-relaxed" html={sections.plan_actions} />
               </div>
             </div>
 
@@ -392,7 +393,7 @@ export const BilanCarboneReportTemplate: React.FC<BilanCarboneReportTemplateProp
               <h2 className="text-3xl font-bold text-[#5F9E6B] mb-6 border-b-2 border-[#5F9E6B] pb-2">
                 Analyse économique
               </h2>
-              <div className="prose max-w-none text-justify leading-relaxed" dangerouslySetInnerHTML={{ __html: sections.analyse_economique }} />
+              <SafeHtml className="prose max-w-none text-justify leading-relaxed" html={sections.analyse_economique} />
             </div>
 
             {/* Page 8 : Recommandations */}
@@ -401,9 +402,10 @@ export const BilanCarboneReportTemplate: React.FC<BilanCarboneReportTemplateProp
                 Recommandations professionnelles
               </h2>
               <div className="prose max-w-none">
-                <div 
+                <SafeHtml
                   className="text-gray-700 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: professionalRecommendations }}
+                  html={professionalRecommendations}
+                />
                 />
               </div>
             </div>

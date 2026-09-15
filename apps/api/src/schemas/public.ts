@@ -13,7 +13,14 @@ export const publicLeadSchema = z.object({
 
 export const registerSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8).max(200),
+  password: z
+    .string()
+    .min(8)
+    .max(200)
+    .refine(
+      (p) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,200}$/.test(p),
+      "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole.",
+    ),
   fullName: z.string().min(1).max(200),
   companyName: z.string().min(1).max(200),
   sector: z.string().max(200).optional(),

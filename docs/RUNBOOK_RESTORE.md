@@ -18,6 +18,22 @@ Nom de fichier **unique** (horodatage à la minute) : `ncs-YYYYMMDD-HHMM.dump`.
 
 ---
 
+## 0. Sauvegarde automatique (recommandé)
+
+Script : `scripts/backup-postgres.sh` (dump custom + rétention + `ncs_run_retention()`).
+
+```bash
+# Cron quotidien 02:00 — dumps chiffrés AES-256-CBC si BACKUP_ENCRYPT_KEY est défini
+0 2 * * * cd /opt/newcarboscan-2027 && BACKUP_ENCRYPT_KEY='…' ./scripts/backup-postgres.sh >> /var/log/ncs-backup.log 2>&1
+```
+
+Copier ensuite `${BACKUP_DIR}` hors du VPS. Restauration d’un `.dump.enc` :
+
+```bash
+openssl enc -d -aes-256-cbc -pbkdf2 -in dumps/ncs-….dump.enc -out dumps/ncs-….dump -pass env:BACKUP_ENCRYPT_KEY
+# puis §3 pg_restore
+```
+
 ## 1. Créer un dump complet (custom `pg_dump`)
 
 Depuis la machine locale (le dump est écrit **ici**, pas écrasé : `noclobber`) :

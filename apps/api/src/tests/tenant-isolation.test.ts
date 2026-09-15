@@ -53,4 +53,10 @@ describe("tenant isolation & P0 security contracts", () => {
     assert.equal(legacySrc.includes("verifyJwtFalse: false"), true);
     assert.equal(legacySrc.includes("verify_jwt = false"), false);
   });
+
+  it("locks import catalog behind org admin", () => {
+    const importSrc = readFileSync(join(here, "../routes/import.ts"), "utf8");
+    assert.ok(importSrc.includes("requireOrgAdmin"));
+    assert.ok(importSrc.includes("sanitizeImportPayload"));
+  });
 });

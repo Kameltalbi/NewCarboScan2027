@@ -4,6 +4,7 @@ import {
   clearSession,
   getStoredToken,
   getStoredUser,
+  persistSession,
   type AuthUser,
   type Session,
 } from "@/integrations/api/client";
@@ -25,34 +26,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const hydrateFromStorage = () => {
-    const token = getStoredToken();
-    const stored = getStoredUser();
-    if (token && stored) {
-      setUser(stored);
-      setSession({ user: stored, access_token: token });
-      return true;
-    }
-    setUser(null);
-    setSession(null);
-    return false;
-  };
-
   const refresh = async () => {
-    const token = getStoredToken();
-    if (!token) {
-      setUser(null);
-      setSession(null);
-      return;
-    }
     try {
       const { user: me } = await api.me();
-      const next = { ...getStoredUser(), ...me } as AuthUser;
-      localStorage.setItem("ncs_user", JSON.stringify(next));
+      const stored = getStoredUser();
+      const next = { ...stored, ...me } as AuthUser;
+      persistSession({
+        token: getStoredToken() ?? "",
+        user: next,
+        organizationId: next.organizationId,
+      });
       setUser(next);
-      setSession({ user: next, access_token: token });
+      setSession({ user: next, access_token: getStoredToken() ?? "cookie" });
     } catch (error) {
-      logger.warn("Session invalide, déconnexion locale", error);
+      if (getStoredUser()) {
+        logger.warn("Session invalide, déconnexion locale", error);
+      }
       clearSession();
       setUser(null);
       setSession(null);
@@ -60,17 +49,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {
-    const has = hydrateFromStorage();
-    if (has) {
-      refresh().finally(() => setIsLoading(false));
-    } else {
-      setIsLoading(false);
-    }
+    refresh().finally(() => setIsLoading(false));
   }, []);
 
   const signOut = async () => {
     try {
-      api.logout();
+      await api.logout();
     } finally {
       setUser(null);
       setSession(null);

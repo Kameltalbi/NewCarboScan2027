@@ -7,6 +7,7 @@ import {
 } from "@newcarboscan/carbon-engine";
 import { withOrgClient } from "../db.js";
 import { reportFromRunSchema } from "../schemas/index.js";
+import { clientSafeError } from "../lib/safeError.js";
 
 /**
  * Remplace generate-carbon-report (P0).
@@ -202,7 +203,7 @@ export async function registerReportRoutes(app: FastifyInstance) {
         return { report };
       } catch (err) {
         return reply.code(400).send({
-          error: err instanceof Error ? err.message : "Report generation failed",
+          error: clientSafeError(err, "Report generation failed"),
         });
       }
     },

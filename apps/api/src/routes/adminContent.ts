@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import bcrypt from "bcryptjs";
 import { pool } from "../db.js";
+import { clientSafeError } from "../lib/safeError.js";
 import {
   adminBlogSchema,
   adminCreateOrgSchema,
@@ -368,7 +369,7 @@ export async function registerAdminContentRoutes(app: FastifyInstance) {
         );
         return { promo: mapPromo(rows[0]) };
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Insert failed";
+        const message = clientSafeError(err, "Insert failed");
         if (message.includes("duplicate") || message.includes("unique")) {
           return reply.code(409).send({ error: "Ce code promo existe déjà" });
         }

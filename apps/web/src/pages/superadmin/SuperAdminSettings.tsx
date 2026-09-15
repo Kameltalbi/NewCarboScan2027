@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/integrations/api/client";
 import { Settings, Globe, CreditCard, Shield, Save } from "lucide-react";
 
 export const SuperAdminSettings = () => {
@@ -29,10 +30,24 @@ export const SuperAdminSettings = () => {
 
   const [securitySettings, setSecuritySettings] = useState({
     require_mfa: false,
-    session_timeout: '24',
+    session_timeout: '8',
     password_min_length: '8',
     max_login_attempts: '5'
   });
+
+  useEffect(() => {
+    api.adminSecuritySettings().then((res) => {
+      const s = res.settings ?? {};
+      setSecuritySettings({
+        require_mfa: Boolean(s.require_mfa),
+        session_timeout: String(s.session_timeout_hours ?? 8),
+        password_min_length: String(s.password_min_length ?? 8),
+        max_login_attempts: String(s.max_login_attempts ?? 5),
+      });
+    }).catch(() => {
+      /* keep defaults */
+    });
+  }, []);
 
   const saveAppSettings = async () => {
     try {
@@ -68,7 +83,13 @@ export const SuperAdminSettings = () => {
 
   const saveSecuritySettings = async () => {
     try {
-      // In a real app, this would save to a settings table
+      await api.adminSaveSecuritySettings({
+        require_mfa: securitySettings.require_mfa,
+        session_timeout_hours: Number(securitySettings.session_timeout) || 8,
+        max_login_attempts: Number(securitySettings.max_login_attempts) || 5,
+        password_min_length: Number(securitySettings.password_min_length) || 8,
+        idle_timeout_minutes: 30,
+      });
       toast({
         title: "Succès",
         description: "Paramètres de sécurité sauvegardés",
