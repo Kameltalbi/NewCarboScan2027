@@ -281,20 +281,20 @@ export const MainHeader = () => {
                     <div className="space-y-3">
                       <SheetClose asChild>
                         <Button 
-                          onClick={() => navigate("/inscription")}
-                          className="w-full bg-[#16585C] hover:bg-[#0F4144] text-white h-11 font-medium rounded-[4px]"
-                        >
-                          {t("navigation.signUp")}
-                        </Button>
-                      </SheetClose>
-                      
-                      <SheetClose asChild>
-                        <Button 
                           onClick={() => navigate("/auth")}
                           variant="outline"
                           className="w-full border-[#16585C] text-[#16585C] bg-transparent hover:bg-[#16585C]/10 h-11 font-medium rounded-[4px]"
                         >
                           {t("navigation.cta.login")}
+                        </Button>
+                      </SheetClose>
+
+                      <SheetClose asChild>
+                        <Button 
+                          onClick={() => navigate("/bilan-gratuit")}
+                          className="w-full bg-[#16585C] hover:bg-[#0F4144] text-white h-11 font-medium rounded-[4px]"
+                        >
+                          Auto-Diagnostic
                         </Button>
                       </SheetClose>
 
@@ -600,17 +600,17 @@ export const MainHeader = () => {
             {/* CTA Buttons */}
             <div className="hidden md:flex items-center space-x-3">
               <Button 
-                onClick={() => navigate("/inscription")}
-                className={`font-medium px-5 py-2 h-10 rounded-[4px] ${transparent ? "bg-[#10B981] hover:bg-[#059669] text-white shadow-lg shadow-[#10B981]/20" : "bg-[#16585C] hover:bg-[#0F4144] text-white"}`}
-              >
-                {t("navigation.signUp")}
-              </Button>
-              <Button 
                 onClick={() => navigate("/auth")}
                 variant="outline"
                 className={`bg-transparent font-medium px-4 py-2 h-10 rounded-[4px] ${transparent ? "border-white/40 text-white hover:bg-white/10" : "border-[#16585C] text-[#16585C] hover:bg-[#16585C]/10"}`}
               >
                 {t("navigation.cta.login")}
+              </Button>
+              <Button 
+                onClick={() => navigate("/bilan-gratuit")}
+                className={`font-medium px-5 py-2 h-10 rounded-[4px] ${transparent ? "bg-[#10B981] hover:bg-[#059669] text-white shadow-lg shadow-[#10B981]/20" : "bg-[#16585C] hover:bg-[#0F4144] text-white"}`}
+              >
+                Auto-Diagnostic
               </Button>
             </div>
 

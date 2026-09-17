@@ -146,7 +146,7 @@ export const HomeHeader: React.FC = () => {
     >
       <div className="mx-auto grid h-[84px] max-w-[1440px] grid-cols-[1fr_auto] items-center px-6 lg:grid-cols-[1fr_auto_1fr] lg:px-10">
         <Link to="/" className="justify-self-start">
-          <BrandLogo variant="light" className="h-11 md:h-12" priority />
+          <BrandLogo variant="light" className="h-8 md:h-9" priority />
         </Link>
 
         <nav className="hidden items-center gap-10 lg:flex">
@@ -239,20 +239,21 @@ export const HomeHeader: React.FC = () => {
           </Link>
         </nav>
 
-        <div className="hidden items-center justify-self-end gap-5 lg:flex">
+        <div className="hidden items-center justify-self-end gap-3 lg:flex">
           <LanguageSwitcher />
-          <Link
-            to="/auth"
-            className="text-[15px] font-medium text-[#073D30]/85 transition-colors hover:text-[#073D30]"
-          >
-            {t("navigation.cta.login")}
-          </Link>
           <button
             type="button"
-            onClick={() => navigate("/demo")}
+            onClick={() => navigate("/auth")}
+            className="inline-flex h-11 items-center justify-center rounded-[4px] border border-[#07563F] bg-transparent px-5 text-[14px] font-semibold text-[#07563F] transition-colors hover:bg-[#07563F]/10"
+          >
+            {t("navigation.cta.login")}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/bilan-gratuit")}
             className="inline-flex h-11 items-center justify-center rounded-[4px] bg-[#07563F] px-5 text-[14px] font-semibold text-white transition-colors hover:bg-[#054C36]"
           >
-            {t("navigation.cta.requestDemo")}
+            Auto-Diagnostic
           </button>
         </div>
 
@@ -320,22 +321,25 @@ export const HomeHeader: React.FC = () => {
                   <Zap className="h-4 w-4 fill-amber-300 text-amber-500" aria-hidden="true" />
                   WattBim
                 </Link>
-                <Link
-                  to="/auth"
-                  onClick={() => setOpen(false)}
-                  className="rounded-[4px] px-3 py-3 text-[15px] font-medium text-[#073D30] hover:bg-[#F4F7F5]"
-                >
-                  {t("navigation.cta.login")}
-                </Link>
                 <button
                   type="button"
                   onClick={() => {
                     setOpen(false);
-                    navigate("/demo");
+                    navigate("/auth");
                   }}
-                  className="mt-3 inline-flex h-12 items-center justify-center rounded-[4px] bg-[#07563F] px-5 text-[14px] font-semibold text-white"
+                  className="mt-3 inline-flex h-12 items-center justify-center rounded-[4px] border border-[#07563F] bg-transparent px-5 text-[14px] font-semibold text-[#07563F]"
                 >
-                  {t("navigation.cta.requestDemo")}
+                  {t("navigation.cta.login")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    navigate("/bilan-gratuit");
+                  }}
+                  className="inline-flex h-12 items-center justify-center rounded-[4px] bg-[#07563F] px-5 text-[14px] font-semibold text-white"
+                >
+                  Auto-Diagnostic
                 </button>
               </nav>
             </SheetContent>
