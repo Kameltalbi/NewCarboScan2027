@@ -668,7 +668,7 @@ export async function registerAdminRoutes(app: FastifyInstance) {
   app.put(
     "/v1/admin/security-settings",
     { preHandler: [app.requireSuperAdmin] },
-    async (request, reply) => {
+    async (request) => {
       const body = request.body as Record<string, unknown>;
       const settings = {
         require_mfa: Boolean(body.require_mfa),

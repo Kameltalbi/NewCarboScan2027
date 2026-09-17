@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { REGISTRY_TOTAL, CATALOG_VISIBLE_TOTAL } from "./helpers/registryCounts.js";
+import { REGISTRY_TOTAL } from "./helpers/registryCounts.js";
 import pg from "pg";
 import {
   decodeSearchCursor,
