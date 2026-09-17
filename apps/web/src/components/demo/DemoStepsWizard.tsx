@@ -197,7 +197,7 @@ export const DemoStepsWizard: React.FC = () => {
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Button asChild size="lg">
-            <Link to="/pricing">Découvrir nos offres</Link>
+            <Link to="/contact">Découvrir nos offres</Link>
           </Button>
           <Button asChild size="lg" variant="outline">
             <Link to="/blog">Lire nos ressources</Link>

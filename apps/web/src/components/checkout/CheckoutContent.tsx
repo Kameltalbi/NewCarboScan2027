@@ -272,7 +272,7 @@ export const CheckoutContent: React.FC = () => {
               <p className="text-muted-foreground">
                 Aucune configuration n'a été trouvée. Configurez votre offre d'abord.
               </p>
-              <Button onClick={() => navigate("/pricing")}>Configurer mon offre</Button>
+              <Button onClick={() => navigate('/contact')}>Configurer mon offre</Button>
             </CardContent>
           </Card>
         </div>

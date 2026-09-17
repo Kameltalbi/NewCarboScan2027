@@ -12,7 +12,6 @@ export const NewFooter: React.FC = () => {
       title: t("newHomepage.footer.sections.product.title"),
       links: [
         { name: t("newHomepage.footer.sections.product.links.freeTester"), href: "#tester" },
-        { name: t("newHomepage.footer.sections.product.links.pricing"), href: "#pricing" },
         { name: t("newHomepage.footer.sections.product.links.integrations"), href: "#" }
       ]
     },

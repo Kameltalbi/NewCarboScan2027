@@ -83,7 +83,7 @@ export const ModuleProtectedRoute: React.FC<ModuleProtectedRouteProps> = ({ chil
 
   // Si pas de modules achetés, rediriger vers pricing
   if (modules.length === 0) {
-    return <Navigate to="/pricing" replace />;
+    return <Navigate to="/contact" replace />;
   }
 
   return <>{children}</>;

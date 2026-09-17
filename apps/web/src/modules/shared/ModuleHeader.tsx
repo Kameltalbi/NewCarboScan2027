@@ -319,7 +319,7 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
             <DropdownMenuItem onClick={() => navigate('/app/bilan-carbone/settings')}>
               Paramètres
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate('/pricing')}>
+            <DropdownMenuItem onClick={() => navigate('/contact')}>
               Abonnement
             </DropdownMenuItem>
             <DropdownMenuSeparator />

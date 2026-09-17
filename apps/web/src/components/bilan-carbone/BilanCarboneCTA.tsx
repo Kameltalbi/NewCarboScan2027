@@ -12,7 +12,7 @@ const BilanCarboneCTA = () => {
     if (user) {
       navigate('/auth'); // Redirect to login/dashboard if user has account
     } else {
-      navigate('/pricing'); // Redirect to pricing if no account
+      navigate('/contact'); // Redirect to pricing if no account
     }
   };
   return (

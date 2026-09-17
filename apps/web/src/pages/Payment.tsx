@@ -8,7 +8,7 @@ const Payment: React.FC = () => {
   useEffect(() => {
     // no-op, redirection déclarative ci-dessous
   }, []);
-  return <Navigate to="/pricing" replace />;
+  return <Navigate to="/contact" replace />;
 };
 
 export default Payment;

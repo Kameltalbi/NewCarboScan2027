@@ -57,7 +57,7 @@ export const PlanBadge: React.FC<PlanBadgeProps> = ({
         </Badge>
         <Button
           size="sm"
-          onClick={() => navigate('/pricing')}
+          onClick={() => navigate('/contact')}
           className="h-6 px-2 text-xs"
         >
           Choisir un plan
@@ -79,7 +79,7 @@ export const PlanBadge: React.FC<PlanBadgeProps> = ({
         <Button
           size="sm"
           variant="outline"
-          onClick={() => navigate('/pricing')}
+          onClick={() => navigate('/contact')}
           className="h-6 px-2 text-xs"
         >
           <ArrowUp className="h-3 w-3 mr-1" />

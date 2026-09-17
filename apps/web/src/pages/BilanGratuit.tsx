@@ -151,7 +151,7 @@ const BilanGratuit: React.FC = () => {
 
             <p className="text-xs text-gray-400">
               {t('freeCalculators.bilan.intro.proHint')}{' '}
-              <button onClick={() => navigate('/pricing')} className="underline text-green-600 hover:text-green-700">
+              <button onClick={() => navigate('/contact')} className="underline text-green-600 hover:text-green-700">
                 {t('freeCalculators.bilan.intro.proLink')}
               </button>.
             </p>
@@ -286,7 +286,7 @@ const BilanGratuit: React.FC = () => {
               <h3 className="text-2xl font-bold">{t('freeCalculators.bilan.results.upsellTitle')}</h3>
               <p className="opacity-90 max-w-xl mx-auto">{t('freeCalculators.bilan.results.upsellText')}</p>
               <div className="flex justify-center gap-3">
-                <Button size="lg" variant="secondary" className="bg-white text-blue-700 hover:bg-blue-50" onClick={() => navigate('/pricing')}>
+                <Button size="lg" variant="secondary" className="bg-white text-blue-700 hover:bg-blue-50" onClick={() => navigate('/contact')}>
                   {t('freeCalculators.bilan.results.seeOffers')}
                 </Button>
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" onClick={() => navigate('/contact')}>

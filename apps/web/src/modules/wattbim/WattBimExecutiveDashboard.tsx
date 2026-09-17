@@ -287,7 +287,7 @@ export const WattBimExecutiveDashboard: React.FC = () => {
               </p>
             </div>
           </div>
-          <Button asChild><Link to="/pricing">Ajouter Bilan Carbone</Link></Button>
+          <Button asChild><Link to="/contact">Ajouter Bilan Carbone</Link></Button>
         </CardContent>
       </Card>
     </div>

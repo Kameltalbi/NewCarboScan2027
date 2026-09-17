@@ -999,7 +999,7 @@ export const AdaptiveCarbonQuestionnaire: React.FC = () => {
                   Contacter l'équipe
                 </Button>
               ) : (
-                <Button onClick={() => navigate('/pricing')}>
+                <Button onClick={() => navigate('/contact')}>
                   Voir les plans disponibles
                 </Button>
               )}
@@ -1144,7 +1144,7 @@ export const AdaptiveCarbonQuestionnaire: React.FC = () => {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => navigate('/pricing')}
+              onClick={() => navigate('/contact')}
             >
               Upgrader mon plan
             </Button>

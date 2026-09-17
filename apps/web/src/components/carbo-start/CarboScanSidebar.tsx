@@ -190,7 +190,7 @@ export const CarboScanSidebar: React.FC = () => {
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton 
-                        onClick={() => navigate('/pricing')}
+                        onClick={() => navigate('/contact')}
                         className="text-white/60 hover:bg-white/10 cursor-pointer"
                         title={isCollapsed ? `${item.title} - Disponible dans CarboPlus` : undefined}
                       >

@@ -68,7 +68,7 @@ export const WhyCarboScanSection = () => {
                 </span>
               ))}
             </div>
-            <a href="/pricing" className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all">
+            <a href="/contact" className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all">
               {t("homepage.whyCarboScan.card2.cta")}
             </a>
           </div>

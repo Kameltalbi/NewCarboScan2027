@@ -168,7 +168,7 @@ export const AdaptiveDashboard: React.FC = () => {
             </p>
             <div className="space-y-3">
               <Button 
-                onClick={() => navigate('/pricing')}
+                onClick={() => navigate('/contact')}
                 className="w-full max-w-sm"
                 size="lg"
               >

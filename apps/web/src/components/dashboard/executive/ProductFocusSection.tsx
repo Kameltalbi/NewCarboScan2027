@@ -53,7 +53,7 @@ export const ProductFocusSection: React.FC<ProductFocusSectionProps> = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate('/pricing')}
+            onClick={() => navigate('/contact')}
             className="text-xs gap-2"
           >
             Découvrir

@@ -124,7 +124,7 @@ export const PlanFeatureGuard: React.FC<PlanFeatureGuardProps> = ({
             </Button>
             <Button
               variant="outline"
-              onClick={() => navigate('/pricing')}
+              onClick={() => navigate('/contact')}
               className="w-full"
               size="sm"
             >

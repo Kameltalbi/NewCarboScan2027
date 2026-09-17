@@ -11,7 +11,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Separator } from "@/components/ui/separator";
-import { Menu, X, ChevronDown, Leaf, BookOpen, Users, Phone, BarChart3, Calculator, FileText, Award, Shield, GraduationCap, CreditCard, PenTool, Package, Database, Zap, Target, HelpCircle } from "lucide-react";
+import { Menu, X, ChevronDown, Leaf, BookOpen, Users, Phone, BarChart3, Calculator, FileText, Award, Shield, GraduationCap, PenTool, Package, Database, Zap, Target, HelpCircle } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { BrandLogo } from "@/components/brand/BrandLogo";
@@ -197,18 +197,6 @@ export const MainHeader = () => {
                           </SheetClose>
                         </div>
                       )}
-
-                      {/* Pricing */}
-                      <div className="py-4 border-b border-gray-100 bg-white">
-                        <SheetClose asChild>
-                          <Link to="/pricing" className="flex items-center space-x-3 p-2 rounded-[4px] hover:bg-gray-50 transition-colors">
-                            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-                              <CreditCard className="h-4 w-4 text-blue-600" />
-                            </div>
-                            <span className="font-medium text-gray-900">{t("navigation.pricing")}</span>
-                          </Link>
-                        </SheetClose>
-                      </div>
 
                       {/* Ressources */}
                       <AccordionItem value="ressources" className="border-b border-gray-100 bg-white">
@@ -482,16 +470,6 @@ export const MainHeader = () => {
                     </div>
                   </div>
                 </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              {/* Pricing */}
-              <NavigationMenuItem>
-                <Link 
-                  to="/pricing" 
-                  className={`h-10 px-4 py-2 text-base font-semibold transition-colors flex items-center ${transparent ? "text-white/90 hover:text-white" : "text-gray-700 hover:text-gray-900"}`}
-                >
-                  {t("navigation.pricing")}
-                </Link>
               </NavigationMenuItem>
 
               {/* Ressources */}
