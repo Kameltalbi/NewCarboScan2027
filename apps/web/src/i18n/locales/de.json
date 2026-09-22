@@ -1477,7 +1477,7 @@
       }
     },
     "footer": {
-      "tagline": "Künstliche Intelligenz im Dienst der Umwelt. Berechnen, analysieren und reduzieren Sie Ihren CO₂-Fußabdruck präzise.",
+      "tagline": "Bewerten Sie die Kohlenstoffreife Ihres Unternehmens und erkennen Sie Ihre Handlungsprioritäten.",
       "sections": {
         "product": {
           "title": "Produkt",
@@ -7134,7 +7134,7 @@
         },
         {
           "question": "Kann man klein anfangen?",
-          "answer": "Ja: zuerst Standorte und Energie, dann Reisen und Einkäufe. Die kostenlose Bilanz liefert eine erste Größenordnung."
+          "answer": "Ja: zuerst Standorte und Energie, dann Reisen und Einkäufe. Die kostenlose Diagnose zeigt die Reife und die Datenverfügbarkeit, ohne Emissionen zu berechnen."
         }
       ]
     }

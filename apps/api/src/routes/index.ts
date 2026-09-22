@@ -21,10 +21,12 @@ import { registerClimateRoutes } from "./climate.js";
 import { registerPcfRoutes } from "./pcf.js";
 import { registerPrivacyRoutes } from "./privacy.js";
 import { registerWebhookRoutes } from "./webhooks.js";
+import { registerDiagnosticRoutes } from "./diagnostic.js";
 
 export async function registerRoutes(app: FastifyInstance) {
   await registerAuthRoutes(app);
   await registerPublicRoutes(app);
+  await registerDiagnosticRoutes(app);
   await registerWebhookRoutes(app);
   await registerPrivacyRoutes(app);
   await registerImportRoutes(app);

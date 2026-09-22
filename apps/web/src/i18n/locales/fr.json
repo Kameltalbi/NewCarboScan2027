@@ -394,6 +394,7 @@
     },
     "items": {
       "dashboard": "Tableau de bord",
+      "diagnostics": "Mes diagnostics",
       "collect": "Collecte",
       "emissionFactors": "Facteurs d'émission",
       "bilanCarbone": "Bilan Carbone",
@@ -1448,7 +1449,7 @@
       }
     },
     "footer": {
-      "tagline": "L'intelligence artificielle au service de l'environnement. Calculez, analysez et réduisez votre empreinte carbone avec précision.",
+      "tagline": "Évaluez la maturité carbone de votre entreprise et identifiez vos priorités d'action.",
       "sections": {
         "product": {
           "title": "Produit",
@@ -6647,7 +6648,7 @@
       "benefitsTitle": "Pourquoi choisir CarboScan pour le secteur {{sector}} ?",
       "ctaTitle": "Prêt à réduire l'empreinte carbone de votre entreprise ?",
       "ctaSubtitle": "Rejoignez les entreprises du secteur {{sector}} qui utilisent CarboScan pour mesurer, comprendre et réduire leur impact environnemental.",
-      "startFree": "Commencer mon bilan gratuit"
+      "startFree": "Commencer mon diagnostic"
     },
     "industrie": {
       "sector": "Industrie",
@@ -7146,7 +7147,7 @@
         },
         {
           "question": "Peut-on commencer petit ?",
-          "answer": "Oui : sites et énergie d’abord, puis déplacements et achats. Le bilan gratuit donne un premier ordre de grandeur."
+          "answer": "Oui : sites et énergie d’abord, puis déplacements et achats. Le diagnostic gratuit situe la maturité et la disponibilité des données, sans calculer d’émissions."
         }
       ]
     }

@@ -1477,7 +1477,7 @@
       }
     },
     "footer": {
-      "tagline": "Inteligencia artificial al servicio del medio ambiente. Calcule, analice y reduzca su huella de carbono con precisión.",
+      "tagline": "Evalúe la madurez de carbono de su empresa e identifique sus prioridades de acción.",
       "sections": {
         "product": {
           "title": "Producto",
@@ -7134,7 +7134,7 @@
         },
         {
           "question": "¿Se puede empezar poco a poco?",
-          "answer": "Sí: sitios y energía primero, luego desplazamientos y compras. La huella gratuita da un primer orden de magnitud."
+          "answer": "Sí: sitios y energía primero, luego desplazamientos y compras. El diagnóstico gratuito sitúa la madurez y la disponibilidad de los datos, sin calcular emisiones."
         }
       ]
     }

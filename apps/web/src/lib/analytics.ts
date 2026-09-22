@@ -19,7 +19,17 @@ export type AnalyticsEventName =
   | 'contact_form_submit'
   | 'purchase'
   | 'begin_checkout'
-  | 'page_view';
+  | 'page_view'
+  | 'diagnostic_started'
+  | 'diagnostic_question_answered'
+  | 'diagnostic_answered'
+  | 'diagnostic_axis_completed'
+  | 'diagnostic_abandoned'
+  | 'diagnostic_completed'
+  | 'diagnostic_report_requested'
+  | 'diagnostic_report_downloaded'
+  | 'diagnostic_cta_clicked'
+  | 'diagnostic_claimed';
 
 declare global {
   interface Window {

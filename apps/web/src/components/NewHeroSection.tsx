@@ -3,22 +3,21 @@ import { Leaf, Rocket, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const heroWebp = "/media/hero-windfarm.webp";
-const heroJpeg = "/media/hero-windfarm.jpg";
+const heroVideo = "/media/hero-wind.mp4";
+const heroPoster = "/media/hero-wind-poster.jpg";
 
-const HeroPhoto = () => (
-  <picture>
-    <source srcSet={heroWebp} type="image/webp" />
-    <img
-      src={heroJpeg}
-      alt=""
-      width={1400}
-      height={788}
-      className="h-full w-full object-cover object-[78%_center]"
-      decoding="async"
-      fetchPriority="high"
-    />
-  </picture>
+const HeroVideo = () => (
+  <video
+    className="h-full w-full object-cover object-[78%_center]"
+    src={heroVideo}
+    poster={heroPoster}
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="auto"
+    aria-hidden="true"
+  />
 );
 
 const TRUST_ITEMS = [
@@ -58,7 +57,7 @@ export const NewHeroSection: React.FC = () => {
           aria-hidden="true"
         />
         <div className="absolute inset-0" style={{ clipPath: "url(#hero-organic-split)" }}>
-          <HeroPhoto />
+          <HeroVideo />
         </div>
       </div>
 
@@ -111,7 +110,7 @@ export const NewHeroSection: React.FC = () => {
         </div>
 
         <div className="relative mt-10 h-[380px] overflow-hidden rounded-[40px_16px_16px_28px] shadow-[0_18px_50px_rgba(7,61,48,0.08)] md:h-[440px] lg:hidden">
-          <HeroPhoto />
+          <HeroVideo />
         </div>
       </div>
     </section>

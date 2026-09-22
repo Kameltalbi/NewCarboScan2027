@@ -193,12 +193,12 @@ export const PAGE_SEO: Record<string, PageSEO> = {
   },
   '/bilan-gratuit': {
     path: '/bilan-gratuit',
-    title: 'Bilan carbone gratuit — Estimateur express CarboScan',
+    title: 'Diagnostic Carbone 360° gratuit | CarboScan',
     description:
-      'Estimez gratuitement l’empreinte carbone de votre entreprise en quelques minutes. Première étape vers un bilan carbone complet.',
+      'Évaluez gratuitement la maturité carbone de votre entreprise, la qualité de vos données et identifiez vos 3 priorités d’action avec CarboScan.',
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
-      { name: 'Bilan gratuit', path: '/bilan-gratuit' },
+      { name: 'Diagnostic carbone', path: '/bilan-gratuit' },
     ],
   },
   '/auth': {

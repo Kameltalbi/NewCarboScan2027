@@ -394,6 +394,7 @@
     },
     "items": {
       "dashboard": "Dashboard",
+      "diagnostics": "My diagnostics",
       "collect": "Data collection",
       "emissionFactors": "Emission factors",
       "bilanCarbone": "Carbon Footprint",
@@ -1477,7 +1478,7 @@
       }
     },
     "footer": {
-      "tagline": "Artificial intelligence serving the environment. Calculate, analyze and reduce your carbon footprint with precision.",
+      "tagline": "Assess your company's carbon maturity and identify your action priorities.",
       "sections": {
         "product": {
           "title": "Product",
@@ -7134,7 +7135,7 @@
         },
         {
           "question": "Can we start small?",
-          "answer": "Yes: sites and energy first, then travel and purchases. The free assessment gives a first order of magnitude."
+          "answer": "Yes: sites and energy first, then travel and purchases. The free diagnostic shows maturity and data readiness, without calculating emissions."
         }
       ]
     }

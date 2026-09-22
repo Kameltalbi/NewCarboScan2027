@@ -24,7 +24,8 @@ export const ModuleProtectedRoute: React.FC<ModuleProtectedRouteProps> = ({ chil
   // EXCEPTION 1: Le Dashboard est toujours accessible si l'utilisateur est connecté
   const isDashboardRoute = location.pathname.startsWith('/app/dashboard');
   const isEmissionFactorsRoute = location.pathname.startsWith('/app/emission-factors');
-  if (isDashboardRoute || isEmissionFactorsRoute) {
+  const isDiagnosticsRoute = location.pathname.startsWith('/app/diagnostics');
+  if (isDashboardRoute || isEmissionFactorsRoute || isDiagnosticsRoute) {
     if (authLoading) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-background">

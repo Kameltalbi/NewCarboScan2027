@@ -13,6 +13,7 @@ const LoadingFallback = () => (
 
 // Dashboard route - Page unique
 const DashboardOverview = lazy(() => import('@/app/dashboard/DashboardOverview').then(m => ({ default: m.DashboardOverview })));
+const MesDiagnostics = lazy(() => import('@/app/diagnostics/MesDiagnostics').then(m => ({ default: m.MesDiagnostics })));
 
 // Collecte routes
 const CollecteNouvelle = lazy(() => import('@/app/collecte/CollecteNouvelle').then(m => ({ default: m.CollecteNouvelle })));
@@ -112,6 +113,16 @@ export const AppRouter: React.FC = () => {
           <Suspense fallback={<LoadingFallback />}>
             <ModuleLayout moduleSlug="bilan-carbone">
               <DashboardOverview />
+            </ModuleLayout>
+          </Suspense>
+        </ModuleProtectedRoute>
+      } />
+
+      <Route path="diagnostics" element={
+        <ModuleProtectedRoute>
+          <Suspense fallback={<LoadingFallback />}>
+            <ModuleLayout moduleSlug="bilan-carbone">
+              <MesDiagnostics />
             </ModuleLayout>
           </Suspense>
         </ModuleProtectedRoute>

@@ -91,7 +91,8 @@ const toneClass = {
 } as const;
 
 export const HomeHeader: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const diagnosticLabel = i18n.language.startsWith("en") ? "Carbon Diagnostic 360°" : "Diagnostic 360°";
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [platformOpen, setPlatformOpen] = useState(false);
@@ -253,7 +254,7 @@ export const HomeHeader: React.FC = () => {
             onClick={() => navigate("/bilan-gratuit")}
             className="inline-flex h-11 items-center justify-center rounded-[4px] bg-[#07563F] px-5 text-[14px] font-semibold text-white transition-colors hover:bg-[#054C36]"
           >
-            Auto-Diagnostic
+            {diagnosticLabel}
           </button>
         </div>
 
@@ -339,7 +340,7 @@ export const HomeHeader: React.FC = () => {
                   }}
                   className="inline-flex h-12 items-center justify-center rounded-[4px] bg-[#07563F] px-5 text-[14px] font-semibold text-white"
                 >
-                  Auto-Diagnostic
+                  {diagnosticLabel}
                 </button>
               </nav>
             </SheetContent>

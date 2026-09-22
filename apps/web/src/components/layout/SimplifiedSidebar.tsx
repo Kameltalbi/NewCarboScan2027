@@ -28,6 +28,7 @@ import {
   Construction,
   Zap,
   Leaf,
+  ClipboardList,
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -56,6 +57,13 @@ const dashboardItem: ModuleItem = {
   labelKey: 'sidebarNav.items.dashboard',
   path: '/app/dashboard',
   icon: LayoutDashboard,
+};
+
+const diagnosticsItem: ModuleItem = {
+  id: 'diagnostics',
+  labelKey: 'sidebarNav.items.diagnostics',
+  path: '/app/diagnostics',
+  icon: ClipboardList,
 };
 
 const sidebarGroups: SidebarGroupDef[] = [
@@ -187,6 +195,11 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
 
   const dashboardDisplay = useMemo(
     () => ({ ...dashboardItem, label: t(dashboardItem.labelKey) }),
+    [t],
+  );
+
+  const diagnosticsDisplay = useMemo(
+    () => ({ ...diagnosticsItem, label: t(diagnosticsItem.labelKey) }),
     [t],
   );
 
@@ -333,6 +346,7 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
       >
         <SidebarMenu>
           <div className="mb-1">{renderItem(dashboardDisplay)}</div>
+          <div className="mb-1">{renderItem(diagnosticsDisplay)}</div>
 
           {displayGroups.map((group) => (
             <div key={group.id}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
@@ -75,6 +75,16 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
   if (jsonLd) {
     schemas.push(...(Array.isArray(jsonLd) ? jsonLd : [jsonLd]));
   }
+
+  useEffect(() => {
+    document.title = pageTitle;
+    const existing = [...document.querySelectorAll('meta[name="description"]')];
+    const meta = existing[0] ?? document.head.appendChild(document.createElement('meta'));
+    meta.setAttribute('name', 'description');
+    meta.setAttribute('content', pageDescription);
+    meta.setAttribute('data-rh', 'true');
+    for (const extra of existing.slice(1)) extra.remove();
+  }, [pageTitle, pageDescription]);
 
   return (
     <Helmet>

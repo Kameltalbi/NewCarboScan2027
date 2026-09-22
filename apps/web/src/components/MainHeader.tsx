@@ -23,7 +23,8 @@ import { useAppData } from "@/contexts/AppDataContext";
 export const MainHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const diagnosticLabel = i18n.language.startsWith("en") ? "Carbon Diagnostic 360°" : "Diagnostic 360°";
   const isMobile = useIsMobile();
   const { isSuperAdmin, hasModule } = useAppData();
   const { user } = useAuth();
@@ -294,7 +295,7 @@ export const MainHeader = () => {
                           onClick={() => navigate("/bilan-gratuit")}
                           className="w-full bg-[#16585C] hover:bg-[#0F4144] text-white h-11 font-medium rounded-[4px]"
                         >
-                          Auto-Diagnostic
+                          {diagnosticLabel}
                         </Button>
                       </SheetClose>
 
@@ -610,7 +611,7 @@ export const MainHeader = () => {
                 onClick={() => navigate("/bilan-gratuit")}
                 className={`font-medium px-5 py-2 h-10 rounded-[4px] ${transparent ? "bg-[#10B981] hover:bg-[#059669] text-white shadow-lg shadow-[#10B981]/20" : "bg-[#16585C] hover:bg-[#0F4144] text-white"}`}
               >
-                Auto-Diagnostic
+                {diagnosticLabel}
               </Button>
             </div>
 
