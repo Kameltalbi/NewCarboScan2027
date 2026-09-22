@@ -17,7 +17,12 @@ export function cellRaw(value: ExcelJS.CellValue): unknown {
     if ("richText" in value) {
       return value.richText.map((part) => part.text).join("");
     }
-    if ("result" in value) return cellRaw(value.result ?? null);
+    if ("result" in value) {
+      const result = value.result;
+      if (result == null || (typeof result === "object" && "error" in result)) return null;
+      if (result instanceof Date) return excelSerial(result);
+      return result;
+    }
     if ("text" in value && typeof value.text === "string") return value.text;
     if ("error" in value) return null;
   }
