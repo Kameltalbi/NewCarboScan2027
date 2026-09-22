@@ -7,12 +7,11 @@ import { seoStaticFilesPlugin } from "./scripts/generate-seo-files.mjs";
 
 /** Strip GA network load on local Vite serve; keep tags for production View Source. */
 function analyticsHtmlPlugin(mode: string): Plugin {
-  const FALLBACK_GA_ID = "G-T07PGN0WZK";
   return {
     name: "carboscan-analytics-html",
     transformIndexHtml(html, ctx) {
       const env = loadEnv(mode, process.cwd(), "");
-      const gaId = env.VITE_GA_MEASUREMENT_ID || FALLBACK_GA_ID;
+      const gaId = env.VITE_GA_MEASUREMENT_ID || "";
       // Dev server: do not load googletagmanager on localhost
       if (ctx.server) {
         return html

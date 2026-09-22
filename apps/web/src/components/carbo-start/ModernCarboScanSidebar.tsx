@@ -229,15 +229,15 @@ export const ModernCarboScanSidebar: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="w-9 h-9 flex items-center justify-center mx-auto rounded-[4px] bg-primary/5 overflow-hidden">
+              <div className="flex items-center justify-center mx-auto">
                 {orgLogoUrl ? (
                   <img 
                     src={orgLogoUrl} 
                     alt="Logo organisation" 
-                    className="h-7 w-7 object-contain"
+                    className="h-7 w-auto max-w-[7rem] object-contain"
                   />
                 ) : (
-                  <BrandLogo variant="symbol" className="h-7 w-7" />
+                  <BrandLogo variant="light" className="h-7" />
                 )}
               </div>
             )}

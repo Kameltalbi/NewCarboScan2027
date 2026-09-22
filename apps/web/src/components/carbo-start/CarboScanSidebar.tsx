@@ -99,9 +99,7 @@ export const CarboScanSidebar: React.FC = () => {
             {!isCollapsed ? (
               <BrandLogo variant="dark" className="h-12" />
             ) : (
-              <div className="w-8 h-8 flex items-center justify-center">
-                <BrandLogo variant="symbol" className="h-8 w-8" />
-              </div>
+              <BrandLogo variant="dark" className="h-8" />
             )}
           </div>
         </div>

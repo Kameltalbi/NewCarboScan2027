@@ -3,7 +3,23 @@ import { Leaf, Rocket, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const heroImage = "/media/hero-windfarm.png";
+const heroWebp = "/media/hero-windfarm.webp";
+const heroJpeg = "/media/hero-windfarm.jpg";
+
+const HeroPhoto = () => (
+  <picture>
+    <source srcSet={heroWebp} type="image/webp" />
+    <img
+      src={heroJpeg}
+      alt=""
+      width={1400}
+      height={788}
+      className="h-full w-full object-cover object-[78%_center]"
+      decoding="async"
+      fetchPriority="high"
+    />
+  </picture>
+);
 
 const TRUST_ITEMS = [
   { icon: Rocket, key: "deploy" as const },
@@ -42,12 +58,7 @@ export const NewHeroSection: React.FC = () => {
           aria-hidden="true"
         />
         <div className="absolute inset-0" style={{ clipPath: "url(#hero-organic-split)" }}>
-          <img
-            src={heroImage}
-            alt=""
-            className="h-full w-full object-cover object-[78%_center]"
-            decoding="async"
-          />
+          <HeroPhoto />
         </div>
       </div>
 
@@ -100,12 +111,7 @@ export const NewHeroSection: React.FC = () => {
         </div>
 
         <div className="relative mt-10 h-[380px] overflow-hidden rounded-[40px_16px_16px_28px] shadow-[0_18px_50px_rgba(7,61,48,0.08)] md:h-[440px] lg:hidden">
-          <img
-            src={heroImage}
-            alt=""
-            className="h-full w-full object-cover object-[78%_center]"
-            decoding="async"
-          />
+          <HeroPhoto />
         </div>
       </div>
     </section>

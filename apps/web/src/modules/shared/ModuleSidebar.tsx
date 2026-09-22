@@ -17,6 +17,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { useAuth } from "@/hooks/useAuth";
 import { ModuleConfig } from "@/modules";
 
@@ -58,13 +59,7 @@ export const ModuleSidebar: React.FC<ModuleSidebarProps> = ({
           className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => navigate('/')}
         >
-          <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center">
-            <span className="text-white font-bold text-sm">CS</span>
-          </div>
-          <div>
-            <h1 className="font-bold text-lg text-white">CarboScan</h1>
-            <p className="text-xs text-slate-400">Suite Climat</p>
-          </div>
+          <BrandLogo variant="dark" className="h-8" />
         </div>
       </SidebarHeader>
 
