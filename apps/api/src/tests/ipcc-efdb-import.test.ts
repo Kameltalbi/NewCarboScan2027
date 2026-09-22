@@ -26,10 +26,10 @@ const seedPath = resolve(root, "db/seeds/ipcc_efdb.sql");
 const hasXlsx = existsSync(xlsxPath);
 
 describe("IPCC EFDB importer (offline)", { skip: !hasXlsx }, () => {
-  it("pins workbook SHA-256 and structural counts", () => {
+  it("pins workbook SHA-256 and structural counts", async () => {
     const sha = createHash("sha256").update(readFileSync(xlsxPath)).digest("hex");
     assert.equal(sha, IPCC_EFDB_EXPECTED_SHA256);
-    const { records, stats } = parseIpccEfdbWorkbook(xlsxPath);
+    const { records, stats } = await parseIpccEfdbWorkbook(xlsxPath);
     assert.equal(records.length, IPCC_EFDB_EXPECTED_RECORD_COUNT);
     assert.equal(stats.distinctEfIds, IPCC_EFDB_EXPECTED_RECORD_COUNT);
     assert.equal(stats.emptyGeo, 10450);
@@ -57,8 +57,8 @@ describe("IPCC EFDB importer (offline)", { skip: !hasXlsx }, () => {
     assert.equal(parseEfdbValue("12abc").number, null);
   });
 
-  it("classifies mandatory examples and operational subset", () => {
-    const { records } = parseIpccEfdbWorkbook(xlsxPath);
+  it("classifies mandatory examples and operational subset", async () => {
+    const { records } = await parseIpccEfdbWorkbook(xlsxPath);
     const classified = classifyAll(records);
     const byId = Object.fromEntries(classified.map((c) => [c.efId, c]));
 

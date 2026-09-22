@@ -25,9 +25,9 @@ describe("uk gov ghg 2026 seed generator (offline)", { skip: !existsSync(WORKBOO
     assert.equal(assertUkWorkbookSha256(WORKBOOK), UK_EXPECTED_SHA256);
   });
 
-  it("generates identical seed bytes twice and matches versioned seed", () => {
-    const a = buildUkSeedSqlFromWorkbook(WORKBOOK);
-    const b = buildUkSeedSqlFromWorkbook(WORKBOOK);
+  it("generates identical seed bytes twice and matches versioned seed", async () => {
+    const a = await buildUkSeedSqlFromWorkbook(WORKBOOK);
+    const b = await buildUkSeedSqlFromWorkbook(WORKBOOK);
     assert.equal(a.factorCount, 2622);
     assert.equal(a.sha256, b.sha256);
     assert.equal(a.sql, b.sql);

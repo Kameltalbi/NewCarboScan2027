@@ -2,24 +2,15 @@
  * EPA GHG Emission Factors Hub 2025 — explicit table-by-table parsers.
  * Sheet: "Emission Factors Hub" (591 rows). NA is never coerced to 0.
  */
-import { createRequire } from "node:module";
+import { loadWorksheet, worksheetMatrix } from "../xlsxMatrix.js";
 import { cleanCell, isNaToken, parseNumeric, slug } from "./helpers.js";
 import { EPA_AR5_GWP, EPA_SHEET_NAME, type EpaRawFactor } from "./types.js";
 
-const require = createRequire(import.meta.url);
-const XLSX = require("xlsx") as typeof import("xlsx");
-
 type SheetMatrix = unknown[][];
 
-function loadMatrix(workbookPath: string): SheetMatrix {
-  const wb = XLSX.readFile(workbookPath, { cellDates: false, raw: true });
-  const sheet = wb.Sheets[EPA_SHEET_NAME];
-  if (!sheet) throw new Error(`Missing sheet ${EPA_SHEET_NAME}`);
-  return XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-    defval: null,
-    raw: true,
-  }) as SheetMatrix;
+async function loadMatrix(workbookPath: string): Promise<SheetMatrix> {
+  const sheet = await loadWorksheet(workbookPath, EPA_SHEET_NAME);
+  return worksheetMatrix(sheet, true);
 }
 
 function cell(row: unknown[] | undefined, idx: number): unknown {
@@ -677,8 +668,8 @@ export type EpaParseResult = {
   byTable: Record<number, number>;
 };
 
-export function parseEpaWorkbook(workbookPath: string): EpaParseResult {
-  const matrix = loadMatrix(workbookPath);
+export async function parseEpaWorkbook(workbookPath: string): Promise<EpaParseResult> {
+  const matrix = await loadMatrix(workbookPath);
   const na = { na: 0 };
   const parts = [
     parseTable1(matrix, na),

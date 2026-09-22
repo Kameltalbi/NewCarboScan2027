@@ -11,7 +11,7 @@ import {
   efFactorChecksumV2,
   ipccEfdbFactorUuid,
 } from "./fixedIds.js";
-import { parseIpccEfdbWorkbook } from "./parseWorkbook.js";
+import { parseIpccEfdbWorkbook, type IpccParseStats } from "./parseWorkbook.js";
 import { assertIpccEfdbWorkbookSha256 } from "./sha256.js";
 import {
   IPCC_EFDB_DATASET_VERSION,
@@ -130,17 +130,19 @@ export type IpccSeedArtifact = {
   autoGlobalActivity: number;
   sourceSha256: string;
   summary: ReturnType<typeof summarizeClassification>;
-  stats: ReturnType<typeof parseIpccEfdbWorkbook>["stats"];
+  stats: IpccParseStats;
   dtos: IpccFactorDto[];
 };
 
-export function buildIpccEfdbSeedSqlFromWorkbook(workbookPath: string): IpccSeedArtifact {
+export async function buildIpccEfdbSeedSqlFromWorkbook(
+  workbookPath: string,
+): Promise<IpccSeedArtifact> {
   const sourceSha256 = assertIpccEfdbWorkbookSha256(workbookPath);
   if (sourceSha256 !== IPCC_EFDB_EXPECTED_SHA256) {
     throw new Error(`Unexpected XLSX SHA-256: ${sourceSha256}`);
   }
 
-  const { records, stats } = parseIpccEfdbWorkbook(workbookPath);
+  const { records, stats } = await parseIpccEfdbWorkbook(workbookPath);
   const classified = classifyAll(records);
   const summary = summarizeClassification(classified);
   const dtos = promoteOperationalFactors(classified);

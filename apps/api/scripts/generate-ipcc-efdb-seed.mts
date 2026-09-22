@@ -10,7 +10,7 @@ const root = resolve(import.meta.dirname, "../../..");
 const xlsx = resolve(root, "data/ipcc_efdb/EFDB_output.xlsx");
 const out = resolve(root, "db/seeds/ipcc_efdb.sql");
 
-const artifact = buildIpccEfdbSeedSqlFromWorkbook(xlsx);
+const artifact = await buildIpccEfdbSeedSqlFromWorkbook(xlsx);
 writeFileSync(out, artifact.sql, "utf8");
 console.log(
   JSON.stringify(

@@ -14,7 +14,7 @@ export async function importUkGovGhg2026(
   workbookPath: string,
 ): Promise<UkImportResult> {
   const fileSha256 = assertUkWorkbookSha256(workbookPath);
-  const rows = parseUkWorkbook(workbookPath);
+  const rows = await parseUkWorkbook(workbookPath);
   const reconcile = reconcileUkRows(rows);
   assertReconcileInvariants(reconcile);
 

@@ -24,8 +24,8 @@ describe("uk gov ghg 2026 adapter (offline)", { skip: !existsSync(WORKBOOK) }, (
     assert.equal(sha, UK_EXPECTED_SHA256);
   });
 
-  it("reconciles source invariants", () => {
-    const rows = parseUkWorkbook(WORKBOOK);
+  it("reconciles source invariants", async () => {
+    const rows = await parseUkWorkbook(WORKBOOK);
     const stats = reconcileUkRows(rows);
     assertReconcileInvariants(stats);
     assert.equal(stats.sourceRowsWithId, 8740);
@@ -35,8 +35,8 @@ describe("uk gov ghg 2026 adapter (offline)", { skip: !existsSync(WORKBOOK) }, (
     assert.equal(stats.negativeValues, 0);
   });
 
-  it("importable IDs are unique, suffix _1, stems unique", () => {
-    const rows = parseUkWorkbook(WORKBOOK).filter(isImportableKgCo2e);
+  it("importable IDs are unique, suffix _1, stems unique", async () => {
+    const rows = (await parseUkWorkbook(WORKBOOK)).filter(isImportableKgCo2e);
     assert.equal(rows.length, 2622);
     const ids = new Set<string>();
     const stems = new Set<string>();
@@ -52,8 +52,8 @@ describe("uk gov ghg 2026 adapter (offline)", { skip: !existsSync(WORKBOOK) }, (
     assert.equal(stems.size, 2622);
   });
 
-  it("does not coerce NULL to zero; preserves zeros", () => {
-    const rows = parseUkWorkbook(WORKBOOK);
+  it("does not coerce NULL to zero; preserves zeros", async () => {
+    const rows = await parseUkWorkbook(WORKBOOK);
     const co2e = rows.filter((r) => (r.ghgUnit ?? "").trim() === "kg CO2e");
     const nulls = co2e.filter((r) => r.valueIsNull);
     const zeros = co2e.filter((r) => r.valueIsZero);
@@ -136,8 +136,8 @@ describe("uk gov ghg 2026 adapter (offline)", { skip: !existsSync(WORKBOOK) }, (
     );
   });
 
-  it("normalizes to 2622 DTOs with unique stable ids", () => {
-    const rows = parseUkWorkbook(WORKBOOK);
+  it("normalizes to 2622 DTOs with unique stable ids", async () => {
+    const rows = await parseUkWorkbook(WORKBOOK);
     const { dtos, zerosImported } = normalizeUkRows(rows);
     assert.equal(dtos.length, 2622);
     assert.equal(new Set(dtos.map((d) => d.stableFactorId)).size, 2622);

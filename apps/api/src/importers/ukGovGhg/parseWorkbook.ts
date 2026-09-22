@@ -1,8 +1,5 @@
-import { createRequire } from "node:module";
+import { displayCell, loadWorksheet, worksheetMatrix } from "../xlsxMatrix.js";
 import type { UkRawRow, UkReconcileStats } from "./types.js";
-
-const require = createRequire(import.meta.url);
-const XLSX = require("xlsx") as typeof import("xlsx");
 
 const SHEET = "Factors by Category";
 const GHG_CO2E = "kg CO2e";
@@ -87,16 +84,9 @@ function parseValueCell(cell: { t?: string; v?: unknown; w?: string } | undefine
 }
 
 /** Read Factors by Category (header at Excel row 6 / 0-based index 5). */
-export function parseUkWorkbook(path: string): UkRawRow[] {
-  const wb = XLSX.readFile(path, { cellDates: false, cellNF: true, cellText: true });
-  const sheet = wb.Sheets[SHEET];
-  if (!sheet) throw new Error(`Missing sheet: ${SHEET}`);
-
-  const matrix = XLSX.utils.sheet_to_json<(string | number | null)[]>(sheet, {
-    header: 1,
-    defval: null,
-    raw: true,
-  }) as unknown[][];
+export async function parseUkWorkbook(path: string): Promise<UkRawRow[]> {
+  const sheet = await loadWorksheet(path, SHEET);
+  const matrix = worksheetMatrix(sheet, true);
 
   let headerIdx = -1;
   for (let i = 0; i < Math.min(40, matrix.length); i++) {
@@ -130,8 +120,7 @@ export function parseUkWorkbook(path: string): UkRawRow[] {
     const row = matrix[r] ?? [];
     const id = cellStr(row[iId]);
     if (!id) continue;
-    const addr = XLSX.utils.encode_cell({ r, c: iVal });
-    const pv = parseValueCell(sheet[addr] as { t?: string; v?: unknown; w?: string } | undefined);
+    const pv = parseValueCell(displayCell(sheet.getRow(r + 1).getCell(iVal + 1)));
     rows.push({
       id,
       scope: cellStr(row[iScope]),

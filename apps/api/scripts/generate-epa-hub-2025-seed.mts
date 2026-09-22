@@ -16,7 +16,7 @@ const workbook =
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const out = resolve(root, "db/seeds/epa_ghg_emission_factors_hub_2025.sql");
 
-const artifact = buildEpaSeedSqlFromWorkbook(workbook);
+const artifact = await buildEpaSeedSqlFromWorkbook(workbook);
 writeFileSync(out, artifact.sql, "utf8");
 console.log(
   JSON.stringify(

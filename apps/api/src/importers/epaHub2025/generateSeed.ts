@@ -49,13 +49,13 @@ export type EpaSeedArtifact = {
   sourceRows: number;
 };
 
-export function buildEpaSeedSqlFromWorkbook(workbookPath: string): EpaSeedArtifact {
+export async function buildEpaSeedSqlFromWorkbook(workbookPath: string): Promise<EpaSeedArtifact> {
   const sourceSha256 = assertEpaWorkbookSha256(workbookPath);
   if (sourceSha256 !== EPA_EXPECTED_SHA256) {
     throw new Error(`Unexpected XLSX SHA-256: ${sourceSha256}`);
   }
 
-  const parsed = parseEpaWorkbook(workbookPath);
+  const parsed = await parseEpaWorkbook(workbookPath);
   const dtos = normalizeEpaFactors(parsed.factors);
   const summary = summarizeEpaDtos(dtos);
 

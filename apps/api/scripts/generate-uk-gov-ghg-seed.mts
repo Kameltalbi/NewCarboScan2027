@@ -32,7 +32,7 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 
-const artifact = buildUkSeedSqlFromWorkbook(xlsx);
+const artifact = await buildUkSeedSqlFromWorkbook(xlsx);
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, artifact.sql, "utf8");
 

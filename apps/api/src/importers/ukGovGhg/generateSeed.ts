@@ -50,13 +50,13 @@ export type UkSeedArtifact = {
   dtos: UkCanonicalDto[];
 };
 
-export function buildUkSeedSqlFromWorkbook(workbookPath: string): UkSeedArtifact {
+export async function buildUkSeedSqlFromWorkbook(workbookPath: string): Promise<UkSeedArtifact> {
   const sourceSha256 = assertUkWorkbookSha256(workbookPath);
   if (sourceSha256 !== UK_EXPECTED_SHA256) {
     throw new Error(`Unexpected XLSX SHA-256: ${sourceSha256}`);
   }
 
-  const rows = parseUkWorkbook(workbookPath);
+  const rows = await parseUkWorkbook(workbookPath);
   const reconcile = reconcileUkRows(rows);
   assertReconcileInvariants(reconcile);
 

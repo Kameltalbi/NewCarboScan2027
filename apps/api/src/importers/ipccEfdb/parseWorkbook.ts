@@ -1,7 +1,7 @@
 /**
  * Parse IPCC EFDB_output.xlsx Sheet1 (headers row 1, data rows 2–27567).
  */
-import { createRequire } from "node:module";
+import { loadWorksheet, worksheetMatrix } from "../xlsxMatrix.js";
 import {
   IPCC_EFDB_COLUMN_COUNT,
   IPCC_EFDB_DATA_END_ROW,
@@ -14,9 +14,6 @@ import {
   type IpccRawRecord,
 } from "./types.js";
 import { assertIpccEfdbWorkbookSha256 } from "./sha256.js";
-
-const require = createRequire(import.meta.url);
-const XLSX = require("xlsx") as typeof import("xlsx");
 
 type SheetMatrix = unknown[][];
 
@@ -34,16 +31,9 @@ function splitList(raw: string | null): string[] {
     .filter(Boolean);
 }
 
-function loadMatrix(workbookPath: string): SheetMatrix {
-  const wb = XLSX.readFile(workbookPath, { cellDates: false, raw: true });
-  const sheet = wb.Sheets[IPCC_EFDB_SHEET_NAME];
-  if (!sheet) throw new Error(`Missing sheet ${IPCC_EFDB_SHEET_NAME}`);
-  return XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-    defval: null,
-    raw: true,
-    blankrows: false,
-  }) as SheetMatrix;
+async function loadMatrix(workbookPath: string): Promise<SheetMatrix> {
+  const sheet = await loadWorksheet(workbookPath, IPCC_EFDB_SHEET_NAME);
+  return worksheetMatrix(sheet, false);
 }
 
 export type IpccParseStats = {
@@ -57,12 +47,12 @@ export type IpccParseStats = {
   multiGas: number;
 };
 
-export function parseIpccEfdbWorkbook(workbookPath: string): {
+export async function parseIpccEfdbWorkbook(workbookPath: string): Promise<{
   records: IpccRawRecord[];
   stats: IpccParseStats;
-} {
+}> {
   const sourceSha256 = assertIpccEfdbWorkbookSha256(workbookPath);
-  const matrix = loadMatrix(workbookPath);
+  const matrix = await loadMatrix(workbookPath);
   if (matrix.length < IPCC_EFDB_DATA_END_ROW) {
     throw new Error(
       `Expected at least ${IPCC_EFDB_DATA_END_ROW} rows (header+data), got ${matrix.length}`,

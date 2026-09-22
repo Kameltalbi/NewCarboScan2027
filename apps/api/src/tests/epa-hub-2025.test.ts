@@ -34,8 +34,8 @@ describe("epa hub 2025 adapter (offline)", { skip: !existsSync(WORKBOOK) }, () =
     assert.equal(assertEpaWorkbookSha256(WORKBOOK), EPA_EXPECTED_SHA256);
   });
 
-  it("parses 12 tables with NA != 0 and pinned counts", () => {
-    const parsed = parseEpaWorkbook(WORKBOOK);
+  it("parses 12 tables with NA != 0 and pinned counts", async () => {
+    const parsed = await parseEpaWorkbook(WORKBOOK);
     assert.equal(parsed.sourceRows, 591);
     assert.equal(Object.keys(parsed.byTable).length, 12);
     assert.ok(parsed.naIgnored > 0, "expected NA cells ignored");
@@ -73,9 +73,9 @@ describe("epa hub 2025 adapter (offline)", { skip: !existsSync(WORKBOOK) }, () =
     assert.equal(EPA_AR5_GWP.N2O, 265);
   });
 
-  it("stable IDs and UUIDs are deterministic", () => {
-    const a = normalizeEpaFactors(parseEpaWorkbook(WORKBOOK).factors);
-    const b = normalizeEpaFactors(parseEpaWorkbook(WORKBOOK).factors);
+  it("stable IDs and UUIDs are deterministic", async () => {
+    const a = normalizeEpaFactors((await parseEpaWorkbook(WORKBOOK)).factors);
+    const b = normalizeEpaFactors((await parseEpaWorkbook(WORKBOOK)).factors);
     assert.equal(a.length, b.length);
     for (let i = 0; i < a.length; i++) {
       assert.equal(a[i]!.stableFactorId, b[i]!.stableFactorId);
@@ -85,9 +85,9 @@ describe("epa hub 2025 adapter (offline)", { skip: !existsSync(WORKBOOK) }, () =
 });
 
 describe("epa hub 2025 seed generator (offline)", { skip: !existsSync(WORKBOOK) }, () => {
-  it("generates identical seed bytes twice and matches versioned seed", () => {
-    const first = buildEpaSeedSqlFromWorkbook(WORKBOOK);
-    const second = buildEpaSeedSqlFromWorkbook(WORKBOOK);
+  it("generates identical seed bytes twice and matches versioned seed", async () => {
+    const first = await buildEpaSeedSqlFromWorkbook(WORKBOOK);
+    const second = await buildEpaSeedSqlFromWorkbook(WORKBOOK);
     assert.equal(first.factorCount, EPA_EXPECTED_FACTOR_COUNT);
     assert.equal(first.sha256, second.sha256);
     assert.equal(first.sql, second.sql);
