@@ -1,9 +1,12 @@
 -- 033 — FORCE RLS sur tables tenant + politiques webhooks / enfants evidence
 -- Complète 032 : le owner Postgres ne contourne plus les policies.
+-- organization_members est exclu : /auth/login lit les appartenances
+-- avant de poser app.organization_id (bootstrap de session).
 
 DO $$
 DECLARE
   r record;
+  skip TEXT[] := ARRAY['organization_members'];
 BEGIN
   FOR r IN
     SELECT DISTINCT c.table_name
@@ -13,6 +16,7 @@ BEGIN
     WHERE c.table_schema = 'public'
       AND c.column_name = 'organization_id'
       AND t.table_type = 'BASE TABLE'
+      AND NOT (c.table_name = ANY (skip))
   LOOP
     EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', r.table_name);
     EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', r.table_name);

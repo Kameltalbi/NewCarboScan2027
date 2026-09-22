@@ -92,7 +92,7 @@ async function writeAudit(
 export async function registerAdminRoutes(app: FastifyInstance) {
   app.get(
     "/v1/admin/organizations",
-    { preHandler: [app.requireSuperAdmin] },
+    { preHandler: [app.requirePlatformReader] },
     async () => {
       const { rows } = await pool.query(ORG_LIST_SQL);
       return { items: rows.map(mapOrgRow) };
@@ -216,7 +216,7 @@ export async function registerAdminRoutes(app: FastifyInstance) {
 
   app.get(
     "/v1/admin/users",
-    { preHandler: [app.requireSuperAdmin] },
+    { preHandler: [app.requirePlatformReader] },
     async () => {
       const { rows } = await pool.query(`
         SELECT

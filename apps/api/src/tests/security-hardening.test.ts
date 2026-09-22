@@ -59,6 +59,15 @@ describe("security hardening wave 1-2", () => {
     assert.equal(existsSync(mig), true);
     const sql = readFileSync(mig, "utf8");
     assert.ok(sql.includes("FORCE ROW LEVEL SECURITY"));
+    assert.ok(sql.includes("organization_members"));
+  });
+
+  it("keeps organization_members outside RLS for login bootstrap", () => {
+    const mig = join(here, "../../../../db/migrations/034_organization_members_no_rls.sql");
+    assert.equal(existsSync(mig), true);
+    const sql = readFileSync(mig, "utf8");
+    assert.ok(sql.includes("DISABLE ROW LEVEL SECURITY"));
+    assert.ok(sql.includes("organization_members"));
   });
 
   it("validates spreadsheet magic bytes and size", async () => {

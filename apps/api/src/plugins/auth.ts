@@ -28,6 +28,10 @@ declare module "fastify" {
       request: FastifyRequest,
       reply: FastifyReply,
     ) => Promise<void>;
+    requirePlatformReader: (
+      request: FastifyRequest,
+      reply: FastifyReply,
+    ) => Promise<void>;
     requireOrgAdmin: (
       request: FastifyRequest,
       reply: FastifyReply,
@@ -250,6 +254,34 @@ export const authPlugin: FastifyPluginAsync = async (app) => {
       await beginTenantTx({
         userId: request.user!.id,
         superadmin: true,
+        organizationId: request.user!.organizationId,
+      });
+    },
+  );
+
+  app.decorate(
+    "requirePlatformReader",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      bindTenant(request);
+      await app.requireAuth(request, reply);
+      if (reply.sent) return;
+      const { rows } = await rawPool.query(
+        `SELECT role FROM user_roles
+         WHERE user_id = $1 AND role IN ('superadmin', 'financeur')
+         ORDER BY CASE role WHEN 'superadmin' THEN 0 ELSE 1 END
+         LIMIT 1`,
+        [request.user!.id],
+      );
+      const platformRole = rows[0]?.role as string | undefined;
+      if (!platformRole) {
+        return reply.code(403).send({ error: "Superadmin required" });
+      }
+      const superadmin = platformRole === "superadmin";
+      request.user!.platformRole = platformRole;
+      if (superadmin) request.user!.role = "superadmin";
+      await beginTenantTx({
+        userId: request.user!.id,
+        superadmin,
         organizationId: request.user!.organizationId,
       });
     },
