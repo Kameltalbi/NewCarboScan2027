@@ -8,7 +8,7 @@ const heroPoster = "/media/hero-wind-poster.jpg";
 
 const HeroVideo = () => (
   <video
-    className="h-full w-full object-cover object-[78%_center]"
+    className="h-full w-full object-cover object-[78%_center] lg:object-[30%_center]"
     src={heroVideo}
     poster={heroPoster}
     autoPlay
