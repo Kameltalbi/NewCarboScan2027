@@ -398,7 +398,16 @@ export const BilanCarboneHome: React.FC = () => {
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
               className="bg-[#4C7D7F] hover:bg-[#5F9E6B] text-white"
-              onClick={() => generateReport(organizationId, referenceYear)}
+              onClick={() => {
+                if (!organizationId) {
+                  toast.error('Organisation introuvable. Reconnectez-vous pour générer le rapport.');
+                  return;
+                }
+                void generateReport(organizationId, referenceYear).catch((error: unknown) => {
+                  const message = error instanceof Error ? error.message : 'Impossible de générer le rapport';
+                  toast.error(message);
+                });
+              }}
             >
               Générer le rapport
             </AlertDialogAction>

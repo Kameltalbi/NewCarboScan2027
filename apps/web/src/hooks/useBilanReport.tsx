@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BilanCarboneCalculator } from '@/lib/calculators/BilanCarboneCalculator';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 
 export const useBilanReport = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -12,6 +12,9 @@ export const useBilanReport = () => {
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
   const generateReport = async (orgId: string, reportYear: number) => {
+    if (!orgId) {
+      throw new Error('Organisation introuvable. Reconnectez-vous pour générer le rapport.');
+    }
     setIsGenerating(true);
     setGenerationProgress(0);
     setGenerationStep('Initialisation...');
@@ -41,25 +44,26 @@ export const useBilanReport = () => {
       setGenerationProgress(50);
       await new Promise(resolve => setTimeout(resolve, 400));
 
-      // 2. Récupérer les infos de l'organisation
-      const { data: org } = await supabase
-        .from('organizations')
-        .select('name, sector, country, reference_year')
-        .eq('id', orgId)
-        .single();
-
-      // 3. Récupérer les infos complémentaires si disponibles
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('company_name, sector, company_size')
-        .eq('id', orgId)
-        .maybeSingle();
-
-      const { data: company } = await supabase
-        .from('companies')
-        .select('nom_entreprise, secteur, collaborateurs, surface_totale, nb_sites, logo_url, ca_annuel')
-        .eq('organization_id', orgId)
-        .maybeSingle();
+      // 2. Récupérer les infos de l'organisation via l'API
+      const [{ organization: org }, sitesResult, profileResult] = await Promise.all([
+        api.getOrganization(),
+        api.listSites().catch(() => ({ items: [] as Array<Record<string, unknown>> })),
+        api.getProfile().catch(() => ({ profile: null })),
+      ]);
+      const sites = sitesResult.items || [];
+      const profile = (profileResult.profile ?? null) as {
+        company_name?: string | null;
+        sector?: string | null;
+        company_size?: string | null;
+      } | null;
+      const employeesFromSites = sites.reduce(
+        (total, site) => total + (Number(site.employees_count ?? site.employees) || 0),
+        0,
+      );
+      const surfaceFromSites = sites.reduce(
+        (total, site) => total + (Number(site.surface_m2 ?? site.surface) || 0),
+        0,
+      );
 
       setGenerationStep('📈 Analyse des postes d\'émission...');
       setGenerationProgress(70);
@@ -67,11 +71,11 @@ export const useBilanReport = () => {
 
       // 4. Préparer les données pour le rapport
       // Préparer les données au format CompactEmpreinteProduitReport
-      const companyName = org?.name || company?.nom_entreprise || profile?.company_name || 'Organisation';
-      const sector = org?.sector || company?.secteur || profile?.sector || 'Services';
-      const employees = company?.collaborateurs || (profile?.company_size === '1-10' ? 5 : 20);
-      const sites = company?.nb_sites || 1;
-      const surface = company?.surface_totale || 180;
+      const companyName = org?.name || profile?.company_name || 'Organisation';
+      const sector = org?.sector || profile?.sector || 'Services';
+      const employees = employeesFromSites || org?.employees || (profile?.company_size === '1-10' ? 5 : 20);
+      const siteCount = sites.length || 1;
+      const surface = surfaceFromSites || org?.totalSurface || 180;
 
       const formData = {
         company_name: companyName,
@@ -80,11 +84,11 @@ export const useBilanReport = () => {
         secteur_activite: sector,
         employees,
         nb_employes: employees,
-        sites,
-        nb_sites: sites,
+        sites: siteCount,
+        nb_sites: siteCount,
         surface,
         annee_etude: reportYear.toString(),
-        revenue: company?.ca_annuel,
+        revenue: org?.annualRevenue,
         organization_id: orgId
       };
 
@@ -105,7 +109,7 @@ export const useBilanReport = () => {
         sector: sector,
         employees: employees.toString(),
         studiedYear: reportYear.toString(),
-        logo: company?.logo_url
+        logo: org?.logoUrl
       };
 
       setGenerationStep('✨ Génération des recommandations...');
