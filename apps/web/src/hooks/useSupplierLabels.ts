@@ -39,8 +39,8 @@ export function useSupplierLabels(): SupplierLabels {
   if (isBank) {
     return {
       isBank: true,
-      moduleTitle: 'Portefeuille',
-      pageTitle: 'Portefeuille de prêts & contreparties (PCAF)',
+      moduleTitle: 'Émissions financées',
+      pageTitle: 'Émissions financées — portefeuille PCAF',
       entitySingular: 'contrepartie',
       entityPlural: 'contreparties',
       tabMine: 'Mes contreparties',
