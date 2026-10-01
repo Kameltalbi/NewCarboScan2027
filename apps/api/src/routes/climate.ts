@@ -1,4 +1,4 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyReply } from "fastify";
 import { z } from "zod";
 import { pool } from "../db.js";
 import { orgIdParamSchema } from "../schemas/index.js";
@@ -6,6 +6,19 @@ import {
   CNZS_V131_META,
   computeCnzsV131CombinedScope12AbsoluteContraction,
 } from "../services/climate/cnzsV131AbsoluteContraction.js";
+
+/** Delete/archive must 404 when the row is outside the caller's organization. */
+async function deleteOwnedOr404(
+  reply: FastifyReply,
+  sql: string,
+  params: unknown[],
+) {
+  const result = await pool.query(sql, params);
+  if (!result.rowCount) {
+    return reply.code(404).send({ error: "Not found" });
+  }
+  return { ok: true as const };
+}
 
 const roadmapSchema = z.object({
   name: z.string().min(1).max(200).optional(),
@@ -309,11 +322,11 @@ export async function registerClimateRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const params = orgIdParamSchema.safeParse(request.params);
       if (!params.success) return reply.code(400).send({ error: "Invalid id" });
-      await pool.query(
+      return deleteOwnedOr404(
+        reply,
         `DELETE FROM climate_levers WHERE id = $1 AND organization_id = $2`,
         [params.data.id, request.user!.organizationId],
       );
-      return { ok: true };
     },
   );
 
@@ -481,11 +494,11 @@ export async function registerClimateRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const params = orgIdParamSchema.safeParse(request.params);
       if (!params.success) return reply.code(400).send({ error: "Invalid id" });
-      await pool.query(
+      return deleteOwnedOr404(
+        reply,
         `DELETE FROM climate_actions WHERE id = $1 AND organization_id = $2`,
         [params.data.id, request.user!.organizationId],
       );
-      return { ok: true };
     },
   );
 
@@ -574,11 +587,11 @@ export async function registerClimateRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const params = orgIdParamSchema.safeParse(request.params);
       if (!params.success) return reply.code(400).send({ error: "Invalid id" });
-      await pool.query(
+      return deleteOwnedOr404(
+        reply,
         `DELETE FROM climate_scenarios WHERE id = $1 AND organization_id = $2`,
         [params.data.id, request.user!.organizationId],
       );
-      return { ok: true };
     },
   );
 
@@ -667,11 +680,11 @@ export async function registerClimateRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const params = orgIdParamSchema.safeParse(request.params);
       if (!params.success) return reply.code(400).send({ error: "Invalid id" });
-      await pool.query(
+      return deleteOwnedOr404(
+        reply,
         `DELETE FROM climate_scenario_levers WHERE id = $1 AND organization_id = $2`,
         [params.data.id, request.user!.organizationId],
       );
-      return { ok: true };
     },
   );
 
@@ -831,11 +844,11 @@ export async function registerClimateRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const params = orgIdParamSchema.safeParse(request.params);
       if (!params.success) return reply.code(400).send({ error: "Invalid id" });
-      await pool.query(
+      return deleteOwnedOr404(
+        reply,
         `DELETE FROM climate_risks WHERE id = $1 AND organization_id = $2`,
         [params.data.id, request.user!.organizationId],
       );
-      return { ok: true };
     },
   );
 
@@ -912,11 +925,11 @@ export async function registerClimateRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const params = orgIdParamSchema.safeParse(request.params);
       if (!params.success) return reply.code(400).send({ error: "Invalid id" });
-      await pool.query(
+      return deleteOwnedOr404(
+        reply,
         `DELETE FROM stakeholder_mobilizations WHERE id = $1 AND organization_id = $2`,
         [params.data.id, request.user!.organizationId],
       );
-      return { ok: true };
     },
   );
 

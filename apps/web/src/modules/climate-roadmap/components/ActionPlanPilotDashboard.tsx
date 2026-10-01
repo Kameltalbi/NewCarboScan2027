@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getRecommendedActions, type RecommendedAction } from "@/lib/recommendedActions";
+import { useOrganizationId } from "@/hooks/useOrganizationId";
 import type {
   ClimateObjective,
   ClimateReferenceTrajectory,
@@ -44,11 +45,18 @@ import {
   computeObjectiveCoverage,
 } from "../lib/actionPlanPilot";
 
-const DISMISS_KEY = "carboscan.plan-actions.dismissed-recs";
+const DISMISS_KEY_PREFIX = "carboscan.plan-actions.dismissed-recs";
 
-function loadDismissed(): Set<string> {
+function dismissStorageKey(organizationId: string | null | undefined): string | null {
+  if (!organizationId) return null;
+  return `${DISMISS_KEY_PREFIX}:${organizationId}`;
+}
+
+function loadDismissed(organizationId: string | null | undefined): Set<string> {
+  const key = dismissStorageKey(organizationId);
+  if (!key) return new Set();
   try {
-    const raw = localStorage.getItem(DISMISS_KEY);
+    const raw = localStorage.getItem(key);
     if (!raw) return new Set();
     const arr = JSON.parse(raw) as string[];
     return new Set(Array.isArray(arr) ? arr : []);
@@ -57,8 +65,10 @@ function loadDismissed(): Set<string> {
   }
 }
 
-function saveDismissed(ids: Set<string>) {
-  localStorage.setItem(DISMISS_KEY, JSON.stringify([...ids]));
+function saveDismissed(organizationId: string | null | undefined, ids: Set<string>) {
+  const key = dismissStorageKey(organizationId);
+  if (!key) return;
+  localStorage.setItem(key, JSON.stringify([...ids]));
 }
 
 function dateInputValue(value: string | null | undefined): string {
@@ -123,11 +133,16 @@ export const ActionPlanPilotDashboard: React.FC<ActionPlanPilotDashboardProps> =
   onCreateAction,
   onUpdateAction,
 }) => {
+  const { organizationId } = useOrganizationId();
   const [recs, setRecs] = useState<RecommendedAction[]>([]);
   const [recsLoading, setRecsLoading] = useState(true);
-  const [dismissed, setDismissed] = useState<Set<string>>(loadDismissed);
+  const [dismissed, setDismissed] = useState<Set<string>>(() => loadDismissed(organizationId));
   const [selected, setSelected] = useState<ClimateAction | null>(null);
   const [addingId, setAddingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setDismissed(loadDismissed(organizationId));
+  }, [organizationId]);
 
   const latestBilan = dataSources.bilans[0] || null;
 
@@ -273,7 +288,7 @@ export const ActionPlanPilotDashboard: React.FC<ActionPlanPilotDashboardProps> =
     setDismissed((prev) => {
       const next = new Set(prev);
       next.add(id);
-      saveDismissed(next);
+      saveDismissed(organizationId, next);
       return next;
     });
   };

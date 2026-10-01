@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getRecommendedActions } from "./recommendedActions";
 
 describe("getRecommendedActions", () => {
-  it("filtre le catalogue pour un profil type Banque Atlas (kgCO₂e)", async () => {
+  it("filtre le catalogue pour un profil bancaire type (kgCO₂e)", async () => {
     const actions = await getRecommendedActions({
       totalEmissions: 7864.7 * 1000,
       scope1: 912.6 * 1000,

@@ -21,7 +21,7 @@ export default function PreviewMethodeCalcul() {
       <div className="border-b border-border bg-background">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between py-3">
-            <p className="text-sm font-semibold tracking-tight">CarboScan · Banque Atlas</p>
+            <p className="text-sm font-semibold tracking-tight">CarboScan · Prévisualisation</p>
             <p className="text-xs text-muted-foreground">Prévisualisation locale</p>
           </div>
           <nav className="flex items-center gap-1 overflow-x-auto">

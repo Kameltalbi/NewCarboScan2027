@@ -26,7 +26,7 @@ describe("CNZS v1.3.1 ACA — Table 1 (BY 2025)", () => {
   });
 });
 
-describe("CNZS v1.3.1 ACA — Banque Atlas (contrôle)", () => {
+describe("CNZS v1.3.1 ACA — contrôle numérique (valeurs Atlas de test)", () => {
   const atlas = computeCnzsV131CombinedScope12AbsoluteContraction({
     baselineYear: 2025,
     targetYear: 2030,
