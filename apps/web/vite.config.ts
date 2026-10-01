@@ -85,6 +85,8 @@ export default defineConfig(({ mode }) => ({
         // doivent pas gonfler le cache d'installation initial.
         globPatterns: ["**/*.{js,css,html,ico,svg,webp,woff2}"],
         cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

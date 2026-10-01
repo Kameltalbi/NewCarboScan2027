@@ -22,11 +22,28 @@ const handleChunkError = (event: Event | PromiseRejectionEvent) => {
     message.includes('Importing a module script failed') ||
     message.includes('error loading dynamically imported module')
   ) {
-    const key = 'lovable:chunk-reload';
+    const key = 'carboscan:chunk-reload';
     const last = Number(sessionStorage.getItem(key) || 0);
     if (Date.now() - last > 10000) {
       sessionStorage.setItem(key, String(Date.now()));
-      window.location.reload();
+      const bust = async () => {
+        try {
+          if ('caches' in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map((k) => caches.delete(k)));
+          }
+          if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map((r) => r.unregister()));
+          }
+        } catch {
+          // ignore — hard reload below still helps
+        }
+        const url = new URL(window.location.href);
+        url.searchParams.set('_r', String(Date.now()));
+        window.location.replace(url.toString());
+      };
+      void bust();
     }
   }
 };
