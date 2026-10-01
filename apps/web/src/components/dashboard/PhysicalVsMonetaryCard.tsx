@@ -9,7 +9,6 @@ import {
   UNVALIDATED_MONETARY_LABEL,
   shareByMethod,
 } from "@/lib/activity-data/dataMethod";
-import { cn } from "@/lib/utils";
 
 type Line = { method?: string | null; kg: number; source?: string | null };
 
@@ -93,16 +92,9 @@ export function PhysicalVsMonetaryCard({ lines }: { lines: Line[] }) {
             </div>
           </div>
 
-          <p
-            className={cn(
-              "text-xs leading-relaxed rounded-md border px-3 py-2",
-              monetaryPct > 0 || unvalidated
-                ? "border-amber-200 bg-amber-50/60 text-amber-950/80"
-                : "border-border bg-muted/30 text-muted-foreground",
-            )}
-          >
+          <p className="text-xs leading-relaxed rounded-md border border-border bg-muted/30 text-muted-foreground px-3 py-2">
             {monetaryPct > 0 || unvalidated
-              ? "Les ratios monétaires (€ ou TND) ne sont pas validés ABC. Ils restent utilisables pour un ordre de grandeur, avec une qualité de donnée inférieure."
+              ? "Répartition indicative entre données mesurées (physiques / fournisseurs) et estimations à partir de montants d’achats."
               : "Aucune contribution monétaire détectée sur cet exercice : la part affichée repose sur des données physiques ou fournisseurs."}
           </p>
         </div>

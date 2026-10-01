@@ -19,13 +19,11 @@ import {
   TrendingDown,
   Factory,
   Truck,
-  Sparkles,
-  Globe,
-  ShieldCheck,
-  FileText,
   ArrowRight,
   Loader2,
   ClipboardList,
+  MapPin,
+  Target,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -37,8 +35,9 @@ import { api } from '@/integrations/api/client';
 import { DashboardContextBar } from '@/components/dashboard/DashboardContextBar';
 import { LazyDataQualityRadarChart } from '@/components/dashboard/LazyCharts';
 import { PhysicalVsMonetaryCard } from '@/components/dashboard/PhysicalVsMonetaryCard';
+import { categoryDisplayLabel } from '@/lib/dashboard/categoryDisplayLabel';
+import { rollupSites } from '@/lib/perimeter/siteRollup';
 
-import aiInsightAvatar from '@/assets/ai-insight-avatar.png';
 import {
   DashboardAggregator,
   type DashboardAggregatedData,
@@ -53,7 +52,6 @@ const SCOPE_COLORS = ['#22c55e', '#3b82f6', '#a78bfa'];
 const CATEGORY_COLORS = ['#22c55e', '#3b82f6', '#a78bfa', '#f59e0b', '#14b8a6'];
 
 const KG_TO_T = 0.001;
-const AI_AVATAR_SRC = aiInsightAvatar;
 const toT = (n: number) => n * KG_TO_T;
 const fmt = (n: number) =>
   new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n);
@@ -76,6 +74,10 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
   const activeYear = selectedYear ?? headerYear ?? defaultYear ?? referenceYear;
   const { sites, isLoading: sitesLoading } = useOrganizationSites(organizationId ?? undefined);
   const [selectedSiteId, setSelectedSiteId] = useState<string | null>(null);
+  const [data, setData] = useState<DashboardAggregatedData | null>(null);
+  const [yearlyTotals, setYearlyTotals] = useState<Array<{ year: number; value: number }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [showDataQualityPanel, setShowDataQualityPanel] = useState(false);
 
   const setActiveYear = (year: number) => {
     setHeaderYear(year);
@@ -101,9 +103,16 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
     }
   }, [sites, selectedSiteId]);
 
-  const [data, setData] = useState<DashboardAggregatedData | null>(null);
-  const [yearlyTotals, setYearlyTotals] = useState<Array<{ year: number; value: number }>>([]);
-  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (!showDataQualityPanel) return;
+    const id = window.setTimeout(() => {
+      document.getElementById('dashboard-data-quality')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 50);
+    return () => window.clearTimeout(id);
+  }, [showDataQualityPanel]);
 
   useEffect(() => {
     const load = async () => {
@@ -279,59 +288,170 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
       ];
     }
     return [
-      { name: 'Scope 1', value: 2192 },
-      { name: 'Scope 2', value: 4934 },
-      { name: 'Scope 3', value: 5332 },
+      { name: 'Scope 1', value: 0 },
+      { name: 'Scope 2', value: 0 },
+      { name: 'Scope 3', value: 0 },
     ];
   }, [hasReal, data]);
 
-  const evolution = useMemo(() => {
-    if (selectedSiteId) {
-      // Pas de série historique par site : un seul point pour l'exercice courant
-      if (hasReal && data) {
-        const current = toT(data.bilanCarbone.totalEmissions);
-        return current > 0 ? [{ year: activeYear, value: Math.round(current) }] : [];
-      }
-      return [];
-    }
+  /** Années avec inventaire réel uniquement — jamais de recopie artificielle. */
+  const realEvolution = useMemo(() => {
+    if (selectedSiteId) return [];
     const byYear = new Map(yearlyTotals.map((row) => [row.year, row.value]));
     if (hasReal && data) {
       const current = toT(data.bilanCarbone.totalEmissions);
-      if (current > 0 && (byYear.get(activeYear) ?? 0) <= 0) {
-        byYear.set(activeYear, current);
-      }
+      if (current > 0) byYear.set(activeYear, current);
     }
-    const baselineYear = byYear.has(2025)
-      ? 2025
-      : [...byYear.entries()].filter(([, v]) => v > 0).sort((a, b) => b[0] - a[0])[0]?.[0];
-    const baseline = baselineYear != null ? byYear.get(baselineYear) ?? 0 : 0;
-    if (baseline <= 0) return [];
-    const start = activeYear - 4;
-    return Array.from({ length: 5 }, (_, i) => {
-      const year = start + i;
-      const real = byYear.get(year) ?? 0;
-      return { year, value: Math.round(real > 0 ? real : baseline) };
-    });
+    return [...byYear.entries()]
+      .filter(([, value]) => value > 0)
+      .sort((a, b) => a[0] - b[0])
+      .map(([year, value]) => ({ year, value: Math.round(value) }));
   }, [yearlyTotals, hasReal, data, activeYear, selectedSiteId]);
 
-  const topCategories = useMemo(() => {
-    if (hasReal && data && data.bilanCarbone.breakdown.length > 0) {
-      return data.bilanCarbone.breakdown.slice(0, 5).map((b) => ({
-        label: b.category.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
-        value: toT(b.emissions),
-        pct: b.percentage,
+  const showEvolution = !selectedSiteId && realEvolution.length >= 2;
+
+  const siteNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const s of sites) map.set(s.id, s.name);
+    return map;
+  }, [sites]);
+
+  /** Agrégation par site depuis le detailedBreakdown déjà chargé (pas de N+1). */
+  const siteEmissions = useMemo(() => {
+    if (!hasReal || !data || selectedSiteId) return [];
+    const lines = (data.bilanCarbone.detailedBreakdown || [])
+      .filter((l) => l.emissions > 0)
+      .map((l) => ({
+        siteId: l.siteId ?? null,
+        scope: l.scope as 1 | 2 | 3,
+        kg: l.emissions,
       }));
-    }
-    return [
-      { label: 'Achats de biens et services', value: 4350, pct: 35 },
-      { label: 'Énergie', value: 2870, pct: 23 },
-      { label: 'Transport et déplacements', value: 1980, pct: 16 },
-      { label: 'Déchets', value: 1250, pct: 10 },
-      { label: 'Immobilisations', value: 650, pct: 5 },
-    ];
+    const rollup = rollupSites(lines);
+    const totalKg = data.bilanCarbone.totalEmissions || 1;
+    return rollup.sites.map((row) => ({
+      id: row.siteId,
+      name: siteNameById.get(row.siteId) || `Site ${row.siteId.slice(0, 8)}`,
+      tonnes: toT(row.kg),
+      pct: (row.kg / totalKg) * 100,
+    }));
+  }, [hasReal, data, selectedSiteId, siteNameById]);
+
+  const topSites = useMemo(() => siteEmissions.slice(0, 8), [siteEmissions]);
+  const top5Sites = useMemo(() => siteEmissions.slice(0, 5), [siteEmissions]);
+  const maxSiteTonnes = Math.max(...topSites.map((s) => s.tonnes), 1);
+
+  const topCategories = useMemo(() => {
+    if (!hasReal || !data || data.bilanCarbone.breakdown.length === 0) return [];
+    return data.bilanCarbone.breakdown.slice(0, 5).map((b) => ({
+      label: categoryDisplayLabel(b.category),
+      technicalKey: b.category,
+      value: toT(b.emissions),
+      pct: b.percentage,
+    }));
   }, [hasReal, data]);
 
-  const maxCat = Math.max(...topCategories.map((c) => c.value), 1);
+  /** Sources du site sélectionné (sous-catégories du detailedBreakdown). */
+  const siteSources = useMemo(() => {
+    if (!selectedSiteId || !hasReal || !data) return [];
+    const map = new Map<string, number>();
+    for (const line of data.bilanCarbone.detailedBreakdown || []) {
+      if (line.emissions <= 0) continue;
+      const key = line.subcategory || line.category || 'other';
+      map.set(key, (map.get(key) || 0) + line.emissions);
+    }
+    const totalKg = data.bilanCarbone.totalEmissions || 1;
+    return [...map.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([key, kg]) => ({
+        label: categoryDisplayLabel(key),
+        technicalKey: key,
+        value: toT(kg),
+        pct: (kg / totalKg) * 100,
+      }));
+  }, [selectedSiteId, hasReal, data]);
+
+  const priorities = useMemo(() => {
+    const items: Array<{
+      title: string;
+      metric: string;
+      detail: string;
+      cta: string;
+      href?: string;
+      selectSiteId?: string;
+    }> = [];
+    if (!hasReal || !data || kpis.total <= 0) return items;
+
+    const topCat = topCategories[0];
+    if (topCat && topCat.pct > 0) {
+      items.push({
+        title: topCat.label,
+        metric: `${Math.round(topCat.pct)} % des émissions`,
+        detail: 'Principal poste à traiter en premier sur cet exercice.',
+        cta: 'Analyser ce poste',
+        href: '/app/bilan-carbone',
+      });
+    }
+
+    if (!selectedSiteId && top5Sites[0] && top5Sites[0].pct >= 10) {
+      const lead = top5Sites[0];
+      items.push({
+        title: lead.name,
+        metric: `${fmt(lead.tonnes)} tCO₂e · ${Math.round(lead.pct)} %`,
+        detail: 'Site le plus contributeur — concentrer l’analyse et le plan d’actions ici.',
+        cta: 'Filtrer sur ce site',
+        selectSiteId: lead.id,
+      });
+    }
+
+    if (kpis.s3Pct >= 25) {
+      items.push({
+        title: 'Scope 3',
+        metric: `${Math.round(kpis.s3Pct)} % des émissions`,
+        detail: 'Identifier les catégories Scope 3 à plus fort potentiel de réduction.',
+        cta: 'Voir le détail',
+        href: '/app/bilan-carbone',
+      });
+    } else if (kpis.s12Pct >= 50) {
+      items.push({
+        title: 'Scope 1 + 2',
+        metric: `${Math.round(kpis.s12Pct)} % des émissions`,
+        detail: 'Prioriser l’énergie et les combustions directes.',
+        cta: 'Voir le détail',
+        href: '/app/bilan-carbone',
+      });
+    }
+
+    if (selectedSite && siteSources[0] && items.length < 3) {
+      items.push({
+        title: siteSources[0].label,
+        metric: `${Math.round(siteSources[0].pct)} % du site`,
+        detail: `Source dominante sur ${selectedSite.name}.`,
+        cta: 'Créer une action',
+        href: `/app/net-zero?tab=lifecycle&site=${encodeURIComponent(selectedSite.id)}&post=${encodeURIComponent(siteSources[0].technicalKey)}&year=${activeYear}`,
+      });
+    }
+
+    return items.slice(0, 3);
+  }, [
+    hasReal,
+    data,
+    kpis.total,
+    kpis.s3Pct,
+    kpis.s12Pct,
+    topCategories,
+    selectedSiteId,
+    selectedSite,
+    top5Sites,
+    siteSources,
+    activeYear,
+  ]);
+
+  const maxCat = Math.max(
+    ...topCategories.map((c) => c.value),
+    ...siteSources.map((c) => c.value),
+    1,
+  );
 
   if (loading || organizationLoading) {
     return (
@@ -488,208 +608,348 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           </div>
         </div>
 
-        {/* Evolution */}
+        {/* Evolution OU Top sites */}
         <div className="bg-card rounded-2xl border border-border p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Évolution des émissions</h3>
-            <span className="text-xs text-muted-foreground border border-border rounded-md px-2 py-1">
-              Annuel
-            </span>
-          </div>
-          {evolution.length === 0 ? (
-            <p className="h-56 flex items-center justify-center text-sm text-muted-foreground">
-              {selectedSite
-                ? 'Pas assez d’historique pour tracer l’évolution de ce site.'
-                : 'Aucun bilan annuel à tracer.'}
-            </p>
+          {showEvolution ? (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-foreground">Évolution des émissions</h3>
+                <span className="text-xs text-muted-foreground border border-border rounded-md px-2 py-1">
+                  Années inventoriées
+                </span>
+              </div>
+              <div className="h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={realEvolution} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="hsdArea" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#22c55e" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                    <XAxis dataKey="year" tickLine={false} axisLine={false} className="text-xs" />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      domain={[0, (max: number) => (max > 0 ? max * 1.15 : 1)]}
+                      tickFormatter={(v) =>
+                        v >= 1000
+                          ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v / 1000)}k`
+                          : fmt(v)
+                      }
+                      className="text-xs"
+                    />
+                    <Tooltip
+                      formatter={(v: number) => [`${fmt(v)} tCO₂e`, 'Émissions']}
+                      contentStyle={{
+                        background: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: 8,
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#16a34a"
+                      strokeWidth={2.5}
+                      fill="url(#hsdArea)"
+                      dot={{ r: 4, fill: '#16a34a' }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Uniquement les exercices disposant d&apos;un inventaire réel — aucune année n&apos;est extrapolée.
+              </p>
+            </>
           ) : (
-          <>
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={evolution} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="hsdArea" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#22c55e" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                <XAxis dataKey="year" tickLine={false} axisLine={false} className="text-xs" />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  domain={[0, (max: number) => (max > 0 ? max * 1.15 : 1)]}
-                  tickFormatter={(v) =>
-                    v >= 1000
-                      ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v / 1000)}k`
-                      : fmt(v)
-                  }
-                  className="text-xs"
-                />
-                <Tooltip
-                  formatter={(v: number) => [`${fmt(v)} tCO₂e`, 'Émissions']}
-                  contentStyle={{
-                    background: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 8,
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#16a34a"
-                  strokeWidth={2.5}
-                  fill="url(#hsdArea)"
-                  dot={{ r: 4, fill: '#16a34a' }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {selectedSite
-                ? `Émissions attribuables à « ${selectedSite.name} » pour ${activeYear}.`
-                : (
-                  <>
-                    Années sans bilan : mêmes émissions que{' '}
-                    {yearlyTotals.some((row) => row.year === 2025 && row.value > 0) ? '2025' : 'l’exercice disponible'}
-                    {' '}(pas d’évolution).
-                  </>
-                )}
-            </p>
-          </>
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-foreground">
+                  {selectedSiteId
+                    ? `Émissions — ${selectedSite?.name || 'Site'}`
+                    : 'Émissions par site — Top 8'}
+                </h3>
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+              </div>
+              {selectedSiteId ? (
+                <div className="space-y-3 py-2">
+                  <p className="text-3xl font-bold tabular-nums text-foreground">
+                    {fmt(kpis.total)}{' '}
+                    <span className="text-sm font-medium text-muted-foreground">tCO₂e</span>
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Scope 1+2 : {fmt(kpis.s12)} tCO₂e ({Math.round(kpis.s12Pct)} %) · Scope 3 :{' '}
+                    {fmt(kpis.s3)} tCO₂e ({Math.round(kpis.s3Pct)} %)
+                  </p>
+                  <button
+                    type="button"
+                    className="mt-2 text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1"
+                    onClick={() => setSelectedSiteId(null)}
+                  >
+                    Revenir à la vue consolidée <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ) : topSites.length === 0 ? (
+                <p className="h-56 flex items-center justify-center text-sm text-muted-foreground text-center px-4">
+                  Aucune émission rattachée à un site pour cet exercice. Vérifiez le rattachement site
+                  dans la collecte.
+                </p>
+              ) : (
+                <>
+                  <div className="space-y-3">
+                    {topSites.map((s) => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        className="w-full text-left"
+                        onClick={() => setSelectedSiteId(s.id)}
+                      >
+                        <div className="flex items-center justify-between text-sm mb-1">
+                          <span className="font-medium text-foreground truncate pr-2">{s.name}</span>
+                          <span className="text-muted-foreground shrink-0 tabular-nums">
+                            <span className="font-semibold text-foreground">{fmt(s.tonnes)}</span> tCO₂e ·{' '}
+                            {Math.round(s.pct)} %
+                          </span>
+                        </div>
+                        <div className="h-2 rounded-full bg-muted overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-emerald-500"
+                            style={{ width: `${(s.tonnes / maxSiteTonnes) * 100}%` }}
+                          />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className="mt-4 text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1"
+                    onClick={() => navigate('/app/bilan-carbone')}
+                  >
+                    Voir les {sites.length || siteEmissions.length} sites →
+                  </button>
+                </>
+              )}
+            </>
           )}
         </div>
       </div>
 
-      {/* Qualité / Transparence + ABC-04 physique vs monétaire */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <LazyDataQualityRadarChart
-          title="Transparence & qualité des données"
-          dataQuality={
-            data?.dataQuality ?? { real: 0, estimated: 0, default: 100 }
-          }
-        />
-        <PhysicalVsMonetaryCard
-          lines={(data?.bilanCarbone.detailedBreakdown || []).map((line) => ({
-            method: line.dataMethod,
-            kg: line.emissions,
-            source: line.emissionFactorSource,
-          }))}
-        />
-      </div>
+      {/* Qualité / Transparence — derrière le lien méthodologique */}
+      {showDataQualityPanel && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5" id="dashboard-data-quality">
+          <LazyDataQualityRadarChart
+            title="Transparence & qualité des données"
+            dataQuality={
+              data?.dataQuality ?? { real: 0, estimated: 0, default: 100 }
+            }
+          />
+          <PhysicalVsMonetaryCard
+            lines={(data?.bilanCarbone.detailedBreakdown || []).map((line) => ({
+              method: line.dataMethod,
+              kg: line.emissions,
+              source: line.emissionFactorSource,
+            }))}
+          />
+        </div>
+      )}
 
-      {/* BOTTOM ROW */}
+      {/* BOTTOM ROW — décision : sites · postes · recommandations */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Top 5 categories */}
+        {/* 1. Sites prioritaires */}
         <div className="bg-card rounded-2xl border border-border p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">
-            {selectedSite
-              ? `Émissions par catégorie — ${selectedSite.name}`
-              : 'Émissions par catégorie (Top 5)'}
+          <h3 className="text-lg font-semibold text-foreground mb-1">
+            {selectedSiteId
+              ? 'Principales sources du site'
+              : 'Sites les plus émetteurs'}
           </h3>
-          <div className="space-y-4">
-            {topCategories.map((c, i) => (
-              <div key={c.label}>
-                <div className="flex items-center justify-between text-sm mb-1.5">
-                  <span className="text-foreground">{c.label}</span>
-                  <span className="text-muted-foreground">
-                    <span className="font-semibold text-foreground">{fmt(c.value)}</span> tCO₂e ·{' '}
-                    {Math.round(c.pct)}%
-                  </span>
-                </div>
-                <div className="h-2 rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{
-                      width: `${(c.value / maxCat) * 100}%`,
-                      background: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="bg-card rounded-2xl border border-border p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Actions en cours</h3>
-          <p className="text-sm text-muted-foreground">
-            {selectedSite
-              ? `Les actions de réduction applicables à « ${selectedSite.name} » s’affichent ici lorsqu’elles sont enregistrées dans le plan d’actions.`
-              : "Aucune action de réduction n'est affichée ici tant qu'elle n'est pas enregistrée dans le plan d'actions."}
+          <p className="text-xs text-muted-foreground mb-4">
+            {selectedSiteId
+              ? 'Où concentrer l’effort sur ce site'
+              : 'Où agir en priorité dans le réseau'}
           </p>
-          <button
-            className="mt-4 text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1"
-            onClick={() => navigate('/app/net-zero?tab=lifecycle')}
-          >
-            Ouvrir le plan d'actions <ArrowRight className="h-3.5 w-3.5" />
-          </button>
-        </div>
-
-        {/* Insight IA */}
-        <div className="bg-card rounded-2xl border border-border p-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="h-5 w-5 text-emerald-600" />
-            <h3 className="text-lg font-semibold text-foreground">Insight IA</h3>
-          </div>
-          <p className="text-sm text-foreground leading-relaxed">
-            {selectedSite ? (
-              <>
-                Vue filtrée sur «&nbsp;<span className="font-semibold">{selectedSite.name}</span>&nbsp;» :
-                {' '}{fmt(kpis.total)} tCO₂e sur l’exercice {activeYear}
-                {' '}(Scope 1+2 : {fmt(kpis.s12)} · Scope 3 : {fmt(kpis.s3)}).
-              </>
-            ) : kpis.evo == null ? (
-              <>
-                Pas de comparaison possible avec {activeYear - 1} : aucun bilan enregistré pour cette année.
-                Les années vides du graphique réutilisent l'exercice disponible, sans inventer d'évolution.
-              </>
+          {selectedSiteId ? (
+            siteSources.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Aucune source détaillée pour ce site.</p>
             ) : (
-              <>
-                Vos émissions ont{' '}
-                {kpis.evo < 0 ? 'diminué' : 'augmenté'} de{' '}
-                <span className="font-semibold">{Math.abs(kpis.evo).toFixed(1)}%</span> par rapport à{' '}
-                {activeYear - 1}.
-              </>
-            )}
+              <div className="space-y-4">
+                {siteSources.map((c, i) => (
+                  <div key={`${c.technicalKey}-${i}`}>
+                    <div className="flex items-center justify-between text-sm mb-1.5 gap-2">
+                      <span className="text-foreground truncate" title={c.technicalKey}>{c.label}</span>
+                      <span className="text-muted-foreground shrink-0 tabular-nums">
+                        <span className="font-semibold text-foreground">{fmt(c.value)}</span> tCO₂e ·{' '}
+                        {Math.round(c.pct)}%
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full bg-muted overflow-hidden">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${(c.value / maxCat) * 100}%`,
+                          background: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
+          ) : top5Sites.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Aucun site contributeur identifiable pour cet exercice.
+            </p>
+          ) : (
+            <>
+              {top5Sites[0] && (
+                <button
+                  type="button"
+                  className="w-full text-left rounded-xl border border-emerald-200 bg-emerald-50/50 px-4 py-3 mb-4"
+                  onClick={() => setSelectedSiteId(top5Sites[0].id)}
+                >
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800/80">
+                    Site n°1
+                  </p>
+                  <p className="mt-0.5 font-semibold text-foreground truncate">{top5Sites[0].name}</p>
+                  <p className="mt-1 text-sm tabular-nums text-muted-foreground">
+                    <span className="font-semibold text-foreground">{fmt(top5Sites[0].tonnes)}</span> tCO₂e
+                    {' · '}
+                    {Math.round(top5Sites[0].pct)} % du total
+                  </p>
+                </button>
+              )}
+              <div className="space-y-3">
+                {top5Sites.slice(1).map((s, idx) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    className="w-full text-left flex items-center justify-between text-sm gap-2"
+                    onClick={() => setSelectedSiteId(s.id)}
+                  >
+                    <span className="text-muted-foreground w-5 shrink-0">{idx + 2}.</span>
+                    <span className="font-medium text-foreground truncate flex-1">{s.name}</span>
+                    <span className="text-muted-foreground shrink-0 tabular-nums">
+                      {fmt(s.tonnes)} · {Math.round(s.pct)}%
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="mt-4 text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1"
+                onClick={() => navigate('/app/bilan-carbone')}
+              >
+                Analyser tous les sites <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* 2. Postes d'émissions */}
+        <div className="bg-card rounded-2xl border border-border p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-1">
+            Postes d&apos;émissions prioritaires
+          </h3>
+          <p className="text-xs text-muted-foreground mb-4">
+            {selectedSite
+              ? `Top 5 — ${selectedSite.name}`
+              : 'Top 5 des postes sur le périmètre sélectionné'}
           </p>
-          <p className="text-sm text-muted-foreground leading-relaxed mt-3">
-            La catégorie «&nbsp;<span className="text-foreground">{topCategories[0]?.label}</span>&nbsp;» représente{' '}
-            <span className="font-semibold text-foreground">
-              {Math.round(topCategories[0]?.pct || 0)}%
-            </span>{' '}
-            {selectedSite ? 'des émissions de ce site' : 'de vos émissions'}. Nous recommandons d'analyser vos leviers prioritaires.
-          </p>
-          <div className="mt-4 flex items-end justify-between gap-3">
-            <button className="text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1">
-              Voir les recommandations <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-            <img
-              src={AI_AVATAR_SRC}
-              alt="Mascotte Insight IA CarboScan"
-              className="w-20 h-20 md:w-24 md:h-24 object-contain shrink-0"
-              loading="lazy"
-            />
+          {topCategories.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Aucun poste d&apos;émission disponible pour ce périmètre.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {topCategories.map((c, i) => (
+                <div key={`${c.technicalKey}-${i}`}>
+                  <div className="flex items-center justify-between text-sm mb-1.5 gap-2">
+                    <span className="text-foreground truncate" title={c.technicalKey}>{c.label}</span>
+                    <span className="text-muted-foreground shrink-0 tabular-nums">
+                      <span className="font-semibold text-foreground">{fmt(c.value)}</span> tCO₂e ·{' '}
+                      {Math.round(c.pct)}%
+                    </span>
+                  </div>
+                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${(c.value / maxCat) * 100}%`,
+                        background: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 3. Recommandations */}
+        <div className="bg-card rounded-2xl border border-border p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <Target className="h-5 w-5 text-emerald-600" />
+            <h3 className="text-lg font-semibold text-foreground">Recommandations</h3>
           </div>
+          <p className="text-xs text-muted-foreground mb-4">
+            Priorités calculées à partir des émissions de l&apos;exercice
+          </p>
+          {priorities.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Pas assez de données pour prioriser automatiquement cet exercice.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {priorities.map((p, idx) => (
+                <div key={`${p.title}-${idx}`} className="border-b border-border last:border-0 pb-3 last:pb-0">
+                  <p className="text-sm font-semibold text-foreground">
+                    {idx + 1}. {p.title}
+                  </p>
+                  <p className="mt-0.5 text-sm font-medium text-emerald-800 tabular-nums">{p.metric}</p>
+                  <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{p.detail}</p>
+                  <button
+                    type="button"
+                    className="mt-2 text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1"
+                    onClick={() => {
+                      if (p.selectSiteId) {
+                        setSelectedSiteId(p.selectSiteId);
+                        return;
+                      }
+                      if (p.href) navigate(p.href);
+                    }}
+                  >
+                    {p.cta} <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* COMPLIANCE FOOTER */}
+      {/* SYNTHÈSE OPÉRATIONNELLE */}
       <div className="bg-card rounded-2xl border border-border px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-6">
-          <ComplianceBadge icon={<Globe className="h-4 w-4" />} label="Calcul interne" />
-          <ComplianceBadge icon={<ShieldCheck className="h-4 w-4" />} label="Non vérifié par un tiers" />
-          <ComplianceBadge icon={<FileText className="h-4 w-4" />} label="Couverture partielle" />
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-foreground">
+          <span className="font-medium">
+            {selectedSiteId
+              ? selectedSite?.name || 'Site sélectionné'
+              : `${sites.length} site${sites.length > 1 ? 's' : ''} consolidé${sites.length > 1 ? 's' : ''}`}
+          </span>
+          <span className="text-muted-foreground">·</span>
+          <span className="tabular-nums font-semibold">{fmt(kpis.total)} tCO₂e</span>
+          <span className="text-muted-foreground">·</span>
+          <span>{Math.round(kpis.s12Pct)} % Scope 1 + 2</span>
+          <span className="text-muted-foreground">·</span>
+          <span>{Math.round(kpis.s3Pct)} % Scope 3</span>
         </div>
-        <div className="text-xs text-muted-foreground">
-          Dernière mise à jour :{' '}
-          {new Date().toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-          })}
-        </div>
+        <button
+          type="button"
+          className="text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1 shrink-0"
+          onClick={() => setShowDataQualityPanel((v) => !v)}
+        >
+          Qualité et périmètre des données <ArrowRight className="h-3.5 w-3.5" />
+        </button>
       </div>
     </div>
   );
@@ -748,12 +1008,5 @@ const KpiCard: React.FC<KpiCardProps> = ({
         {footer && <div className="mt-1 text-xs text-muted-foreground">{footer}</div>}
       </div>
     </div>
-  </div>
-);
-
-const ComplianceBadge: React.FC<{ icon: React.ReactNode; label: string }> = ({ icon, label }) => (
-  <div className="flex items-center gap-2 text-sm text-foreground">
-    <span className="text-emerald-600">{icon}</span>
-    {label}
   </div>
 );
