@@ -1334,7 +1334,7 @@ export const MethodeCalculPage: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
-                onClick={() => navigate("/app/fournisseurs")}
+                onClick={() => navigate("/app/fournisseurs/vue")}
                 className="gap-2"
               >
                 Voir la vue d&apos;ensemble
@@ -1385,7 +1385,7 @@ export const PortfolioReportPage: React.FC = () => {
               </p>
             </div>
           </div>
-          <Button type="button" variant="outline" onClick={() => navigate("/app/fournisseurs")}>
+          <Button type="button" variant="outline" onClick={() => navigate("/app/fournisseurs/vue")}>
             Ouvrir la vue d&apos;ensemble
           </Button>
         </CardContent>

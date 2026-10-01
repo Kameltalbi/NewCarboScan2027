@@ -27,8 +27,8 @@ const FournisseursApp: React.FC = () => {
 
   const navItems: NavItem[] = L.isBank
     ? [
-        { label: "Méthode de calcul", path: "/methode", icon: BookOpen },
-        { label: "Vue d'ensemble", path: "", icon: LayoutDashboard },
+        { label: "Méthode de calcul", path: "", icon: BookOpen },
+        { label: "Vue d'ensemble", path: "/vue", icon: LayoutDashboard },
         { label: "Portefeuille", path: "/portefeuille", icon: Landmark },
         { label: "Contreparties", path: "/contreparties", icon: Users },
         { label: "Qualité des données", path: "/scoring", icon: BarChart3 },
@@ -47,7 +47,13 @@ const FournisseursApp: React.FC = () => {
       <Routes>
         <Route
           index
-          element={L.isBank ? <PortfolioEmissionsView /> : <FournisseursHome />}
+          element={L.isBank ? <MethodeCalculPage /> : <FournisseursHome />}
+        />
+        <Route
+          path="vue"
+          element={
+            L.isBank ? <PortfolioEmissionsView /> : <Navigate to="" replace />
+          }
         />
         <Route path="portefeuille" element={<FournisseursHome />} />
         <Route path="contreparties" element={<FournisseursHome />} />
@@ -57,13 +63,19 @@ const FournisseursApp: React.FC = () => {
         <Route
           path="emissions"
           element={
-            L.isBank ? <Navigate to="" replace /> : <PortfolioEmissionsView />
+            L.isBank ? (
+              <Navigate to="/app/fournisseurs/vue" replace />
+            ) : (
+              <PortfolioEmissionsView />
+            )
           }
         />
         <Route path="scoring" element={<ScoringQualityView />} />
         <Route
           path="methode"
-          element={L.isBank ? <MethodeCalculPage /> : <Navigate to="" replace />}
+          element={
+            L.isBank ? <Navigate to="" replace /> : <Navigate to="" replace />
+          }
         />
         <Route
           path="rapport"
