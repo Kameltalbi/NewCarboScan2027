@@ -42,8 +42,8 @@ export const TransitionOverviewPage: React.FC = () => {
             Transition &amp; trajectoires
           </h1>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Pilotez vos objectifs de réduction, vos scénarios et votre progression vers vos
-            trajectoires climatiques.
+            Synthèse de votre transition : émissions de référence, trajectoire 1,5&nbsp;°C,
+            objectif principal, scénarios et contribution du plan d&apos;actions.
           </p>
         </div>
         <Button asChild size="sm">

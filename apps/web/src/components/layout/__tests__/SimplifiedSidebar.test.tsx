@@ -101,15 +101,16 @@ describe('SimplifiedSidebar', () => {
     expect(screen.getByText('Dashboard')).toBeDefined();
   });
 
-  it('renders emission factors item translated', async () => {
+  it('keeps a single Transition hub entry and no separate action/scenario items', async () => {
     const { SimplifiedSidebar } = await import('@/components/layout/SimplifiedSidebar');
     render(
-      <MemoryRouter initialEntries={['/app/dashboard']}>
+      <MemoryRouter initialEntries={['/app/transition']}>
         <SimplifiedSidebar />
       </MemoryRouter>
     );
 
-    expect(screen.getByText("Facteurs d'émission")).toBeDefined();
-    expect(screen.getByText("Méthode")).toBeDefined();
+    expect(screen.getByText('Transition & trajectoires')).toBeDefined();
+    expect(screen.queryByText("Plan d'actions")).toBeNull();
+    expect(screen.queryByText('Modélisation scénarios')).toBeNull();
   });
 });

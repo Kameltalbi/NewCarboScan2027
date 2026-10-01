@@ -184,10 +184,10 @@ export const getDefaultModules = (hasModule: (slug: string) => boolean): Omit<Mo
   },
   {
     id: 'net-zero',
-    name: 'Feuille de route climat',
+    name: 'Transition & trajectoires',
     slug: 'net-zero',
     icon: <Target className="h-4 w-4" />,
-    route: '/app/net-zero',
-    isActive: hasModule('net-zero') || hasModule('trajectoire'),
+    route: '/app/transition',
+    isActive: hasModule('net-zero') || hasModule('trajectoire') || hasModule('decarbotech'),
   },
 ];

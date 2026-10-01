@@ -229,6 +229,15 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
     if (path === '/app/dashboard') {
       return location.pathname === path;
     }
+    // Hub Transition : anciennes URLs net-zero / scenarios restent mises en évidence
+    if (path === '/app/transition') {
+      return (
+        location.pathname.startsWith('/app/transition') ||
+        location.pathname.startsWith('/app/net-zero') ||
+        location.pathname.startsWith('/app/scenarios') ||
+        location.pathname.startsWith('/app/decarbotech')
+      );
+    }
     return location.pathname.startsWith(path);
   };
 

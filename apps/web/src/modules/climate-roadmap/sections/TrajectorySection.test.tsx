@@ -31,7 +31,7 @@ describe("TrajectorySection", () => {
     expect(screen.queryByTestId("reduction-trajectory-chart")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Ouvrir les actions de réduction" })).toHaveAttribute(
       "href",
-      "/app/net-zero?tab=actions",
+      "/app/transition/actions",
     );
   });
 });

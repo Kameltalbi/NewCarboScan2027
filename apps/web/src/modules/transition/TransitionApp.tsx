@@ -54,33 +54,36 @@ export const TransitionApp: React.FC = () => {
 
   return (
     <div className={cn(isEmbeddedModule ? "" : "mx-auto max-w-7xl p-6")}>
-      <nav
-        className={cn(
-          "mb-6 flex flex-wrap gap-1 rounded-xl border border-border bg-muted/40 p-1",
-          isEmbeddedModule && "mx-auto max-w-7xl px-6 pt-6",
-        )}
-      >
-        {TABS.map((tab) => {
-          const active = tab.end
-            ? location.pathname === tab.to
-            : location.pathname.startsWith(tab.to);
-          return (
-            <NavLink
-              key={tab.to}
-              to={tab.to}
-              end={tab.end}
-              className={cn(
-                "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
-                active
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {tab.label}
-            </NavLink>
-          );
-        })}
-      </nav>
+      <div className={cn(isEmbeddedModule && "mx-auto max-w-7xl px-6 pt-6")}>
+        <nav
+          aria-label="Navigation Transition & trajectoires"
+          className="mb-2 flex flex-wrap gap-1 rounded-xl border border-border bg-muted/40 p-1"
+        >
+          {TABS.map((tab) => {
+            const active = tab.end
+              ? location.pathname === tab.to
+              : location.pathname.startsWith(tab.to);
+            return (
+              <NavLink
+                key={tab.to}
+                to={tab.to}
+                end={tab.end}
+                className={cn(
+                  "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {tab.label}
+              </NavLink>
+            );
+          })}
+        </nav>
+        <p className="mb-6 text-xs text-muted-foreground">
+          Mesurer → Définir une trajectoire → Fixer ses objectifs → Simuler → Agir → Suivre
+        </p>
+      </div>
 
       <Suspense fallback={<Loading />}>
         <Routes>

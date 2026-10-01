@@ -168,7 +168,7 @@ export function TrajectorySection({
       <div className="flex flex-wrap gap-2">
         <Button type="button" onClick={save} disabled={saving}>Enregistrer la trajectoire</Button>
         <Button type="button" variant="outline" asChild>
-          <Link to="/app/net-zero?tab=actions">Ouvrir les actions de réduction</Link>
+          <Link to="/app/transition/actions">Ouvrir les actions de réduction</Link>
         </Button>
       </div>
     </div>

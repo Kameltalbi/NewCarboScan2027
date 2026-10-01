@@ -165,7 +165,7 @@ export const generateAlerts = (
       type: 'recommendation',
       priority: 'low',
       message: 'Aucune trajectoire de décarbonation définie',
-      action: { label: 'Créer', route: '/app/net-zero' },
+      action: { label: 'Créer', route: '/app/transition/actions' },
     });
   }
 

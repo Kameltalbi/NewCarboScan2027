@@ -428,7 +428,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         metric: `${Math.round(siteSources[0].pct)} % du site`,
         detail: `Source dominante sur ${selectedSite.name}.`,
         cta: 'Créer une action',
-        href: `/app/net-zero?tab=lifecycle&site=${encodeURIComponent(selectedSite.id)}&post=${encodeURIComponent(siteSources[0].technicalKey)}&year=${activeYear}`,
+        href: `/app/transition/actions?site=${encodeURIComponent(selectedSite.id)}&post=${encodeURIComponent(siteSources[0].technicalKey)}&year=${activeYear}`,
       });
     }
 

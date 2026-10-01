@@ -82,7 +82,7 @@ export function ReductionTrajectoryCard() {
       ) : (
         <ReductionTrajectoryChart points={view.points} />
       )}
-      <Link to="/app/net-zero?tab=trajectory" className="text-xs text-[#4C7D7F] underline">
+      <Link to="/app/transition/trajectoires" className="text-xs text-[#4C7D7F] underline">
         Définir la trajectoire et ouvrir les actions
       </Link>
     </div>

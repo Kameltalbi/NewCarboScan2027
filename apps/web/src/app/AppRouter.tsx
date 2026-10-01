@@ -56,13 +56,7 @@ const ACVInterpretation = lazy(() => import('@/pages/ACVInterpretation'));
 const ACVComparison = lazy(() => import('@/pages/ACVComparison'));
 const ACVExport = lazy(() => import('@/pages/ACVExport'));
 
-// Climate Roadmap module (replaces old Net Zero)
-const ClimateRoadmapModule = lazy(() => import('@/modules/climate-roadmap/ClimateRoadmapModule').then(m => ({ default: m.ClimateRoadmapModule })));
-
-// Scenarios module
-const ScenariosModule = lazy(() => import('@/modules/scenarios/ScenariosModule').then(m => ({ default: m.ScenariosModule })));
-
-// Transition & trajectoires (hub)
+// Climate Roadmap / Scenarios — accessibles via Transition & trajectoires
 const TransitionApp = lazy(() => import('@/modules/transition/TransitionApp'));
 
 
@@ -238,7 +232,7 @@ export const AppRouter: React.FC = () => {
         </ModuleProtectedRoute>
       } />
 
-      {/* Transition & trajectoires — hub principal */}
+      {/* Transition & trajectoires — hub principal décarbonation */}
       <Route path="transition/*" element={
         <ModuleProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
@@ -249,28 +243,10 @@ export const AppRouter: React.FC = () => {
         </ModuleProtectedRoute>
       } />
 
-      {/* Feuille de route / Plan d'actions — routes conservées (deep links) */}
-      <Route path="net-zero/*" element={
-        <ModuleProtectedRoute>
-          <Suspense fallback={<LoadingFallback />}>
-            <ModuleLayout moduleSlug="decarbotech">
-              <ClimateRoadmapModule />
-            </ModuleLayout>
-          </Suspense>
-        </ModuleProtectedRoute>
-      } />
-
-      {/* Modélisation de scénarios — routes conservées */}
-      <Route path="scenarios/*" element={
-        <ModuleProtectedRoute>
-          <Suspense fallback={<LoadingFallback />}>
-            <ModuleLayout moduleSlug="decarbotech">
-              <ScenariosModule />
-            </ModuleLayout>
-          </Suspense>
-        </ModuleProtectedRoute>
-      } />
-
+      {/* Anciennes URLs — redirections vers les onglets Transition */}
+      <Route path="net-zero/*" element={<Navigate to="/app/transition/actions" replace />} />
+      <Route path="scenarios/*" element={<Navigate to="/app/transition/scenarios" replace />} />
+      <Route path="decarbotech/*" element={<Navigate to="/app/transition" replace />} />
 
       <Route path="fournisseurs/*" element={
         <ModuleProtectedRoute>
@@ -297,7 +273,6 @@ export const AppRouter: React.FC = () => {
           <Navigate to="/app/bilan-carbone/rapports" replace />
         </ModuleProtectedRoute>
       } />
-
 
       {/* Catalogue FE registry (search + facets + detail) */}
       <Route path="methode" element={
@@ -328,9 +303,6 @@ export const AppRouter: React.FC = () => {
           </Suspense>
         </ModuleProtectedRoute>
       } />
-
-      {/* Legacy redirects */}
-      <Route path="decarbotech/*" element={<Navigate to="/app/net-zero" replace />} />
     </Routes>
   );
 };

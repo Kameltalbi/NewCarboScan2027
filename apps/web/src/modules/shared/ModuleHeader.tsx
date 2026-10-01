@@ -128,11 +128,13 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
     if (isCollecte) {
       return "Collecte de données";
     }
-    if (location.pathname.startsWith('/app/net-zero')) {
-      return "Plan d'actions";
-    }
-    if (location.pathname.startsWith('/app/scenarios')) {
-      return "Modélisation Scénarios";
+    if (
+      location.pathname.startsWith('/app/transition') ||
+      location.pathname.startsWith('/app/net-zero') ||
+      location.pathname.startsWith('/app/scenarios') ||
+      location.pathname.startsWith('/app/decarbotech')
+    ) {
+      return "Transition & trajectoires";
     }
     if (
       location.pathname.startsWith('/app/fournisseurs') ||

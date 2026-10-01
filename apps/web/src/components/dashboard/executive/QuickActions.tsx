@@ -50,7 +50,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({
       id: 'create-trajectory',
       label: 'Feuille de route climat',
       icon: Target,
-      route: '/app/net-zero',
+      route: '/app/transition/actions',
       show: hasNetZero,
     },
   ].filter(action => action.show);
