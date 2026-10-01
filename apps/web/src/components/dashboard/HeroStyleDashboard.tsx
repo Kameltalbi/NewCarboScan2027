@@ -602,7 +602,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           </p>
           <button
             className="mt-4 text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1"
-            onClick={() => navigate('/app/net-zero')}
+            onClick={() => navigate('/app/net-zero?tab=lifecycle')}
           >
             Ouvrir le plan d'actions <ArrowRight className="h-3.5 w-3.5" />
           </button>
