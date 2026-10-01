@@ -348,7 +348,9 @@ export const ActionPlanPilotDashboard: React.FC<ActionPlanPilotDashboardProps> =
             meta={
               referenceTrajectory
                 ? [
-                    referenceTrajectory.framework || "SBTi",
+                    (referenceTrajectory.framework || "SBTi").toUpperCase() === "SBTI"
+                      ? "SBTi"
+                      : referenceTrajectory.framework || "SBTi",
                     referenceTrajectory.target_type || "Near-Term",
                     `${referenceTrajectory.base_year} → ${referenceTrajectory.target_year}`,
                   ]
