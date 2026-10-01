@@ -418,6 +418,7 @@
       "wattbim": "WattBim",
       "actionPlan": "Maßnahmenplan",
       "scenarios": "Szenariomodellierung",
+      "transition": "Transition & Pfade",
       "methodNotes": "Methodenhinweise",
       "settings": "Einstellungen"
     }

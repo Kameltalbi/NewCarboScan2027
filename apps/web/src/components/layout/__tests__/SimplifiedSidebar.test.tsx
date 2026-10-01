@@ -18,6 +18,7 @@ vi.mock('react-i18next', () => ({
         'sidebarNav.items.wattbim': 'WattBim',
         'sidebarNav.items.actionPlan': "Plan d'actions",
         'sidebarNav.items.scenarios': 'Modélisation scénarios',
+        'sidebarNav.items.transition': 'Transition & trajectoires',
         'sidebarNav.items.methodNotes': 'Méthode',
         'sidebarNav.items.settings': 'Paramètres',
         'sidebarNav.groups.carbonAccounting': 'Comptabilité carbone',

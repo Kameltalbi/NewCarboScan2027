@@ -1,61 +1,57 @@
-// Module principal — Plan d'actions
+// Module principal — Plan d'actions (tableau de pilotage décarbonation)
 
-import React, { useMemo, useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Loader2, Plus, LayoutDashboard, Layers, Zap, ListChecks, ArrowUpDown, Calendar, Activity, FileText, ClipboardList, ShieldAlert, Users } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Loader2, ListChecks, ShieldAlert, Users, Plus } from "lucide-react";
+import { toast } from "sonner";
 
-import { useClimateRoadmaps, useClimateLevers, useClimateActions, useRoadmapDashboard } from './hooks/useClimateRoadmap';
-import { useAvailableDataSources } from './hooks/useAvailableBaselineData';
-import { RoadmapEntryPage, RoadmapInitConfig } from './components/RoadmapEntryPage';
-import { ActionsAutoDisplay } from './components/ActionsAutoDisplay';
-import { ActionsLifecycleView } from './components/ActionsLifecycleView';
-
-import { OverviewSection } from './sections/OverviewSection';
-import { BaselineSection } from './sections/BaselineSection';
-import { LeversSection } from './sections/LeversSection';
-import { ActionsSection } from './sections/ActionsSection';
-import { PrioritizationSection } from './sections/PrioritizationSection';
-import { CalendarSection } from './sections/CalendarSection';
-import { PerformanceSection } from './sections/PerformanceSection';
-import { ReportingSection } from './sections/ReportingSection';
-import { TrajectorySection } from './sections/TrajectorySection';
-import { RisksSection } from './sections/RisksSection';
-import { MobilizationSection } from './sections/MobilizationSection';
-import { latestActualByYear } from '@/lib/net-zero/reductionTrajectory';
+import {
+  useClimateRoadmaps,
+  useClimateActions,
+} from "./hooks/useClimateRoadmap";
+import { useAvailableDataSources } from "./hooks/useAvailableBaselineData";
+import { useClimateObjectives } from "@/modules/transition/hooks/useClimateObjectives";
+import { RoadmapEntryPage, type RoadmapInitConfig } from "./components/RoadmapEntryPage";
+import { ActionPlanPilotDashboard } from "./components/ActionPlanPilotDashboard";
+import { RisksSection } from "./sections/RisksSection";
+import { MobilizationSection } from "./sections/MobilizationSection";
+import type { ClimateAction } from "./types";
+import { api } from "@/integrations/api/client";
 
 export const ClimateRoadmapModule: React.FC = () => {
-  const { roadmaps, loading: roadmapsLoading, createRoadmap, updateRoadmap } = useClimateRoadmaps();
+  const { roadmaps, loading: roadmapsLoading, createRoadmap } = useClimateRoadmaps();
   const dataSources = useAvailableDataSources();
+  const { primary, loading: objectivesLoading } = useClimateObjectives();
   const [activeRoadmapId, setActiveRoadmapId] = useState<string | null>(null);
+  const activeRoadmapIdRef = useRef<string | null>(null);
+  const ensureInFlight = useRef<Promise<string | null> | null>(null);
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'recommendations');
+  const tabParam = searchParams.get("tab");
+  const initialTab =
+    tabParam === "risks" || tabParam === "mobilization" ? tabParam : "plan";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   useEffect(() => {
+    activeRoadmapIdRef.current = activeRoadmapId;
+  }, [activeRoadmapId]);
+
+  useEffect(() => {
     if (roadmaps.length > 0 && !activeRoadmapId) {
-      const active = roadmaps.find(r => r.status === 'active') || roadmaps[0];
+      const active = roadmaps.find((r) => r.status === "active") || roadmaps[0];
       setActiveRoadmapId(active.id);
     }
   }, [roadmaps, activeRoadmapId]);
 
-  const activeRoadmap = roadmaps.find(r => r.id === activeRoadmapId) || null;
-  const { levers, createLever, updateLever } = useClimateLevers(activeRoadmapId);
-  const { actions, createAction, updateAction } = useClimateActions(activeRoadmapId);
-  const { dashboard } = useRoadmapDashboard(activeRoadmapId);
-  const actuals = useMemo(
-    () => latestActualByYear(dataSources.bilans.map((bilan) => ({
-      year: bilan.year,
-      emissionsT: bilan.totalEmissions,
-      updatedAt: bilan.date,
-    }))),
-    [dataSources.bilans],
-  );
+  const activeRoadmap = roadmaps.find((r) => r.id === activeRoadmapId) || null;
+  const { actions, updateAction, refetch: refetchActions } =
+    useClimateActions(activeRoadmapId);
 
   const handleStart = async (config: RoadmapInitConfig) => {
-    const targetEmissions = config.baseline_emissions_tco2e * (1 - config.reduction_target_percent / 100);
+    const targetEmissions =
+      config.baseline_emissions_tco2e * (1 - config.reduction_target_percent / 100);
     const result = await createRoadmap({
       name: config.name,
       description: config.description,
@@ -64,16 +60,125 @@ export const ClimateRoadmapModule: React.FC = () => {
       reduction_target_percent: config.reduction_target_percent,
       baseline_emissions_tco2e: config.baseline_emissions_tco2e,
       target_emissions_tco2e: targetEmissions,
-      status: 'active',
+      status: "active",
     });
     if (result) {
       setActiveRoadmapId(result.id);
       setShowCreateForm(false);
-      toast.success('Plan d\'actions créé avec succès');
+      toast.success("Plan d'actions créé avec succès");
     }
   };
 
-  if (roadmapsLoading || dataSources.loading) {
+  /** Crée un plan minimal à partir de l'objectif Transition ou du bilan, sans inventer d'actions. */
+  const ensureRoadmap = async (): Promise<string | null> => {
+    if (activeRoadmapIdRef.current) return activeRoadmapIdRef.current;
+    if (ensureInFlight.current) return ensureInFlight.current;
+
+    ensureInFlight.current = (async () => {
+      if (activeRoadmapIdRef.current) return activeRoadmapIdRef.current;
+
+      // Relecture API pour éviter une double création en course
+      try {
+        const { items } = await api.listClimateRoadmaps();
+        const existing = (items || []) as Array<{ id: string; status?: string }>;
+        if (existing.length > 0) {
+          const id =
+            existing.find((r) => r.status === "active")?.id || existing[0].id;
+          activeRoadmapIdRef.current = id;
+          setActiveRoadmapId(id);
+          return id;
+        }
+      } catch {
+        // continue with create
+      }
+
+      const bilan = dataSources.bilans[0];
+      const baselineYear =
+        primary?.baseline_year ?? bilan?.year ?? new Date().getFullYear() - 1;
+      const targetYear = primary?.target_year ?? 2030;
+      const baselineT =
+        primary?.baseline_value != null
+          ? Number(primary.baseline_value)
+          : bilan?.totalEmissions ?? null;
+      const targetT =
+        primary?.target_value != null
+          ? Number(primary.target_value)
+          : baselineT != null && primary?.reduction_percent != null
+            ? baselineT * (1 - Number(primary.reduction_percent) / 100)
+            : null;
+      const reductionPct =
+        primary?.reduction_percent != null
+          ? Number(primary.reduction_percent)
+          : baselineT != null && targetT != null && baselineT > 0
+            ? ((baselineT - targetT) / baselineT) * 100
+            : null;
+
+      if (baselineT == null || !(baselineT > 0)) {
+        toast.error(
+          "Aucun bilan ni objectif chiffré disponible pour initialiser le plan. Définissez un objectif dans Transition.",
+        );
+        return null;
+      }
+
+      const result = await createRoadmap({
+        name: primary?.name
+          ? `Plan d'actions — ${primary.name}`
+          : "Plan d'actions décarbonation",
+        description: primary
+          ? `Plan lié à l'objectif Transition « ${primary.name} ».`
+          : "Plan initialisé à partir du bilan carbone.",
+        baseline_year: baselineYear,
+        target_year: targetYear,
+        reduction_target_percent: reductionPct,
+        baseline_emissions_tco2e: baselineT,
+        target_emissions_tco2e: targetT,
+        status: "active",
+      });
+      if (!result) return null;
+      activeRoadmapIdRef.current = result.id;
+      setActiveRoadmapId(result.id);
+      return result.id;
+    })();
+
+    try {
+      return await ensureInFlight.current;
+    } finally {
+      ensureInFlight.current = null;
+    }
+  };
+
+  const handleCreateAction = async (
+    action: Partial<ClimateAction>,
+  ): Promise<ClimateAction | null> => {
+    const roadmapId = await ensureRoadmap();
+    if (!roadmapId) return null;
+
+    const payload: Record<string, unknown> = {
+      roadmap_id: roadmapId,
+      title: action.title,
+      description: action.description ?? null,
+      status: action.status ?? "studying",
+      priority: action.priority ?? "medium",
+      source_emission_targeted: action.source_emission_targeted ?? null,
+      scope_concerned: action.scope_concerned ?? null,
+      owner_name: action.owner_name ?? null,
+      target_date: action.target_date ?? null,
+    };
+    if (
+      action.expected_reduction_tco2e != null &&
+      Number(action.expected_reduction_tco2e) > 0
+    ) {
+      payload.expected_reduction_tco2e = Number(action.expected_reduction_tco2e);
+    }
+
+    const { item } = await api.createClimateAction(payload);
+    activeRoadmapIdRef.current = roadmapId;
+    setActiveRoadmapId(roadmapId);
+    await refetchActions();
+    return item ? (item as unknown as ClimateAction) : null;
+  };
+
+  if (roadmapsLoading || dataSources.loading || objectivesLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-3">
@@ -84,112 +189,93 @@ export const ClimateRoadmapModule: React.FC = () => {
     );
   }
 
-  // No roadmap: show tabs with recommendations + lifecycle
-  if (roadmaps.length === 0) {
+  if (showCreateForm) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1">
-            <TabsTrigger value="recommendations" className="gap-1.5 text-xs">
-              <Zap className="h-3.5 w-3.5" />Recommandations
-            </TabsTrigger>
-            <TabsTrigger value="lifecycle" className="gap-1.5 text-xs">
-              <ClipboardList className="h-3.5 w-3.5" />Suivi des actions
-            </TabsTrigger>
-            <TabsTrigger value="risks" className="gap-1.5 text-xs">
-              <ShieldAlert className="h-3.5 w-3.5" />Risques
-            </TabsTrigger>
-            <TabsTrigger value="mobilization" className="gap-1.5 text-xs">
-              <Users className="h-3.5 w-3.5" />Mobilisation
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="recommendations">
-            <ActionsAutoDisplay
-              dataSources={dataSources}
-              onCreateRoadmap={() => setShowCreateForm(true)}
-            />
-          </TabsContent>
-          <TabsContent value="lifecycle">
-            <ActionsLifecycleView dataSources={dataSources} />
-          </TabsContent>
-          <TabsContent value="risks">
-            <RisksSection actions={[]} />
-          </TabsContent>
-          <TabsContent value="mobilization">
-            <MobilizationSection actions={[]} />
-          </TabsContent>
-        </Tabs>
+        <div className="mb-4">
+          <Button variant="ghost" size="sm" onClick={() => setShowCreateForm(false)}>
+            ← Retour au plan d&apos;actions
+          </Button>
+        </div>
+        <RoadmapEntryPage dataSources={dataSources} onStart={handleStart} />
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
+    <div className="p-6 max-w-7xl mx-auto space-y-4">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <h1 className="text-xl font-semibold text-foreground">Plan d’actions</h1>
+          <p className="text-sm text-muted-foreground">
+            Pilotage de la décarbonation, connecté à Transition &amp; trajectoires.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
           {roadmaps.length > 1 && (
             <select
-              value={activeRoadmapId || ''}
-              onChange={e => setActiveRoadmapId(e.target.value)}
-              className="text-sm border rounded-md px-2 py-1 bg-background"
+              value={activeRoadmapId || ""}
+              onChange={(e) => setActiveRoadmapId(e.target.value)}
+              className="text-sm border rounded-md px-2 py-1.5 bg-background"
             >
-              {roadmaps.map(r => (
-                <option key={r.id} value={r.id}>{r.name}</option>
+              {roadmaps.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
               ))}
             </select>
           )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => setShowCreateForm(true)}
+          >
+            <Plus className="h-4 w-4" />
+            Nouveau plan
+          </Button>
         </div>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Plus className="h-4 w-4" />Nouveau plan d'actions
-        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1">
-          <TabsTrigger value="recommendations" className="gap-1.5 text-xs"><Zap className="h-3.5 w-3.5" />Recommandations</TabsTrigger>
-          <TabsTrigger value="lifecycle" className="gap-1.5 text-xs"><ClipboardList className="h-3.5 w-3.5" />Suivi des actions</TabsTrigger>
-          <TabsTrigger value="overview" className="gap-1.5 text-xs"><LayoutDashboard className="h-3.5 w-3.5" />Vue d'ensemble</TabsTrigger>
-          <TabsTrigger value="baseline" className="gap-1.5 text-xs"><Layers className="h-3.5 w-3.5" />Baseline</TabsTrigger>
-          <TabsTrigger value="levers" className="gap-1.5 text-xs"><Zap className="h-3.5 w-3.5" />Leviers</TabsTrigger>
-          <TabsTrigger value="trajectory" className="gap-1.5 text-xs"><Activity className="h-3.5 w-3.5" />Trajectoire</TabsTrigger>
-          <TabsTrigger value="actions" className="gap-1.5 text-xs"><ListChecks className="h-3.5 w-3.5" />Actions</TabsTrigger>
-          <TabsTrigger value="risks" className="gap-1.5 text-xs"><ShieldAlert className="h-3.5 w-3.5" />Risques</TabsTrigger>
-          <TabsTrigger value="mobilization" className="gap-1.5 text-xs"><Users className="h-3.5 w-3.5" />Mobilisation</TabsTrigger>
-          <TabsTrigger value="prioritization" className="gap-1.5 text-xs"><ArrowUpDown className="h-3.5 w-3.5" />Priorisation</TabsTrigger>
-          <TabsTrigger value="calendar" className="gap-1.5 text-xs"><Calendar className="h-3.5 w-3.5" />Calendrier</TabsTrigger>
-          <TabsTrigger value="performance" className="gap-1.5 text-xs"><Activity className="h-3.5 w-3.5" />Performance</TabsTrigger>
-          <TabsTrigger value="reporting" className="gap-1.5 text-xs"><FileText className="h-3.5 w-3.5" />Reporting</TabsTrigger>
+          <TabsTrigger value="plan" className="gap-1.5 text-xs">
+            <ListChecks className="h-3.5 w-3.5" />
+            Plan d’actions
+          </TabsTrigger>
+          <TabsTrigger value="risks" className="gap-1.5 text-xs">
+            <ShieldAlert className="h-3.5 w-3.5" />
+            Risques
+          </TabsTrigger>
+          <TabsTrigger value="mobilization" className="gap-1.5 text-xs">
+            <Users className="h-3.5 w-3.5" />
+            Mobilisation
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="recommendations">
-          <ActionsAutoDisplay dataSources={dataSources} onCreateRoadmap={() => setShowCreateForm(true)} />
+        <TabsContent value="plan">
+          <ActionPlanPilotDashboard
+            dataSources={dataSources}
+            actions={actions}
+            primaryObjective={primary}
+            roadmapBaselineT={activeRoadmap?.baseline_emissions_tco2e ?? null}
+            roadmapTargetT={activeRoadmap?.target_emissions_tco2e ?? null}
+            roadmapTargetYear={activeRoadmap?.target_year ?? null}
+            onEnsureRoadmap={ensureRoadmap}
+            onCreateAction={handleCreateAction}
+            onUpdateAction={updateAction}
+          />
         </TabsContent>
-        <TabsContent value="lifecycle">
-          <ActionsLifecycleView dataSources={dataSources} />
+        <TabsContent value="risks">
+          <RisksSection
+            actions={actions.map((action) => ({ id: action.id, title: action.title }))}
+          />
         </TabsContent>
-        <TabsContent value="overview">
-          {dashboard ? <OverviewSection dashboard={dashboard} /> : (
-            <div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
-          )}
+        <TabsContent value="mobilization">
+          <MobilizationSection
+            actions={actions.map((action) => ({ id: action.id, title: action.title }))}
+          />
         </TabsContent>
-        <TabsContent value="baseline">{activeRoadmap && <BaselineSection roadmap={activeRoadmap} />}</TabsContent>
-        <TabsContent value="levers"><LeversSection levers={levers} onCreateLever={createLever} onUpdateLever={updateLever} /></TabsContent>
-        <TabsContent value="trajectory">
-          {activeRoadmap && (
-            <TrajectorySection
-              roadmap={activeRoadmap}
-              actuals={actuals}
-              onSave={(patch) => updateRoadmap(activeRoadmap.id, patch)}
-            />
-          )}
-        </TabsContent>
-        <TabsContent value="actions"><ActionsSection actions={actions} levers={levers} onCreateAction={createAction} onUpdateAction={updateAction} /></TabsContent>
-        <TabsContent value="risks"><RisksSection actions={actions.map((action) => ({ id: action.id, title: action.title }))} /></TabsContent>
-        <TabsContent value="mobilization"><MobilizationSection actions={actions.map((action) => ({ id: action.id, title: action.title }))} /></TabsContent>
-        <TabsContent value="prioritization"><PrioritizationSection actions={actions} levers={levers} /></TabsContent>
-        <TabsContent value="calendar">{activeRoadmap && <CalendarSection actions={actions} levers={levers} baselineYear={activeRoadmap.baseline_year} targetYear={activeRoadmap.target_year} />}</TabsContent>
-        <TabsContent value="performance">{activeRoadmap && <PerformanceSection roadmap={activeRoadmap} actions={actions} levers={levers} />}</TabsContent>
-        <TabsContent value="reporting">{activeRoadmap && <ReportingSection roadmap={activeRoadmap} actions={actions} levers={levers} />}</TabsContent>
       </Tabs>
     </div>
   );

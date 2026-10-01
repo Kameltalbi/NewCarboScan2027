@@ -1352,6 +1352,31 @@ export const api = {
 
   listClimateScenarios: () =>
     request<{ items: Array<Record<string, unknown>> }>("/v1/climate/scenarios"),
+  listClimateFrameworks: () =>
+    request<{ items: Array<Record<string, unknown>> }>("/v1/climate/frameworks"),
+  listClimateObjectives: () =>
+    request<{ items: Array<Record<string, unknown>> }>("/v1/climate/objectives"),
+  createClimateObjective: (payload: Record<string, unknown>) =>
+    request<{ item: Record<string, unknown> }>("/v1/climate/objectives", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  patchClimateObjective: (id: string, payload: Record<string, unknown>) =>
+    request<{ item: Record<string, unknown> }>(`/v1/climate/objectives/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+  archiveClimateObjective: (id: string) =>
+    request(`/v1/climate/objectives/${id}`, { method: "DELETE" }),
+  listClimateReferenceTrajectories: () =>
+    request<{ items: Array<Record<string, unknown>> }>("/v1/climate/reference-trajectories"),
+  createClimateReferenceTrajectory: (payload: Record<string, unknown>) =>
+    request<{ item: Record<string, unknown>; computation?: Record<string, unknown> }>(
+      "/v1/climate/reference-trajectories",
+      { method: "POST", body: JSON.stringify(payload) },
+    ),
+  archiveClimateReferenceTrajectory: (id: string) =>
+    request(`/v1/climate/reference-trajectories/${id}`, { method: "DELETE" }),
   createClimateScenario: (payload: Record<string, unknown>) =>
     request<{ item: Record<string, unknown> }>("/v1/climate/scenarios", {
       method: "POST",

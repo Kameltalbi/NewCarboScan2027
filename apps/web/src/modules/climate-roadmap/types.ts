@@ -185,9 +185,9 @@ export const LEVER_CATEGORY_LABELS: Record<string, string> = {
 };
 
 export const ACTION_STATUS_LABELS: Record<ActionStatus, string> = {
-  to_launch: 'À lancer',
-  studying: 'En étude',
-  validated: 'Validée',
+  to_launch: 'À étudier',
+  studying: 'À étudier',
+  validated: 'Planifiée',
   in_progress: 'En cours',
   suspended: 'Suspendue',
   completed: 'Terminée',

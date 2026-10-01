@@ -24,7 +24,6 @@ import {
   LucideIcon,
   Lock,
   Users,
-  GitBranch,
   Construction,
   Zap,
   Leaf,
@@ -140,17 +139,11 @@ const sidebarGroups: SidebarGroupDef[] = [
     labelKey: 'sidebarNav.groups.climateStrategy',
     items: [
       {
-        id: 'plan-net-zero',
-        labelKey: 'sidebarNav.items.actionPlan',
-        path: '/app/net-zero',
+        id: 'transition',
+        labelKey: 'sidebarNav.items.transition',
+        path: '/app/transition',
         icon: Target,
         requiresModule: 'decarbotech',
-      },
-      {
-        id: 'modelisation-scenario',
-        labelKey: 'sidebarNav.items.scenarios',
-        path: '/app/scenarios',
-        icon: GitBranch,
       },
     ],
   },

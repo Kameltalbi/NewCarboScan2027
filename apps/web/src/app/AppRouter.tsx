@@ -62,6 +62,9 @@ const ClimateRoadmapModule = lazy(() => import('@/modules/climate-roadmap/Climat
 // Scenarios module
 const ScenariosModule = lazy(() => import('@/modules/scenarios/ScenariosModule').then(m => ({ default: m.ScenariosModule })));
 
+// Transition & trajectoires (hub)
+const TransitionApp = lazy(() => import('@/modules/transition/TransitionApp'));
+
 
 // Paramètres routes
 const ParametresApp = lazy(() => import('@/app/parametres/ParametresApp').then(m => ({ default: m.ParametresApp })));
@@ -235,7 +238,18 @@ export const AppRouter: React.FC = () => {
         </ModuleProtectedRoute>
       } />
 
-      {/* Feuille de route climat */}
+      {/* Transition & trajectoires — hub principal */}
+      <Route path="transition/*" element={
+        <ModuleProtectedRoute>
+          <Suspense fallback={<LoadingFallback />}>
+            <ModuleLayout moduleSlug="decarbotech">
+              <TransitionApp />
+            </ModuleLayout>
+          </Suspense>
+        </ModuleProtectedRoute>
+      } />
+
+      {/* Feuille de route / Plan d'actions — routes conservées (deep links) */}
       <Route path="net-zero/*" element={
         <ModuleProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>
@@ -246,7 +260,7 @@ export const AppRouter: React.FC = () => {
         </ModuleProtectedRoute>
       } />
 
-      {/* Modélisation de scénarios */}
+      {/* Modélisation de scénarios — routes conservées */}
       <Route path="scenarios/*" element={
         <ModuleProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>

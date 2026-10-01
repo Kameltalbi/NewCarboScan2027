@@ -2,6 +2,10 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { pool } from "../db.js";
 import { orgIdParamSchema } from "../schemas/index.js";
+import {
+  CNZS_V131_META,
+  computeCnzsV131CombinedScope12AbsoluteContraction,
+} from "../services/climate/cnzsV131AbsoluteContraction.js";
 
 const roadmapSchema = z.object({
   name: z.string().min(1).max(200).optional(),
@@ -912,6 +916,447 @@ export async function registerClimateRoutes(app: FastifyInstance) {
         `DELETE FROM stakeholder_mobilizations WHERE id = $1 AND organization_id = $2`,
         [params.data.id, request.user!.organizationId],
       );
+      return { ok: true };
+    },
+  );
+
+  // ---- Transition : frameworks + objectives ----
+  const objectiveSchema = z.object({
+    name: z.string().min(1).max(300),
+    objective_type: z.enum([
+      "absolute_reduction",
+      "intensity_reduction",
+      "by_scope",
+      "by_category",
+      "by_site",
+      "energy",
+      "other",
+    ]),
+    origin: z.enum(["internal", "external_framework"]).optional(),
+    validation_status: z
+      .enum(["reference_trajectory", "company_objective", "submitted", "validated"])
+      .optional(),
+    is_primary: z.boolean().optional(),
+    perimeter: z.string().max(80).optional().nullable(),
+    scopes: z.array(z.number().int()).optional().nullable(),
+    category_key: z.string().max(200).optional().nullable(),
+    site_id: z.string().uuid().optional().nullable(),
+    baseline_year: z.number().int(),
+    baseline_value: z.number().optional().nullable(),
+    baseline_unit: z.string().max(40).optional().nullable(),
+    target_year: z.number().int(),
+    target_value: z.number().optional().nullable(),
+    reduction_percent: z.number().optional().nullable(),
+    unit: z.string().max(40).optional().nullable(),
+    framework_version_id: z.string().uuid().optional().nullable(),
+    validation_body: z.string().max(200).optional().nullable(),
+    validation_date: z.string().optional().nullable(),
+    validation_reference: z.string().max(300).optional().nullable(),
+    owner_name: z.string().max(200).optional().nullable(),
+    notes: z.string().max(8000).optional().nullable(),
+    status: z.enum(["draft", "active", "archived"]).optional(),
+    parameters: z.record(z.unknown()).optional().nullable(),
+  });
+
+  app.get(
+    "/v1/climate/frameworks",
+    { preHandler: [app.requireOrgMember] },
+    async () => {
+      const { rows: frameworks } = await pool.query(
+        `SELECT f.*,
+           COALESCE(
+             json_agg(v.* ORDER BY v.created_at DESC)
+               FILTER (WHERE v.id IS NOT NULL),
+             '[]'
+           ) AS versions
+         FROM climate_frameworks f
+         LEFT JOIN climate_framework_versions v ON v.framework_id = f.id
+         GROUP BY f.id
+         ORDER BY f.code`,
+      );
+      return { items: frameworks };
+    },
+  );
+
+  app.get(
+    "/v1/climate/objectives",
+    { preHandler: [app.requireOrgMember] },
+    async (request) => {
+      const orgId = request.user!.organizationId!;
+      const { rows } = await pool.query(
+        `SELECT o.*,
+           fv.version_label AS framework_version_label,
+           fv.method_key AS framework_method_key,
+           f.code AS framework_code,
+           f.name AS framework_name
+         FROM climate_objectives o
+         LEFT JOIN climate_framework_versions fv ON fv.id = o.framework_version_id
+         LEFT JOIN climate_frameworks f ON f.id = fv.framework_id
+         WHERE o.organization_id = $1
+         ORDER BY o.is_primary DESC, o.target_year ASC, o.created_at DESC`,
+        [orgId],
+      );
+      return { items: rows };
+    },
+  );
+
+  app.post(
+    "/v1/climate/objectives",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const parsed = objectiveSchema.safeParse(request.body ?? {});
+      if (!parsed.success) return reply.code(400).send({ error: "Objectif incomplet", details: parsed.error.flatten() });
+      const d = parsed.data;
+      if (d.target_year <= d.baseline_year) {
+        return reply.code(400).send({ error: "L'année cible doit être postérieure à l'année de référence" });
+      }
+      // Never auto-mark as SBTi-validated
+      let validationStatus = d.validation_status ?? "company_objective";
+      if (validationStatus === "validated" && !d.validation_body && !d.validation_reference) {
+        return reply.code(400).send({
+          error: "Statut « validé » exige un organisme et/ou une référence de validation",
+        });
+      }
+      const orgId = request.user!.organizationId!;
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        if (d.is_primary) {
+          await client.query(
+            `UPDATE climate_objectives SET is_primary = false, updated_at = now()
+             WHERE organization_id = $1 AND is_primary = true`,
+            [orgId],
+          );
+        }
+        const { rows } = await client.query(
+          `INSERT INTO climate_objectives (
+             organization_id, name, objective_type, origin, validation_status, is_primary,
+             perimeter, scopes, category_key, site_id,
+             baseline_year, baseline_value, baseline_unit,
+             target_year, target_value, reduction_percent, unit,
+             framework_version_id, validation_body, validation_date, validation_reference,
+             owner_name, notes, status, parameters, created_by
+           ) VALUES (
+             $1,$2,$3,$4,$5,$6,
+             $7,$8,$9,$10,
+             $11,$12,$13,
+             $14,$15,$16,$17,
+             $18,$19,$20,$21,
+             $22,$23,$24,$25,$26
+           ) RETURNING *`,
+          [
+            orgId,
+            d.name,
+            d.objective_type,
+            d.origin ?? "internal",
+            validationStatus,
+            d.is_primary ?? false,
+            d.perimeter ?? "organization",
+            d.scopes ?? [1, 2, 3],
+            d.category_key ?? null,
+            d.site_id ?? null,
+            d.baseline_year,
+            d.baseline_value ?? null,
+            d.baseline_unit ?? "tCO2e",
+            d.target_year,
+            d.target_value ?? null,
+            d.reduction_percent ?? null,
+            d.unit ?? "tCO2e",
+            d.framework_version_id ?? null,
+            d.validation_body ?? null,
+            d.validation_date ?? null,
+            d.validation_reference ?? null,
+            d.owner_name ?? null,
+            d.notes ?? null,
+            d.status ?? "active",
+            JSON.stringify(d.parameters ?? {}),
+            request.user!.id ?? null,
+          ],
+        );
+        await client.query("COMMIT");
+        return { item: rows[0] };
+      } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+      } finally {
+        client.release();
+      }
+    },
+  );
+
+  app.patch(
+    "/v1/climate/objectives/:id",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      const parsed = objectiveSchema.partial().safeParse(request.body ?? {});
+      if (!params.success || !parsed.success) {
+        return reply.code(400).send({ error: "Objectif invalide" });
+      }
+      const d = parsed.data;
+      if (d.validation_status === "validated" && !d.validation_body && !d.validation_reference) {
+        return reply.code(400).send({
+          error: "Statut « validé » exige un organisme et/ou une référence de validation",
+        });
+      }
+      const orgId = request.user!.organizationId!;
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        if (d.is_primary === true) {
+          await client.query(
+            `UPDATE climate_objectives SET is_primary = false, updated_at = now()
+             WHERE organization_id = $1 AND is_primary = true AND id <> $2`,
+            [orgId, params.data.id],
+          );
+        }
+        const { rows } = await client.query(
+          `UPDATE climate_objectives SET
+             name = COALESCE($3, name),
+             objective_type = COALESCE($4, objective_type),
+             origin = COALESCE($5, origin),
+             validation_status = COALESCE($6, validation_status),
+             is_primary = COALESCE($7, is_primary),
+             perimeter = COALESCE($8, perimeter),
+             scopes = COALESCE($9, scopes),
+             category_key = COALESCE($10, category_key),
+             site_id = COALESCE($11, site_id),
+             baseline_year = COALESCE($12, baseline_year),
+             baseline_value = COALESCE($13, baseline_value),
+             baseline_unit = COALESCE($14, baseline_unit),
+             target_year = COALESCE($15, target_year),
+             target_value = COALESCE($16, target_value),
+             reduction_percent = COALESCE($17, reduction_percent),
+             unit = COALESCE($18, unit),
+             framework_version_id = COALESCE($19, framework_version_id),
+             validation_body = COALESCE($20, validation_body),
+             validation_date = COALESCE($21, validation_date),
+             validation_reference = COALESCE($22, validation_reference),
+             owner_name = COALESCE($23, owner_name),
+             notes = COALESCE($24, notes),
+             status = COALESCE($25, status),
+             parameters = COALESCE($26, parameters),
+             updated_at = now()
+           WHERE id = $1 AND organization_id = $2
+           RETURNING *`,
+          [
+            params.data.id,
+            orgId,
+            d.name ?? null,
+            d.objective_type ?? null,
+            d.origin ?? null,
+            d.validation_status ?? null,
+            d.is_primary ?? null,
+            d.perimeter ?? null,
+            d.scopes ?? null,
+            d.category_key ?? null,
+            d.site_id ?? null,
+            d.baseline_year ?? null,
+            d.baseline_value ?? null,
+            d.baseline_unit ?? null,
+            d.target_year ?? null,
+            d.target_value ?? null,
+            d.reduction_percent ?? null,
+            d.unit ?? null,
+            d.framework_version_id ?? null,
+            d.validation_body ?? null,
+            d.validation_date ?? null,
+            d.validation_reference ?? null,
+            d.owner_name ?? null,
+            d.notes ?? null,
+            d.status ?? null,
+            d.parameters != null ? JSON.stringify(d.parameters) : null,
+          ],
+        );
+        await client.query("COMMIT");
+        if (!rows[0]) return reply.code(404).send({ error: "Not found" });
+        return { item: rows[0] };
+      } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+      } finally {
+        client.release();
+      }
+    },
+  );
+
+  app.delete(
+    "/v1/climate/objectives/:id",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.code(400).send({ error: "Invalid id" });
+      // Soft archive preferred over hard delete
+      const { rows } = await pool.query(
+        `UPDATE climate_objectives SET status = 'archived', is_primary = false, updated_at = now()
+         WHERE id = $1 AND organization_id = $2
+         RETURNING id`,
+        [params.data.id, request.user!.organizationId],
+      );
+      if (!rows[0]) return reply.code(404).send({ error: "Not found" });
+      return { ok: true };
+    },
+  );
+
+  // ---- Transition Phase 2 : trajectoires de référence versionnées ----
+  const referenceTrajectorySchema = z.object({
+    name: z.string().min(1).max(300).optional(),
+    baseline_year: z.number().int(),
+    target_year: z.number().int(),
+    scope1_emissions: z.number().nonnegative(),
+    scope2_emissions: z.number().nonnegative(),
+    framework_version_id: z.string().uuid().optional().nullable(),
+    most_recent_year: z.number().int().optional().nullable(),
+    company_net_zero_year: z.number().int().optional().nullable(),
+  });
+
+  app.get(
+    "/v1/climate/reference-trajectories",
+    { preHandler: [app.requireOrgMember] },
+    async (request) => {
+      const { rows } = await pool.query(
+        `SELECT * FROM climate_reference_trajectories
+         WHERE organization_id = $1
+         ORDER BY calculated_at DESC`,
+        [request.user!.organizationId],
+      );
+      return { items: rows };
+    },
+  );
+
+  app.post(
+    "/v1/climate/reference-trajectories",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const parsed = referenceTrajectorySchema.safeParse(request.body ?? {});
+      if (!parsed.success) {
+        return reply.code(400).send({ error: "Trajectoire incomplète", details: parsed.error.flatten() });
+      }
+      const d = parsed.data;
+      if (d.target_year <= d.baseline_year) {
+        return reply.code(400).send({ error: "L'année cible doit être postérieure à l'année de référence" });
+      }
+      if (d.scope1_emissions + d.scope2_emissions <= 0) {
+        return reply.code(400).send({ error: "Les émissions Scope 1 + 2 doivent être > 0" });
+      }
+
+      let result;
+      try {
+        result = computeCnzsV131CombinedScope12AbsoluteContraction({
+          baselineYear: d.baseline_year,
+          targetYear: d.target_year,
+          mostRecentYear: d.most_recent_year ?? d.baseline_year,
+          scope1EmissionsT: d.scope1_emissions,
+          scope2EmissionsT: d.scope2_emissions,
+          companyNetZeroYear: d.company_net_zero_year ?? null,
+        });
+      } catch (e) {
+        return reply.code(400).send({
+          error: e instanceof Error ? e.message : "Calcul de trajectoire impossible",
+        });
+      }
+
+      const orgId = request.user!.organizationId!;
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+
+        // Résoudre la version framework active (snapshot link)
+        let frameworkVersionId = d.framework_version_id ?? null;
+        if (!frameworkVersionId) {
+          const { rows: fv } = await client.query(
+            `SELECT v.id FROM climate_framework_versions v
+             JOIN climate_frameworks f ON f.id = v.framework_id
+             WHERE f.code = 'sbti' AND v.method_key = $1
+             ORDER BY v.status = 'active' DESC, v.created_at DESC
+             LIMIT 1`,
+            [CNZS_V131_META.methodKey],
+          );
+          frameworkVersionId = fv[0]?.id ?? null;
+        }
+
+        // Une seule trajectoire active par org pour ce method_key (Phase 2)
+        await client.query(
+          `UPDATE climate_reference_trajectories
+           SET status = 'archived', updated_at = now()
+           WHERE organization_id = $1 AND status = 'active' AND method_key = $2`,
+          [orgId, CNZS_V131_META.methodKey],
+        );
+
+        const { rows } = await client.query(
+          `INSERT INTO climate_reference_trajectories (
+             organization_id, name, status, framework_version_id,
+             framework, framework_version, methodology, method_key, ambition, target_type,
+             base_year, target_year, baseline_emissions,
+             scope1_emissions, scope2_emissions, scope_boundary,
+             dlarr_percent, reduction_percent, target_emissions,
+             annual_points, parameters, assumptions,
+             source_url, source_document, weighting_status,
+             calculated_at, created_by
+           ) VALUES (
+             $1,$2,'active',$3,
+             $4,$5,$6,$7,$8,$9,
+             $10,$11,$12,
+             $13,$14,$15,
+             $16,$17,$18,
+             $19,$20,$21,
+             $22,$23,$24,
+             now(),$25
+           ) RETURNING *`,
+          [
+            orgId,
+            d.name ?? "Trajectoire de référence 1,5 °C",
+            frameworkVersionId,
+            result.framework,
+            `Corporate Net-Zero Standard ${result.versionLabel}`,
+            result.methodology,
+            result.methodKey,
+            result.ambition,
+            result.targetType,
+            result.baselineYear,
+            result.targetYear,
+            result.baselineEmissionsT,
+            result.scope1EmissionsT,
+            result.scope2EmissionsT,
+            [1, 2],
+            result.dlarrPercent,
+            result.reductionPercent,
+            result.targetEmissionsT,
+            JSON.stringify(result.annualPoints),
+            JSON.stringify(result.parameters),
+            result.assumptions.join("\n"),
+            CNZS_V131_META.sourceUrl,
+            CNZS_V131_META.sourceDocument,
+            result.weightingStatus,
+            request.user!.id ?? null,
+          ],
+        );
+
+        await client.query("COMMIT");
+        return { item: rows[0], computation: result };
+      } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+      } finally {
+        client.release();
+      }
+    },
+  );
+
+  app.delete(
+    "/v1/climate/reference-trajectories/:id",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.code(400).send({ error: "Invalid id" });
+      const { rows } = await pool.query(
+        `UPDATE climate_reference_trajectories
+         SET status = 'archived', updated_at = now()
+         WHERE id = $1 AND organization_id = $2
+         RETURNING id`,
+        [params.data.id, request.user!.organizationId],
+      );
+      if (!rows[0]) return reply.code(404).send({ error: "Not found" });
       return { ok: true };
     },
   );

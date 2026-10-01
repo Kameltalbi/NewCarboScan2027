@@ -69,12 +69,12 @@ export const moduleRegistry: ModuleConfig[] = [
   },
   {
     slug: 'decarbotech',
-    name: 'Monitoring & Réduction',
-    description: 'Plan de réduction Net-Zero, intégration IoT, tableaux de bord de décarbonation',
+    name: 'Transition & trajectoires',
+    description: 'Objectifs, trajectoires, scénarios et plan d\'actions de décarbonation',
     icon: 'Target',
-    route: '/app/decarbotech',
+    route: '/app/transition',
     category: 'core',
-    component: lazy(() => import('./decarbotech/DecarbotechApp')),
+    component: lazy(() => import('./transition/TransitionApp')),
     isActive: true,
   },
   {

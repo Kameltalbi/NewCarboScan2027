@@ -418,6 +418,7 @@
       "wattbim": "WattBim",
       "actionPlan": "Plan de acciones",
       "scenarios": "Modelización de escenarios",
+      "transition": "Transición y trayectorias",
       "methodNotes": "Notas de método",
       "settings": "Ajustes"
     }

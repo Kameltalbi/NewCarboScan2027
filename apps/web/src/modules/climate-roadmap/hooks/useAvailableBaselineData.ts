@@ -1,10 +1,16 @@
 // Hook pour détecter les données disponibles dans les autres modules CarboScan
-// et proposer une baseline intelligente à l'utilisateur
+// et proposer une baseline intelligente à l'utilisateur.
+//
+// Source fiable (alignée Dashboard / Bilan Carbone / Transition) :
+// 1. Snapshots bilans_carbone (total_emission en tCO₂e, champ year)
+// 2. Sinon agrégation live activity_data via DashboardAggregator (kg → tCO₂e)
+// Ne crée / ne modifie aucun bilan.
 
 import { useState, useEffect } from "react";
 import { api } from "@/integrations/api/client";
 import { useOrganizationId } from "@/hooks/useOrganizationId";
 import { useAuth } from "@/hooks/useAuth";
+import { DashboardAggregator } from "@/lib/calculators/DashboardAggregator";
 
 export interface DataSourceSummary {
   bilanCount: number;
@@ -27,6 +33,8 @@ export interface BilanSummary {
   status: string;
   date: string;
   sitesCount?: number;
+  /** true si dérivé de activity_data (pas de ligne bilans_carbone) */
+  fromActivity?: boolean;
 }
 
 export interface PCFSummary {
@@ -54,6 +62,70 @@ function num(v: unknown): number {
 
 function str(v: unknown, fallback = ""): string {
   return v == null ? fallback : String(v);
+}
+
+function resolveBilanYear(b: Record<string, unknown>): number | null {
+  if (b.year != null && Number.isFinite(Number(b.year))) return Number(b.year);
+  if (b.reference_year != null && Number.isFinite(Number(b.reference_year))) {
+    return Number(b.reference_year);
+  }
+  const dateStr = str(b.date_bilan || b.updated_at || b.created_at);
+  if (dateStr) {
+    const y = new Date(dateStr).getFullYear();
+    if (Number.isFinite(y)) return y;
+  }
+  return null;
+}
+
+async function buildActivityFallbackBilans(
+  organizationId: string,
+): Promise<BilanSummary[]> {
+  const yearsRes = await api.listOrgYears();
+  const yearCandidates = new Set<number>();
+  for (const item of yearsRes.items || []) {
+    if (item.is_included && Number.isFinite(Number(item.year))) {
+      yearCandidates.add(Number(item.year));
+    }
+  }
+  const latestActivity = Number(yearsRes.latestActivityYear);
+  if (Number.isFinite(latestActivity)) yearCandidates.add(latestActivity);
+  const latestBilan = Number(yearsRes.latestBilanYear);
+  if (Number.isFinite(latestBilan)) yearCandidates.add(latestBilan);
+
+  if (yearCandidates.size === 0) {
+    // Dernier recours : année courante / N-1 si des activités existent
+    const y = new Date().getFullYear();
+    yearCandidates.add(y);
+    yearCandidates.add(y - 1);
+  }
+
+  const out: BilanSummary[] = [];
+  for (const year of [...yearCandidates].sort((a, b) => b - a)) {
+    try {
+      const aggregated = await DashboardAggregator.aggregate(
+        organizationId,
+        `${year}-01-01`,
+        `${year}-12-31`,
+      );
+      const kg = aggregated.bilanCarbone;
+      const totalT = kg.totalEmissions / 1000;
+      if (!(totalT > 0)) continue;
+      out.push({
+        id: `live-activity-${year}`,
+        year,
+        totalEmissions: totalT,
+        scope1: kg.scope1 / 1000,
+        scope2: kg.scope2 / 1000,
+        scope3: kg.scope3 / 1000,
+        status: "calculated",
+        date: `${year}-12-31`,
+        fromActivity: true,
+      });
+    } catch {
+      // année sans données calculables
+    }
+  }
+  return out;
 }
 
 export function useAvailableDataSources(): DataSourceSummary {
@@ -89,26 +161,35 @@ export function useAvailableDataSources(): DataSourceSummary {
         for (const b of bilanItems || []) {
           const total = num(b.total_emission);
           if (total <= 0) continue;
-          const updated = str(b.updated_at || b.created_at);
+          const updated = str(b.updated_at || b.created_at || b.date_bilan);
           bilans.push({
             id: str(b.id),
-            year:
-              b.reference_year != null
-                ? num(b.reference_year)
-                : updated
-                  ? new Date(updated).getFullYear()
-                  : null,
+            year: resolveBilanYear(b),
             totalEmissions: total,
             scope1: num(b.scope1_emission),
             scope2: num(b.scope2_emission),
             scope3: num(b.scope3_emission),
             status: str(b.status, "draft"),
             date: updated,
+            fromActivity: false,
           });
           if (!lastUpdate || updated > lastUpdate) lastUpdate = updated;
         }
       } catch {
-        // bilans indisponibles — on continue avec les autres sources
+        // bilans indisponibles — on continue
+      }
+
+      // Fallback aligné Dashboard / Bilan live : activity_data
+      if (bilans.length === 0 && organizationId) {
+        try {
+          const live = await buildActivityFallbackBilans(organizationId);
+          bilans.push(...live);
+          if (live[0]?.date && (!lastUpdate || live[0].date > lastUpdate)) {
+            lastUpdate = live[0].date;
+          }
+        } catch {
+          // pas de données activity
+        }
       }
 
       if (organizationId) {

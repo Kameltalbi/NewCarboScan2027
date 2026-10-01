@@ -32,11 +32,13 @@ export const ActionsAutoDisplay: React.FC<ActionsAutoDisplayProps> = ({ dataSour
 
   const fetchActions = useCallback(async () => {
     if (!latestBilan) { setLoading(false); return; }
+    // Catalogue : seuils en kgCO₂e — BilanSummary est en tCO₂e
+    const toKg = (t: number) => t * 1000;
     const result = await getRecommendedActions({
-      totalEmissions: latestBilan.totalEmissions,
-      scope1: latestBilan.scope1,
-      scope2: latestBilan.scope2,
-      scope3: latestBilan.scope3,
+      totalEmissions: toKg(latestBilan.totalEmissions),
+      scope1: toKg(latestBilan.scope1),
+      scope2: toKg(latestBilan.scope2),
+      scope3: toKg(latestBilan.scope3),
       categoryBreakdown: [],
       majorityScope: latestBilan.scope3 >= latestBilan.scope1 && latestBilan.scope3 >= latestBilan.scope2 ? 3
         : latestBilan.scope1 >= latestBilan.scope2 ? 1 : 2,
