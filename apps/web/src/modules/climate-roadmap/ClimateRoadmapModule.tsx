@@ -13,6 +13,7 @@ import {
 } from "./hooks/useClimateRoadmap";
 import { useAvailableDataSources } from "./hooks/useAvailableBaselineData";
 import { useClimateObjectives } from "@/modules/transition/hooks/useClimateObjectives";
+import { useClimateReferenceTrajectories } from "@/modules/transition/hooks/useClimateReferenceTrajectories";
 import { RoadmapEntryPage, type RoadmapInitConfig } from "./components/RoadmapEntryPage";
 import { ActionPlanPilotDashboard } from "./components/ActionPlanPilotDashboard";
 import { RisksSection } from "./sections/RisksSection";
@@ -24,6 +25,8 @@ export const ClimateRoadmapModule: React.FC = () => {
   const { roadmaps, loading: roadmapsLoading, createRoadmap } = useClimateRoadmaps();
   const dataSources = useAvailableDataSources();
   const { primary, loading: objectivesLoading } = useClimateObjectives();
+  const { active: referenceTrajectory, loading: refLoading } =
+    useClimateReferenceTrajectories();
   const [activeRoadmapId, setActiveRoadmapId] = useState<string | null>(null);
   const activeRoadmapIdRef = useRef<string | null>(null);
   const ensureInFlight = useRef<Promise<string | null> | null>(null);
@@ -178,7 +181,7 @@ export const ClimateRoadmapModule: React.FC = () => {
     return item ? (item as unknown as ClimateAction) : null;
   };
 
-  if (roadmapsLoading || dataSources.loading || objectivesLoading) {
+  if (roadmapsLoading || dataSources.loading || objectivesLoading || refLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-3">
@@ -258,6 +261,7 @@ export const ClimateRoadmapModule: React.FC = () => {
             dataSources={dataSources}
             actions={actions}
             primaryObjective={primary}
+            referenceTrajectory={referenceTrajectory}
             roadmapBaselineT={activeRoadmap?.baseline_emissions_tco2e ?? null}
             roadmapTargetT={activeRoadmap?.target_emissions_tco2e ?? null}
             roadmapTargetYear={activeRoadmap?.target_year ?? null}

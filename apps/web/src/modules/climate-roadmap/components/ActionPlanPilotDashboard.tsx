@@ -25,7 +25,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getRecommendedActions, type RecommendedAction } from "@/lib/recommendedActions";
-import type { ClimateObjective } from "@/modules/transition/types";
+import type {
+  ClimateObjective,
+  ClimateReferenceTrajectory,
+} from "@/modules/transition/types";
+import { resolveTargetEmissions } from "@/modules/transition/lib/trajectoryComparison";
 import type { DataSourceSummary } from "../hooks/useAvailableBaselineData";
 import type { ClimateAction, ActionStatus } from "../types";
 import {
@@ -98,6 +102,7 @@ interface ActionPlanPilotDashboardProps {
   dataSources: DataSourceSummary;
   actions: ClimateAction[];
   primaryObjective: ClimateObjective | null;
+  referenceTrajectory: ClimateReferenceTrajectory | null;
   roadmapBaselineT: number | null;
   roadmapTargetT: number | null;
   roadmapTargetYear: number | null;
@@ -111,10 +116,10 @@ export const ActionPlanPilotDashboard: React.FC<ActionPlanPilotDashboardProps> =
   dataSources,
   actions,
   primaryObjective,
+  referenceTrajectory,
   roadmapBaselineT,
   roadmapTargetT,
   roadmapTargetYear,
-  onEnsureRoadmap,
   onCreateAction,
   onUpdateAction,
 }) => {
@@ -167,64 +172,87 @@ export const ActionPlanPilotDashboard: React.FC<ActionPlanPilotDashboardProps> =
     return { totalT, quantifiedCount };
   }, [planActions]);
 
-  const baselineT = useMemo(() => {
-    if (primaryObjective?.baseline_value != null && Number.isFinite(Number(primaryObjective.baseline_value))) {
-      return Number(primaryObjective.baseline_value);
-    }
-    return roadmapBaselineT;
-  }, [primaryObjective, roadmapBaselineT]);
+  /** Snapshot Transition — objectif entreprise (pas de recalcul local). */
+  const companyBaselineT = useMemo(() => {
+    if (primaryObjective?.baseline_value == null) return null;
+    const n = Number(primaryObjective.baseline_value);
+    return Number.isFinite(n) ? n : null;
+  }, [primaryObjective]);
 
-  const targetT = useMemo(() => {
-    if (primaryObjective?.target_value != null && Number.isFinite(Number(primaryObjective.target_value))) {
-      return Number(primaryObjective.target_value);
-    }
-    if (
-      primaryObjective?.baseline_value != null &&
-      primaryObjective?.reduction_percent != null &&
-      Number.isFinite(Number(primaryObjective.baseline_value)) &&
-      Number.isFinite(Number(primaryObjective.reduction_percent))
-    ) {
-      return (
-        Number(primaryObjective.baseline_value) *
-        (1 - Number(primaryObjective.reduction_percent) / 100)
-      );
-    }
-    return roadmapTargetT;
-  }, [primaryObjective, roadmapTargetT]);
+  const companyTargetT = useMemo(
+    () => (primaryObjective ? resolveTargetEmissions(primaryObjective) : null),
+    [primaryObjective],
+  );
 
-  const targetYear =
-    primaryObjective?.target_year ?? roadmapTargetYear ?? null;
-
-  const objectiveLabel = useMemo(() => {
-    if (primaryObjective) {
-      const pct =
-        primaryObjective.reduction_percent != null
-          ? `−${fmtNum(Number(primaryObjective.reduction_percent))} %`
-          : baselineT != null && targetT != null && baselineT > 0
-            ? `−${fmtNum(((baselineT - targetT) / baselineT) * 100)} %`
-            : null;
-      const year = primaryObjective.target_year;
-      if (pct && year) return `${pct} d’ici ${year}`;
-      if (pct) return pct;
-      return primaryObjective.name;
+  const companyReductionPct = useMemo(() => {
+    if (primaryObjective?.reduction_percent != null) {
+      const n = Number(primaryObjective.reduction_percent);
+      return Number.isFinite(n) ? n : null;
     }
-    if (roadmapTargetT != null && roadmapBaselineT != null && roadmapBaselineT > 0) {
-      const pct = ((roadmapBaselineT - roadmapTargetT) / roadmapBaselineT) * 100;
-      return `−${fmtNum(pct)} %${roadmapTargetYear ? ` d’ici ${roadmapTargetYear}` : ""}`;
+    if (companyBaselineT != null && companyTargetT != null && companyBaselineT > 0) {
+      return ((companyBaselineT - companyTargetT) / companyBaselineT) * 100;
     }
     return null;
-  }, [primaryObjective, baselineT, targetT, roadmapBaselineT, roadmapTargetT, roadmapTargetYear]);
+  }, [primaryObjective, companyBaselineT, companyTargetT]);
+
+  /** Snapshot Transition — trajectoire de référence (ACA), jamais recalculée ici. */
+  const refBaselineT = useMemo(() => {
+    if (referenceTrajectory?.baseline_emissions == null) return null;
+    const n = Number(referenceTrajectory.baseline_emissions);
+    return Number.isFinite(n) ? n : null;
+  }, [referenceTrajectory]);
+
+  const refTargetT = useMemo(() => {
+    if (referenceTrajectory?.target_emissions == null) return null;
+    const n = Number(referenceTrajectory.target_emissions);
+    return Number.isFinite(n) ? n : null;
+  }, [referenceTrajectory]);
+
+  const refReductionPct = useMemo(() => {
+    if (referenceTrajectory?.reduction_percent != null) {
+      const n = Number(referenceTrajectory.reduction_percent);
+      return Number.isFinite(n) ? n : null;
+    }
+    if (refBaselineT != null && refTargetT != null && refBaselineT > 0) {
+      return ((refBaselineT - refTargetT) / refBaselineT) * 100;
+    }
+    return null;
+  }, [referenceTrajectory, refBaselineT, refTargetT]);
+
+  // Couverture : objectif entreprise prioritaire, sinon trajectoire de référence, sinon roadmap
+  const coverageBaselineT =
+    companyBaselineT ?? refBaselineT ?? roadmapBaselineT;
+  const coverageTargetT = companyTargetT ?? refTargetT ?? roadmapTargetT;
+  const coverageTargetYear =
+    primaryObjective?.target_year ??
+    referenceTrajectory?.target_year ??
+    roadmapTargetYear ??
+    null;
+  const coverageLabel =
+    companyTargetT != null
+      ? "objectif"
+      : refTargetT != null
+        ? "trajectoire de référence"
+        : "objectif";
 
   const coverage = useMemo(
     () =>
       computeObjectiveCoverage({
-        baselineT: baselineT != null && Number.isFinite(baselineT) ? baselineT : null,
-        targetT: targetT != null && Number.isFinite(targetT) ? targetT : null,
+        baselineT:
+          coverageBaselineT != null && Number.isFinite(coverageBaselineT)
+            ? coverageBaselineT
+            : null,
+        targetT:
+          coverageTargetT != null && Number.isFinite(coverageTargetT)
+            ? coverageTargetT
+            : null,
         plannedReductionT: potentialReduction.totalT,
         quantifiedActionCount: potentialReduction.quantifiedCount,
       }),
-    [baselineT, targetT, potentialReduction],
+    [coverageBaselineT, coverageTargetT, potentialReduction],
   );
+
+  const hasTransitionContext = Boolean(primaryObjective || referenceTrajectory);
 
   const existingTitles = useMemo(
     () => new Set(planActions.map((a) => a.title.trim().toLowerCase())),
@@ -281,8 +309,8 @@ export const ActionPlanPilotDashboard: React.FC<ActionPlanPilotDashboardProps> =
 
   return (
     <div className="space-y-8">
-      {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* KPIs actions */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         <KpiCard label="Actions au total" value={String(planActions.length)} />
         <KpiCard label="Actions en cours" value={String(inProgressCount)} />
         <KpiCard
@@ -298,37 +326,79 @@ export const ActionPlanPilotDashboard: React.FC<ActionPlanPilotDashboardProps> =
               : "Quantifiez vos actions pour afficher le potentiel"
           }
         />
-        <KpiCard
-          label="Objectif principal"
-          value={objectiveLabel || "Non défini"}
-          hint={
-            primaryObjective ? (
-              <Link
-                to="/app/transition/objectifs"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
-              >
-                Voir dans Transition <ExternalLink className="h-3 w-3" />
-              </Link>
-            ) : (
-              <Link
-                to="/app/transition/objectifs"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
-              >
-                Définir un objectif <ExternalLink className="h-3 w-3" />
-              </Link>
-            )
-          }
-        />
       </div>
+
+      {/* Connexion Transition — snapshots uniquement, aucun recalcul */}
+      <section className="rounded-lg border border-border bg-background space-y-0 divide-y divide-border">
+        <div className="flex items-center justify-between gap-3 px-4 py-3">
+          <h2 className="text-sm font-semibold text-foreground">
+            Transition &amp; trajectoires
+          </h2>
+          <Link
+            to="/app/transition"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+          >
+            Ouvrir Transition <ExternalLink className="h-3 w-3" />
+          </Link>
+        </div>
+
+        <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
+          <TransitionSnapshotCard
+            title="Trajectoire de référence 1,5 °C"
+            meta={
+              referenceTrajectory
+                ? [
+                    referenceTrajectory.framework || "SBTi",
+                    referenceTrajectory.target_type || "Near-Term",
+                    `${referenceTrajectory.base_year} → ${referenceTrajectory.target_year}`,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")
+                : null
+            }
+            baselineT={refBaselineT}
+            targetT={refTargetT}
+            reductionPct={refReductionPct}
+            emptyHref="/app/transition/trajectoires"
+            emptyLabel="Configurer la trajectoire"
+          />
+          <TransitionSnapshotCard
+            title="Objectif entreprise"
+            meta={
+              primaryObjective
+                ? [
+                    primaryObjective.name,
+                    `${primaryObjective.baseline_year} → ${primaryObjective.target_year}`,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")
+                : null
+            }
+            baselineT={companyBaselineT}
+            targetT={companyTargetT}
+            reductionPct={companyReductionPct}
+            emptyHref="/app/transition/objectifs"
+            emptyLabel="Définir un objectif"
+          />
+        </div>
+      </section>
 
       {/* Couverture objectif */}
       <section className="rounded-lg border border-border bg-muted/30 px-4 py-3 space-y-1">
         <h3 className="text-sm font-semibold text-foreground">Couverture de l’objectif</h3>
-        {coverage && targetYear ? (
+        {!hasTransitionContext ? (
+          <p className="text-sm text-muted-foreground">
+            Définissez une trajectoire ou un objectif dans Transition pour mesurer la couverture.{" "}
+            <Link to="/app/transition" className="text-primary hover:underline">
+              Aller à Transition
+            </Link>
+          </p>
+        ) : coverage && coverageTargetYear ? (
           <p className="text-sm text-muted-foreground">
             Vos actions planifiées couvrent{" "}
             <span className="font-semibold text-foreground">{fmtNum(coverage.percent)} %</span>{" "}
-            de la réduction nécessaire pour atteindre votre objectif {targetYear}.
+            de la réduction nécessaire pour atteindre votre {coverageLabel}{" "}
+            {coverageTargetYear}.
             <span className="block text-xs mt-1">
               {fmtNum(coverage.plannedT)} tCO₂e/an quantifiés sur {fmtNum(coverage.neededT)}{" "}
               tCO₂e nécessaires.
@@ -518,6 +588,55 @@ function KpiCard({
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="text-lg font-semibold text-foreground leading-tight">{value}</p>
       {hint ? <div className="text-[11px] text-muted-foreground pt-0.5">{hint}</div> : null}
+    </div>
+  );
+}
+
+function TransitionSnapshotCard({
+  title,
+  meta,
+  baselineT,
+  targetT,
+  reductionPct,
+  emptyHref,
+  emptyLabel,
+}: {
+  title: string;
+  meta: string | null;
+  baselineT: number | null;
+  targetT: number | null;
+  reductionPct: number | null;
+  emptyHref: string;
+  emptyLabel: string;
+}) {
+  const hasData = baselineT != null && targetT != null;
+  return (
+    <div className="px-4 py-4 space-y-2">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {title}
+      </p>
+      {hasData ? (
+        <>
+          {meta ? <p className="text-xs text-muted-foreground">{meta}</p> : null}
+          <p className="text-sm text-foreground">
+            <span className="font-medium">{fmtNum(baselineT)} tCO₂e</span>
+            <span className="text-muted-foreground"> → </span>
+            <span className="font-medium">{fmtNum(targetT)} tCO₂e</span>
+          </p>
+          {reductionPct != null ? (
+            <p className="text-sm font-semibold text-foreground">
+              −{fmtNum(reductionPct)} %
+            </p>
+          ) : null}
+        </>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          Non défini.{" "}
+          <Link to={emptyHref} className="text-primary hover:underline">
+            {emptyLabel}
+          </Link>
+        </p>
+      )}
     </div>
   );
 }
