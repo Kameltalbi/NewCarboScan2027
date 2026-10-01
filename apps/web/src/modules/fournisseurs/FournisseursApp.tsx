@@ -21,9 +21,16 @@ import {
   ScoringQualityView,
 } from "./PortfolioViews";
 import { useSupplierLabels } from "@/hooks/useSupplierLabels";
+import { useAppData } from "@/contexts/AppDataContext";
 
 const FournisseursApp: React.FC = () => {
   const L = useSupplierLabels();
+  const { hasModule } = useAppData();
+
+  // PCAF uniquement si flag tenant ; sinon module Fournisseurs classique requis.
+  if (!L.financedEmissionsEnabled && !hasModule("fournisseurs")) {
+    return <Navigate to="/app/dashboard" replace />;
+  }
 
   const navItems: NavItem[] = L.isBank
     ? [

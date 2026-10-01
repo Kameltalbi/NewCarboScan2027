@@ -43,6 +43,8 @@ vi.mock('react-i18next', () => ({
 vi.mock('@/hooks/useSupplierLabels', () => ({
   useSupplierLabels: () => ({
     moduleTitle: 'Fournisseurs',
+    isBank: false,
+    financedEmissionsEnabled: false,
   }),
 }));
 

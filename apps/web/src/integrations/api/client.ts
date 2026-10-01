@@ -1445,6 +1445,8 @@ export type OrganizationData = {
   pilotName: string | null;
   legalName: string | null;
   consolidationMethod?: string | null;
+  organizationType?: "enterprise" | "financial_institution";
+  financedEmissionsEnabled?: boolean;
   subscriptionPlan: string | null;
   subscriptionStatus: string | null;
   userId?: string | null;

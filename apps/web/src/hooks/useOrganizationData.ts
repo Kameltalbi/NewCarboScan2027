@@ -18,6 +18,8 @@ export interface OrganizationData {
   annual_revenue: number | null;
   employees: number | null;
   total_surface: number | null;
+  organization_type: 'enterprise' | 'financial_institution';
+  financed_emissions_enabled: boolean;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -48,6 +50,11 @@ export const useOrganizationData = () => {
           annual_revenue: org.annualRevenue ?? null,
           employees: org.employees ?? null,
           total_surface: org.totalSurface ?? null,
+          organization_type:
+            org.organizationType === 'financial_institution'
+              ? 'financial_institution'
+              : 'enterprise',
+          financed_emissions_enabled: Boolean(org.financedEmissionsEnabled),
           created_at: org.createdAt,
           updated_at: org.updatedAt,
         };

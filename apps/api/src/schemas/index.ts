@@ -144,6 +144,8 @@ export const patchOrganizationSchema = z.object({
   totalSurface: z.number().optional().nullable(),
   productionUnitLabel: z.string().max(80).optional().nullable(),
   productionUnitQuantity: z.number().optional().nullable(),
+  organizationType: z.enum(["enterprise", "financial_institution"]).optional(),
+  financedEmissionsEnabled: z.boolean().optional(),
 });
 
 const orgRoleEnum = z.enum([

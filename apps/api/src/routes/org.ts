@@ -10,6 +10,7 @@ import {
   patchOrganizationSchema,
   siteSchema,
 } from "../schemas/index.js";
+import { defaultFinancedEmissionsEnabled } from "../services/orgFeatureFlags.js";
 
 const ORG_SELECT = `
   id, name, slug, sector, country, status, reference_year, currency,
@@ -17,6 +18,7 @@ const ORG_SELECT = `
   consolidation_method,
   employees, annual_revenue, total_surface,
   production_unit_label, production_unit_quantity,
+  organization_type, financed_emissions_enabled,
   subscription_plan, subscription_status, user_id, created_at, updated_at
 `;
 
@@ -37,6 +39,11 @@ function mapOrg(row: Record<string, unknown>) {
     pilotName: row.pilot_name,
     legalName: row.legal_name,
     consolidationMethod: row.consolidation_method ?? "operational_control",
+    organizationType:
+      row.organization_type === "financial_institution"
+        ? "financial_institution"
+        : "enterprise",
+    financedEmissionsEnabled: Boolean(row.financed_emissions_enabled),
     subscriptionPlan: row.subscription_plan,
     subscriptionStatus: row.subscription_status,
     userId: row.user_id,
@@ -75,6 +82,13 @@ export async function registerOrgRoutes(app: FastifyInstance) {
       const d = parsed.data;
       const orgId = request.user!.organizationId!;
       const setLogo = d.logoUrl !== undefined;
+
+      let nextType = d.organizationType;
+      let nextFinanced = d.financedEmissionsEnabled;
+      if (nextType !== undefined && nextFinanced === undefined) {
+        nextFinanced = defaultFinancedEmissionsEnabled(nextType);
+      }
+
       const { rows } = await pool.query(
         `UPDATE organizations SET
            name = COALESCE($2, name),
@@ -94,6 +108,8 @@ export async function registerOrgRoutes(app: FastifyInstance) {
            total_surface = CASE WHEN $19::boolean THEN $20::numeric ELSE total_surface END,
            production_unit_label = CASE WHEN $21::boolean THEN $22::text ELSE production_unit_label END,
            production_unit_quantity = CASE WHEN $23::boolean THEN $24::numeric ELSE production_unit_quantity END,
+           organization_type = COALESCE($25, organization_type),
+           financed_emissions_enabled = COALESCE($26, financed_emissions_enabled),
            updated_at = now()
          WHERE id = $1
          RETURNING ${ORG_SELECT}`,
@@ -122,6 +138,8 @@ export async function registerOrgRoutes(app: FastifyInstance) {
           d.productionUnitLabel ?? null,
           d.productionUnitQuantity !== undefined,
           d.productionUnitQuantity ?? null,
+          nextType ?? null,
+          nextFinanced ?? null,
         ],
       );
       return { organization: mapOrg(rows[0]) };

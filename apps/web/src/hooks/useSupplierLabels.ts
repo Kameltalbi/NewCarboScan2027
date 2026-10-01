@@ -1,10 +1,12 @@
-// Adapte les libellés du module "Fournisseurs" au secteur de l'organisation.
-// Pour une banque, on parle de portefeuille de prêts / contreparties (PCAF).
+// Libellés du module Fournisseurs / Émissions financées.
+// Piloté par le feature flag tenant financed_emissions_enabled — jamais par le nom ou l'email.
 
 import { useOrganizationData } from './useOrganizationData';
 
 export interface SupplierLabels {
+  /** true lorsque financed_emissions_enabled est actif sur l'organisation. */
   isBank: boolean;
+  financedEmissionsEnabled: boolean;
   moduleTitle: string;        // menu latéral
   pageTitle: string;          // header de la page
   entitySingular: string;     // "fournisseur" / "contrepartie"
@@ -29,16 +31,15 @@ export interface SupplierLabels {
   scoreLegend: string;
 }
 
-const BANK_SECTORS = ['banque', 'bank', 'finance', 'banking', 'financial services'];
-
 export function useSupplierLabels(): SupplierLabels {
   const { organization } = useOrganizationData();
-  const sector = (organization?.sector || '').toLowerCase().trim();
-  const isBank = BANK_SECTORS.some(s => sector.includes(s));
+  const financedEmissionsEnabled = Boolean(organization?.financed_emissions_enabled);
+  const isBank = financedEmissionsEnabled;
 
   if (isBank) {
     return {
       isBank: true,
+      financedEmissionsEnabled: true,
       moduleTitle: 'Émissions financées',
       pageTitle: 'Émissions financées — portefeuille PCAF',
       entitySingular: 'contrepartie',
@@ -66,6 +67,7 @@ export function useSupplierLabels(): SupplierLabels {
 
   return {
     isBank: false,
+    financedEmissionsEnabled: false,
     moduleTitle: 'Fournisseurs',
     pageTitle: 'Engagement fournisseurs',
     entitySingular: 'fournisseur',

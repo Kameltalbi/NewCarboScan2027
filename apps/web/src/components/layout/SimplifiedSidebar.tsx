@@ -242,10 +242,20 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
   };
 
   const activeModuleSlugs = modules.map((m) => m.slug);
+  const financedEmissionsEnabled = supplierLabels.financedEmissionsEnabled;
+
+  const isFournisseursNavVisible = (item: ModuleItem): boolean => {
+    if (item.id !== 'fournisseurs') return true;
+    // Émissions financées : uniquement si le flag tenant est actif.
+    if (financedEmissionsEnabled) return true;
+    // Fournisseurs classiques : module fournisseurs sans PCAF.
+    return activeModuleSlugs.includes('fournisseurs');
+  };
 
   const isModuleLocked = (item: ModuleItem): boolean => {
     if (item.external) return false;
     if (item.comingSoon) return true;
+    if (item.id === 'fournisseurs' && financedEmissionsEnabled) return false;
     return !!item.requiresModule && !activeModuleSlugs.includes(item.requiresModule);
   };
 
@@ -357,12 +367,16 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
           <div className="mb-1">{renderItem(dashboardDisplay)}</div>
           <div className="mb-1">{renderItem(diagnosticsDisplay)}</div>
 
-          {displayGroups.map((group) => (
-            <div key={group.id}>
-              <div className="mx-3 my-2 h-px bg-[hsl(var(--sidebar-border))]" />
-              <div className="space-y-0.5">{group.items.map(renderItem)}</div>
-            </div>
-          ))}
+          {displayGroups.map((group) => {
+            const visibleItems = group.items.filter(isFournisseursNavVisible);
+            if (visibleItems.length === 0) return null;
+            return (
+              <div key={group.id}>
+                <div className="mx-3 my-2 h-px bg-[hsl(var(--sidebar-border))]" />
+                <div className="space-y-0.5">{visibleItems.map(renderItem)}</div>
+              </div>
+            );
+          })}
         </SidebarMenu>
       </SidebarContent>
 

@@ -854,6 +854,7 @@ INSERT INTO organizations (
   id, name, slug, user_id, country, sector, reference_year, currency,
   legal_name, pilot_name, subscription_plan, subscription_status, max_users,
   status, consolidation_method, employees, annual_revenue, total_surface,
+  organization_type, financed_emissions_enabled,
   legacy_source, legacy_id, imported_at, raw_legacy
 ) VALUES (
   ${sqlStr(ORG)},
@@ -865,6 +866,7 @@ INSERT INTO organizations (
   'Direction Climat & ESG',
   'pro', 'active', 25, 'active', 'operational_control',
   ${siteEmployees}, 420000000, ${siteSurface},
+  'financial_institution', true,
   ${sqlStr(LEGACY)}, 'org-banque-atlas', now(),
   jsonb_build_object(
     'demo', true,

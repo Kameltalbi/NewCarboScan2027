@@ -2,6 +2,10 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { pool } from "../db.js";
 import { orgIdParamSchema } from "../schemas/index.js";
+import {
+  assertFinancedEmissionsEnabled,
+  isPcafSupplierPayload,
+} from "../services/orgFeatureFlags.js";
 
 const createSupplierSchema = z.object({
   name: z.string().min(1).max(200),
@@ -60,6 +64,14 @@ export async function registerSupplierRoutes(app: FastifyInstance) {
       const where = ["organization_id = $1"];
       if (activeOnly) {
         where.push("COALESCE(is_active, true) IS DISTINCT FROM false");
+      }
+      // Sans flag PCAF : exclure les contreparties Scope 3 cat. 15 (émissions financées).
+      const { rows: flagRows } = await pool.query(
+        `SELECT financed_emissions_enabled FROM organizations WHERE id = $1`,
+        [orgId],
+      );
+      if (!flagRows[0]?.financed_emissions_enabled) {
+        where.push("(scope3_ghg_category IS NULL OR scope3_ghg_category <> 15)");
       }
       const { rows } = await pool.query(
         `SELECT ${SUPPLIER_SELECT}
@@ -147,6 +159,10 @@ export async function registerSupplierRoutes(app: FastifyInstance) {
       }
       const d = parsed.data;
       const orgId = request.user!.organizationId!;
+      if (isPcafSupplierPayload(d)) {
+        const ok = await assertFinancedEmissionsEnabled(orgId, reply);
+        if (!ok) return;
+      }
       const { rows } = await pool.query(
         `INSERT INTO suppliers (
            organization_id, name, siret, naf_code, country, city, address, postal_code,
@@ -223,6 +239,10 @@ export async function registerSupplierRoutes(app: FastifyInstance) {
       );
       if (!rows[0]) {
         return reply.code(404).send({ error: "Contrepartie introuvable" });
+      }
+      if (Number(rows[0].scope3_ghg_category) === 15) {
+        const ok = await assertFinancedEmissionsEnabled(orgId, reply);
+        if (!ok) return;
       }
       const { rows: purchases } = await pool.query(
         `SELECT id, organization_id, supplier_id, reference_year, description,

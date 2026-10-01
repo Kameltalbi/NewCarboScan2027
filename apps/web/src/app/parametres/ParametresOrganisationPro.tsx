@@ -179,6 +179,7 @@ export const ParametresOrganisationPro: React.FC = () => {
     pilotName: '',
     country: 'Tunisie',
     sector: '',
+    organizationType: '' as '' | 'enterprise' | 'financial_institution',
     referenceYear: new Date().getFullYear().toString(),
     employees: '',
     totalSurface: '',
@@ -278,6 +279,12 @@ export const ParametresOrganisationPro: React.FC = () => {
             pilotName: org.pilotName || '',
             country: org.country || 'Tunisie',
             sector: org.sector || '',
+            organizationType:
+              org.organizationType === 'financial_institution'
+                ? 'financial_institution'
+                : org.organizationType === 'enterprise'
+                  ? 'enterprise'
+                  : '',
             referenceYear: org.referenceYear?.toString() || new Date().getFullYear().toString(),
             employees: org.employees?.toString() || '',
             totalSurface: org.totalSurface?.toString() || '',
@@ -317,14 +324,25 @@ export const ParametresOrganisationPro: React.FC = () => {
   const handleSaveOrganization = async () => {
     if (!user?.id) return;
 
+    if (
+      orgData.organizationType !== 'enterprise' &&
+      orgData.organizationType !== 'financial_institution'
+    ) {
+      toast.error("Sélectionnez le type d'organisation");
+      return;
+    }
+
     setIsSaving(true);
     try {
+      const financedDefault = orgData.organizationType === 'financial_institution';
       const { organization: saved } = await api.patchOrganization({
         name: orgData.organizationName,
         legalName: orgData.legalName || null,
         pilotName: orgData.pilotName || null,
         country: orgData.country,
         sector: orgData.sector || null,
+        organizationType: orgData.organizationType,
+        financedEmissionsEnabled: financedDefault,
         referenceYear: parseInt(orgData.referenceYear),
         employees: totalEmployees > 0 ? totalEmployees : parseInt(orgData.employees) || null,
         totalSurface: totalSurface > 0 ? totalSurface : parseFloat(orgData.totalSurface) || null,
@@ -671,6 +689,30 @@ export const ParametresOrganisationPro: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
+              <Label htmlFor="organizationType">Type d&apos;organisation *</Label>
+              <Select
+                value={orgData.organizationType}
+                onValueChange={(v) =>
+                  setOrgData({
+                    ...orgData,
+                    organizationType: v as 'enterprise' | 'financial_institution',
+                  })
+                }
+              >
+                <SelectTrigger id="organizationType">
+                  <SelectValue placeholder="Sélectionner un type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="enterprise">Entreprise / organisation</SelectItem>
+                  <SelectItem value="financial_institution">Institution financière</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Les institutions financières activent le module Émissions financées (PCAF).
+                Les autres tenants conservent le module Fournisseurs classique si souscrit.
+              </p>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="pilotName">Pilote de la démarche Bilan Carbone®</Label>
               <Input
                 id="pilotName"
@@ -679,6 +721,9 @@ export const ParametresOrganisationPro: React.FC = () => {
                 onChange={(e) => setOrgData({ ...orgData, pilotName: e.target.value })}
               />
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="sector">Secteur d'activité *</Label>
               <Select value={orgData.sector} onValueChange={(v) => setOrgData({ ...orgData, sector: v })}>
@@ -691,6 +736,16 @@ export const ParametresOrganisationPro: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Émissions financées (PCAF)</Label>
+              <div className="flex h-10 items-center rounded-md border border-input bg-muted/40 px-3 text-sm">
+                {orgData.organizationType === 'financial_institution'
+                  ? 'Activé (institution financière)'
+                  : orgData.organizationType === 'enterprise'
+                    ? 'Désactivé (entreprise / organisation)'
+                    : 'Selon le type d’organisation'}
+              </div>
             </div>
           </div>
 
