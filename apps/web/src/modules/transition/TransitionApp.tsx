@@ -32,18 +32,7 @@ const TABS = [
 ] as const;
 
 function ScenariosInTransition() {
-  return (
-    <>
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="mb-2 rounded-lg border border-amber-200 bg-amber-50/80 px-4 py-2.5 text-sm text-amber-950">
-          <span className="font-medium">Simulation non enregistrée.</span>{" "}
-          Les trajectoires de scénarios sont calculées à la volée. La persistance des résultats
-          annuels sera ajoutée dans une phase dédiée.
-        </div>
-      </div>
-      <ScenariosModule />
-    </>
-  );
+  return <ScenariosModule />;
 }
 
 export const TransitionApp: React.FC = () => {

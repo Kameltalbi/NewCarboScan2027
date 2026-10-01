@@ -151,7 +151,45 @@ export function useTransitionDashboard() {
 
   const selectedScenario = scenarios.find((s) => s.id === selectedScenarioId) || null;
 
+  const [persistedScenarioSeries, setPersistedScenarioSeries] = useState<
+    Array<{ year: number; emissionsT: number }>
+  >([]);
+  const [scenarioResultsLoaded, setScenarioResultsLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!selectedScenarioId) {
+      setPersistedScenarioSeries([]);
+      setScenarioResultsLoaded(false);
+      return;
+    }
+    let cancelled = false;
+    setScenarioResultsLoaded(false);
+    void api
+      .listClimateScenarioResults(selectedScenarioId)
+      .then(({ items }) => {
+        if (cancelled) return;
+        const series = (items || [])
+          .map((r) => ({
+            year: Number(r.year),
+            emissionsT: Number(r.projected_emissions_tco2e ?? 0),
+          }))
+          .filter((r) => Number.isFinite(r.year) && r.emissionsT >= 0);
+        setPersistedScenarioSeries(series);
+        setScenarioResultsLoaded(true);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPersistedScenarioSeries([]);
+          setScenarioResultsLoaded(true);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedScenarioId]);
+
   const scenarioSeries = useMemo(() => {
+    if (persistedScenarioSeries.length > 0) return persistedScenarioSeries;
     if (!selectedScenario || levers.length === 0) return [];
     return computeTrajectory(
       selectedScenario.baseline_emissions_tco2e || 0,
@@ -160,7 +198,7 @@ export function useTransitionDashboard() {
       levers as ScenarioLever[],
       assumptions,
     ).map((r) => ({ year: r.year, emissionsT: r.projected_emissions_tco2e }));
-  }, [selectedScenario, levers, assumptions]);
+  }, [persistedScenarioSeries, selectedScenario, levers, assumptions]);
 
   const referenceFrameworkVersion =
     frameworks
@@ -258,7 +296,7 @@ export function useTransitionDashboard() {
     setSelectedScenarioId,
     selectedScenario,
     scenarioSeries,
-    scenarioSimulationPersisted: false,
+    scenarioSimulationPersisted: scenarioResultsLoaded && persistedScenarioSeries.length > 0,
     chartPoints,
     alignment,
     referenceEmissions,

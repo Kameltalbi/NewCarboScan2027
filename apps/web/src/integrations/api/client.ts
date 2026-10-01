@@ -1405,6 +1405,15 @@ export const api = {
     ),
   deleteClimateScenarioLever: (id: string) =>
     request(`/v1/climate/scenario-levers/${id}`, { method: "DELETE" }),
+  computeClimateScenario: (id: string, payload: Record<string, unknown>) =>
+    request<{ items: Array<Record<string, unknown>>; calculation_version: string }>(
+      `/v1/climate/scenarios/${id}/compute`,
+      { method: "POST", body: JSON.stringify(payload) },
+    ),
+  listClimateScenarioResults: (scenarioId: string) =>
+    request<{ items: Array<Record<string, unknown>> }>(
+      `/v1/climate/scenarios/${scenarioId}/results`,
+    ),
   listClimateScenarioAssumptions: (leverId?: string) => {
     const q = leverId ? `?leverId=${encodeURIComponent(leverId)}` : "";
     return request<{ items: Array<Record<string, unknown>> }>(

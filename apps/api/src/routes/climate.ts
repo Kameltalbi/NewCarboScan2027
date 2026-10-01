@@ -103,7 +103,7 @@ const actionSchema = z.object({
   indicator_target: z.string().max(200).optional().nullable(),
   indicator_actual: z.string().max(200).optional().nullable(),
   comments: z.string().max(8000).optional().nullable(),
-  estimation_method: z.enum(["measure", "invoice", "supplier_quote", "internal_estimate"]).optional().nullable(),
+  estimation_method: z.enum(["measure", "invoice", "supplier_quote", "internal_estimate", "scenario_whatif"]).optional().nullable(),
 });
 
 export async function registerClimateRoutes(app: FastifyInstance) {
@@ -527,8 +527,8 @@ export async function registerClimateRoutes(app: FastifyInstance) {
         `INSERT INTO climate_scenarios
            (organization_id, name, description, baseline_year, start_year, target_year,
             scenario_type, target_reduction_percent, baseline_emissions_tco2e, target_emissions_tco2e,
-            net_zero_flag, status, notes, created_by)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,COALESCE($11,false),COALESCE($12,'draft'),$13,$14)
+            net_zero_flag, status, notes, created_by, baseline_source_type, baseline_source_id, raw_legacy)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,COALESCE($11,false),COALESCE($12,'draft'),$13,$14,$15,$16,COALESCE($17::jsonb,'{}'::jsonb))
          RETURNING *`,
         [
           request.user!.organizationId,
@@ -545,6 +545,11 @@ export async function registerClimateRoutes(app: FastifyInstance) {
           body.status ?? "draft",
           body.notes ?? null,
           request.user!.id,
+          body.baseline_source_type ?? body.baselineSourceType ?? null,
+          body.baseline_source_id ?? body.baselineSourceId ?? null,
+          body.raw_legacy != null || body.rawLegacy != null
+            ? JSON.stringify(body.raw_legacy ?? body.rawLegacy)
+            : null,
         ],
       );
       return { item: rows[0] };
@@ -564,6 +569,16 @@ export async function registerClimateRoutes(app: FastifyInstance) {
            description = COALESCE($4, description),
            status = COALESCE($5, status),
            notes = COALESCE($6, notes),
+           baseline_year = COALESCE($7, baseline_year),
+           start_year = COALESCE($8, start_year),
+           target_year = COALESCE($9, target_year),
+           baseline_emissions_tco2e = COALESCE($10, baseline_emissions_tco2e),
+           target_emissions_tco2e = COALESCE($11, target_emissions_tco2e),
+           target_reduction_percent = COALESCE($12, target_reduction_percent),
+           baseline_source_type = COALESCE($13, baseline_source_type),
+           baseline_source_id = COALESCE($14, baseline_source_id),
+           scenario_type = COALESCE($15, scenario_type),
+           raw_legacy = CASE WHEN $16::jsonb IS NULL THEN raw_legacy ELSE $16::jsonb END,
            updated_at = now()
          WHERE id = $1 AND organization_id = $2
          RETURNING *`,
@@ -574,6 +589,18 @@ export async function registerClimateRoutes(app: FastifyInstance) {
           body.description ?? null,
           typeof body.status === "string" ? body.status : null,
           body.notes ?? null,
+          body.baseline_year ?? body.baselineYear ?? null,
+          body.start_year ?? body.startYear ?? null,
+          body.target_year ?? body.targetYear ?? null,
+          body.baseline_emissions_tco2e ?? body.baselineEmissionsTco2e ?? null,
+          body.target_emissions_tco2e ?? body.targetEmissionsTco2e ?? null,
+          body.target_reduction_percent ?? body.targetReductionPercent ?? null,
+          body.baseline_source_type ?? body.baselineSourceType ?? null,
+          body.baseline_source_id ?? body.baselineSourceId ?? null,
+          body.scenario_type ?? body.scenarioType ?? null,
+          body.raw_legacy != null || body.rawLegacy != null
+            ? JSON.stringify(body.raw_legacy ?? body.rawLegacy)
+            : null,
         ],
       );
       if (!rows[0]) return reply.code(404).send({ error: "Not found" });
@@ -628,8 +655,9 @@ export async function registerClimateRoutes(app: FastifyInstance) {
       if (!owned.rows[0]) return reply.code(404).send({ error: "Scénario introuvable" });
       const { rows } = await pool.query(
         `INSERT INTO climate_scenario_levers
-           (organization_id, scenario_id, custom_lever_name, category, description, enabled)
-         VALUES ($1,$2,$3,$4,$5,COALESCE($6,true))
+           (organization_id, scenario_id, custom_lever_name, category, description, enabled,
+            source_emission_targeted, max_reduction_tco2e, estimated_cost, confidence_level, raw_legacy)
+         VALUES ($1,$2,$3,$4,$5,COALESCE($6,true),$7,$8,$9,$10,COALESCE($11::jsonb,'{}'::jsonb))
          RETURNING *`,
         [
           request.user!.organizationId,
@@ -638,6 +666,13 @@ export async function registerClimateRoutes(app: FastifyInstance) {
           body.category ?? null,
           body.description ?? null,
           body.enabled ?? true,
+          body.source_emission_targeted ?? body.sourceEmissionTargeted ?? null,
+          body.max_reduction_tco2e ?? body.maxReductionTco2e ?? null,
+          body.estimated_cost ?? body.estimatedCost ?? null,
+          body.confidence_level ?? body.confidenceLevel ?? null,
+          body.raw_legacy != null || body.rawLegacy != null
+            ? JSON.stringify(body.raw_legacy ?? body.rawLegacy)
+            : null,
         ],
       );
       return { item: rows[0] };
@@ -657,6 +692,11 @@ export async function registerClimateRoutes(app: FastifyInstance) {
            category = COALESCE($4, category),
            description = COALESCE($5, description),
            enabled = COALESCE($6, enabled),
+           source_emission_targeted = COALESCE($7, source_emission_targeted),
+           max_reduction_tco2e = COALESCE($8, max_reduction_tco2e),
+           estimated_cost = COALESCE($9, estimated_cost),
+           confidence_level = COALESCE($10, confidence_level),
+           raw_legacy = CASE WHEN $11::jsonb IS NULL THEN raw_legacy ELSE $11::jsonb END,
            updated_at = now()
          WHERE id = $1 AND organization_id = $2
          RETURNING *`,
@@ -667,6 +707,13 @@ export async function registerClimateRoutes(app: FastifyInstance) {
           body.category ?? null,
           body.description ?? null,
           typeof body.enabled === "boolean" ? body.enabled : null,
+          body.source_emission_targeted ?? body.sourceEmissionTargeted ?? null,
+          body.max_reduction_tco2e ?? body.maxReductionTco2e ?? null,
+          body.estimated_cost ?? body.estimatedCost ?? null,
+          body.confidence_level ?? body.confidenceLevel ?? null,
+          body.raw_legacy != null || body.rawLegacy != null
+            ? JSON.stringify(body.raw_legacy ?? body.rawLegacy)
+            : null,
         ],
       );
       if (!rows[0]) return reply.code(404).send({ error: "Not found" });
@@ -759,6 +806,129 @@ export async function registerClimateRoutes(app: FastifyInstance) {
       );
       if (!rows[0]) return reply.code(404).send({ error: "Not found" });
       return { item: rows[0] };
+    },
+  );
+
+  /** Persiste les résultats annuels d'un scénario What-If (projection — jamais le bilan réel). */
+  app.post(
+    "/v1/climate/scenarios/:id/compute",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.code(400).send({ error: "Invalid id" });
+      const body = (request.body ?? {}) as Record<string, unknown>;
+      const orgId = request.user!.organizationId!;
+
+      const { rows: scenRows } = await pool.query(
+        `SELECT * FROM climate_scenarios WHERE id = $1 AND organization_id = $2`,
+        [params.data.id, orgId],
+      );
+      const scenario = scenRows[0] as Record<string, unknown> | undefined;
+      if (!scenario) return reply.code(404).send({ error: "Scénario introuvable" });
+
+      const baseline = Number(body.baseline_emissions_tco2e ?? scenario.baseline_emissions_tco2e ?? 0);
+      const baselineYear = Number(body.baseline_year ?? scenario.baseline_year ?? new Date().getFullYear());
+      const targetYear = Number(body.target_year ?? scenario.target_year ?? baselineYear);
+      const reductionTco2e = Math.max(0, Number(body.reduction_tco2e ?? 0));
+      const calcVersion = String(body.calculation_version ?? "whatif-v1");
+      const impactMeta = body.impact_meta ?? body.impactMeta ?? null;
+
+      if (!Number.isFinite(baseline) || baseline < 0) {
+        return reply.code(400).send({ error: "baseline_emissions_tco2e invalide" });
+      }
+
+      const results: Array<Record<string, unknown>> = [];
+      for (let year = baselineYear; year <= Math.max(baselineYear, targetYear); year++) {
+        const applied = year === baselineYear ? 0 : reductionTco2e;
+        const projected = Math.max(0, baseline - (year >= baselineYear + 1 || targetYear === baselineYear ? reductionTco2e : applied));
+        // Instant What-If: dès l'année de référence (ou année cible), appliquer la réduction pleine.
+        const projectedInstant =
+          year >= baselineYear ? Math.max(0, baseline - reductionTco2e) : baseline;
+        const useProjected = projectedInstant;
+        const reductionPct = baseline > 0 ? ((baseline - useProjected) / baseline) * 100 : 0;
+        const { rows } = await pool.query(
+          `INSERT INTO climate_scenario_results
+             (organization_id, scenario_id, year, projected_emissions_tco2e, annual_reduction_tco2e,
+              cumulative_reduction_tco2e, residual_emissions_tco2e, reduction_percent_vs_baseline,
+              calculation_version, calculated_at, raw_legacy)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,now(),COALESCE($10::jsonb,'{}'::jsonb))
+           ON CONFLICT (scenario_id, year) DO UPDATE SET
+             projected_emissions_tco2e = EXCLUDED.projected_emissions_tco2e,
+             annual_reduction_tco2e = EXCLUDED.annual_reduction_tco2e,
+             cumulative_reduction_tco2e = EXCLUDED.cumulative_reduction_tco2e,
+             residual_emissions_tco2e = EXCLUDED.residual_emissions_tco2e,
+             reduction_percent_vs_baseline = EXCLUDED.reduction_percent_vs_baseline,
+             calculation_version = EXCLUDED.calculation_version,
+             calculated_at = now(),
+             raw_legacy = EXCLUDED.raw_legacy
+           RETURNING *`,
+          [
+            orgId,
+            params.data.id,
+            year,
+            useProjected,
+            year === baselineYear ? reductionTco2e : 0,
+            reductionTco2e,
+            useProjected,
+            reductionPct,
+            calcVersion,
+            impactMeta != null ? JSON.stringify(impactMeta) : null,
+          ],
+        );
+        results.push(rows[0]);
+      }
+
+      await pool.query(
+        `UPDATE climate_scenarios SET
+           baseline_emissions_tco2e = $3,
+           target_emissions_tco2e = $4,
+           target_reduction_percent = $5,
+           baseline_year = COALESCE($6, baseline_year),
+           target_year = COALESCE($7, target_year),
+           raw_legacy = CASE WHEN $8::jsonb IS NULL THEN raw_legacy ELSE raw_legacy || $8::jsonb END,
+           updated_at = now()
+         WHERE id = $1 AND organization_id = $2`,
+        [
+          params.data.id,
+          orgId,
+          baseline,
+          Math.max(0, baseline - reductionTco2e),
+          baseline > 0 ? (reductionTco2e / baseline) * 100 : 0,
+          baselineYear,
+          targetYear,
+          JSON.stringify({
+            whatif_last_compute: {
+              calculation_version: calcVersion,
+              calculated_at: new Date().toISOString(),
+              reduction_tco2e: reductionTco2e,
+              impact: impactMeta,
+            },
+          }),
+        ],
+      );
+
+      return { items: results, calculation_version: calcVersion };
+    },
+  );
+
+  app.get(
+    "/v1/climate/scenarios/:id/results",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.code(400).send({ error: "Invalid id" });
+      const owned = await pool.query(
+        `SELECT 1 FROM climate_scenarios WHERE id = $1 AND organization_id = $2`,
+        [params.data.id, request.user!.organizationId],
+      );
+      if (!owned.rows[0]) return reply.code(404).send({ error: "Scénario introuvable" });
+      const { rows } = await pool.query(
+        `SELECT * FROM climate_scenario_results
+         WHERE scenario_id = $1 AND organization_id = $2
+         ORDER BY year ASC`,
+        [params.data.id, request.user!.organizationId],
+      );
+      return { items: rows };
     },
   );
 
