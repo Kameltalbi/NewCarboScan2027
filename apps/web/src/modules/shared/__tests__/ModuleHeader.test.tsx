@@ -4,6 +4,14 @@ import { screen } from '@testing-library/dom';
 import { MemoryRouter } from 'react-router-dom';
 import { ModuleHeader } from '../ModuleHeader';
 
+const supplierLabelsMock = vi.hoisted(() => ({
+  current: {
+    isBank: false,
+    moduleTitle: 'Fournisseurs',
+    pageTitle: 'Engagement fournisseurs',
+  },
+}));
+
 // Mock dependencies
 vi.mock('@/hooks/useAuth', () => ({
   useAuth: () => ({ signOut: vi.fn() }),
@@ -11,6 +19,10 @@ vi.mock('@/hooks/useAuth', () => ({
 
 vi.mock('@/hooks/useOrganizationYears', () => ({
   useOrganizationYears: () => ({ allowedYears: [2024, 2025], isLoading: false }),
+}));
+
+vi.mock('@/hooks/useSupplierLabels', () => ({
+  useSupplierLabels: () => supplierLabelsMock.current,
 }));
 
 vi.mock('@/contexts/AppDataContext', () => ({
@@ -36,6 +48,14 @@ const defaultUser = {
 };
 
 describe('ModuleHeader', () => {
+  beforeEach(() => {
+    supplierLabelsMock.current = {
+      isBank: false,
+      moduleTitle: 'Fournisseurs',
+      pageTitle: 'Engagement fournisseurs',
+    };
+  });
+
   it('renders with banner role and aria-label', () => {
     render(
       <MemoryRouter initialEntries={['/app/dashboard']}>
@@ -76,6 +96,29 @@ describe('ModuleHeader', () => {
       </MemoryRouter>
     );
     expect(screen.getByText('Bilan Carbone')).toBeInTheDocument();
+  });
+
+  it('shows bank label on fournisseurs route for financial orgs', () => {
+    supplierLabelsMock.current = {
+      isBank: true,
+      moduleTitle: 'Émissions financées',
+      pageTitle: 'Émissions financées — portefeuille PCAF',
+    };
+    render(
+      <MemoryRouter initialEntries={['/app/fournisseurs']}>
+        <ModuleHeader
+          user={defaultUser}
+          currentModule={{
+            name: 'Gestion Fournisseurs',
+            description: 'desc',
+            slug: 'fournisseurs',
+            route: '/app/fournisseurs',
+          }}
+        />
+      </MemoryRouter>
+    );
+    expect(screen.getByText('Émissions financées')).toBeInTheDocument();
+    expect(screen.queryByText('Gestion Fournisseurs')).not.toBeInTheDocument();
   });
 
   it('renders sidebar trigger with accessible label', () => {

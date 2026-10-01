@@ -13,6 +13,42 @@ if (import.meta.env.PROD) {
   // console.error is preserved for real errors
 }
 
+/** Bump after each prod deploy that changes lazy routes (forces SW/cache purge). */
+const APP_BUILD = '2026-10-01-methode-calcul-v2';
+const BUILD_KEY = 'carboscan:app-build';
+
+async function purgeStaleClientCaches() {
+  try {
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    }
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+  } catch {
+    // ignore
+  }
+}
+
+// One-shot reload when a new deploy is detected (stale PWA / immutable chunks)
+if (import.meta.env.PROD) {
+  const previous = localStorage.getItem(BUILD_KEY);
+  if (previous !== APP_BUILD) {
+    localStorage.setItem(BUILD_KEY, APP_BUILD);
+    if (previous) {
+      void purgeStaleClientCaches().then(() => {
+        const url = new URL(window.location.href);
+        url.searchParams.set('_r', APP_BUILD);
+        window.location.replace(url.toString());
+      });
+    } else {
+      void purgeStaleClientCaches();
+    }
+  }
+}
+
 // Auto-reload on stale dynamic import chunks (after deploy)
 const handleChunkError = (event: Event | PromiseRejectionEvent) => {
   const error = (event as PromiseRejectionEvent).reason || (event as ErrorEvent).error;
@@ -27,18 +63,7 @@ const handleChunkError = (event: Event | PromiseRejectionEvent) => {
     if (Date.now() - last > 10000) {
       sessionStorage.setItem(key, String(Date.now()));
       const bust = async () => {
-        try {
-          if ('caches' in window) {
-            const keys = await caches.keys();
-            await Promise.all(keys.map((k) => caches.delete(k)));
-          }
-          if ('serviceWorker' in navigator) {
-            const regs = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(regs.map((r) => r.unregister()));
-          }
-        } catch {
-          // ignore — hard reload below still helps
-        }
+        await purgeStaleClientCaches();
         const url = new URL(window.location.href);
         url.searchParams.set('_r', String(Date.now()));
         window.location.replace(url.toString());

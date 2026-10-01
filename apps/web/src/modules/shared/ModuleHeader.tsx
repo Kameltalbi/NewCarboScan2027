@@ -23,6 +23,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { OrganizationSwitcher } from "@/components/shared/OrganizationSwitcher";
+import { useSupplierLabels } from "@/hooks/useSupplierLabels";
 
 const formatDateTime = () => {
   const now = new Date();
@@ -53,6 +54,7 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
   const location = useLocation();
   const { signOut } = useAuth();
   const { organizationId } = useAppData();
+  const supplierLabels = useSupplierLabels();
   const [currentDateTime, setCurrentDateTime] = useState(formatDateTime());
 
   useEffect(() => {
@@ -132,6 +134,12 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
     if (location.pathname.startsWith('/app/scenarios')) {
       return "Modélisation Scénarios";
     }
+    if (
+      location.pathname.startsWith('/app/fournisseurs') ||
+      currentModule?.slug === 'fournisseurs'
+    ) {
+      return supplierLabels.moduleTitle;
+    }
     return currentModule?.name || "CarboScan";
   };
 
@@ -141,6 +149,14 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
     }
     if (isCollecte) {
       return `Année ${dashboardYear} • Alimentez vos modules avec des données fiables`;
+    }
+    if (
+      location.pathname.startsWith('/app/fournisseurs') ||
+      currentModule?.slug === 'fournisseurs'
+    ) {
+      return supplierLabels.isBank
+        ? "Portefeuille PCAF • émissions financées"
+        : (currentModule?.description || "");
     }
     return currentModule?.description || "";
   };

@@ -815,6 +815,42 @@ export const api = {
     return request<{ items: Array<Record<string, unknown>> }>(`/v1/org/sites${q}`);
   },
 
+  listSuppliers: (opts?: { active?: boolean }) => {
+    const q = opts?.active === false ? "?active=false" : "";
+    return request<{ items: Array<Record<string, unknown>> }>(`/v1/suppliers${q}`);
+  },
+
+  getSupplierStats: () =>
+    request<{
+      stats: {
+        total_suppliers: number;
+        engaged_suppliers: number;
+        scored_suppliers: number;
+        top_performers: number;
+        total_spend: number;
+        total_emissions: number;
+        avg_confidence: number;
+        questionnaires_sent: number;
+        questionnaires_completed: number;
+        countries_count: number;
+      };
+    }>("/v1/suppliers/stats"),
+
+  listSupplierPurchases: () =>
+    request<{ items: Array<Record<string, unknown>> }>("/v1/suppliers/purchases"),
+
+  createSupplier: (payload: Record<string, unknown>) =>
+    request<{ item: Record<string, unknown> }>("/v1/suppliers", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  getSupplier: (id: string) =>
+    request<{
+      item: Record<string, unknown>;
+      purchases?: Array<Record<string, unknown>>;
+    }>(`/v1/suppliers/${id}`),
+
   createSite: (payload: Record<string, unknown>) =>
     request<{ site: Record<string, unknown> }>("/v1/org/sites", {
       method: "POST",

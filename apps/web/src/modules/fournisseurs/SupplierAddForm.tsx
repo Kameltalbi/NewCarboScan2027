@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, ArrowRight, Check, Building2, MapPin, ShoppingCart, Leaf, Send } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Building2, MapPin, ShoppingCart, Leaf, Send, Landmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSuppliers } from "@/hooks/useSuppliers";
+import { useSupplierLabels } from "@/hooks/useSupplierLabels";
 import {
   Select,
   SelectContent,
@@ -17,15 +18,38 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const steps = [
-  { key: 'entreprise', label: 'Entreprise', icon: Building2 },
-  { key: 'localisation', label: 'Localisation', icon: MapPin },
-  { key: 'achats', label: 'Achats', icon: ShoppingCart },
-  { key: 'climat', label: 'Maturité climat', icon: Leaf },
-  { key: 'invitation', label: 'Invitation', icon: Send },
+/** Pays prioritaires Afrique + partenaires commerciaux courants */
+const countries = [
+  { code: 'TN', label: 'Tunisie' },
+  { code: 'MA', label: 'Maroc' },
+  { code: 'DZ', label: 'Algérie' },
+  { code: 'EG', label: 'Égypte' },
+  { code: 'SN', label: 'Sénégal' },
+  { code: 'CI', label: "Côte d'Ivoire" },
+  { code: 'ML', label: 'Mali' },
+  { code: 'BF', label: 'Burkina Faso' },
+  { code: 'NE', label: 'Niger' },
+  { code: 'GN', label: 'Guinée' },
+  { code: 'MR', label: 'Mauritanie' },
+  { code: 'CM', label: 'Cameroun' },
+  { code: 'GA', label: 'Gabon' },
+  { code: 'CG', label: 'Congo' },
+  { code: 'CD', label: 'RDC' },
+  { code: 'NG', label: 'Nigeria' },
+  { code: 'GH', label: 'Ghana' },
+  { code: 'KE', label: 'Kenya' },
+  { code: 'RW', label: 'Rwanda' },
+  { code: 'ZA', label: 'Afrique du Sud' },
+  { code: 'MU', label: 'Maurice' },
+  { code: 'MG', label: 'Madagascar' },
+  { code: 'FR', label: 'France' },
+  { code: 'DE', label: 'Allemagne' },
+  { code: 'CN', label: 'Chine' },
+  { code: 'AE', label: 'Émirats arabes unis' },
+  { code: 'TR', label: 'Turquie' },
 ];
 
-const purchaseCategories = [
+const supplierPurchaseCategories = [
   'Matières premières',
   'Énergie',
   'Transport',
@@ -36,23 +60,23 @@ const purchaseCategories = [
   'Déchets',
 ];
 
-const countries = [
-  { code: 'FR', label: 'France' },
-  { code: 'MA', label: 'Maroc' },
-  { code: 'SN', label: 'Sénégal' },
-  { code: 'CI', label: "Côte d'Ivoire" },
-  { code: 'TN', label: 'Tunisie' },
-  { code: 'NG', label: 'Nigeria' },
-  { code: 'DE', label: 'Allemagne' },
-  { code: 'CN', label: 'Chine' },
-  { code: 'MR', label: 'Mauritanie' },
-  { code: 'DZ', label: 'Algérie' },
-  { code: 'CM', label: 'Cameroun' },
-  { code: 'GA', label: 'Gabon' },
+const bankSectorCategories = [
+  'Industrie textile',
+  'Agroalimentaire',
+  'Services numériques',
+  'BTP',
+  'Énergie',
+  'Transport & logistique',
+  'Santé / distribution',
+  'Services financiers',
+  'Tourisme',
+  'Immobilier',
+  'Fintech',
+  'Agro-export',
+  'Autre',
 ];
 
 interface FormData {
-  // Entreprise
   name: string;
   siret: string;
   naf_code: string;
@@ -61,18 +85,15 @@ interface FormData {
   contact_email: string;
   contact_phone: string;
   contact_role: string;
-  // Localisation
   country: string;
   city: string;
   address: string;
   postal_code: string;
-  // Achats
   purchase_category: string;
   purchase_subcategory: string;
   annual_spend: string;
   criticality: string;
   scope3_ghg_category: string;
-  // Climat
   has_carbon_footprint: boolean;
   has_sbti_target: boolean;
   sbti_target_year: string;
@@ -81,7 +102,6 @@ interface FormData {
   has_iso14001: boolean;
   has_ecovadis: boolean;
   ecovadis_score: string;
-  // Invitation
   send_invitation: boolean;
   invitation_message: string;
   notes: string;
@@ -90,7 +110,7 @@ interface FormData {
 const initialFormData: FormData = {
   name: '', siret: '', naf_code: '', legal_form: '',
   contact_name: '', contact_email: '', contact_phone: '', contact_role: '',
-  country: 'FR', city: '', address: '', postal_code: '',
+  country: 'TN', city: '', address: '', postal_code: '',
   purchase_category: '', purchase_subcategory: '', annual_spend: '', criticality: 'medium', scope3_ghg_category: '1',
   has_carbon_footprint: false, has_sbti_target: false, sbti_target_year: '',
   has_cdp_disclosure: false, cdp_score: '', has_iso14001: false, has_ecovadis: false, ecovadis_score: '',
@@ -99,10 +119,28 @@ const initialFormData: FormData = {
 
 export const SupplierAddForm: React.FC = () => {
   const navigate = useNavigate();
+  const L = useSupplierLabels();
   const { createSupplier } = useSuppliers();
   const [currentStep, setCurrentStep] = useState(0);
   const [form, setForm] = useState<FormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const steps = useMemo(
+    () => [
+      { key: 'entreprise', label: L.isBank ? 'Contrepartie' : 'Entreprise', icon: Building2 },
+      { key: 'localisation', label: 'Localisation', icon: MapPin },
+      {
+        key: 'achats',
+        label: L.isBank ? 'Financement' : 'Achats',
+        icon: L.isBank ? Landmark : ShoppingCart,
+      },
+      { key: 'climat', label: 'Maturité climat', icon: Leaf },
+      { key: 'invitation', label: 'Invitation', icon: Send },
+    ],
+    [L.isBank],
+  );
+
+  const categories = L.isBank ? bankSectorCategories : supplierPurchaseCategories;
 
   const update = (field: keyof FormData, value: string | boolean) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -134,7 +172,7 @@ export const SupplierAddForm: React.FC = () => {
         purchase_subcategory: form.purchase_subcategory || null,
         annual_spend: form.annual_spend ? parseFloat(form.annual_spend) : null,
         criticality: form.criticality as any,
-        scope3_ghg_category: parseInt(form.scope3_ghg_category) || 1,
+        scope3_ghg_category: L.isBank ? 15 : (parseInt(form.scope3_ghg_category) || 1),
         has_carbon_footprint: form.has_carbon_footprint,
         has_sbti_target: form.has_sbti_target,
         sbti_target_year: form.sbti_target_year ? parseInt(form.sbti_target_year) : null,
@@ -154,21 +192,17 @@ export const SupplierAddForm: React.FC = () => {
     }
   };
 
-  const progress = ((currentStep + 1) / steps.length) * 100;
-
   return (
     <div className="min-h-[500px]">
-      {/* Back link */}
       <button
         onClick={() => navigate('/app/fournisseurs')}
         className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Retour à l'accueil
+        Retour au {L.isBank ? 'portefeuille' : 'module'}
       </button>
 
       <div className="flex gap-8">
-        {/* Left sidebar - Steps */}
         <div className="hidden md:block w-56 shrink-0">
           <nav className="space-y-1">
             {steps.map((step, index) => {
@@ -178,27 +212,32 @@ export const SupplierAddForm: React.FC = () => {
               return (
                 <button
                   key={step.key}
+                  type="button"
                   onClick={() => index <= currentStep && setCurrentStep(index)}
                   className={cn(
-                    "flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm transition-colors text-left",
-                    isActive && "bg-primary/10 text-primary font-medium",
-                    isCompleted && "text-foreground",
+                    "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
+                    isActive && "bg-primary/10 font-medium text-primary",
+                    isCompleted && !isActive && "text-foreground",
                     !isActive && !isCompleted && "text-muted-foreground",
-                    index <= currentStep && "cursor-pointer hover:bg-muted/50"
                   )}
-                  disabled={index > currentStep}
                 >
-                  <span>{step.label}</span>
-                  {isCompleted && <Check className="h-4 w-4 text-emerald-500 ml-auto" />}
+                  <span
+                    className={cn(
+                      "flex h-7 w-7 items-center justify-center rounded-full border text-xs",
+                      isActive && "border-primary bg-primary text-primary-foreground",
+                      isCompleted && !isActive && "border-emerald-500 bg-emerald-500 text-white",
+                    )}
+                  >
+                    {isCompleted && !isActive ? <Check className="h-3.5 w-3.5" /> : <StepIcon className="h-3.5 w-3.5" />}
+                  </span>
+                  {step.label}
                 </button>
               );
             })}
           </nav>
         </div>
 
-        {/* Main content */}
         <div className="flex-1 max-w-2xl">
-          {/* Progress bar */}
           <div className="flex items-center gap-3 mb-8">
             <div className="flex-1 flex gap-1">
               {steps.map((_, i) => (
@@ -214,29 +253,58 @@ export const SupplierAddForm: React.FC = () => {
             <span className="text-xs text-muted-foreground">{currentStep + 1}/{steps.length}</span>
           </div>
 
-          {/* Step content */}
           <div className="space-y-6">
             {currentStep === 0 && (
               <>
-                <h2 className="text-2xl font-semibold">Informations de l'entreprise</h2>
+                <h2 className="text-2xl font-semibold">
+                  {L.isBank ? "Informations de la contrepartie" : "Informations de l'entreprise"}
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <Label htmlFor="name">Nom de l'entreprise *</Label>
-                    <Input id="name" value={form.name} onChange={e => update('name', e.target.value)} placeholder="Ex: Ciments du Sahel" className="mt-1.5" />
+                    <Label htmlFor="name">Raison sociale *</Label>
+                    <Input
+                      id="name"
+                      value={form.name}
+                      onChange={e => update('name', e.target.value)}
+                      placeholder="Ex: Médina Textile SA"
+                      className="mt-1.5"
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="siret">N° d'identification fiscale</Label>
-                    <Input id="siret" value={form.siret} onChange={e => update('siret', e.target.value)} placeholder="SIRET, MF, NIF, RC..." className="mt-1.5" />
-                    <p className="text-xs text-muted-foreground mt-1">SIRET (France), Matricule Fiscal (Tunisie), NIF, RC…</p>
+                    <Label htmlFor="siret">Identifiant fiscal / registre</Label>
+                    <Input
+                      id="siret"
+                      value={form.siret}
+                      onChange={e => update('siret', e.target.value)}
+                      placeholder="Ex: 1234567/A/M/000"
+                      className="mt-1.5"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Matricule fiscal, NIF, RCCM, TIN ou équivalent local (Afrique).
+                    </p>
                   </div>
                   <div>
-                    <Label htmlFor="naf_code">Code d'activité</Label>
-                    <Input id="naf_code" value={form.naf_code} onChange={e => update('naf_code', e.target.value)} placeholder="NAF, NACE, ISIC..." className="mt-1.5" />
-                    <p className="text-xs text-muted-foreground mt-1">NAF (France), NACE (Europe), ISIC (International)</p>
+                    <Label htmlFor="naf_code">Code d&apos;activité économique</Label>
+                    <Input
+                      id="naf_code"
+                      value={form.naf_code}
+                      onChange={e => update('naf_code', e.target.value)}
+                      placeholder="Ex: ISIC / nomenclature locale"
+                      className="mt-1.5"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Classification nationale ou ISIC — adaptée au marché africain.
+                    </p>
                   </div>
                   <div>
                     <Label htmlFor="legal_form">Forme juridique</Label>
-                    <Input id="legal_form" value={form.legal_form} onChange={e => update('legal_form', e.target.value)} placeholder="Ex: SA, SARL, SUARL, GmbH, Ltd" className="mt-1.5" />
+                    <Input
+                      id="legal_form"
+                      value={form.legal_form}
+                      onChange={e => update('legal_form', e.target.value)}
+                      placeholder="Ex: SA, SARL, SUARL, SAS, Ltd"
+                      className="mt-1.5"
+                    />
                   </div>
                 </div>
 
@@ -249,7 +317,7 @@ export const SupplierAddForm: React.FC = () => {
                     </div>
                     <div>
                       <Label htmlFor="contact_email">Email</Label>
-                      <Input id="contact_email" type="email" value={form.contact_email} onChange={e => update('contact_email', e.target.value)} placeholder="contact@entreprise.com" className="mt-1.5" />
+                      <Input id="contact_email" type="email" value={form.contact_email} onChange={e => update('contact_email', e.target.value)} placeholder="contact@entreprise.tn" className="mt-1.5" />
                     </div>
                     <div>
                       <Label htmlFor="contact_phone">Téléphone</Label>
@@ -257,7 +325,7 @@ export const SupplierAddForm: React.FC = () => {
                     </div>
                     <div>
                       <Label htmlFor="contact_role">Fonction</Label>
-                      <Input id="contact_role" value={form.contact_role} onChange={e => update('contact_role', e.target.value)} placeholder="Ex: Responsable RSE" className="mt-1.5" />
+                      <Input id="contact_role" value={form.contact_role} onChange={e => update('contact_role', e.target.value)} placeholder="Ex: Directeur financier / RSE" className="mt-1.5" />
                     </div>
                   </div>
                 </div>
@@ -283,15 +351,15 @@ export const SupplierAddForm: React.FC = () => {
                   </div>
                   <div>
                     <Label htmlFor="city">Ville</Label>
-                    <Input id="city" value={form.city} onChange={e => update('city', e.target.value)} placeholder="Ex: Dakar" className="mt-1.5" />
+                    <Input id="city" value={form.city} onChange={e => update('city', e.target.value)} placeholder="Ex: Tunis, Sfax, Abidjan…" className="mt-1.5" />
                   </div>
                   <div>
                     <Label htmlFor="postal_code">Code postal</Label>
-                    <Input id="postal_code" value={form.postal_code} onChange={e => update('postal_code', e.target.value)} placeholder="Ex: 75001" className="mt-1.5" />
+                    <Input id="postal_code" value={form.postal_code} onChange={e => update('postal_code', e.target.value)} placeholder="Ex: 1000" className="mt-1.5" />
                   </div>
                   <div className="md:col-span-2">
                     <Label htmlFor="address">Adresse</Label>
-                    <Input id="address" value={form.address} onChange={e => update('address', e.target.value)} placeholder="Rue, numéro, bâtiment..." className="mt-1.5" />
+                    <Input id="address" value={form.address} onChange={e => update('address', e.target.value)} placeholder="Avenue, numéro, quartier…" className="mt-1.5" />
                   </div>
                 </div>
               </>
@@ -299,48 +367,74 @@ export const SupplierAddForm: React.FC = () => {
 
             {currentStep === 2 && (
               <>
-                <h2 className="text-2xl font-semibold">Informations d'achats</h2>
+                <h2 className="text-2xl font-semibold">
+                  {L.isBank ? "Informations de financement" : "Informations d'achats"}
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <Label>Catégorie d'achat principale</Label>
+                    <Label>{L.isBank ? "Secteur emprunteur" : "Catégorie d'achat principale"}</Label>
                     <Select value={form.purchase_category} onValueChange={v => update('purchase_category', v)}>
                       <SelectTrigger className="mt-1.5">
-                        <SelectValue placeholder="Sélectionner une catégorie" />
+                        <SelectValue placeholder="Sélectionner" />
                       </SelectTrigger>
                       <SelectContent>
-                        {purchaseCategories.map(c => (
+                        {categories.map(c => (
                           <SelectItem key={c} value={c}>{c}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="purchase_subcategory">Sous-catégorie</Label>
-                    <Input id="purchase_subcategory" value={form.purchase_subcategory} onChange={e => update('purchase_subcategory', e.target.value)} placeholder="Ex: Acier et métaux ferreux" className="mt-1.5" />
+                    <Label htmlFor="purchase_subcategory">
+                      {L.isBank ? "Type de financement" : "Sous-catégorie"}
+                    </Label>
+                    <Input
+                      id="purchase_subcategory"
+                      value={form.purchase_subcategory}
+                      onChange={e => update('purchase_subcategory', e.target.value)}
+                      placeholder={L.isBank ? "Ex: Prêt moyen terme / ligne de crédit" : "Ex: Acier et métaux ferreux"}
+                      className="mt-1.5"
+                    />
+                  </div>
+                  {!L.isBank ? (
+                    <div>
+                      <Label htmlFor="scope3_ghg_category">Catégorie GHG Scope 3</Label>
+                      <Select value={form.scope3_ghg_category} onValueChange={v => update('scope3_ghg_category', v)}>
+                        <SelectTrigger className="mt-1.5">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 — Achats de biens et services</SelectItem>
+                          <SelectItem value="2">2 — Biens d'équipement</SelectItem>
+                          <SelectItem value="3">3 — Énergie (hors scope 1&2)</SelectItem>
+                          <SelectItem value="4">4 — Transport amont</SelectItem>
+                          <SelectItem value="5">5 — Déchets générés</SelectItem>
+                          <SelectItem value="6">6 — Déplacements professionnels</SelectItem>
+                          <SelectItem value="7">7 — Domicile-travail</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : (
+                    <div>
+                      <Label>Catégorie GHG</Label>
+                      <Input value="15 — Émissions financées (PCAF)" disabled className="mt-1.5" />
+                    </div>
+                  )}
+                  <div>
+                    <Label htmlFor="annual_spend">
+                      {L.isBank ? "Encours / montant financé (TND)" : "Volume d'achats annuel (TND)"}
+                    </Label>
+                    <Input
+                      id="annual_spend"
+                      type="number"
+                      value={form.annual_spend}
+                      onChange={e => update('annual_spend', e.target.value)}
+                      placeholder="Ex: 1500000"
+                      className="mt-1.5"
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="scope3_ghg_category">Catégorie GHG Scope 3</Label>
-                    <Select value={form.scope3_ghg_category} onValueChange={v => update('scope3_ghg_category', v)}>
-                      <SelectTrigger className="mt-1.5">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">1 — Achats de biens et services</SelectItem>
-                        <SelectItem value="2">2 — Biens d'équipement</SelectItem>
-                        <SelectItem value="3">3 — Énergie (hors scope 1&2)</SelectItem>
-                        <SelectItem value="4">4 — Transport amont</SelectItem>
-                        <SelectItem value="5">5 — Déchets générés</SelectItem>
-                        <SelectItem value="6">6 — Déplacements professionnels</SelectItem>
-                        <SelectItem value="7">7 — Domicile-travail</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="annual_spend">Volume d'achats annuel (€)</Label>
-                    <Input id="annual_spend" type="number" value={form.annual_spend} onChange={e => update('annual_spend', e.target.value)} placeholder="Ex: 150000" className="mt-1.5" />
-                  </div>
-                  <div>
-                    <Label>Criticité fournisseur</Label>
+                    <Label>{L.isBank ? "Criticité contrepartie" : "Criticité fournisseur"}</Label>
                     <Select value={form.criticality} onValueChange={v => update('criticality', v)}>
                       <SelectTrigger className="mt-1.5">
                         <SelectValue />
@@ -355,14 +449,14 @@ export const SupplierAddForm: React.FC = () => {
                   </div>
                 </div>
 
-                {form.annual_spend && form.purchase_category && (
+                {form.annual_spend && form.purchase_category && !L.isBank && (
                   <Card className="border-primary/20 bg-primary/5">
                     <CardContent className="p-4 flex items-start gap-3">
                       <Leaf className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                       <div className="text-sm">
                         <p className="font-medium text-primary">Estimation préliminaire</p>
                         <p className="text-muted-foreground mt-1">
-                          Sur la base d'un ratio monétaire ADEME, ce fournisseur générerait environ{' '}
+                          Sur la base d&apos;un ratio monétaire sectoriel, cette {L.entitySingular} générerait environ{' '}
                           <strong className="text-foreground">
                             {Math.round(parseFloat(form.annual_spend) * 0.45).toLocaleString('fr-FR')} kgCO₂e/an
                           </strong>{' '}
@@ -379,13 +473,15 @@ export const SupplierAddForm: React.FC = () => {
               <>
                 <h2 className="text-2xl font-semibold">Maturité climatique</h2>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Ces informations permettent de calculer le score carbone du fournisseur.
+                  Ces informations renseignent le score qualité et l&apos;engagement de la {L.entitySingular}.
                 </p>
                 <div className="space-y-5">
                   <div className="flex items-center justify-between p-4 rounded-lg border">
                     <div>
                       <p className="text-sm font-medium">Bilan carbone réalisé</p>
-                      <p className="text-xs text-muted-foreground">Le fournisseur a déjà réalisé un bilan GES</p>
+                      <p className="text-xs text-muted-foreground">
+                        La {L.entitySingular} a déjà réalisé un bilan GES
+                      </p>
                     </div>
                     <Switch checked={form.has_carbon_footprint} onCheckedChange={v => update('has_carbon_footprint', v)} />
                   </div>
@@ -398,7 +494,7 @@ export const SupplierAddForm: React.FC = () => {
                     <Switch checked={form.has_sbti_target} onCheckedChange={v => update('has_sbti_target', v)} />
                   </div>
                   {form.has_sbti_target && (
-                    <div className="ml-4">
+                    <div>
                       <Label htmlFor="sbti_year">Année cible SBTi</Label>
                       <Input id="sbti_year" type="number" value={form.sbti_target_year} onChange={e => update('sbti_target_year', e.target.value)} placeholder="Ex: 2030" className="mt-1.5 w-40" />
                     </div>
@@ -406,13 +502,13 @@ export const SupplierAddForm: React.FC = () => {
 
                   <div className="flex items-center justify-between p-4 rounded-lg border">
                     <div>
-                      <p className="text-sm font-medium">Réponse CDP (Carbon Disclosure Project)</p>
-                      <p className="text-xs text-muted-foreground">Données publiées auprès du CDP</p>
+                      <p className="text-sm font-medium">Divulgation CDP</p>
+                      <p className="text-xs text-muted-foreground">Reporting climatique publié via CDP</p>
                     </div>
                     <Switch checked={form.has_cdp_disclosure} onCheckedChange={v => update('has_cdp_disclosure', v)} />
                   </div>
                   {form.has_cdp_disclosure && (
-                    <div className="ml-4">
+                    <div>
                       <Label>Score CDP</Label>
                       <Select value={form.cdp_score} onValueChange={v => update('cdp_score', v)}>
                         <SelectTrigger className="mt-1.5 w-40"><SelectValue placeholder="Score" /></SelectTrigger>
@@ -427,22 +523,22 @@ export const SupplierAddForm: React.FC = () => {
 
                   <div className="flex items-center justify-between p-4 rounded-lg border">
                     <div>
-                      <p className="text-sm font-medium">Certification ISO 14001</p>
-                      <p className="text-xs text-muted-foreground">Système de management environnemental</p>
+                      <p className="text-sm font-medium">ISO 14001</p>
+                      <p className="text-xs text-muted-foreground">Système de management environnemental certifié</p>
                     </div>
                     <Switch checked={form.has_iso14001} onCheckedChange={v => update('has_iso14001', v)} />
                   </div>
 
                   <div className="flex items-center justify-between p-4 rounded-lg border">
                     <div>
-                      <p className="text-sm font-medium">Évaluation EcoVadis</p>
-                      <p className="text-xs text-muted-foreground">Score RSE EcoVadis</p>
+                      <p className="text-sm font-medium">EcoVadis</p>
+                      <p className="text-xs text-muted-foreground">Évaluation RSE EcoVadis</p>
                     </div>
                     <Switch checked={form.has_ecovadis} onCheckedChange={v => update('has_ecovadis', v)} />
                   </div>
                   {form.has_ecovadis && (
-                    <div className="ml-4">
-                      <Label htmlFor="ecovadis_score">Score EcoVadis (0-100)</Label>
+                    <div>
+                      <Label htmlFor="ecovadis_score">Score EcoVadis (0–100)</Label>
                       <Input id="ecovadis_score" type="number" min="0" max="100" value={form.ecovadis_score} onChange={e => update('ecovadis_score', e.target.value)} placeholder="Ex: 65" className="mt-1.5 w-40" />
                     </div>
                   )}
@@ -452,97 +548,76 @@ export const SupplierAddForm: React.FC = () => {
 
             {currentStep === 4 && (
               <>
-                <h2 className="text-2xl font-semibold">Invitation du fournisseur</h2>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Envoyez une invitation par email pour que le fournisseur complète ses données directement sur la plateforme.
+                <h2 className="text-2xl font-semibold">
+                  Invitation de la {L.entitySingular}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Envoyez une invitation pour que la {L.entitySingular} complète ses données sur la plateforme.
                 </p>
-
-                <div className="flex items-center justify-between p-4 rounded-lg border mb-4">
-                  <div>
-                    <p className="text-sm font-medium">Envoyer une invitation par email</p>
-                    <p className="text-xs text-muted-foreground">
-                      {form.contact_email ? `À : ${form.contact_email}` : 'Aucun email de contact renseigné'}
-                    </p>
+                <div className="space-y-4 mt-4">
+                  <div className="flex items-center justify-between p-4 rounded-lg border">
+                    <div>
+                      <p className="text-sm font-medium">Envoyer une invitation</p>
+                      <p className="text-xs text-muted-foreground">Email avec lien d&apos;accès sécurisé</p>
+                    </div>
+                    <Switch checked={form.send_invitation} onCheckedChange={v => update('send_invitation', v)} />
                   </div>
-                  <Switch 
-                    checked={form.send_invitation} 
-                    onCheckedChange={v => update('send_invitation', v)}
-                    disabled={!form.contact_email}
-                  />
-                </div>
-
-                {form.send_invitation && form.contact_email && (
+                  {form.send_invitation && (
+                    <div>
+                      <Label htmlFor="invitation_message">Message</Label>
+                      <Textarea
+                        id="invitation_message"
+                        value={form.invitation_message}
+                        onChange={e => update('invitation_message', e.target.value)}
+                        placeholder="Ajoutez un message personnalisé à l'invitation..."
+                        className="mt-1.5"
+                      />
+                    </div>
+                  )}
                   <div>
-                    <Label htmlFor="invitation_message">Message personnalisé (optionnel)</Label>
-                    <Textarea 
-                      id="invitation_message" 
-                      value={form.invitation_message}
-                      onChange={e => update('invitation_message', e.target.value)}
-                      placeholder="Ajoutez un message personnalisé à l'invitation..."
+                    <Label htmlFor="notes">Notes internes</Label>
+                    <Textarea
+                      id="notes"
+                      value={form.notes}
+                      onChange={e => update('notes', e.target.value)}
+                      placeholder={`Notes ou commentaires sur cette ${L.entitySingular}...`}
                       className="mt-1.5"
-                      rows={3}
                     />
                   </div>
-                )}
-
-                <div className="mt-6">
-                  <Label htmlFor="notes">Notes internes</Label>
-                  <Textarea 
-                    id="notes" 
-                    value={form.notes}
-                    onChange={e => update('notes', e.target.value)}
-                    placeholder="Notes ou commentaires sur ce fournisseur..."
-                    className="mt-1.5"
-                    rows={3}
-                  />
+                  <Card>
+                    <CardContent className="p-4 text-sm space-y-1">
+                      <div><span className="text-muted-foreground">Raison sociale :</span> {form.name || '—'}</div>
+                      <div><span className="text-muted-foreground">Pays :</span> {countries.find(c => c.code === form.country)?.label || form.country}</div>
+                      <div><span className="text-muted-foreground">{L.isBank ? 'Secteur' : 'Catégorie'} :</span> {form.purchase_category || '—'}</div>
+                      <div>
+                        <span className="text-muted-foreground">{L.isBank ? 'Encours' : 'Achats'} :</span>{' '}
+                        {form.annual_spend ? `${Number(form.annual_spend).toLocaleString('fr-FR')} TND` : '—'}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-
-                {/* Recap card */}
-                <Card className="mt-6 bg-muted/30">
-                  <CardContent className="p-4">
-                    <h3 className="text-sm font-medium mb-3">Récapitulatif</h3>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div><span className="text-muted-foreground">Entreprise :</span> {form.name}</div>
-                      <div><span className="text-muted-foreground">Pays :</span> {countries.find(c => c.code === form.country)?.label}</div>
-                      {form.purchase_category && <div><span className="text-muted-foreground">Catégorie :</span> {form.purchase_category}</div>}
-                      {form.annual_spend && <div><span className="text-muted-foreground">Volume :</span> {parseFloat(form.annual_spend).toLocaleString('fr-FR')} €</div>}
-                      <div><span className="text-muted-foreground">Criticité :</span> {form.criticality}</div>
-                      {form.contact_email && <div><span className="text-muted-foreground">Contact :</span> {form.contact_email}</div>}
-                    </div>
-                  </CardContent>
-                </Card>
               </>
             )}
           </div>
 
-          {/* Navigation buttons */}
-          <div className="flex justify-between mt-10 pt-6 border-t border-border">
+          <div className="mt-8 flex items-center justify-between border-t pt-6">
             <Button
               variant="outline"
               onClick={() => currentStep > 0 ? setCurrentStep(currentStep - 1) : navigate('/app/fournisseurs')}
-              className="gap-2"
             >
-              <ArrowLeft className="h-4 w-4" />
-              Retour
+              {currentStep > 0 ? 'Précédent' : 'Annuler'}
             </Button>
-
             {currentStep < steps.length - 1 ? (
               <Button
                 onClick={() => setCurrentStep(currentStep + 1)}
                 disabled={!canProceed()}
                 className="gap-2"
               >
-                Suivant
-                <ArrowRight className="h-4 w-4" />
+                Suivant <ArrowRight className="h-4 w-4" />
               </Button>
             ) : (
-              <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting || !canProceed()}
-                className="gap-2"
-              >
-                {isSubmitting ? 'Enregistrement...' : 'Enregistrer le fournisseur'}
-                <Check className="h-4 w-4" />
+              <Button onClick={handleSubmit} disabled={isSubmitting || !form.name.trim()} className="gap-2">
+                {isSubmitting ? 'Enregistrement...' : `Enregistrer la ${L.entitySingular}`}
               </Button>
             )}
           </div>

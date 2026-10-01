@@ -94,6 +94,7 @@ const EconomicSimulator = lazy(() => import("./pages/EconomicSimulator"));
 const CarboScanAcademy = lazy(() => import("./pages/CarboScanAcademy"));
 const AutresServices = lazy(() => import("./pages/AutresServices"));
 const CommentCaMarche = lazy(() => import("./pages/CommentCaMarche").then(m => ({ default: m.CommentCaMarche })));
+const PreviewMethodeCalcul = lazy(() => import("./pages/PreviewMethodeCalcul"));
 const AdminBlog = lazy(() => import("./pages/AdminBlog"));
 const Developers = lazy(() => import("./pages/Developers"));
 
@@ -222,6 +223,7 @@ function App() {
               <Route path="/carboscan-academy" element={<CarboScanAcademy />} />
               <Route path="/autres-services" element={<AutresServices />} />
               <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
+              <Route path="/preview/methode-calcul" element={<PreviewMethodeCalcul />} />
 
               <Route path="/sitemap" element={<SitemapRedirect />} />
               <Route path="*" element={<NotFound />} />

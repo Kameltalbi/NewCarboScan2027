@@ -43,12 +43,12 @@ export const DashboardSiteFilter: React.FC<DashboardSiteFilterProps> = ({
     ? sites.find(s => s.id === selectedSiteId) 
     : null;
 
-  const displayLabel = selectedSite?.name || 'Tous les sites (consolidé)';
+  const displayLabel = selectedSite?.name || `Tous les sites (${sites.length})`;
 
   // Si moins de 2 sites, afficher juste un label simple (pas de dropdown)
   if (sites.length < 2) {
     return (
-      <Button variant="outline" disabled className="w-[200px] justify-start gap-2">
+      <Button variant="outline" disabled className="w-[220px] justify-start gap-2">
         <Layers className="h-4 w-4 shrink-0 text-primary" />
         <span className="truncate">{sites.length === 1 ? sites[0].name : 'Aucun site'}</span>
       </Button>
@@ -62,7 +62,7 @@ export const DashboardSiteFilter: React.FC<DashboardSiteFilterProps> = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[260px] justify-between"
+          className="w-[280px] justify-between"
           disabled={isLoading}
         >
           <div className="flex items-center gap-2 truncate">
@@ -76,7 +76,7 @@ export const DashboardSiteFilter: React.FC<DashboardSiteFilterProps> = ({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[260px] p-0">
+      <PopoverContent className="w-[280px] p-0">
         <Command>
           <CommandInput placeholder="Rechercher un site..." />
           <CommandList>
@@ -93,7 +93,7 @@ export const DashboardSiteFilter: React.FC<DashboardSiteFilterProps> = ({
                 className="gap-2"
               >
                 <Layers className="h-4 w-4 text-primary" />
-                <span className="font-medium">Tous les sites (consolidé)</span>
+                <span className="font-medium">Tous les sites ({sites.length})</span>
                 <Check
                   className={cn(
                     "ml-auto h-4 w-4",

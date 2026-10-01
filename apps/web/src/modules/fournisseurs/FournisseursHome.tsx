@@ -18,7 +18,7 @@ import {
 import { useSuppliers } from "@/hooks/useSuppliers";
 import { useSupplierLabels } from "@/hooks/useSupplierLabels";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useOrganizationId } from "@/hooks/useOrganizationId";
 
 // Score colors matching Greenly style
@@ -74,18 +74,15 @@ export const FournisseursHome: React.FC = () => {
     queryKey: ['supplier-purchases-agg', organizationId],
     queryFn: async () => {
       if (!organizationId) return {};
-      const { data, error } = await supabase
-        .from('supplier_purchases')
-        .select('supplier_id, amount, calculated_emissions_kgco2e')
-        .eq('organization_id', organizationId);
-      if (error) throw error;
+      const { items } = await api.listSupplierPurchases();
       const agg: Record<string, { amount: number; emissions_kg: number }> = {};
-      (data || []).forEach((r: any) => {
-        if (!r.supplier_id) return;
-        const cur = agg[r.supplier_id] || { amount: 0, emissions_kg: 0 };
+      (items || []).forEach((r) => {
+        const supplierId = r.supplier_id ? String(r.supplier_id) : null;
+        if (!supplierId) return;
+        const cur = agg[supplierId] || { amount: 0, emissions_kg: 0 };
         cur.amount += Number(r.amount || 0);
         cur.emissions_kg += Number(r.calculated_emissions_kgco2e || 0);
-        agg[r.supplier_id] = cur;
+        agg[supplierId] = cur;
       });
       return agg;
     },

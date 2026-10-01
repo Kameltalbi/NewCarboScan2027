@@ -54,19 +54,21 @@ const SITES = [
 ];
 
 const COUNTERPARTIES = [
-  { id: "d101", name: "Médina Textile SA", city: "Monastir", cat: "Industrie textile", score: "A", conf: 88, spend: 48500000, kg: 20370000, dq: 2 },
-  { id: "d102", name: "Carthage Agro SARL", city: "Béja", cat: "Agroalimentaire", score: "B", conf: 72, spend: 31200000, kg: 26520000, dq: 3 },
-  { id: "d103", name: "Numéris Soft TN", city: "Tunis", cat: "Services numériques", score: "A+", conf: 92, spend: 15800000, kg: 2844000, dq: 1 },
-  { id: "d104", name: "Sahel Constructions", city: "Sousse", cat: "BTP", score: "C", conf: 55, spend: 27600000, kg: 40020000, dq: 4 },
-  { id: "d105", name: "Oasis Énergies", city: "Gabès", cat: "Énergie", score: "B", conf: 68, spend: 52400000, kg: 57640000, dq: 3 },
-  { id: "d106", name: "Cap Bon Logistique", city: "Nabeul", cat: "Transport & logistique", score: "B", conf: 70, spend: 18900000, kg: 17955000, dq: 3 },
-  { id: "d107", name: "Golfe Pharma Distribution", city: "Sfax", cat: "Santé / distribution", score: "A", conf: 84, spend: 22100000, kg: 12155000, dq: 2 },
-  { id: "d108", name: "Virtus Courtage Assurances", city: "Tunis", cat: "Services financiers", score: "A+", conf: 90, spend: 9400000, kg: 1128000, dq: 1 },
-  { id: "d109", name: "Horizon Hôtels Groupe", city: "Hammamet", cat: "Tourisme", score: "C", conf: 48, spend: 36700000, kg: 60555000, dq: 4 },
-  { id: "d110", name: "Delta Immobilière", city: "Ariana", cat: "Immobilier", score: "D", conf: 35, spend: 41200000, kg: 86520000, dq: 5 },
-  { id: "d111", name: "SoftPay Fintech", city: "Tunis", cat: "Fintech", score: "A", conf: 86, spend: 7200000, kg: 1584000, dq: 2 },
-  { id: "d112", name: "Green Olive Export", city: "Sfax", cat: "Agro-export", score: "B", conf: 65, spend: 14300000, kg: 11154000, dq: 3 },
+  { id: "d101", name: "Médina Textile SA", city: "Monastir", cat: "Industrie textile", score: "A", conf: 88, spend: 48500000, kg: 20370000, dq: 2, attr: 0.25 },
+  { id: "d102", name: "Carthage Agro SARL", city: "Béja", cat: "Agroalimentaire", score: "B", conf: 72, spend: 31200000, kg: 26520000, dq: 3, attr: 0.22 },
+  { id: "d103", name: "Numéris Soft TN", city: "Tunis", cat: "Services numériques", score: "A+", conf: 92, spend: 15800000, kg: 2844000, dq: 1, attr: 0.18 },
+  { id: "d104", name: "Sahel Constructions", city: "Sousse", cat: "BTP", score: "C", conf: 55, spend: 27600000, kg: 40020000, dq: 4, attr: 0.28 },
+  { id: "d105", name: "Oasis Énergies", city: "Gabès", cat: "Énergie", score: "B", conf: 68, spend: 52400000, kg: 57640000, dq: 3, attr: 0.30 },
+  { id: "d106", name: "Cap Bon Logistique", city: "Nabeul", cat: "Transport & logistique", score: "B", conf: 70, spend: 18900000, kg: 17955000, dq: 3, attr: 0.20 },
+  { id: "d107", name: "Golfe Pharma Distribution", city: "Sfax", cat: "Santé / distribution", score: "A", conf: 84, spend: 22100000, kg: 12155000, dq: 2, attr: 0.24 },
+  { id: "d108", name: "Virtus Courtage Assurances", city: "Tunis", cat: "Services financiers", score: "A+", conf: 90, spend: 9400000, kg: 1128000, dq: 1, attr: 0.15 },
+  { id: "d109", name: "Horizon Hôtels Groupe", city: "Hammamet", cat: "Tourisme", score: "C", conf: 48, spend: 36700000, kg: 60555000, dq: 4, attr: 0.32 },
+  { id: "d110", name: "Delta Immobilière", city: "Ariana", cat: "Immobilier", score: "D", conf: 35, spend: 41200000, kg: 86520000, dq: 5, attr: 0.35 },
+  { id: "d111", name: "SoftPay Fintech", city: "Tunis", cat: "Fintech", score: "A", conf: 86, spend: 7200000, kg: 1584000, dq: 2, attr: 0.16 },
+  { id: "d112", name: "Green Olive Export", city: "Sfax", cat: "Agro-export", score: "B", conf: 65, spend: 14300000, kg: 11154000, dq: 3, attr: 0.21 },
 ];
+
+const PCAF_OPTION_BY_DQ = { 1: "1a", 2: "1b", 3: "2b", 4: "3a", 5: "3b" };
 
 function uid(suffix) {
   return `a7a50000-0000-4000-8000-00000000${suffix}`;
@@ -748,6 +750,27 @@ function buildSql() {
 
   const supplierValues = COUNTERPARTIES.map((c) => {
     const sid = uid(c.id);
+    const financedT = c.kg / 1000;
+    const companyValue = Math.round(c.spend / c.attr);
+    const companyEmissions = Math.round((financedT / c.attr) * 10) / 10;
+    const option = PCAF_OPTION_BY_DQ[c.dq];
+    const raw = JSON.stringify({
+      demo: true,
+      label: "DEMO DATA — FICTIONAL ORGANIZATION",
+      pcaf_standard: "PCAF Part A Financed Emissions Third Edition 2025",
+      pcaf_section: "5.2",
+      asset_class: "business_loans",
+      listing: "private",
+      pcaf_data_quality: c.dq,
+      pcaf_option: option,
+      outstanding_tnd: c.spend,
+      total_equity_plus_debt_tnd: companyValue,
+      attribution_factor: c.attr,
+      company_emissions_tco2e: companyEmissions,
+      financed_emissions_tco2e: financedT,
+      scopes_covered: "1+2 (+3 séparément)",
+      currency: "TND",
+    }).replace(/'/g, "''");
     return `(${[
       sqlStr(sid),
       sqlStr(ORG),
@@ -768,12 +791,12 @@ function buildSql() {
       sqlStr("TND"),
       sqlNum(YEAR),
       sqlStr("high"),
-      sqlStr(`DEMO — contrepartie fictive. PCAF data quality ≈ ${c.dq}.`),
+      sqlStr(`DEMO — contrepartie fictive. PCAF Option ${option}, data quality score ${c.dq}.`),
       "true",
       sqlStr(LEGACY),
       sqlStr(`cp-${c.id}`),
       "now()",
-      `'{"demo":true,"pcaf_data_quality":${c.dq},"label":"DEMO DATA — FICTIONAL ORGANIZATION"}'::jsonb`,
+      `'${raw}'::jsonb`,
     ].join(",")})`;
   }).join(",\n");
 

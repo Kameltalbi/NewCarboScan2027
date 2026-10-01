@@ -22,6 +22,7 @@ import { registerPcfRoutes } from "./pcf.js";
 import { registerPrivacyRoutes } from "./privacy.js";
 import { registerWebhookRoutes } from "./webhooks.js";
 import { registerDiagnosticRoutes } from "./diagnostic.js";
+import { registerSupplierRoutes } from "./suppliers.js";
 
 export async function registerRoutes(app: FastifyInstance) {
   await registerAuthRoutes(app);
@@ -46,5 +47,6 @@ export async function registerRoutes(app: FastifyInstance) {
   await registerPcfRoutes(app);
   await registerAcvRoutes(app);
   await registerClimateRoutes(app);
+  await registerSupplierRoutes(app);
   await registerLegacyFunctionStubs(app);
 }

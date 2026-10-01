@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { useOrganizationId } from './useOrganizationId';
 import { toast } from 'sonner';
 
@@ -32,6 +32,7 @@ export interface Supplier {
   last_data_update: string | null;
   created_at: string;
   updated_at: string;
+  raw_legacy?: Record<string, unknown> | null;
 }
 
 export interface SupplierStats {
@@ -47,6 +48,43 @@ export interface SupplierStats {
   countries_count: number;
 }
 
+function mapSupplier(row: Record<string, unknown>): Supplier {
+  return {
+    id: String(row.id),
+    organization_id: String(row.organization_id),
+    name: String(row.name || ''),
+    siret: (row.siret as string | null) ?? null,
+    naf_code: (row.naf_code as string | null) ?? null,
+    country: String(row.country || ''),
+    city: (row.city as string | null) ?? null,
+    contact_name: (row.contact_name as string | null) ?? null,
+    contact_email: (row.contact_email as string | null) ?? null,
+    purchase_category: (row.purchase_category as string | null) ?? null,
+    carbon_score: (row.carbon_score as string | null) ?? null,
+    confidence_index: Number(row.confidence_index ?? 0),
+    engagement_status: String(row.engagement_status || 'not_contacted'),
+    data_method: String(row.data_method || 'estimated'),
+    has_carbon_footprint: Boolean(row.has_carbon_footprint),
+    has_sbti_target: Boolean(row.has_sbti_target),
+    has_cdp_disclosure: Boolean(row.has_cdp_disclosure),
+    cdp_score: (row.cdp_score as string | null) ?? null,
+    has_iso14001: Boolean(row.has_iso14001),
+    has_ecovadis: Boolean(row.has_ecovadis),
+    ecovadis_score: row.ecovadis_score != null ? Number(row.ecovadis_score) : null,
+    annual_spend: row.annual_spend != null ? Number(row.annual_spend) : null,
+    criticality: String(row.criticality || 'medium'),
+    is_active: row.is_active !== false,
+    tags: Array.isArray(row.tags) ? (row.tags as string[]) : [],
+    last_data_update: (row.last_data_update as string | null) ?? null,
+    created_at: String(row.created_at || ''),
+    updated_at: String(row.updated_at || ''),
+    raw_legacy:
+      row.raw_legacy && typeof row.raw_legacy === 'object'
+        ? (row.raw_legacy as Record<string, unknown>)
+        : null,
+  };
+}
+
 export const useSuppliers = () => {
   const { organizationId } = useOrganizationId();
   const queryClient = useQueryClient();
@@ -55,14 +93,8 @@ export const useSuppliers = () => {
     queryKey: ['suppliers', organizationId],
     queryFn: async () => {
       if (!organizationId) return [];
-      const { data, error } = await supabase
-        .from('suppliers')
-        .select('*')
-        .eq('organization_id', organizationId)
-        .eq('is_active', true)
-        .order('name');
-      if (error) throw error;
-      return (data || []) as Supplier[];
+      const { items } = await api.listSuppliers();
+      return (items || []).map((row) => mapSupplier(row));
     },
     enabled: !!organizationId,
   });
@@ -71,11 +103,8 @@ export const useSuppliers = () => {
     queryKey: ['supplier-stats', organizationId],
     queryFn: async () => {
       if (!organizationId) return null;
-      const { data, error } = await supabase
-        .rpc('get_supplier_dashboard_stats', { p_org_id: organizationId });
-      if (error) throw error;
-      if (!data || data.length === 0) return null;
-      return data[0] as SupplierStats;
+      const { stats } = await api.getSupplierStats();
+      return stats as SupplierStats;
     },
     enabled: !!organizationId,
   });
@@ -83,21 +112,16 @@ export const useSuppliers = () => {
   const createSupplier = useMutation({
     mutationFn: async (supplier: Partial<Supplier>) => {
       if (!organizationId) throw new Error('No organization');
-      const { data, error } = await supabase
-        .from('suppliers')
-        .insert({ ...supplier, organization_id: organizationId })
-        .select()
-        .single();
-      if (error) throw error;
-      return data;
+      const { item } = await api.createSupplier(supplier as Record<string, unknown>);
+      return mapSupplier(item);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['suppliers', organizationId] });
       queryClient.invalidateQueries({ queryKey: ['supplier-stats', organizationId] });
-      toast.success('Fournisseur ajouté avec succès');
+      toast.success('Contrepartie ajoutée avec succès');
     },
     onError: (err) => {
-      toast.error('Erreur lors de l\'ajout du fournisseur');
+      toast.error('Erreur lors de l\'ajout');
       console.error(err);
     },
   });

@@ -34,6 +34,7 @@ import { useOrganizationData } from '@/hooks/useOrganizationData';
 import { useOrganizationSites } from '@/hooks/useOrganizationSites';
 import { useOrganizationYears } from '@/hooks/useOrganizationYears';
 import { api } from '@/integrations/api/client';
+import { DashboardContextBar } from '@/components/dashboard/DashboardContextBar';
 
 import aiInsightAvatar from '@/assets/ai-insight-avatar.png';
 import {
@@ -68,10 +69,16 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
   const { user } = useAuth();
   const { organizationId, organizationLoading } = useAppData();
   const { referenceYear, organization } = useOrganizationData();
-  const { defaultYear } = useOrganizationYears(organizationId);
+  const { defaultYear, allowedYears } = useOrganizationYears(organizationId);
   const [headerYear, setHeaderYear] = useState<number | null>(null);
   const activeYear = selectedYear ?? headerYear ?? defaultYear ?? referenceYear;
-  const { sites } = useOrganizationSites(organizationId ?? undefined);
+  const { sites, isLoading: sitesLoading } = useOrganizationSites(organizationId ?? undefined);
+  const [selectedSiteId, setSelectedSiteId] = useState<string | null>(null);
+
+  const setActiveYear = (year: number) => {
+    setHeaderYear(year);
+    window.dispatchEvent(new CustomEvent('dashboardYearChange', { detail: year }));
+  };
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -84,7 +91,13 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
     return () => window.removeEventListener('dashboardYearChange', handler);
   }, []);
 
-
+  // Drop stale site selection if the site disappears from the org list
+  useEffect(() => {
+    if (!selectedSiteId) return;
+    if (sites.length > 0 && !sites.some((s) => s.id === selectedSiteId)) {
+      setSelectedSiteId(null);
+    }
+  }, [sites, selectedSiteId]);
 
   const [data, setData] = useState<DashboardAggregatedData | null>(null);
   const [yearlyTotals, setYearlyTotals] = useState<Array<{ year: number; value: number }>>([]);
@@ -99,40 +112,64 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           organizationId,
           `${activeYear}-01-01`,
           `${activeYear}-12-31`,
+          { siteId: selectedSiteId },
         );
         setData(cur);
-        try {
-          const { items } = await api.listBilans();
-          const byYear = new Map<number, number>();
-          for (const row of items || []) {
-            const qYear = Number((row as { questionnaire_data?: { year?: unknown } }).questionnaire_data?.year);
-            const rawRef = Number((row as { raw_legacy?: { reference_year?: unknown } }).raw_legacy?.reference_year);
-            const colYear = Number(row.year);
-            const year =
-              (Number.isInteger(qYear) && qYear >= 2000 && qYear)
-              || (Number.isInteger(rawRef) && rawRef >= 2000 && rawRef)
-              || (Number.isInteger(colYear) && colYear >= 2000 && colYear)
-              || (row.date_bilan ? new Date(String(row.date_bilan)).getFullYear() : null);
-            if (year == null || !Number.isInteger(year)) continue;
-            const tonnes = Number(row.total_emission ?? row.total_kgco2e ?? 0) || 0;
-            byYear.set(year, Math.max(byYear.get(year) ?? 0, tonnes));
-          }
-          setYearlyTotals(
-            [...byYear.entries()]
-              .sort((a, b) => a[0] - b[0])
-              .map(([year, value]) => ({ year, value })),
-          );
-        } catch {
+        // Bilans annuels = vue organisation (pas de série historique par site)
+        if (selectedSiteId) {
           setYearlyTotals([]);
+        } else {
+          try {
+            const { items } = await api.listBilans();
+            const byYear = new Map<number, number>();
+            for (const row of items || []) {
+              const qYear = Number((row as { questionnaire_data?: { year?: unknown } }).questionnaire_data?.year);
+              const rawRef = Number((row as { raw_legacy?: { reference_year?: unknown } }).raw_legacy?.reference_year);
+              const colYear = Number(row.year);
+              const year =
+                (Number.isInteger(qYear) && qYear >= 2000 && qYear)
+                || (Number.isInteger(rawRef) && rawRef >= 2000 && rawRef)
+                || (Number.isInteger(colYear) && colYear >= 2000 && colYear)
+                || (row.date_bilan ? new Date(String(row.date_bilan)).getFullYear() : null);
+              if (year == null || !Number.isInteger(year)) continue;
+              const tonnes = Number(row.total_emission ?? row.total_kgco2e ?? 0) || 0;
+              byYear.set(year, Math.max(byYear.get(year) ?? 0, tonnes));
+            }
+            setYearlyTotals(
+              [...byYear.entries()]
+                .sort((a, b) => a[0] - b[0])
+                .map(([year, value]) => ({ year, value })),
+            );
+          } catch {
+            setYearlyTotals([]);
+          }
         }
+      } catch {
+        setData(null);
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [user, organizationId, organizationLoading, activeYear]);
+  }, [user, organizationId, organizationLoading, activeYear, selectedSiteId]);
 
   const hasReal = !!data && data.bilanCarbone.totalEmissions > 0;
+  const selectedSite = selectedSiteId
+    ? sites.find((s) => s.id === selectedSiteId) ?? null
+    : null;
+
+  const contextBar = (
+    <DashboardContextBar
+      organizationName={organization?.name || 'Organisation'}
+      activeYear={activeYear}
+      availableYears={allowedYears}
+      onYearChange={setActiveYear}
+      sites={sites.map((s) => ({ id: s.id, name: s.name }))}
+      selectedSiteId={selectedSiteId}
+      onSiteChange={setSelectedSiteId}
+      sitesLoading={sitesLoading}
+    />
+  );
 
   // Values (real if available, else demo values matching the hero preview)
   const kpis = useMemo(() => {
@@ -142,9 +179,12 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
       const s2 = toT(data.bilanCarbone.scope2);
       const s3 = toT(data.bilanCarbone.scope3);
       const s12 = s1 + s2;
-      const prevYearTotal = yearlyTotals.find((y) => y.year === activeYear - 1)?.value ?? 0;
+      // Évolution YoY uniquement en vue consolidée (bilans = org)
+      const prevYearTotal = selectedSiteId
+        ? 0
+        : yearlyTotals.find((y) => y.year === activeYear - 1)?.value ?? 0;
       const evo =
-        prevYearTotal > 0 && total > 0
+        !selectedSiteId && prevYearTotal > 0 && total > 0
           ? ((total - prevYearTotal) / prevYearTotal) * 100
           : null;
       return {
@@ -166,25 +206,33 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
       s12Pct: 0,
       s3Pct: 0,
     };
-  }, [hasReal, data, yearlyTotals, activeYear]);
+  }, [hasReal, data, yearlyTotals, activeYear, selectedSiteId]);
 
   // Agrégats sites (fallback quand l'organisation n'a pas ces champs renseignés)
   const siteTotals = useMemo(() => {
-    return sites.reduce(
+    const scoped = selectedSite
+      ? [selectedSite]
+      : sites;
+    return scoped.reduce(
       (acc, s) => ({
         employees: acc.employees + (Number(s.employees_count) || 0),
         surface: acc.surface + (Number(s.surface_m2) || 0),
       }),
       { employees: 0, surface: 0 },
     );
-  }, [sites]);
+  }, [sites, selectedSite]);
 
-  // Intensité carbone adaptative : CA (meilleur KPI) > effectif > surface
+  // Intensité carbone adaptative : CA (vue consolidée) > effectif > surface
   const intensityKpi = useMemo(() => {
     const total = kpis.total; // tCO2e
-    const revenue = Number(organization?.annual_revenue) || 0;
-    const employees = Number(organization?.employees) || siteTotals.employees;
-    const surface = Number(organization?.total_surface) || siteTotals.surface;
+    // CA org uniquement en vue consolidée (non attribuable à une seule agence)
+    const revenue = selectedSiteId ? 0 : Number(organization?.annual_revenue) || 0;
+    const employees = selectedSiteId
+      ? siteTotals.employees
+      : Number(organization?.employees) || siteTotals.employees;
+    const surface = selectedSiteId
+      ? siteTotals.surface
+      : Number(organization?.total_surface) || siteTotals.surface;
     const sym = CURRENCY_LABEL[organization?.currency || 'TND'] || organization?.currency || '';
 
     if (!hasReal || total <= 0) return null;
@@ -201,18 +249,22 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
       return {
         value: new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(total / employees),
         unit: 'tCO₂e / collaborateur',
-        footer: `Sur la base de ${employees} collaborateurs (CA non renseigné)`,
+        footer: selectedSite
+          ? `Sur la base de ${employees} collaborateurs — ${selectedSite.name}`
+          : `Sur la base de ${employees} collaborateurs (CA non renseigné)`,
       };
     }
     if (surface > 0) {
       return {
         value: new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format((total * 1000) / surface),
         unit: 'kgCO₂e / m²',
-        footer: `Sur la base de ${new Intl.NumberFormat('fr-FR').format(surface)} m² (CA non renseigné)`,
+        footer: selectedSite
+          ? `Sur la base de ${new Intl.NumberFormat('fr-FR').format(surface)} m² — ${selectedSite.name}`
+          : `Sur la base de ${new Intl.NumberFormat('fr-FR').format(surface)} m² (CA non renseigné)`,
       };
     }
     return null;
-  }, [kpis.total, organization, hasReal, siteTotals]);
+  }, [kpis.total, organization, hasReal, siteTotals, selectedSite, selectedSiteId]);
 
 
 
@@ -232,6 +284,14 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
   }, [hasReal, data]);
 
   const evolution = useMemo(() => {
+    if (selectedSiteId) {
+      // Pas de série historique par site : un seul point pour l'exercice courant
+      if (hasReal && data) {
+        const current = toT(data.bilanCarbone.totalEmissions);
+        return current > 0 ? [{ year: activeYear, value: Math.round(current) }] : [];
+      }
+      return [];
+    }
     const byYear = new Map(yearlyTotals.map((row) => [row.year, row.value]));
     if (hasReal && data) {
       const current = toT(data.bilanCarbone.totalEmissions);
@@ -250,7 +310,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
       const real = byYear.get(year) ?? 0;
       return { year, value: Math.round(real > 0 ? real : baseline) };
     });
-  }, [yearlyTotals, hasReal, data, activeYear]);
+  }, [yearlyTotals, hasReal, data, activeYear, selectedSiteId]);
 
   const topCategories = useMemo(() => {
     if (hasReal && data && data.bilanCarbone.breakdown.length > 0) {
@@ -281,30 +341,43 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
 
   if (!hasReal) {
     return (
-      <div className="flex min-h-[65vh] items-center justify-center px-4 py-10">
-        <div className="w-full max-w-2xl rounded-2xl border border-border bg-card p-8 text-center shadow-sm sm:p-12">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-            <ClipboardList className="h-7 w-7" />
+      <div className="space-y-6">
+        {contextBar}
+        <div className="flex min-h-[55vh] items-center justify-center px-4 py-10">
+          <div className="w-full max-w-2xl rounded-2xl border border-border bg-card p-8 text-center shadow-sm sm:p-12">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <ClipboardList className="h-7 w-7" />
+            </div>
+            <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+              Année {activeYear}
+              {selectedSite ? ` · ${selectedSite.name}` : ''}
+            </p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight">
+              {selectedSite
+                ? 'Aucune donnée pour ce site'
+                : 'Votre tableau de bord est prêt'}
+            </h2>
+            <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-muted-foreground">
+              {selectedSite
+                ? `Aucune activité carbone n'est rattachée à « ${selectedSite.name} » pour l'exercice ${activeYear}. Sélectionnez « Tous les sites » pour la vue consolidée, ou saisissez des données pour ce site.`
+                : "Aucune donnée carbone n'est encore enregistrée. Démarrez une collecte pour construire votre premier bilan avec vos propres données."}
+            </p>
+            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+              {selectedSite ? (
+                <Button variant="outline" onClick={() => setSelectedSiteId(null)}>
+                  Voir tous les sites
+                </Button>
+              ) : (
+                <Button onClick={() => navigate('/app/collecte/nouvelle?mode=bilan-carbone')}>
+                  Démarrer une collecte
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              )}
+              <Button variant="outline" onClick={() => navigate('/app/bilan-carbone')}>
+                Ouvrir Bilan Carbone
+              </Button>
+            </div>
           </div>
-          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            Année {activeYear}
-          </p>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight">Votre tableau de bord est prêt</h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-muted-foreground">
-            Aucune donnée carbone n'est encore enregistrée. Démarrez une collecte pour construire votre premier bilan avec vos propres données.
-          </p>
-          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-            <Button onClick={() => navigate('/app/collecte/nouvelle?mode=bilan-carbone')}>
-              Démarrer une collecte
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button variant="outline" onClick={() => navigate('/app/bilan-carbone')}>
-              Ouvrir Bilan Carbone
-            </Button>
-          </div>
-          <p className="mt-6 text-xs text-muted-foreground">
-            Les indicateurs apparaîtront ici uniquement après l'enregistrement de données réelles.
-          </p>
         </div>
       </div>
     );
@@ -312,6 +385,8 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
 
   return (
     <div className="space-y-6">
+      {contextBar}
+
       {/* KPI ROW */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
         <KpiCard
@@ -359,7 +434,9 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         {/* Donut */}
         <div className="bg-card rounded-2xl border border-border p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">
-            Répartition des émissions par scope
+            {selectedSite
+              ? `Répartition des émissions — ${selectedSite.name}`
+              : 'Répartition des émissions par scope'}
           </h3>
           <div className="flex items-center gap-6">
             <div className="relative w-52 h-52 shrink-0">
@@ -419,7 +496,9 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           </div>
           {evolution.length === 0 ? (
             <p className="h-56 flex items-center justify-center text-sm text-muted-foreground">
-              Aucun bilan annuel à tracer.
+              {selectedSite
+                ? 'Pas assez d’historique pour tracer l’évolution de ce site.'
+                : 'Aucun bilan annuel à tracer.'}
             </p>
           ) : (
           <>
@@ -465,9 +544,15 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
             </ResponsiveContainer>
           </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              Années sans bilan : mêmes émissions que{' '}
-              {yearlyTotals.some((row) => row.year === 2025 && row.value > 0) ? '2025' : 'l’exercice disponible'}
-              {' '}(pas d’évolution).
+              {selectedSite
+                ? `Émissions attribuables à « ${selectedSite.name} » pour ${activeYear}.`
+                : (
+                  <>
+                    Années sans bilan : mêmes émissions que{' '}
+                    {yearlyTotals.some((row) => row.year === 2025 && row.value > 0) ? '2025' : 'l’exercice disponible'}
+                    {' '}(pas d’évolution).
+                  </>
+                )}
             </p>
           </>
           )}
@@ -479,7 +564,9 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         {/* Top 5 categories */}
         <div className="bg-card rounded-2xl border border-border p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">
-            Émissions par catégorie (Top 5)
+            {selectedSite
+              ? `Émissions par catégorie — ${selectedSite.name}`
+              : 'Émissions par catégorie (Top 5)'}
           </h3>
           <div className="space-y-4">
             {topCategories.map((c, i) => (
@@ -509,7 +596,9 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         <div className="bg-card rounded-2xl border border-border p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">Actions en cours</h3>
           <p className="text-sm text-muted-foreground">
-            Aucune action de réduction n'est affichée ici tant qu'elle n'est pas enregistrée dans le plan d'actions.
+            {selectedSite
+              ? `Les actions de réduction applicables à « ${selectedSite.name} » s’affichent ici lorsqu’elles sont enregistrées dans le plan d’actions.`
+              : "Aucune action de réduction n'est affichée ici tant qu'elle n'est pas enregistrée dans le plan d'actions."}
           </p>
           <button
             className="mt-4 text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1"
@@ -526,7 +615,13 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
             <h3 className="text-lg font-semibold text-foreground">Insight IA</h3>
           </div>
           <p className="text-sm text-foreground leading-relaxed">
-            {kpis.evo == null ? (
+            {selectedSite ? (
+              <>
+                Vue filtrée sur «&nbsp;<span className="font-semibold">{selectedSite.name}</span>&nbsp;» :
+                {' '}{fmt(kpis.total)} tCO₂e sur l’exercice {activeYear}
+                {' '}(Scope 1+2 : {fmt(kpis.s12)} · Scope 3 : {fmt(kpis.s3)}).
+              </>
+            ) : kpis.evo == null ? (
               <>
                 Pas de comparaison possible avec {activeYear - 1} : aucun bilan enregistré pour cette année.
                 Les années vides du graphique réutilisent l'exercice disponible, sans inventer d'évolution.
@@ -545,7 +640,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
             <span className="font-semibold text-foreground">
               {Math.round(topCategories[0]?.pct || 0)}%
             </span>{' '}
-            de vos émissions. Nous recommandons d'analyser vos leviers prioritaires.
+            {selectedSite ? 'des émissions de ce site' : 'de vos émissions'}. Nous recommandons d'analyser vos leviers prioritaires.
           </p>
           <div className="mt-4 flex items-end justify-between gap-3">
             <button className="text-sm text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1">
