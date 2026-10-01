@@ -12,6 +12,8 @@ interface DataQualityRadarChartProps {
     estimated: number; // % données estimées (0-100)
     default: number;   // % données par défaut (0-100)
   };
+  /** Titre affiché (défaut : Qualité des Données) */
+  title?: string;
 }
 
 // Couleur principale du radar (turquoise CarboScan)
@@ -36,7 +38,10 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const DataQualityRadarChart: React.FC<DataQualityRadarChartProps> = ({ dataQuality }) => {
+export const DataQualityRadarChart: React.FC<DataQualityRadarChartProps> = ({
+  dataQuality,
+  title = 'Qualité des Données',
+}) => {
   // Calcul des scores basé sur les VRAIES données de qualité
   const radarData = useMemo(() => {
     const { real, estimated, default: defaultData } = dataQuality;
@@ -137,7 +142,7 @@ export const DataQualityRadarChart: React.FC<DataQualityRadarChartProps> = ({ da
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-emerald-600" />
-            Qualité des Données
+            {title}
           </CardTitle>
           <div className="flex items-center gap-1">
             <span className="text-xl font-bold tabular-nums text-foreground">{avgScoreFormatted}</span>

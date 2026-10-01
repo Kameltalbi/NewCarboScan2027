@@ -221,6 +221,7 @@ interface LazyDataQualityRadarChartProps {
     estimated: number;
     default: number;
   };
+  title?: string;
 }
 
 export const LazyDataQualityRadarChart: React.FC<LazyDataQualityRadarChartProps> = (props) => (

@@ -35,6 +35,8 @@ import { useOrganizationSites } from '@/hooks/useOrganizationSites';
 import { useOrganizationYears } from '@/hooks/useOrganizationYears';
 import { api } from '@/integrations/api/client';
 import { DashboardContextBar } from '@/components/dashboard/DashboardContextBar';
+import { LazyDataQualityRadarChart } from '@/components/dashboard/LazyCharts';
+import { PhysicalVsMonetaryCard } from '@/components/dashboard/PhysicalVsMonetaryCard';
 
 import aiInsightAvatar from '@/assets/ai-insight-avatar.png';
 import {
@@ -557,6 +559,23 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           </>
           )}
         </div>
+      </div>
+
+      {/* Qualité / Transparence + ABC-04 physique vs monétaire */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <LazyDataQualityRadarChart
+          title="Transparence & qualité des données"
+          dataQuality={
+            data?.dataQuality ?? { real: 0, estimated: 0, default: 100 }
+          }
+        />
+        <PhysicalVsMonetaryCard
+          lines={(data?.bilanCarbone.detailedBreakdown || []).map((line) => ({
+            method: line.dataMethod,
+            kg: line.emissions,
+            source: line.emissionFactorSource,
+          }))}
+        />
       </div>
 
       {/* BOTTOM ROW */}
