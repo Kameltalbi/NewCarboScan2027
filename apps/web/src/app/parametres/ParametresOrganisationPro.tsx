@@ -53,7 +53,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { api, supabase, sessionAuth} from "@/integrations/api/client";
+import { api, supabase } from "@/integrations/api/client";
 import { SiteOperationField } from "@/components/collect/sites/SiteOperationField";
 import {
   CONSOLIDATION_METHODS,
@@ -111,6 +111,51 @@ const SITE_TYPES = [
   { value: 'magasin', label: 'Magasin', icon: Store },
   { value: 'autre', label: 'Autre', icon: MapPin },
 ];
+
+/** Compresse le logo en data URL pour api.patchOrganization (plafond schéma 500k). */
+async function fileToLogoDataUrl(file: File, maxChars = 450_000): Promise<string> {
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = () => reject(new Error('Image illisible'));
+      el.src = objectUrl;
+    });
+
+    const maxSide = 512;
+    const scale = Math.min(1, maxSide / Math.max(img.width, img.height, 1));
+    const w = Math.max(1, Math.round(img.width * scale));
+    const h = Math.max(1, Math.round(img.height * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas indisponible');
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const preferPng = file.type === 'image/png';
+    const mime = preferPng ? 'image/png' : 'image/webp';
+    let quality = 0.9;
+    let dataUrl = canvas.toDataURL(mime, quality);
+    while (dataUrl.length > maxChars && quality > 0.45) {
+      quality -= 0.1;
+      dataUrl = canvas.toDataURL('image/webp', quality);
+    }
+    if (dataUrl.length > maxChars) {
+      // Dernier recours : plus petit côté
+      const w2 = Math.max(1, Math.round(w * 0.7));
+      const h2 = Math.max(1, Math.round(h * 0.7));
+      canvas.width = w2;
+      canvas.height = h2;
+      ctx.drawImage(img, 0, 0, w2, h2);
+      dataUrl = canvas.toDataURL('image/webp', 0.7);
+    }
+    return dataUrl;
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
 
 export const ParametresOrganisationPro: React.FC = () => {
   const { user } = useAuth();
@@ -319,8 +364,8 @@ export const ParametresOrganisationPro: React.FC = () => {
     const file = event.target.files?.[0];
     if (!file || !user?.id) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast.error('Veuillez sélectionner une image');
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) && !file.type.startsWith('image/')) {
+      toast.error('Veuillez sélectionner une image JPG, PNG ou WebP');
       return;
     }
 
@@ -332,76 +377,26 @@ export const ParametresOrganisationPro: React.FC = () => {
     setIsUploading(true);
 
     try {
-      // Vérifie le token auprès de Supabase et évite d'utiliser un état local stale.
-      const { data: authData, error: authError } = await sessionAuth.getUser();
-      if (authError) throw authError;
-      const authedUserId = authData.user?.id;
-      if (!authedUserId) {
-        toast.error('Session expirée. Merci de vous reconnecter.');
-        setIsUploading(false);
+      // Stocker le logo via l'API org (data URL) — supabase.storage n'existe plus.
+      const dataUrl = await fileToLogoDataUrl(file);
+      if (dataUrl.length > 500_000) {
+        toast.error('Logo trop volumineux après compression. Essayez une image plus légère.');
         return;
       }
 
-      let targetOrgId = orgId;
-      if (!targetOrgId) {
-        const { data: org, error: orgError } = await supabase
-          .from('organizations')
-          .select('id')
-          .eq('user_id', authedUserId)
-          .maybeSingle();
-        if (orgError) throw orgError;
-        targetOrgId = org?.id || null;
-        if (targetOrgId) setOrgId(targetOrgId);
-      }
-
-      if (!targetOrgId) {
-        toast.error('Enregistrez d’abord l’organisation avant d’ajouter un logo.');
-        setIsUploading(false);
-        return;
-      }
-
-      const fileExt = (file.name.split('.').pop() || 'png').toLowerCase();
-      // Storage reste sécurisé par utilisateur connecté ; l'URL publique est ensuite rattachée à l'organisation.
-      const filePath = `${authedUserId}/logo.${fileExt}`;
-
-      // Nettoyer les anciens logos de cet utilisateur (toutes extensions)
-      const { data: existing } = await supabase.storage
-        .from('organization-logos')
-        .list(authedUserId);
-      if (existing && existing.length > 0) {
-        await supabase.storage
-          .from('organization-logos')
-          .remove(existing.map(f => `${authedUserId}/${f.name}`));
-      }
-
-      const { error: uploadError } = await supabase.storage
-        .from('organization-logos')
-        .upload(filePath, file, { upsert: true, contentType: file.type || `image/${fileExt}` });
-
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from('organization-logos')
-        .getPublicUrl(filePath);
-
-      const newLogoUrl = urlData.publicUrl + '?t=' + Date.now();
-
-      const { error: updateError } = await supabase
-        .from('organizations')
-        .update({ logo_url: newLogoUrl, updated_at: new Date().toISOString() })
-        .eq('id', targetOrgId);
-      if (updateError) throw updateError;
-
-      setLogoUrl(newLogoUrl);
+      const { organization } = await api.patchOrganization({ logoUrl: dataUrl });
+      if (organization?.id) setOrgId(organization.id);
+      setLogoUrl(organization?.logoUrl ?? dataUrl);
       queryClient.invalidateQueries({ queryKey: ['organization-data'] });
       window.dispatchEvent(new CustomEvent('orgLogoUpdated'));
       toast.success('Logo téléchargé avec succès');
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Upload error:', error);
-      const msg = error?.message || error?.error || 'Erreur inconnue';
+      const msg = error instanceof Error ? error.message : 'Erreur inconnue';
       toast.error(`Erreur téléchargement logo : ${msg}`);
     } finally {
       setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -410,37 +405,7 @@ export const ParametresOrganisationPro: React.FC = () => {
 
     setIsUploading(true);
     try {
-      const { data: authData, error: authError } = await sessionAuth.getUser();
-      if (authError) throw authError;
-      const authedUserId = authData.user?.id;
-      if (!authedUserId) {
-        toast.error('Session expirée. Merci de vous reconnecter.');
-        return;
-      }
-
-      const targetOrgId = orgId;
-      if (!targetOrgId) {
-        toast.error('Organisation introuvable');
-        return;
-      }
-
-      const { data: files } = await supabase.storage
-        .from('organization-logos')
-        .list(authedUserId);
-
-      if (files && files.length > 0) {
-        const filesToRemove = files.map(f => `${authedUserId}/${f.name}`);
-        await supabase.storage
-          .from('organization-logos')
-          .remove(filesToRemove);
-      }
-
-      const { error: updateError } = await supabase
-        .from('organizations')
-        .update({ logo_url: null, updated_at: new Date().toISOString() })
-        .eq('id', targetOrgId);
-      if (updateError) throw updateError;
-
+      await api.patchOrganization({ logoUrl: null });
       setLogoUrl(null);
       queryClient.invalidateQueries({ queryKey: ['organization-data'] });
       window.dispatchEvent(new CustomEvent('orgLogoUpdated'));
