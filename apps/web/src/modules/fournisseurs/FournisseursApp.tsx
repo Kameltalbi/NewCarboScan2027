@@ -27,11 +27,11 @@ const FournisseursApp: React.FC = () => {
 
   const navItems: NavItem[] = L.isBank
     ? [
+        { label: "Méthode de calcul", path: "/methode", icon: BookOpen },
         { label: "Vue d'ensemble", path: "", icon: LayoutDashboard },
         { label: "Portefeuille", path: "/portefeuille", icon: Landmark },
         { label: "Contreparties", path: "/contreparties", icon: Users },
         { label: "Qualité des données", path: "/scoring", icon: BarChart3 },
-        { label: "Méthode de calcul", path: "/methode", icon: BookOpen },
         { label: "Rapport", path: "/rapport", icon: FileBarChart },
       ]
     : [

@@ -126,6 +126,59 @@ const assetClasses = [
   },
 ] as const;
 
+const methodologyDetails = [
+  {
+    title: "Entreprise — Business Loans",
+    intro:
+      "Prêt aux besoins généraux d'une entreprise. Les émissions de l'emprunteur sont prises en compte, puis une part seulement est attribuée à la banque.",
+    numerator: "Encours restant du prêt (Outstanding Amount)",
+    denominator:
+      "Entreprise non cotée : total des capitaux propres + dette. Entreprise cotée : EVIC (Enterprise Value Including Cash).",
+    emissions:
+      "Émissions de l'entreprise (Scopes 1 et 2, et Scope 3 selon le périmètre applicable) — déclarées, énergétiques, physiques ou économiques selon les données disponibles.",
+    formula:
+      "Émissions financées = (Encours / Valeur d'attribution) × Émissions de l'entreprise",
+    note: "C'est la logique illustrée dans l'exemple simplifié de cette page. Le dénominateur n'est pas un montant fixe universel.",
+  },
+  {
+    title: "Projet — Project Finance",
+    intro:
+      "Financement d'un projet clairement identifié (infrastructure, énergie, industriel). On attribue les émissions du projet, pas celles de l'entreprise dans son ensemble.",
+    numerator: "Encours restant alloué au projet",
+    denominator:
+      "Total des fonds du projet (equity + dette du projet), ou valeur totale du projet selon la donnée disponible.",
+    emissions:
+      "Émissions du projet financé (construction et/ou exploitation), estimées à partir des données projet disponibles.",
+    formula:
+      "Émissions financées = (Encours projet / Valeur totale du projet) × Émissions du projet",
+    note: "Si le projet n'est pas encore en exploitation, la méthode et les données d'activité peuvent différer de la phase d'opération.",
+  },
+  {
+    title: "Immobilier — Commercial Real Estate / Mortgages",
+    intro:
+      "Financement d'un actif immobilier. L'attribution repose sur la valeur de l'immeuble, pas sur le bilan global de l'emprunteur.",
+    numerator: "Encours restant du financement immobilier",
+    denominator: "Valeur de l'actif immobilier (souvent à l'origination).",
+    emissions:
+      "Émissions associées au bâtiment (énergie consommée, intensité carbone du bien, ou estimation selon les données disponibles).",
+    formula:
+      "Émissions financées = (Encours / Valeur de l'actif) × Émissions du bâtiment",
+    note: "La qualité dépend fortement des données énergétiques ou d'intensité carbone disponibles pour l'actif.",
+  },
+  {
+    title: "Véhicule — Motor Vehicle Loans",
+    intro:
+      "Financement de l'acquisition d'un véhicule. L'attribution est liée à la valeur du véhicule financé.",
+    numerator: "Encours restant du prêt véhicule",
+    denominator: "Valeur du véhicule à l'origination.",
+    emissions:
+      "Émissions associées à l'usage du véhicule (souvent distance × facteur d'émission, ou estimation selon le type de véhicule).",
+    formula:
+      "Émissions financées = (Encours / Valeur du véhicule) × Émissions du véhicule",
+    note: "Les données kilométriques et le type de motorisation améliorent nettement la qualité du calcul.",
+  },
+] as const;
+
 const analysisCards = [
   {
     icon: PieChart,
@@ -391,6 +444,11 @@ export const MethodeCalculPage: React.FC = () => {
                   L&apos;entreprise dispose déjà d&apos;un bilan GES
                 </h3>
               </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                C&apos;est la situation la plus favorable : l&apos;emprunteur a déjà
+                mesuré ses émissions. CarboScan reprend ces chiffres et calcule
+                uniquement la part attribuable au financement de la banque.
+              </p>
 
               <div className="space-y-0">
                 {[
@@ -400,15 +458,15 @@ export const MethodeCalculPage: React.FC = () => {
                   },
                   {
                     title: "CarboScan utilise les émissions déclarées",
-                    body: null,
+                    body: "Les émissions de l'entreprise sont reprises telles quelles — sans estimation supplémentaire.",
                   },
                   {
                     title: "Application de la méthode d'attribution PCAF",
-                    body: null,
+                    body: "Seule la part correspondant à l'encours de la banque est retenue.",
                   },
                   {
                     title: "Émissions financées",
-                    body: null,
+                    body: "Résultat final attribué au portefeuille de l'institution.",
                     dominant: true,
                   },
                 ].map((step, i, arr) => (
@@ -460,6 +518,13 @@ export const MethodeCalculPage: React.FC = () => {
                   PCAF — Option 2a · données énergétiques
                 </Badge>
               </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Sans bilan GES, les consommations d&apos;énergie (électricité,
+                carburants, gaz) permettent déjà d&apos;estimer les émissions de
+                façon plus précise qu&apos;un simple ratio sectoriel. CarboScan
+                convertit chaque consommation avec le facteur d&apos;émission
+                approprié, puis applique la part de la banque.
+              </p>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="rounded-lg border border-border px-4 py-3">
@@ -595,6 +660,12 @@ export const MethodeCalculPage: React.FC = () => {
                   PCAF — Option 2b · données physiques de production
                 </Badge>
               </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Lorsque l&apos;énergie n&apos;est pas connue, la production
+                physique (tonnes, MWh, etc.) reste un bon proxy. On multiplie le
+                volume produit par un facteur d&apos;émission adapté au produit
+                ou au procédé, puis on attribue la part de la banque.
+              </p>
 
               <div className="flex flex-wrap gap-2 text-sm">
                 <span className="rounded-md border border-border px-3 py-1.5 text-muted-foreground">
@@ -611,7 +682,8 @@ export const MethodeCalculPage: React.FC = () => {
               <p className="text-sm text-muted-foreground">
                 Exemples : tonnes de ciment · tonnes d&apos;acier · tonnes de
                 clinker · MWh produits · autres unités physiques adaptées au
-                secteur.
+                secteur. Chaque unité est convertie avec un facteur d&apos;émission
+                physique adapté au produit ou au procédé.
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-2 rounded-xl border border-border bg-muted/30 px-4 py-5 text-center sm:gap-3">
@@ -661,6 +733,12 @@ export const MethodeCalculPage: React.FC = () => {
                   Seules les données économiques sont disponibles
                 </h3>
               </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                On ne connaît ni le bilan GES, ni l&apos;énergie, ni la production.
+                CarboScan s&apos;appuie alors sur le chiffre d&apos;affaires et le
+                secteur pour estimer les émissions via un facteur sectoriel, avant
+                d&apos;appliquer la part de la banque.
+              </p>
 
               <div className="flex flex-wrap gap-2 text-sm">
                 <span className="rounded-md border border-border px-3 py-1.5 text-muted-foreground">
@@ -724,6 +802,12 @@ export const MethodeCalculPage: React.FC = () => {
                   Très peu de données sont disponibles
                 </h3>
               </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Avec seulement l&apos;encours et le secteur, CarboScan utilise des
+                proxies sectoriels pour donner un ordre de grandeur. Le résultat
+                reste utile pour prioriser, mais la qualité de la donnée est
+                clairement plus faible.
+              </p>
 
               <div className="space-y-0">
                 {[
@@ -1003,24 +1087,70 @@ export const MethodeCalculPage: React.FC = () => {
         </Button>
 
         {showAdvanced && (
-          <Card className="border-dashed">
-            <CardContent className="space-y-3 p-5 text-sm leading-relaxed text-muted-foreground">
-              <p>
-                Pour chaque classe d&apos;actifs, la méthodologie basée sur PCAF
-                définit une logique d&apos;attribution propre. Les formules
-                détaillées et les hypothèses appliquées dans CarboScan sont
-                documentées dans les notes de méthode.
+          <div className="space-y-4 rounded-xl border border-border bg-muted/20 p-4 sm:p-6">
+            <div className="space-y-2">
+              <h3 className="text-base font-semibold">
+                Détail méthodologique par classe d&apos;actifs
+              </h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Pour chaque type de financement, CarboScan combine trois éléments :
+                l&apos;encours (numérateur), une valeur d&apos;attribution
+                (dénominateur) et les émissions de l&apos;objet financé. La formule
+                générale reste :{" "}
+                <span className="font-medium text-foreground">
+                  émissions financées = part attribuée × émissions de
+                  l&apos;objet financé
+                </span>
+                . Ce qui change, c&apos;est la définition de la part attribuée et
+                la nature des données carbone.
               </p>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
-                onClick={() => navigate("/app/methode")}
-              >
-                Ouvrir les notes de méthode
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
-            </CardContent>
-          </Card>
+            </div>
+
+            <div className="space-y-3">
+              {methodologyDetails.map((detail) => (
+                <Card key={detail.title}>
+                  <CardContent className="space-y-3 p-5">
+                    <h4 className="font-semibold text-foreground">{detail.title}</h4>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {detail.intro}
+                    </p>
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      <div className="rounded-lg border border-border bg-background px-3 py-2.5">
+                        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                          Numérateur
+                        </p>
+                        <p className="mt-1 text-sm text-foreground">{detail.numerator}</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-background px-3 py-2.5">
+                        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                          Dénominateur
+                        </p>
+                        <p className="mt-1 text-sm text-foreground">{detail.denominator}</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-background px-3 py-2.5">
+                        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                          Données d&apos;émissions
+                        </p>
+                        <p className="mt-1 text-sm text-foreground">{detail.emissions}</p>
+                      </div>
+                    </div>
+                    <p className="rounded-md border border-emerald-200 bg-emerald-50/50 px-3 py-2 text-sm font-medium text-emerald-950">
+                      {detail.formula}
+                    </p>
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      {detail.note}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Ces logiques sont basées sur PCAF. Elles ne sont pas interchangeables :
+              appliquer le dénominateur d&apos;un prêt entreprise à un actif
+              immobilier ou à un véhicule conduirait à un résultat incorrect.
+            </p>
+          </div>
         )}
       </section>
 

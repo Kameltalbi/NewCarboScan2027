@@ -7,11 +7,11 @@ import { MethodeCalculPage } from "@/modules/fournisseurs/MethodeCalculPage";
 import { cn } from "@/lib/utils";
 
 const NAV = [
+  { label: "Méthode de calcul", icon: BookOpen, active: true },
   { label: "Vue d'ensemble", icon: LayoutDashboard },
   { label: "Portefeuille", icon: Landmark },
   { label: "Contreparties", icon: Users },
   { label: "Qualité des données", icon: BarChart3 },
-  { label: "Méthode de calcul", icon: BookOpen, active: true },
   { label: "Rapport", icon: FileBarChart },
 ] as const;
 
