@@ -11,6 +11,7 @@ COPY packages/carbon-engine/package.json ./packages/carbon-engine/
 
 RUN npm ci
 
+COPY packages/carbon-engine ./packages/carbon-engine
 COPY apps/web ./apps/web
 
 RUN npm run build -w @newcarboscan/web
