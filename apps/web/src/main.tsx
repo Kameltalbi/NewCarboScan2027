@@ -14,7 +14,7 @@ if (import.meta.env.PROD) {
 }
 
 /** Bump after each prod deploy that changes lazy routes (forces SW/cache purge). */
-const APP_BUILD = '2026-10-01-org-type-financed-emissions-v1';
+const APP_BUILD = '2026-10-01-dashboard-analytical-sites-v1';
 const BUILD_KEY = 'carboscan:app-build';
 
 async function purgeStaleClientCaches() {

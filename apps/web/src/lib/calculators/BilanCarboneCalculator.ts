@@ -96,6 +96,32 @@ export interface BilanCarboneResult {
 
 export class BilanCarboneCalculator {
   /**
+   * Un bilan gelé sans lignes détaillées (ou sans site_id) ne permet pas
+   * d'afficher sites / postes. On continue alors sur activity_data pour enrichir.
+   */
+  private static frozenLacksOperationalDetail(result: BilanCarboneResult): boolean {
+    if (!result.frozen) return false;
+    if (!result.detailedBreakdown || result.detailedBreakdown.length === 0) return true;
+    if (!result.detailedBreakdown.some((line) => Boolean(line.siteId))) return true;
+    if (
+      result.breakdown.length > 0 &&
+      result.breakdown.every((b) => /^Scope\s*[123]$/i.test(String(b.category || "").trim()))
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  private static isScopeOnlyBreakdown(
+    breakdown: Array<{ category: string; emissions: number; percentage: number }>,
+  ): boolean {
+    return (
+      breakdown.length > 0 &&
+      breakdown.every((b) => /^Scope\s*[123]$/i.test(String(b.category || "").trim()))
+    );
+  }
+
+  /**
    * Calculer le bilan carbone pour une organisation sur une période
    * Priorité: activity_data via RPC function, fallback sur bilans_carbone pour compatibilité
    */
@@ -107,9 +133,17 @@ export class BilanCarboneCalculator {
   ): Promise<BilanCarboneResult> {
     // Un bilan soumis ou validé reste sur le snapshot de clôture.
     // Un brouillon est recalculé depuis les données d'activité.
+    // Si le snapshot n'a pas de détail opérationnel (sites / postes), on enrichit
+    // depuis activity_data sans modifier les totaux gelés.
+    let frozenShell: BilanCarboneResult | null = null;
     if (!siteId) {
       const frozen = await this.calculateFromClosedBilan(periodStart, periodEnd);
-      if (frozen) return frozen;
+      if (frozen) {
+        if (!this.frozenLacksOperationalDetail(frozen)) {
+          return frozen;
+        }
+        frozenShell = frozen;
+      }
     }
 
     // Calculer côté frontend depuis activity_data
@@ -129,6 +163,7 @@ export class BilanCarboneCalculator {
 
     // Si activity_data est vide et pas de filtre site, essayer le fallback legacy
     if (activities.length === 0 && !siteId) {
+      if (frozenShell) return frozenShell;
       return await this.calculateFromLegacyBilans(organizationId, periodStart, periodEnd);
     }
 
@@ -295,6 +330,7 @@ export class BilanCarboneCalculator {
     const totalEmissions = scope1 + scope2 + scope3;
 
     if (totalEmissions === 0 && !siteId) {
+      if (frozenShell) return frozenShell;
       const legacy = await this.calculateFromLegacyBilans(organizationId, periodStart, periodEnd);
       if (legacy.totalEmissions > 0) return legacy;
     }
@@ -315,7 +351,7 @@ export class BilanCarboneCalculator {
       }))
       .sort((a, b) => b.emissions - a.emissions);
 
-    return {
+    const liveResult: BilanCarboneResult = {
       totalEmissions,
       scope1,
       scope2,
@@ -333,6 +369,24 @@ export class BilanCarboneCalculator {
       },
       missingFactors,
     };
+
+    // Totaux gelés conservés ; détail sites/postes depuis activity_data.
+    if (frozenShell) {
+      const useLiveBreakdown =
+        this.isScopeOnlyBreakdown(frozenShell.breakdown) && liveResult.breakdown.length > 0;
+      return {
+        ...frozenShell,
+        breakdown: useLiveBreakdown ? liveResult.breakdown : frozenShell.breakdown,
+        detailedBreakdown:
+          liveResult.detailedBreakdown.length > 0
+            ? liveResult.detailedBreakdown
+            : frozenShell.detailedBreakdown,
+        missingFactors: liveResult.missingFactors,
+        dataQuality: liveResult.dataQuality,
+      };
+    }
+
+    return liveResult;
   }
 
   /**

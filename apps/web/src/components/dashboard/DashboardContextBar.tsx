@@ -101,10 +101,7 @@ export const DashboardContextBar: React.FC<DashboardContextBarProps> = ({
           className="inline-flex items-center gap-2 self-start rounded-md border border-emerald-200 bg-emerald-50/80 px-3 py-1.5 text-sm font-medium text-emerald-800 transition-colors hover:bg-emerald-100 sm:self-auto"
         >
           <Landmark className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Émissions financées</span>
-          <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
-            PCAF
-          </span>
+          <span>Émissions financées · PCAF</span>
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
       )}
