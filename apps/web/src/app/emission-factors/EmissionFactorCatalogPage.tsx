@@ -10,6 +10,7 @@ import { FactorDataSourcesTable } from "@/components/emission-factors/FactorData
 import { FactorDetailSheet } from "@/components/emission-factors/FactorDetailSheet";
 import { useFactorCatalogSearch } from "@/components/emission-factors/useFactorCatalogSearch";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { MethodNoteLink } from "@/components/method/MethodNoteLink";
 
 export default function EmissionFactorCatalogPage() {
   const { t, i18n } = useTranslation();
@@ -38,7 +39,10 @@ export default function EmissionFactorCatalogPage() {
         <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
           {t("emissionFactorCatalog.title")}
         </h1>
-        <p className="text-sm text-muted-foreground">{t("emissionFactorCatalog.subtitle")}</p>
+        <p className="text-sm text-muted-foreground">
+          {t("emissionFactorCatalog.subtitle")}{" "}
+          <MethodNoteLink noteId="facteurs" label="Note de méthode : facteurs" />
+        </p>
       </header>
 
       <FactorDataSourcesTable

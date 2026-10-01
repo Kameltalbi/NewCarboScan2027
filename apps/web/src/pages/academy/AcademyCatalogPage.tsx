@@ -99,7 +99,11 @@ const AcademyCatalogPage: React.FC = () => {
             CarboScan Academy
           </h1>
           <p className="text-muted-foreground">
-            Découvrez nos formations pour maîtriser le bilan carbone et la décarbonation
+            Parcours en ligne pour prendre en main la plateforme CarboScan : collecte, bilan, plan d'actions et exports.
+          </p>
+          <p className="text-sm text-muted-foreground mt-2 max-w-3xl">
+            Il s'agit d'une formation générale à l'outil. Ce n'est pas une formation officielle liée à une marque méthodologique.
+            Un atelier animé se note dans le plan d'actions, onglet Mobilisation. Les supports de session restent archivés avec la mission.
           </p>
         </div>
 

@@ -53,6 +53,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { GHG_SCOPE3_CATEGORIES } from '@/lib/scope3/ghg-protocol-categories';
 import { getAllSubcategories } from '@/lib/scope3/subcategories';
 import { invalidateEmissionFactorCache } from '@/lib/calculators/BilanCarboneCalculator';
+import { FactorSourceInventory } from './FactorSourceInventory';
 
 interface CustomEmissionFactor {
   id: string;
@@ -592,6 +593,7 @@ export const ParametresSources: React.FC = () => {
 
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
+      <FactorSourceInventory />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

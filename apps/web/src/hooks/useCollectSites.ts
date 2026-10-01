@@ -20,6 +20,7 @@ export interface CollectSite {
   is_consolidated: boolean;
   contact_name?: string;
   contact_email?: string;
+  operation_status?: 'operated' | 'not_operated' | null;
   metadata?: Json;
   created_at: string;
   updated_at: string;
@@ -45,6 +46,10 @@ function asSite(row: Record<string, unknown>): CollectSite {
     is_consolidated: row.is_consolidated !== false,
     contact_name: row.contact_name as string | undefined,
     contact_email: row.contact_email as string | undefined,
+    operation_status:
+      row.operation_status === 'operated' || row.operation_status === 'not_operated'
+        ? row.operation_status
+        : null,
     metadata: row.metadata as Json | undefined,
     created_at: String(row.created_at ?? ''),
     updated_at: String(row.updated_at ?? ''),
@@ -80,6 +85,7 @@ export const useCollectSites = (companyId?: string) => {
         surface_m2: input.surface_m2,
         contact_name: input.contact_name,
         contact_email: input.contact_email,
+        operation_status: input.operation_status ?? null,
       });
       return asSite((site as Record<string, unknown>) ?? {});
     },
@@ -110,6 +116,7 @@ export const useCollectSites = (companyId?: string) => {
         surface_m2: input.surface_m2,
         contact_name: input.contact_name,
         contact_email: input.contact_email,
+        operation_status: input.operation_status ?? null,
       });
       return asSite((site as Record<string, unknown>) ?? {});
     },

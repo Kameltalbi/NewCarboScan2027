@@ -64,7 +64,7 @@ export const RoadmapEntryPage: React.FC<RoadmapEntryPageProps> = ({ dataSources,
     description: '',
     baseline_year: dataSources.bilans[0]?.year || new Date().getFullYear() - 1,
     target_year: 2030,
-    reduction_target_percent: 42,
+    reduction_target_percent: null as number | null,
     owner: '',
   });
 
@@ -85,9 +85,16 @@ export const RoadmapEntryPage: React.FC<RoadmapEntryPageProps> = ({ dataSources,
     return { total: 0, scope1: 0, scope2: 0, scope3: 0, dominantScope: '—' };
   }, [selectedSource, selectedBilan]);
 
-  const targetEmissions = baseline.total * (1 - form.reduction_target_percent / 100);
+  const targetEmissions = form.reduction_target_percent == null
+    ? null
+    : baseline.total * (1 - form.reduction_target_percent / 100);
 
-  const canStart = form.name.trim().length > 0 && baseline.total > 0 && form.target_year > form.baseline_year;
+  const canStart = form.name.trim().length > 0
+    && baseline.total > 0
+    && form.target_year > form.baseline_year
+    && form.reduction_target_percent != null
+    && form.reduction_target_percent >= 0
+    && form.reduction_target_percent <= 100;
 
   const handleStart = () => {
     onStart({
@@ -98,7 +105,7 @@ export const RoadmapEntryPage: React.FC<RoadmapEntryPageProps> = ({ dataSources,
       perimeter,
       baseline_year: form.baseline_year,
       target_year: form.target_year,
-      reduction_target_percent: form.reduction_target_percent,
+      reduction_target_percent: form.reduction_target_percent ?? 0,
       baseline_emissions_tco2e: baseline.total,
       scope1: baseline.scope1,
       scope2: baseline.scope2,
@@ -323,15 +330,20 @@ export const RoadmapEntryPage: React.FC<RoadmapEntryPageProps> = ({ dataSources,
                   <Label className="text-xs">Objectif de réduction (%)</Label>
                   <Input
                     type="number"
-                    value={form.reduction_target_percent}
-                    onChange={e => setForm(p => ({ ...p, reduction_target_percent: parseFloat(e.target.value) || 0 }))}
+                    value={form.reduction_target_percent ?? ''}
+                    onChange={e => setForm(p => ({
+                      ...p,
+                      reduction_target_percent: e.target.value.trim() === '' ? null : Number(e.target.value),
+                    }))}
                     min={1} max={100}
                     className="mt-1"
                   />
                 </div>
               </div>
 
-              {/* SBTi presets */}
+              <p className="text-[11px] text-muted-foreground">
+                Les propositions ci-dessous ne deviennent l&apos;objectif qu&apos;une fois choisies.
+              </p>
               <div className="flex gap-2">
                 {SBTi_PRESETS.map(p => (
                   <button
@@ -367,9 +379,13 @@ export const RoadmapEntryPage: React.FC<RoadmapEntryPageProps> = ({ dataSources,
                       </div>
                       <Separator />
                       <PreviewRow label="Scope dominant" value={baseline.dominantScope} />
-                      <PreviewRow label="Objectif" value={`−${form.reduction_target_percent}% d'ici ${form.target_year}`} />
-                      <PreviewRow label="Cible" value={`${targetEmissions.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} tCO₂e`} />
-                      <PreviewRow label="Réduction à atteindre" value={`${(baseline.total - targetEmissions).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} tCO₂e`} bold />
+                      {form.reduction_target_percent != null && targetEmissions != null && (
+                        <>
+                          <PreviewRow label="Objectif" value={`−${form.reduction_target_percent}% d'ici ${form.target_year}`} />
+                          <PreviewRow label="Cible" value={`${targetEmissions.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} tCO₂e`} />
+                          <PreviewRow label="Réduction à atteindre" value={`${(baseline.total - targetEmissions).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} tCO₂e`} bold />
+                        </>
+                      )}
                     </>
                   ) : (
                     <div className="text-center py-6">

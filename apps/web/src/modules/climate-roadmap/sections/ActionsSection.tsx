@@ -1,7 +1,7 @@
 // Section 4 — Plan de réduction (inspiré Greenly)
 // Actions classées par poste d'émission, chaque action en carte, popup détaillée
 
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +13,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, ChevronRight, X, CheckCircle2, Clock, AlertTriangle, Zap, Truck, Building2, Monitor, ShoppingCart, Trash2, Factory, Leaf } from 'lucide-react';
 import { ClimateAction, ClimateLever, ACTION_STATUS_LABELS, ACTION_STATUS_COLORS, PRIORITY_LABELS, PRIORITY_COLORS, ActionStatus, ActionPriority, LEVER_CATEGORY_LABELS } from '../types';
+import { api } from '@/integrations/api/client';
+import { toast } from 'sonner';
+import { actionTypeLabel, ESTIMATION_METHODS, PLAN_ACTION_TYPES, toClimateActionPayload, type ActionPlanForm } from '@/lib/climate/actionPlan';
+import { MethodNoteLink } from '@/components/method/MethodNoteLink';
 
 interface ActionsSectionProps {
   actions: ClimateAction[];
@@ -65,6 +69,16 @@ const STEPS: { id: StepId; label: string; icon: React.ElementType }[] = [
   { id: 'completed', label: 'Terminé', icon: CheckCircle2 },
 ];
 
+function dateInputValue(value: string | null | undefined): string {
+  if (!value) return "";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 const STEP_STATUSES: Record<StepId, ActionStatus[]> = {
   select: ['to_launch', 'studying'],
   prioritize: ['validated'],
@@ -99,19 +113,17 @@ const ActionDetailPopup: React.FC<{
 }> = ({ action, lever, onUpdate, onClose }) => {
   const [status, setStatus] = useState<ActionStatus>(action.status);
   const [ownerName, setOwnerName] = useState(action.owner_name || '');
-  const [targetDate, setTargetDate] = useState(action.target_date || '');
+  const [targetDate, setTargetDate] = useState(dateInputValue(action.target_date));
   const [priority, setPriority] = useState<ActionPriority>(action.priority);
   const [notes, setNotes] = useState(action.comments || '');
   const [saving, setSaving] = useState(false);
 
-  // Calculate efficacy from expected reduction vs lever potential
   const efficacy = lever && lever.estimated_potential_reduction_tco2e > 0
-    ? Math.min(100, Math.round((action.expected_reduction_tco2e / lever.estimated_potential_reduction_tco2e) * 100))
-    : 75;
+    ? Math.min(100, Math.round(((Number(action.expected_reduction_tco2e) || 0) / lever.estimated_potential_reduction_tco2e) * 100))
+    : null;
 
-  // Feasibility based on complexity
   const feasibilityMap: Record<string, string> = { low: 'Facile', medium: 'Modérée', high: 'Complexe', very_high: 'Très complexe' };
-  const feasibility = lever ? feasibilityMap[lever.complexity_level] || 'Modérée' : 'Modérée';
+  const feasibility = lever?.complexity_level ? feasibilityMap[lever.complexity_level] ?? null : null;
 
   const handleSave = async () => {
     setSaving(true);
@@ -139,10 +151,12 @@ const ActionDetailPopup: React.FC<{
           )}
           <h3 className="font-semibold text-foreground leading-tight">{action.title}</h3>
         </div>
-        <div className="text-center shrink-0">
-          <p className="text-[10px] text-muted-foreground mb-1">Efficacité</p>
-          <EfficacyCircle value={efficacy} />
-        </div>
+        {efficacy != null && (
+          <div className="text-center shrink-0">
+            <p className="text-[10px] text-muted-foreground mb-1">Efficacité</p>
+            <EfficacyCircle value={efficacy} />
+          </div>
+        )}
       </div>
 
       {/* Description */}
@@ -154,20 +168,24 @@ const ActionDetailPopup: React.FC<{
 
       {/* Feasibility & Impact */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <p className="text-xs text-muted-foreground">Estimation de la faisabilité</p>
-          <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${
-              feasibility === 'Facile' ? 'bg-emerald-500' :
-              feasibility === 'Modérée' ? 'bg-amber-500' : 'bg-red-500'
-            }`} />
-            <span className="text-sm font-medium">{feasibility}</span>
+        {feasibility && (
+          <div className="space-y-1.5">
+            <p className="text-xs text-muted-foreground">Estimation de la faisabilité</p>
+            <div className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${
+                feasibility === 'Facile' ? 'bg-emerald-500' :
+                feasibility === 'Modérée' ? 'bg-amber-500' : 'bg-red-500'
+              }`} />
+              <span className="text-sm font-medium">{feasibility}</span>
+            </div>
           </div>
-        </div>
+        )}
         <div className="space-y-1.5">
-          <p className="text-xs text-muted-foreground">Estimation de l'impact</p>
+          <p className="text-xs text-muted-foreground">Potentiel estimé</p>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">{Math.round(action.expected_reduction_tco2e)}</span>
+            <span className="text-sm font-medium">
+              {action.expected_reduction_tco2e == null ? "—" : Math.round(Number(action.expected_reduction_tco2e))}
+            </span>
             <span className="text-xs text-muted-foreground">tCO₂e</span>
           </div>
         </div>
@@ -275,8 +293,8 @@ const ActionCard: React.FC<{
   const [open, setOpen] = useState(false);
 
   const efficacy = lever && lever.estimated_potential_reduction_tco2e > 0
-    ? Math.min(100, Math.round((action.expected_reduction_tco2e / lever.estimated_potential_reduction_tco2e) * 100))
-    : 75;
+    ? Math.min(100, Math.round((Number(action.expected_reduction_tco2e) || 0) / lever.estimated_potential_reduction_tco2e * 100))
+    : null;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -284,12 +302,15 @@ const ActionCard: React.FC<{
         <Card className="cursor-pointer hover:shadow-md transition-all hover:border-primary/30 group">
           <CardContent className="p-4 space-y-3">
             {/* Category badge */}
-            {lever && (
-              <Badge variant="outline" className="text-[10px]">
-                <span className={`w-2 h-2 rounded-full ${POSTE_COLORS[lever.category] || 'bg-muted'} mr-1.5 inline-block`} />
-                {LEVER_CATEGORY_LABELS[lever.category] || lever.category}
-              </Badge>
-            )}
+            <div className="flex flex-wrap gap-1">
+              <Badge variant="outline" className="text-[10px]">{actionTypeLabel(action.action_type)}</Badge>
+              {lever && (
+                <Badge variant="outline" className="text-[10px]">
+                  <span className={`w-2 h-2 rounded-full ${POSTE_COLORS[lever.category] || 'bg-muted'} mr-1.5 inline-block`} />
+                  {LEVER_CATEGORY_LABELS[lever.category] || lever.category}
+                </Badge>
+              )}
+            </div>
 
             {/* Title */}
             <p className="text-sm font-medium text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
@@ -300,13 +321,17 @@ const ActionCard: React.FC<{
             <div className="flex items-center justify-between pt-1">
               <div className="flex items-center gap-3">
                 <div className="text-center">
-                  <p className="text-[9px] text-muted-foreground">Impact</p>
-                  <p className="text-xs font-semibold">{Math.round(action.expected_reduction_tco2e)} tCO₂e</p>
+                  <p className="text-[9px] text-muted-foreground">Potentiel estimé</p>
+                  <p className="text-xs font-semibold">
+                    {action.expected_reduction_tco2e == null ? "—" : `${Math.round(Number(action.expected_reduction_tco2e))} tCO₂e`}
+                  </p>
                 </div>
-                <div className="text-center">
-                  <p className="text-[9px] text-muted-foreground">Pertinence</p>
-                  <EfficacyCircle value={efficacy} />
-                </div>
+                {efficacy != null && (
+                  <div className="text-center">
+                    <p className="text-[9px] text-muted-foreground">Pertinence</p>
+                    <EfficacyCircle value={efficacy} />
+                  </div>
+                )}
               </div>
               <div className="flex flex-col items-end gap-1">
                 <Badge className={`${ACTION_STATUS_COLORS[action.status]} text-[10px]`}>
@@ -336,11 +361,25 @@ export const ActionsSection: React.FC<ActionsSectionProps> = ({ actions, levers,
   const [currentStep, setCurrentStep] = useState<StepId>('select');
   const [activeCategoryIdx, setActiveCategoryIdx] = useState(0);
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({
-    title: '', description: '', lever_id: '', priority: 'medium' as ActionPriority,
-    expected_reduction_tco2e: 0, budget_estimated: 0, owner_name: '',
-    start_date: '', target_date: '',
-  });
+  const emptyForm: ActionPlanForm = {
+    title: '', description: '', actionType: 'reduction', leverId: '', poste: '',
+    siteId: '', ownerName: '', startDate: '', targetDate: '', priority: 'medium',
+    status: 'to_launch', budget: '', indicatorName: '', indicatorTarget: '',
+    potentialT: '', estimationMethod: '',
+  };
+  const [form, setForm] = useState<ActionPlanForm>(emptyForm);
+  const [sites, setSites] = useState<Array<{ id: string; name: string }>>([]);
+
+  useEffect(() => {
+    api.listSites()
+      .then((result) => {
+        setSites((result.items || []).map((site) => ({
+          id: String(site.id),
+          name: String(site.name ?? "Site"),
+        })));
+      })
+      .catch(() => setSites([]));
+  }, []);
 
   // Filter actions by current step
   const stepActions = useMemo(() => {
@@ -375,14 +414,14 @@ export const ActionsSection: React.FC<ActionsSectionProps> = ({ actions, levers,
   const activeCategory = categories[activeCategoryIdx] || null;
 
   const handleCreate = async () => {
-    if (!form.lever_id || !form.title) return;
-    await onCreateAction({
-      ...form,
-      start_date: form.start_date || null,
-      target_date: form.target_date || null,
-    });
+    const prepared = toClimateActionPayload(form);
+    if ("error" in prepared) {
+      toast.error(prepared.error);
+      return;
+    }
+    await onCreateAction(prepared);
     setShowCreate(false);
-    setForm({ title: '', description: '', lever_id: '', priority: 'medium', expected_reduction_tco2e: 0, budget_estimated: 0, owner_name: '', start_date: '', target_date: '' });
+    setForm(emptyForm);
   };
 
   return (
@@ -442,33 +481,136 @@ export const ActionsSection: React.FC<ActionsSectionProps> = ({ actions, levers,
           <DialogTrigger asChild>
             <Button size="sm" className="gap-2"><Plus className="h-4 w-4" />Créer une action</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Nouvelle action climat</DialogTitle></DialogHeader>
             <div className="space-y-4">
+              <p className="text-xs text-muted-foreground">
+                Le potentiel en tCO₂e est une estimation. Il reste dans le plan et ne change pas le total du bilan.{" "}
+                <MethodNoteLink noteId="plan-de-transition" label="Note de méthode" />
+              </p>
               <div>
-                <Label>Levier associé</Label>
-                <Select value={form.lever_id} onValueChange={v => setForm({ ...form, lever_id: v })}>
-                  <SelectTrigger><SelectValue placeholder="Choisir un levier" /></SelectTrigger>
+                <Label htmlFor="action-title">Titre</Label>
+                <Input id="action-title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="action-description">Description</Label>
+                <Textarea id="action-description" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Type d&apos;action</Label>
+                  <Select value={form.actionType} onValueChange={v => setForm({ ...form, actionType: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {PLAN_ACTION_TYPES.map((item) => (
+                        <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Priorité</Label>
+                  <Select value={form.priority} onValueChange={v => setForm({ ...form, priority: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(PRIORITY_LABELS) as ActionPriority[]).map((key) => (
+                        <SelectItem key={key} value={key}>{PRIORITY_LABELS[key]}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Statut</Label>
+                  <Select value={form.status} onValueChange={v => setForm({ ...form, status: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(ACTION_STATUS_LABELS) as ActionStatus[]).map((key) => (
+                        <SelectItem key={key} value={key}>{ACTION_STATUS_LABELS[key]}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="action-poste">Poste</Label>
+                  <Input id="action-poste" value={form.poste} onChange={e => setForm({ ...form, poste: e.target.value })} />
+                </div>
+              </div>
+              {form.actionType === "suppliers" && (
+                <p className="text-xs text-muted-foreground">
+                  Les plans fournisseurs détaillés restent dans le module fournisseurs.
+                </p>
+              )}
+              <div>
+                <Label>Levier</Label>
+                <Select value={form.leverId || "none"} onValueChange={v => setForm({ ...form, leverId: v === "none" ? "" : v })}>
+                  <SelectTrigger><SelectValue placeholder="Aucun levier" /></SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="none">Aucun levier</SelectItem>
                     {levers.map(l => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Site</Label>
+                  <Select value={form.siteId || "none"} onValueChange={v => setForm({ ...form, siteId: v === "none" ? "" : v })}>
+                    <SelectTrigger><SelectValue placeholder="Non renseigné" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Non renseigné</SelectItem>
+                      {sites.map((site) => <SelectItem key={site.id} value={site.id}>{site.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="action-owner">Responsable</Label>
+                  <Input id="action-owner" value={form.ownerName} onChange={e => setForm({ ...form, ownerName: e.target.value })} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="action-start">Date de début</Label>
+                  <Input id="action-start" type="date" value={form.startDate} onChange={e => setForm({ ...form, startDate: e.target.value })} />
+                </div>
+                <div>
+                  <Label htmlFor="action-end">Date cible</Label>
+                  <Input id="action-end" type="date" value={form.targetDate} onChange={e => setForm({ ...form, targetDate: e.target.value })} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="action-cost">Coût estimé</Label>
+                  <Input id="action-cost" inputMode="decimal" value={form.budget} onChange={e => setForm({ ...form, budget: e.target.value })} />
+                </div>
+                <div>
+                  <Label htmlFor="action-potential">Potentiel estimé (tCO₂e)</Label>
+                  <Input id="action-potential" inputMode="decimal" value={form.potentialT} onChange={e => setForm({ ...form, potentialT: e.target.value })} />
+                </div>
+              </div>
               <div>
-                <Label>Titre de l'action</Label>
-                <Input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Ex: Passage à la visioconférence" />
+                <Label>Méthode d&apos;estimation</Label>
+                <Select value={form.estimationMethod || "unspecified"} onValueChange={v => setForm({ ...form, estimationMethod: v === "unspecified" ? "" : v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unspecified">Non renseignée</SelectItem>
+                    {ESTIMATION_METHODS.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div><Label>Description</Label><Textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} placeholder="Décrivez l'action et comment la mettre en place..." /></div>
               <div className="grid grid-cols-2 gap-3">
-                <div><Label>Réduction attendue (tCO₂e)</Label><Input type="number" value={form.expected_reduction_tco2e} onChange={e => setForm({ ...form, expected_reduction_tco2e: +e.target.value })} /></div>
-                <div><Label>Budget estimé (€)</Label><Input type="number" value={form.budget_estimated} onChange={e => setForm({ ...form, budget_estimated: +e.target.value })} /></div>
+                <div>
+                  <Label htmlFor="action-kpi">Indicateur</Label>
+                  <Input id="action-kpi" value={form.indicatorName} onChange={e => setForm({ ...form, indicatorName: e.target.value })} />
+                </div>
+                <div>
+                  <Label htmlFor="action-kpi-target">Cible de l&apos;indicateur</Label>
+                  <Input id="action-kpi-target" value={form.indicatorTarget} onChange={e => setForm({ ...form, indicatorTarget: e.target.value })} />
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div><Label>Date de début</Label><Input type="date" value={form.start_date} onChange={e => setForm({ ...form, start_date: e.target.value })} /></div>
-                <div><Label>Date butoire</Label><Input type="date" value={form.target_date} onChange={e => setForm({ ...form, target_date: e.target.value })} /></div>
-              </div>
-              <div><Label>Responsable</Label><Input value={form.owner_name} onChange={e => setForm({ ...form, owner_name: e.target.value })} placeholder="Nom du responsable" /></div>
-              <Button onClick={handleCreate} disabled={!form.title || !form.lever_id} className="w-full">Créer l'action</Button>
+              <Button onClick={handleCreate} disabled={!form.title.trim()} className="w-full">Créer l&apos;action</Button>
             </div>
           </DialogContent>
         </Dialog>

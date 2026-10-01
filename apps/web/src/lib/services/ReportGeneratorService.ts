@@ -8,6 +8,7 @@
  */
 
 import { api } from '@/integrations/api/client';
+import { consolidationLabel } from '@/lib/perimeter/consolidation';
 import { REPORT_PALETTE, applyReportPalette } from './reportPalette';
 import { logger } from '@/utils/logger';
 import { BilanCarboneCalculator } from '@/lib/calculators/BilanCarboneCalculator';
@@ -740,7 +741,8 @@ export class ReportGeneratorService {
       activeSitesCount: siteList.length,
       sitesWithScope3: 0,
       logoUrl: org?.logoUrl || null,
-      pilotName: org?.pilotName || null
+      pilotName: org?.pilotName || null,
+      consolidationMethod: org?.consolidationMethod || null,
     };
   }
 
@@ -975,8 +977,7 @@ export class ReportGeneratorService {
       year: 'numeric'
     });
 
-    // Méthode de consolidation (par défaut : contrôle opérationnel)
-    const consolidationMethod = 'contrôle opérationnel';
+    const consolidationMethod = consolidationLabel(orgData.consolidationMethod);
 
     // Pilote de la démarche et nom complet : configurables dans Paramètres > Organisation
     const pilotName = orgData.pilotName || 'le pilote désigné au sein de l\'organisation';

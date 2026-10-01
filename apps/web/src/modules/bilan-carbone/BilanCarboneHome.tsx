@@ -36,6 +36,11 @@ import {
 } from '@/components/ui/alert-dialog';
 
 import { toast } from 'sonner';
+import { DataMethodShare } from './DataMethodShare';
+import { UncertaintyPanel } from './UncertaintyPanel';
+import { ReductionTrajectoryCard } from './ReductionTrajectoryCard';
+import { SiteRollupCard } from './SiteRollupCard';
+import { IntensityCard } from './IntensityCard';
 
 
 export const BilanCarboneHome: React.FC = () => {
@@ -47,6 +52,9 @@ export const BilanCarboneHome: React.FC = () => {
   const [orgMeta, setOrgMeta] = useState<{ name: string; employees: number | null; sector?: string; revenue: number | null; currency: string }>({ name: 'Mon Organisation', employees: null, sector: undefined, revenue: null, currency: 'TND' });
   const [exporting, setExporting] = useState<null | 'pptx'>(null);
   const [showGenerateConfirm, setShowGenerateConfirm] = useState(false);
+  const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const { 
     isGenerating, 
@@ -100,7 +108,7 @@ export const BilanCarboneHome: React.FC = () => {
     };
     
     loadBilan();
-  }, [organizationId, orgLoading, referenceYear, user]);
+  }, [organizationId, orgLoading, referenceYear, user, reloadKey]);
 
   // Fonction pour sauvegarder le bilan dans l'historique
   const saveBilanToHistory = async (bilanData: any, orgId: string, year: number) => {
@@ -138,6 +146,57 @@ export const BilanCarboneHome: React.FC = () => {
     }
   };
 
+  const closeBilan = async () => {
+    if (!organizationId || !bilanData?.detailedBreakdown?.length) {
+      toast.error("Ce bilan n'a pas de lignes à figer.");
+      return;
+    }
+    setClosing(true);
+    try {
+      const year = referenceYear;
+      const { items } = await api.listBilans();
+      let existing = (items || []).find((b: any) => Number(b.year) === year) as any;
+      if (!existing) {
+        const created = await api.createBilan({
+          year,
+          name: `Bilan ${year}`,
+          status: "draft",
+          totalEmission: bilanData.totalEmissions / 1000,
+          scope1Emission: bilanData.scope1 / 1000,
+          scope2Emission: bilanData.scope2 / 1000,
+          scope3Emission: bilanData.scope3 / 1000,
+          dateBilan: `${year}-12-31`,
+        });
+        existing = created.bilan;
+      }
+      const lines = bilanData.detailedBreakdown.map((line: any, index: number) => ({
+        lineKey: `${line.scope}:${line.category}:${line.subcategory}:${index}`.slice(0, 200),
+        name: line.subcategory || line.category || `Ligne ${index + 1}`,
+        category: line.category || "other",
+        scope: line.scope,
+        quantity: Number(line.quantity) || 0,
+        activityUnit: line.unit || "unité",
+        factorValue: Number(line.emissionFactor) || 0,
+        factorUnit: line.emissionFactorUnit || "kgCO2e",
+        factorSource: line.emissionFactorSource || "Non trouvé",
+        factorName: line.subcategory || line.category || `Ligne ${index + 1}`,
+        resultKgCo2e: Number(line.emissions) || 0,
+      }));
+      await api.closeBilan(existing.id, {
+        periodStart: `${year}-01-01`,
+        periodEnd: `${year}-12-31`,
+        lines,
+      });
+      toast.success("Bilan clôturé. Les facteurs utilisés sont conservés.");
+      setShowCloseConfirm(false);
+      setReloadKey((value) => value + 1);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Impossible de clôturer le bilan.");
+    } finally {
+      setClosing(false);
+    }
+  };
+
   const hasBilanData = bilanData && bilanData.totalEmissions > 0;
 
   if (loading || orgLoading) {
@@ -163,7 +222,9 @@ export const BilanCarboneHome: React.FC = () => {
                   <div>
                     <h2 className="text-xl font-bold text-slate-900">Bilan Carbone {referenceYear}</h2>
                     <Badge className="bg-[#87C6A0]/20 text-[#5F9E6B] border-[#87C6A0]/50 mt-1">
-                      Calculé depuis vos données
+                      {bilanData.frozen
+                        ? `Clôturé${bilanData.frozenAt ? ` le ${new Date(bilanData.frozenAt).toLocaleDateString("fr-FR")}` : ""}`
+                        : "Calculé depuis vos données"}
                     </Badge>
                   </div>
                 </div>
@@ -194,6 +255,40 @@ export const BilanCarboneHome: React.FC = () => {
                     <div className="text-xs text-muted-foreground whitespace-nowrap">Scope 3</div>
                   </div>
                 </div>
+                <DataMethodShare
+                  lines={(bilanData.detailedBreakdown || []).map((line) => ({
+                    method: line.dataMethod,
+                    kg: line.emissions,
+                    source: line.emissionFactorSource,
+                  }))}
+                />
+                <SiteRollupCard
+                  organizationKg={bilanData.totalEmissions}
+                  lines={(bilanData.detailedBreakdown || []).map((line) => ({
+                    siteId: line.siteId,
+                    scope: line.scope,
+                    kg: line.emissions,
+                  }))}
+                />
+                <IntensityCard totalKg={bilanData.totalEmissions} />
+                <UncertaintyPanel
+                  lines={(bilanData.detailedBreakdown || []).map((line) => ({
+                    label: line.subcategory,
+                    kg: line.emissions,
+                    quality: line.dataQuality,
+                    uncertaintyPct: line.uncertaintyPct ?? null,
+                  }))}
+                />
+                <ReductionTrajectoryCard />
+                {bilanData.frozen && bilanData.detailedBreakdown?.length > 0 && (
+                  <ul className="text-xs text-muted-foreground space-y-1 pt-2 max-w-xl">
+                    {bilanData.detailedBreakdown.slice(0, 6).map((line: any, index: number) => (
+                      <li key={`${line.subcategory}-${index}`}>
+                        {line.subcategory} · {line.emissionFactor} {line.emissionFactorUnit} · {line.emissionFactorSource}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               
               <div className="flex flex-col gap-2">
@@ -205,6 +300,15 @@ export const BilanCarboneHome: React.FC = () => {
                   <FileText className="h-4 w-4 mr-2" />
                   Générer le rapport
                 </Button>
+                {!bilanData.frozen && bilanData.detailedBreakdown?.length > 0 && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCloseConfirm(true)}
+                    disabled={closing}
+                  >
+                    Clôturer le bilan
+                  </Button>
+                )}
               </div>
 
             </div>
@@ -279,9 +383,9 @@ export const BilanCarboneHome: React.FC = () => {
             <div className="flex-1">
               <h3 className="font-semibold text-slate-900 mb-2">Flux de calcul unifié</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Votre bilan carbone est calculé automatiquement à partir des données saisies dans le module 
-                <strong> Collecte de données</strong>. Les émissions sont mises à jour en temps réel et utilisent 
-                vos facteurs d'émission personnalisés ou la base ADEME Base Carbone 2024.
+                {bilanData?.frozen
+                  ? "Ce bilan est clôturé. Les facteurs affichés sont ceux enregistrés à la clôture. Une mise à jour du catalogue ne les change pas."
+                  : "Votre bilan carbone est calculé à partir des données saisies dans le module Collecte de données. Tant qu'il reste en brouillon, un nouveau calcul reprend les facteurs du moment. La clôture conserve le facteur de chaque ligne."}
               </p>
               <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground">
                 <Calendar className="h-4 w-4" />
@@ -410,6 +514,24 @@ export const BilanCarboneHome: React.FC = () => {
               }}
             >
               Générer le rapport
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showCloseConfirm} onOpenChange={setShowCloseConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Clôturer le bilan {referenceYear}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Les facteurs de chaque ligne sont enregistrés tels qu'ils sont aujourd'hui.
+              Une modification ultérieure du catalogue ne changera pas ce bilan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={closing}>Annuler</AlertDialogCancel>
+            <AlertDialogAction disabled={closing} onClick={() => void closeBilan()}>
+              {closing ? "Clôture..." : "Clôturer"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

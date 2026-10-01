@@ -31,6 +31,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCollectSites, type CollectSite, type CreateSiteInput } from '@/hooks/useCollectSites';
+import { SiteOperationField } from '@/components/collect/sites/SiteOperationField';
+import { fromOperationChoice, operationStatusLabel, toOperationChoice, type OperationChoice } from '@/lib/perimeter/consolidation';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from "@/integrations/api/client";
 import { useQuery } from '@tanstack/react-query';
@@ -81,6 +83,7 @@ export const SitesManagementDialog: React.FC<SitesManagementDialogProps> = ({
     site_type: 'bureau',
     employees_count: '',
     surface_m2: '',
+    operation_status: 'unspecified' as OperationChoice,
   });
 
   const resetForm = () => {
@@ -92,6 +95,7 @@ export const SitesManagementDialog: React.FC<SitesManagementDialogProps> = ({
       site_type: 'bureau',
       employees_count: '',
       surface_m2: '',
+      operation_status: 'unspecified',
     });
     setEditingSite(null);
     setIsCreating(false);
@@ -107,6 +111,7 @@ export const SitesManagementDialog: React.FC<SitesManagementDialogProps> = ({
       site_type: site.site_type || 'bureau',
       employees_count: site.employees_count?.toString() || '',
       surface_m2: site.surface_m2?.toString() || '',
+      operation_status: toOperationChoice(site.operation_status),
     });
     setIsCreating(true);
   };
@@ -138,6 +143,7 @@ export const SitesManagementDialog: React.FC<SitesManagementDialogProps> = ({
       site_type: formData.site_type,
       employees_count: formData.employees_count ? parseInt(formData.employees_count) : undefined,
       surface_m2: formData.surface_m2 ? parseFloat(formData.surface_m2) : undefined,
+      operation_status: fromOperationChoice(formData.operation_status),
       is_active: true,
       is_consolidated: true,
     };
@@ -244,6 +250,10 @@ export const SitesManagementDialog: React.FC<SitesManagementDialogProps> = ({
                           placeholder="Ex: Tunisie"
                         />
                       </div>
+                      <SiteOperationField
+                        value={formData.operation_status}
+                        onChange={(operation_status) => setFormData({ ...formData, operation_status })}
+                      />
                       <div className="space-y-2">
                         <Label htmlFor="site_type">Type de site</Label>
                         <Select
@@ -335,7 +345,7 @@ export const SitesManagementDialog: React.FC<SitesManagementDialogProps> = ({
                             </div>
                             <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
                               <Badge variant="outline" className="text-xs">
-                                {getSiteTypeLabel(site.site_type)}
+                                {getSiteTypeLabel(site.site_type)} · {operationStatusLabel(site.operation_status)}
                               </Badge>
                               {site.city && (
                                 <span className="flex items-center gap-1">

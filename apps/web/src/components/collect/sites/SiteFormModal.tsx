@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import type { CollectSite } from '@/hooks/useCollectSites';
+import { SiteOperationField } from './SiteOperationField';
+import { fromOperationChoice, toOperationChoice, type OperationChoice } from '@/lib/perimeter/consolidation';
 
 const siteFormSchema = z.object({
   name: z.string().min(1, 'Le nom est requis'),
@@ -35,6 +37,7 @@ const siteFormSchema = z.object({
   contact_email: z.string().email().optional().or(z.literal('')),
   is_active: z.boolean(),
   is_consolidated: z.boolean(),
+  operation_status: z.enum(['operated', 'not_operated', 'unspecified']),
 });
 
 type SiteFormValues = z.infer<typeof siteFormSchema>;
@@ -44,7 +47,10 @@ interface SiteFormModalProps {
   onOpenChange: (open: boolean) => void;
   site?: CollectSite;
   companyId: string;
-  onSubmit: (data: SiteFormValues & { company_id: string }) => void;
+  onSubmit: (data: Omit<SiteFormValues, 'operation_status'> & {
+    company_id: string;
+    operation_status: 'operated' | 'not_operated' | null;
+  }) => void;
   isLoading?: boolean;
 }
 
@@ -80,6 +86,7 @@ export const SiteFormModal: React.FC<SiteFormModalProps> = ({
       contact_email: site?.contact_email || '',
       is_active: site?.is_active ?? true,
       is_consolidated: site?.is_consolidated ?? true,
+      operation_status: toOperationChoice(site?.operation_status),
     },
   });
 
@@ -98,6 +105,7 @@ export const SiteFormModal: React.FC<SiteFormModalProps> = ({
         contact_email: site.contact_email || '',
         is_active: site.is_active,
         is_consolidated: site.is_consolidated,
+        operation_status: toOperationChoice(site.operation_status),
       });
     } else {
       form.reset({
@@ -113,12 +121,17 @@ export const SiteFormModal: React.FC<SiteFormModalProps> = ({
         contact_email: '',
         is_active: true,
         is_consolidated: true,
+        operation_status: 'unspecified',
       });
     }
   }, [site, form]);
 
   const handleSubmit = (data: SiteFormValues) => {
-    onSubmit({ ...data, company_id: companyId });
+    onSubmit({
+      ...data,
+      company_id: companyId,
+      operation_status: fromOperationChoice(data.operation_status as OperationChoice),
+    });
   };
 
   return (
@@ -183,6 +196,17 @@ export const SiteFormModal: React.FC<SiteFormModalProps> = ({
                     </Select>
                     <FormMessage />
                   </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="operation_status"
+                render={({ field }) => (
+                  <SiteOperationField
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 )}
               />
 

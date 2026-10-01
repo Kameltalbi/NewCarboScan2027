@@ -44,6 +44,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useCollectSites, type CollectSite, type CreateSiteInput } from '@/hooks/useCollectSites';
+import { SiteOperationField } from '@/components/collect/sites/SiteOperationField';
+import { fromOperationChoice, operationStatusLabel, toOperationChoice, type OperationChoice } from '@/lib/perimeter/consolidation';
 import { useAuth } from '@/hooks/useAuth';
 import { api } from "@/integrations/api/client";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -99,6 +101,7 @@ export const ParametresSites: React.FC = () => {
     site_type: 'bureau',
     employees_count: '',
     surface_m2: '',
+    operation_status: 'unspecified' as OperationChoice,
   });
 
   const resetForm = () => {
@@ -111,6 +114,7 @@ export const ParametresSites: React.FC = () => {
       site_type: 'bureau',
       employees_count: '',
       surface_m2: '',
+      operation_status: 'unspecified',
     });
     setEditingSite(null);
     setIsFormOpen(false);
@@ -127,6 +131,7 @@ export const ParametresSites: React.FC = () => {
       site_type: site.site_type || 'bureau',
       employees_count: site.employees_count?.toString() || '',
       surface_m2: site.surface_m2?.toString() || '',
+      operation_status: toOperationChoice(site.operation_status),
     });
     setIsFormOpen(true);
   };
@@ -158,6 +163,7 @@ export const ParametresSites: React.FC = () => {
       site_type: formData.site_type,
       employees_count: formData.employees_count ? parseInt(formData.employees_count) : undefined,
       surface_m2: formData.surface_m2 ? parseFloat(formData.surface_m2) : undefined,
+      operation_status: fromOperationChoice(formData.operation_status),
       is_active: true,
       is_consolidated: true,
     };
@@ -302,6 +308,9 @@ export const ParametresSites: React.FC = () => {
                               {site.code}
                             </Badge>
                           )}
+                          <Badge variant="outline" className="text-xs font-normal">
+                            {operationStatusLabel(site.operation_status)}
+                          </Badge>
                           {!site.is_active && (
                             <Badge variant="secondary" className="text-xs">Inactif</Badge>
                           )}
@@ -387,6 +396,11 @@ export const ParametresSites: React.FC = () => {
                 />
               </div>
             </div>
+
+            <SiteOperationField
+              value={formData.operation_status}
+              onChange={(operation_status) => setFormData({ ...formData, operation_status })}
+            />
 
             <div className="space-y-2">
               <Label htmlFor="site_type">Type de site</Label>

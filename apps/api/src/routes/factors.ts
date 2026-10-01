@@ -21,6 +21,7 @@ import {
 } from "../services/factorSearch.js";
 import { resolveFactor } from "../services/factorResolver/index.js";
 import { resolveAndCalculate } from "../services/factorResolver/resolveAndCalculate.js";
+import { listFactorSourceInventory } from "../services/factorSourceInventory.js";
 
 function isDraftCatalogRequest(status: string | undefined): boolean {
   return status === "draft" || status === "deprecated";
@@ -267,6 +268,15 @@ export async function registerFactorRoutes(app: FastifyInstance) {
         const message = clientSafeError(err, "resolve-and-calculate failed");
         return reply.code(500).send({ error: message });
       }
+    },
+  );
+
+  app.get(
+    "/v1/factors/sources",
+    { preHandler: [app.requireOrgMember] },
+    async () => {
+      const items = await listFactorSourceInventory(pool);
+      return { items };
     },
   );
 

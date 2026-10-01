@@ -2,6 +2,8 @@
 import React from "react";
 import { HomeHeader } from "@/components/HomeHeader";
 import { NewHeroSection } from "@/components/NewHeroSection";
+import { StrategicPillarsSection } from "@/components/homepage/StrategicPillarsSection";
+import { AfricaPositioningSection } from "@/components/homepage/AfricaPositioningSection";
 import { SuiteModulesSection } from "@/components/homepage/SuiteModulesSection";
 import { CarboScanWattBimToggleSection } from "@/components/homepage/CarboScanWattBimToggleSection";
 import { WhyCarboScanSection } from "@/components/homepage/WhyCarboScanSection";
@@ -18,8 +20,10 @@ const Index = () => {
 
       <main id="main-content" className="flex-1">
         <NewHeroSection />
-        <LocalSupportSection />
+        <StrategicPillarsSection />
         <NewReferencesSection />
+        <AfricaPositioningSection />
+        <LocalSupportSection />
         <SuiteModulesSection />
         <CarboScanWattBimToggleSection />
         <WhyCarboScanSection />

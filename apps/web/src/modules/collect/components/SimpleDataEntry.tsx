@@ -177,6 +177,11 @@ export const SimpleDataEntry: React.FC<SimpleDataEntryProps> = ({ onSuccess }) =
         data_quality: 'estimated',
         notes: formData.description || undefined,
         site_id: selectedSite === 'all' ? null : selectedSite,
+        data_method: /tnd|eur|€|keur/i.test(formData.unit)
+          ? 'monetary'
+          : scope.startsWith('scope1') || scope.startsWith('scope2')
+            ? 'physical'
+            : undefined,
         scope_hint: scope.startsWith('scope1') ? 1 : scope.startsWith('scope2') ? 2 : scope.startsWith('scope3') ? 3 : undefined,
       });
 

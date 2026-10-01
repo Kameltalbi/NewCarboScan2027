@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useCollectSites, type CollectSite, type CreateSiteInput } from '@/hooks/useCollectSites';
+import { operationStatusLabel } from '@/lib/perimeter/consolidation';
 import { SiteFormModal } from './SiteFormModal';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -166,6 +167,7 @@ export const SitesManagement: React.FC<SitesManagementProps> = ({ companyId }) =
               <CardContent className="space-y-3">
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline">{getSiteTypeLabel(site.site_type)}</Badge>
+                  <Badge variant="outline">{operationStatusLabel(site.operation_status)}</Badge>
                   {!site.is_active && <Badge variant="secondary">Inactif</Badge>}
                   {site.is_consolidated && (
                     <Badge variant="default" className="bg-primary/20 text-primary">

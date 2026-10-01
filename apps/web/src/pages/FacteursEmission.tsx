@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { ArrowRight, Search } from "lucide-react";
+import { publicFactorSourceGroups } from "@/lib/factors/factorSourceInventory";
 
 const NS = "facteursEmissionLanding";
 const PATH = "/facteurs-emission";
@@ -93,35 +94,7 @@ const FacteursEmission: React.FC = () => {
   const [category, setCategory] = useState<Category | "all">("all");
 
   const sourceGroups = useMemo(
-    () =>
-      [
-        {
-          status: "available" as const,
-          items: [
-            { name: "ADEME", subtitle: "Base Carbone" },
-            { name: "UK Government", subtitle: "GHG Conversion Factors" },
-            { name: "CarboScan", subtitle: t(`${NS}.sources.localFactors`) },
-          ],
-        },
-        {
-          status: "soon" as const,
-          items: [
-            { name: "EPA", subtitle: "US GHG Emission Factors Hub" },
-            { name: "INIES", subtitle: t(`${NS}.sources.inies`) },
-            { name: "PEP ecopassport" },
-            { name: "IPCC" },
-            { name: "Agribalyse" },
-          ],
-        },
-        {
-          status: "upcoming" as const,
-          items: [{ name: "HBEFA" }, { name: "Worldsteel" }, { name: "Plastics Europe" }],
-        },
-        {
-          status: "study" as const,
-          items: [{ name: "ecoinvent" }],
-        },
-      ] as const,
+    () => publicFactorSourceGroups(t(`${NS}.sources.localFactors`), t(`${NS}.sources.inies`)),
     [t],
   );
 
@@ -147,6 +120,10 @@ const FacteursEmission: React.FC = () => {
     available: {
       badge: "bg-[#07563F] text-white",
       wrap: "border-[#07563F]/20 bg-white",
+    },
+    imported: {
+      badge: "bg-[#07563F]/10 text-[#07563F]",
+      wrap: "border-[#07563F]/15 bg-white",
     },
     soon: {
       badge: "bg-[#073D30]/08 text-[#073D30]",

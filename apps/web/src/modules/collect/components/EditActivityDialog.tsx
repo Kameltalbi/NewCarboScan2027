@@ -49,6 +49,7 @@ interface EditActivityDialogProps {
 // Types d'activité valides selon la base de données
 const ACTIVITY_TYPES = [
   { value: 'energy', label: 'Énergie' },
+  { value: 'process', label: 'Procédé / autre émission directe' },
   { value: 'transport', label: 'Transport' },
   { value: 'purchase', label: 'Achat' },
   { value: 'material', label: 'Matière' },

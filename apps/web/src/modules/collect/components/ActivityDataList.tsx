@@ -15,10 +15,13 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { dataMethodLabel } from '@/lib/activity-data/dataMethod';
 import { Edit, Trash2, Filter, X, Search, Download, History, ChevronLeft, ChevronRight, Leaf, Pencil, Loader2, MoreVertical } from 'lucide-react';
 import { BilanCarboneCalculator } from '@/lib/calculators/BilanCarboneCalculator';
 import { ActivityDataHistoryComponent } from './ActivityDataHistory';
 import { exportToExcel, exportToCSV, exportToJSON, exportToAuditReport } from '@/lib/activity-data/ActivityDataExportService';
+import { closedSnapshotsByYear, type PortableFactor } from '@/lib/activity-data/portableExport';
+import { api } from '@/integrations/api/client';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,6 +81,10 @@ export const ActivityDataList: React.FC = () => {
   // Fonction pour obtenir le label lisible d'une sous-catégorie
   const getReadableSubcategoryLabel = (subcategory: string | null | undefined): string | null => {
     if (!subcategory) return null;
+
+    if (subcategory.toLowerCase().startsWith('process_other:')) {
+      return subcategory.split(':').slice(1).join(':');
+    }
 
     // La DB peut stocker le format "categorie:sous_categorie" (ex: "cat1_purchased_goods:custom_...")
     // On ne garde que la clé de sous-catégorie pour résoudre le libellé.
@@ -170,6 +177,44 @@ export const ActivityDataList: React.FC = () => {
     })();
     return () => { cancelled = true; };
   }, [organizationId, activities]);
+
+  const exportCollected = async (kind: 'excel' | 'csv') => {
+    let organizationName: string | null = null;
+    let snapshotsByYear: ReturnType<typeof closedSnapshotsByYear> = {};
+    let bilansRead = false;
+    try {
+      const [org, bilans] = await Promise.all([api.getOrganization(), api.listBilans()]);
+      organizationName = org.organization?.name ?? null;
+      snapshotsByYear = closedSnapshotsByYear((bilans.items || []) as Array<Record<string, unknown>>);
+      bilansRead = true;
+    } catch (error) {
+      toast({
+        title: 'Export sans facteurs',
+        description: error instanceof Error ? error.message : 'Les bilans enregistrés n\'ont pas pu être lus.',
+        variant: 'destructive',
+      });
+    }
+    const sitesById = Object.fromEntries(sites.map((site) => [site.id, site.name]));
+    const currentByActivityId: Record<string, PortableFactor> = {};
+    if (bilansRead) {
+      for (const activity of activities) {
+        const yearMatch = String(activity.period_start || '').match(/^(\d{4})/);
+        const year = yearMatch ? Number(yearMatch[1]) : null;
+        if (year != null && snapshotsByYear[year]) continue;
+        const displayed = emissionsMap.get(activity.id);
+        if (!displayed) continue;
+        currentByActivityId[activity.id] = {
+          factorValue: displayed.fe,
+          factorUnit: displayed.feUnit,
+          factorSource: displayed.feSource,
+          resultKgCo2e: displayed.emissions,
+        };
+      }
+    }
+    const portable = { organizationName, sitesById, snapshotsByYear, currentByActivityId };
+    if (kind === 'excel') await exportToExcel(activities, { format: 'excel' }, portable);
+    else exportToCSV(activities, portable);
+  };
 
   // Réinitialiser la page quand les filtres changent
   useEffect(() => {
@@ -470,10 +515,10 @@ export const ActivityDataList: React.FC = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => exportToExcel(activities)}>
+                <DropdownMenuItem onClick={() => exportCollected('excel')}>
                   Excel (.xlsx)
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => exportToCSV(activities)}>
+                <DropdownMenuItem onClick={() => exportCollected('csv')}>
                   CSV (.csv)
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => exportToJSON(activities)}>
@@ -679,6 +724,7 @@ export const ActivityDataList: React.FC = () => {
                       electricity: 'Électricité',
                       water: 'Eau',
                       refrigerant: 'Fluide frigorigène',
+                      process: 'Procédé',
                     };
                     
                     // Afficher le libellé de sous-catégorie en priorité s'il existe
@@ -692,6 +738,9 @@ export const ActivityDataList: React.FC = () => {
                         {subcategoryLabel && (
                           <span className="text-xs text-muted-foreground block">{activityTypeLabel}</span>
                         )}
+                        <Badge variant="outline" className="mt-1 text-xs font-normal">
+                          {dataMethodLabel(activity.data_method)}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         {activity.site_id 

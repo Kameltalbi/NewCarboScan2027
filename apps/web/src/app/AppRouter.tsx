@@ -5,6 +5,8 @@ import { Loader2, Plus, Settings, BarChart3, FileText, Download, Home, FolderPlu
 import { ModuleProtectedRoute } from '@/components/ModuleProtectedRoute';
 import { HorizontalNav, NavItem } from '@/components/layout/HorizontalNav';
 
+const MethodNotesPage = lazy(() => import('@/app/methode/MethodNotesPage').then(m => ({ default: m.MethodNotesPage })));
+
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[400px]">
     <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -284,6 +286,16 @@ export const AppRouter: React.FC = () => {
 
 
       {/* Catalogue FE registry (search + facets + detail) */}
+      <Route path="methode" element={
+        <ModuleProtectedRoute>
+          <Suspense fallback={<LoadingFallback />}>
+            <ModuleLayout moduleSlug="bilan-carbone">
+              <MethodNotesPage />
+            </ModuleLayout>
+          </Suspense>
+        </ModuleProtectedRoute>
+      } />
+
       <Route path="emission-factors" element={
         <ModuleProtectedRoute>
           <Suspense fallback={<LoadingFallback />}>

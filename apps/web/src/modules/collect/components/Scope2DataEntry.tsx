@@ -22,6 +22,8 @@ import { Badge } from '@/components/ui/badge';
 import { Save, Loader2, Zap, Flame, Snowflake, MapPin, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { SourceUncertaintyFields } from './SourceUncertaintyFields';
+import { parseOptionalUncertainty, type SourceType } from '@/lib/activity-data/uncertaintySummary';
 
 // Catégories Scope 2
 const SCOPE2_CATEGORIES = [
@@ -80,6 +82,8 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
     period_start: `${referenceYear}-01-01`,
     period_end: `${referenceYear}-12-31`,
     data_quality: 'estimated' as 'real' | 'estimated' | 'default',
+    source_type: 'unspecified',
+    uncertainty: '',
   });
 
   const currentCategory = SCOPE2_CATEGORIES.find(c => c.id === selectedCategory);
@@ -101,6 +105,12 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
         description: 'Veuillez sélectionner une sous-catégorie',
         variant: 'destructive',
       });
+      return;
+    }
+
+    const uncertainty = parseOptionalUncertainty(formData.uncertainty);
+    if (!uncertainty.ok) {
+      toast({ title: 'Erreur', description: uncertainty.message, variant: 'destructive' });
       return;
     }
 
@@ -130,6 +140,9 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
         notes: formData.description || undefined,
         site_id: selectedSite === 'all' ? null : selectedSite,
         scope_hint: 2,
+        data_method: 'physical',
+        source_type: formData.source_type === 'unspecified' ? null : (formData.source_type as SourceType),
+        uncertainty_pct: uncertainty.value,
       });
 
       toast({
@@ -145,6 +158,8 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
         period_start: formData.period_start,
         period_end: formData.period_end,
         data_quality: 'estimated',
+        source_type: 'unspecified',
+        uncertainty: '',
       });
       setSelectedSubcategory('');
 
@@ -359,6 +374,13 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
 
                   {/* Description */}
                   <div className="space-y-2">
+                    <SourceUncertaintyFields
+                      sourceType={formData.source_type}
+                      uncertainty={formData.uncertainty}
+                      onSourceType={(source_type) => setFormData((prev) => ({ ...prev, source_type }))}
+                      onUncertainty={(value) => setFormData((prev) => ({ ...prev, uncertainty: value }))}
+                      idPrefix="scope2"
+                    />
                     <Label htmlFor="description">Description (optionnelle)</Label>
                     <Textarea
                       id="description"

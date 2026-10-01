@@ -7,7 +7,7 @@ export type MaturityLevel = 'concept' | 'study' | 'pilot' | 'deployment' | 'matu
 export type LeverStatus = 'identified' | 'validated' | 'in_progress' | 'completed' | 'abandoned';
 export type ActionStatus = 'to_launch' | 'studying' | 'validated' | 'in_progress' | 'suspended' | 'completed' | 'abandoned';
 export type ActionPriority = 'critical' | 'high' | 'medium' | 'low';
-export type ActionType = 'reduction' | 'substitution' | 'efficiency' | 'sobriety' | 'compensation' | 'other';
+export type ActionType = 'reduction' | 'data_quality' | 'awareness' | 'suppliers' | 'substitution' | 'efficiency' | 'sobriety' | 'compensation' | 'other';
 export type MilestoneStatus = 'pending' | 'in_progress' | 'completed' | 'overdue';
 
 export interface ClimateRoadmap {
@@ -21,6 +21,8 @@ export interface ClimateRoadmap {
   baseline_emissions_tco2e: number | null;
   target_emissions_tco2e: number | null;
   status: RoadmapStatus;
+  trajectory_kind?: 'reference' | 'personalized' | null;
+  intermediate_targets?: Array<{ year: number; reduction_percent: number }> | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
@@ -82,6 +84,7 @@ export interface ClimateAction {
   dependencies: string | null;
   risks: string | null;
   comments: string | null;
+  estimation_method?: 'measure' | 'invoice' | 'supplier_quote' | 'internal_estimate' | null;
   created_at: string;
   updated_at: string;
   // Joins

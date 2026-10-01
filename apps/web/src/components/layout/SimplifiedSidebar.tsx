@@ -29,6 +29,7 @@ import {
   Zap,
   Leaf,
   ClipboardList,
+  BookOpen,
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -88,6 +89,12 @@ const sidebarGroups: SidebarGroupDef[] = [
         path: '/app/bilan-carbone',
         icon: BarChart3,
         requiresModule: 'bilan-carbone',
+      },
+      {
+        id: 'methode',
+        labelKey: 'sidebarNav.items.methodNotes',
+        path: '/app/methode',
+        icon: BookOpen,
       },
       {
         id: 'fournisseurs',

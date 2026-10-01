@@ -8,6 +8,7 @@
 export type ActivityType = 
   | 'energy'
   | 'fuel'
+  | 'process'
   | 'transport'
   | 'purchase'
   | 'material'
@@ -63,6 +64,9 @@ export interface ActivityData {
   scope_hint?: 1 | 2 | 3 | null;
   notes?: string | null;
   source_document?: string | null;
+  data_method?: 'physical' | 'monetary' | 'direct_emission' | 'supplier_specific' | 'other' | null;
+  source_type?: 'measured' | 'invoice' | 'supplier' | 'estimate' | 'extrapolation' | 'monetary_ratio' | null;
+  uncertainty_pct?: number | null;
   created_by?: string | null;
   created_at: string;
   updated_at: string;
@@ -91,8 +95,12 @@ export interface ActivityDataInput {
   data_quality?: DataQuality;
   confidence_score?: number | null;
   scope_hint?: 1 | 2 | 3 | null;
+  scope?: 1 | 2 | 3 | null;
   notes?: string | null;
   source_document?: string | null;
+  data_method?: 'physical' | 'monetary' | 'direct_emission' | 'supplier_specific' | 'other' | null;
+  source_type?: 'measured' | 'invoice' | 'supplier' | 'estimate' | 'extrapolation' | 'monetary_ratio' | null;
+  uncertainty_pct?: number | null;
 }
 
 /**

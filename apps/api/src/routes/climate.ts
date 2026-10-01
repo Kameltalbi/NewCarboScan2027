@@ -12,6 +12,11 @@ const roadmapSchema = z.object({
   baseline_emissions_tco2e: z.number().optional().nullable(),
   target_emissions_tco2e: z.number().optional().nullable(),
   status: z.string().max(40).optional().nullable(),
+  trajectory_kind: z.enum(["reference", "personalized"]).optional().nullable(),
+  intermediate_targets: z.array(z.object({
+    year: z.number().int(),
+    reduction_percent: z.number().min(0).max(100),
+  })).optional().nullable(),
 });
 
 const leverSchema = z.object({
@@ -30,6 +35,26 @@ const leverSchema = z.object({
   maturity_level: z.string().max(40).optional().nullable(),
   owner: z.string().max(200).optional().nullable(),
   status: z.string().max(40).optional().nullable(),
+});
+
+const mobilizationSchema = z.object({
+  audience: z.enum(["employees", "management", "suppliers", "other"]),
+  stakeholders: z.string().min(1).max(500),
+  title: z.string().min(1).max(300),
+  occurred_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  owner_name: z.string().min(1).max(200),
+  support: z.string().max(2000).optional().nullable(),
+  action_id: z.string().uuid().optional().nullable(),
+});
+
+const riskSchema = z.object({
+  title: z.string().min(1).max(300),
+  category: z.enum(["physical", "transition", "other"]),
+  probability: z.enum(["low", "medium", "high"]),
+  impact: z.enum(["low", "medium", "high"]),
+  risk_level: z.enum(["low", "medium", "high"]),
+  measure: z.string().max(8000).optional().nullable(),
+  action_id: z.string().uuid().optional().nullable(),
 });
 
 const actionSchema = z.object({
@@ -61,6 +86,7 @@ const actionSchema = z.object({
   indicator_target: z.string().max(200).optional().nullable(),
   indicator_actual: z.string().max(200).optional().nullable(),
   comments: z.string().max(8000).optional().nullable(),
+  estimation_method: z.enum(["measure", "invoice", "supplier_quote", "internal_estimate"]).optional().nullable(),
 });
 
 export async function registerClimateRoutes(app: FastifyInstance) {
@@ -146,6 +172,8 @@ export async function registerClimateRoutes(app: FastifyInstance) {
            baseline_emissions_tco2e = COALESCE($8, baseline_emissions_tco2e),
            target_emissions_tco2e = COALESCE($9, target_emissions_tco2e),
            status = COALESCE($10, status),
+           trajectory_kind = CASE WHEN $11::boolean THEN $12::text ELSE trajectory_kind END,
+           intermediate_targets = CASE WHEN $13::boolean THEN $14::jsonb ELSE intermediate_targets END,
            updated_at = now()
          WHERE id = $1 AND organization_id = $2
          RETURNING *`,
@@ -160,6 +188,10 @@ export async function registerClimateRoutes(app: FastifyInstance) {
           d.baseline_emissions_tco2e ?? null,
           d.target_emissions_tco2e ?? null,
           d.status ?? null,
+          d.trajectory_kind !== undefined,
+          d.trajectory_kind ?? null,
+          d.intermediate_targets !== undefined,
+          d.intermediate_targets == null ? null : JSON.stringify(d.intermediate_targets),
         ],
       );
       if (!rows[0]) return reply.code(404).send({ error: "Not found" });
@@ -332,8 +364,8 @@ export async function registerClimateRoutes(app: FastifyInstance) {
             business_unit, scope_concerned, source_emission_targeted, owner_user_id, owner_name,
             contributors, start_date, target_date, end_date, status, priority, progress_percent,
             budget_estimated, budget_actual, expected_reduction_tco2e, realized_reduction_tco2e,
-            expected_savings, realized_savings, indicator_name, indicator_target, indicator_actual, comments)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,COALESCE($17,'to_launch'),$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29)
+            expected_savings, realized_savings, indicator_name, indicator_target, indicator_actual, comments, estimation_method)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,COALESCE($17,'to_launch'),$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30)
          RETURNING *`,
         [
           request.user!.organizationId,
@@ -365,6 +397,7 @@ export async function registerClimateRoutes(app: FastifyInstance) {
           d.indicator_target ?? null,
           d.indicator_actual ?? null,
           d.comments ?? null,
+          d.estimation_method ?? null,
         ],
       );
       return { item: rows[0] };
@@ -392,6 +425,14 @@ export async function registerClimateRoutes(app: FastifyInstance) {
            owner_name = COALESCE($9, owner_name),
            expected_reduction_tco2e = COALESCE($10, expected_reduction_tco2e),
            comments = COALESCE($11, comments),
+           action_type = CASE WHEN $12::boolean THEN $13::text ELSE action_type END,
+           site_id = CASE WHEN $14::boolean THEN $15::uuid ELSE site_id END,
+           start_date = CASE WHEN $16::boolean THEN $17::date ELSE start_date END,
+           budget_estimated = CASE WHEN $18::boolean THEN $19::numeric ELSE budget_estimated END,
+           indicator_name = CASE WHEN $20::boolean THEN $21::text ELSE indicator_name END,
+           indicator_target = CASE WHEN $22::boolean THEN $23::text ELSE indicator_target END,
+           source_emission_targeted = CASE WHEN $24::boolean THEN $25::text ELSE source_emission_targeted END,
+           estimation_method = CASE WHEN $26::boolean THEN $27::text ELSE estimation_method END,
            updated_at = now()
          WHERE id = $1 AND organization_id = $2
          RETURNING *`,
@@ -407,6 +448,22 @@ export async function registerClimateRoutes(app: FastifyInstance) {
           d.owner_name ?? null,
           d.expected_reduction_tco2e ?? null,
           d.comments ?? null,
+          d.action_type !== undefined,
+          d.action_type ?? null,
+          d.site_id !== undefined,
+          d.site_id ?? null,
+          d.start_date !== undefined,
+          d.start_date ?? null,
+          d.budget_estimated !== undefined,
+          d.budget_estimated ?? null,
+          d.indicator_name !== undefined,
+          d.indicator_name ?? null,
+          d.indicator_target !== undefined,
+          d.indicator_target ?? null,
+          d.source_emission_targeted !== undefined,
+          d.source_emission_targeted ?? null,
+          d.estimation_method !== undefined,
+          d.estimation_method ?? null,
         ],
       );
       if (!rows[0]) return reply.code(404).send({ error: "Not found" });
@@ -685,6 +742,177 @@ export async function registerClimateRoutes(app: FastifyInstance) {
       );
       if (!rows[0]) return reply.code(404).send({ error: "Not found" });
       return { item: rows[0] };
+    },
+  );
+
+  async function ownedAction(organizationId: string, actionId: string | null | undefined) {
+    if (!actionId) return true;
+    const { rows } = await pool.query(
+      `SELECT 1 FROM climate_actions WHERE id = $1 AND organization_id = $2`,
+      [actionId, organizationId],
+    );
+    return Boolean(rows[0]);
+  }
+
+  app.get(
+    "/v1/climate/risks",
+    { preHandler: [app.requireOrgMember] },
+    async (request) => {
+      const { rows } = await pool.query(
+        `SELECT * FROM climate_risks
+         WHERE organization_id = $1
+         ORDER BY created_at DESC`,
+        [request.user!.organizationId],
+      );
+      return { items: rows };
+    },
+  );
+
+  app.post(
+    "/v1/climate/risks",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const parsed = riskSchema.safeParse(request.body ?? {});
+      if (!parsed.success) return reply.code(400).send({ error: "Risque incomplet" });
+      const d = parsed.data;
+      const orgId = request.user!.organizationId!;
+      if (!(await ownedAction(orgId, d.action_id))) {
+        return reply.code(400).send({ error: "Action introuvable" });
+      }
+      const { rows } = await pool.query(
+        `INSERT INTO climate_risks
+           (organization_id, title, category, probability, impact, risk_level, measure, action_id)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+         RETURNING *`,
+        [orgId, d.title, d.category, d.probability, d.impact, d.risk_level, d.measure ?? null, d.action_id ?? null],
+      );
+      return { item: rows[0] };
+    },
+  );
+
+  app.patch(
+    "/v1/climate/risks/:id",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      const parsed = riskSchema.safeParse(request.body ?? {});
+      if (!params.success || !parsed.success) return reply.code(400).send({ error: "Risque incomplet" });
+      const d = parsed.data;
+      const orgId = request.user!.organizationId!;
+      if (!(await ownedAction(orgId, d.action_id))) {
+        return reply.code(400).send({ error: "Action introuvable" });
+      }
+      const { rows } = await pool.query(
+        `UPDATE climate_risks SET
+           title = $3,
+           category = $4,
+           probability = $5,
+           impact = $6,
+           risk_level = $7,
+           measure = $8,
+           action_id = $9,
+           updated_at = now()
+         WHERE id = $1 AND organization_id = $2
+         RETURNING *`,
+        [params.data.id, orgId, d.title, d.category, d.probability, d.impact, d.risk_level, d.measure ?? null, d.action_id ?? null],
+      );
+      if (!rows[0]) return reply.code(404).send({ error: "Not found" });
+      return { item: rows[0] };
+    },
+  );
+
+  app.delete(
+    "/v1/climate/risks/:id",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.code(400).send({ error: "Invalid id" });
+      await pool.query(
+        `DELETE FROM climate_risks WHERE id = $1 AND organization_id = $2`,
+        [params.data.id, request.user!.organizationId],
+      );
+      return { ok: true };
+    },
+  );
+
+  app.get(
+    "/v1/climate/mobilizations",
+    { preHandler: [app.requireOrgMember] },
+    async (request) => {
+      const { rows } = await pool.query(
+        `SELECT * FROM stakeholder_mobilizations
+         WHERE organization_id = $1
+         ORDER BY occurred_on DESC NULLS LAST, created_at DESC`,
+        [request.user!.organizationId],
+      );
+      return { items: rows };
+    },
+  );
+
+  app.post(
+    "/v1/climate/mobilizations",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const parsed = mobilizationSchema.safeParse(request.body ?? {});
+      if (!parsed.success) return reply.code(400).send({ error: "Mobilisation incomplète" });
+      const d = parsed.data;
+      const orgId = request.user!.organizationId!;
+      if (!(await ownedAction(orgId, d.action_id))) {
+        return reply.code(400).send({ error: "Action introuvable" });
+      }
+      const { rows } = await pool.query(
+        `INSERT INTO stakeholder_mobilizations
+           (organization_id, audience, stakeholders, title, occurred_on, owner_name, support, action_id)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+         RETURNING *`,
+        [orgId, d.audience, d.stakeholders, d.title, d.occurred_on, d.owner_name, d.support ?? null, d.action_id ?? null],
+      );
+      return { item: rows[0] };
+    },
+  );
+
+  app.patch(
+    "/v1/climate/mobilizations/:id",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      const parsed = mobilizationSchema.safeParse(request.body ?? {});
+      if (!params.success || !parsed.success) return reply.code(400).send({ error: "Mobilisation incomplète" });
+      const d = parsed.data;
+      const orgId = request.user!.organizationId!;
+      if (!(await ownedAction(orgId, d.action_id))) {
+        return reply.code(400).send({ error: "Action introuvable" });
+      }
+      const { rows } = await pool.query(
+        `UPDATE stakeholder_mobilizations SET
+           audience = $3,
+           stakeholders = $4,
+           title = $5,
+           occurred_on = $6,
+           owner_name = $7,
+           support = $8,
+           action_id = $9,
+           updated_at = now()
+         WHERE id = $1 AND organization_id = $2
+         RETURNING *`,
+        [params.data.id, orgId, d.audience, d.stakeholders, d.title, d.occurred_on, d.owner_name, d.support ?? null, d.action_id ?? null],
+      );
+      if (!rows[0]) return reply.code(404).send({ error: "Not found" });
+      return { item: rows[0] };
+    },
+  );
+
+  app.delete(
+    "/v1/climate/mobilizations/:id",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.code(400).send({ error: "Invalid id" });
+      await pool.query(
+        `DELETE FROM stakeholder_mobilizations WHERE id = $1 AND organization_id = $2`,
+        [params.data.id, request.user!.organizationId],
+      );
+      return { ok: true };
     },
   );
 }

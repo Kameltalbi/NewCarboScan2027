@@ -138,9 +138,12 @@ export const patchOrganizationSchema = z.object({
   distanceUnit: z.string().max(32).optional().nullable(),
   logoUrl: z.string().max(500_000).optional().nullable(),
   pilotName: z.string().max(200).optional().nullable(),
+  consolidationMethod: z.enum(["operational_control", "financial_control"]).optional(),
   annualRevenue: z.number().optional().nullable(),
   employees: z.number().int().optional().nullable(),
   totalSurface: z.number().optional().nullable(),
+  productionUnitLabel: z.string().max(80).optional().nullable(),
+  productionUnitQuantity: z.number().optional().nullable(),
 });
 
 const orgRoleEnum = z.enum([
@@ -223,6 +226,8 @@ export const siteSchema = z
     contact_name: z.string().max(200).optional().nullable(),
     contactEmail: z.string().max(200).optional().nullable(),
     contact_email: z.string().max(200).optional().nullable(),
+    operationStatus: z.enum(["operated", "not_operated"]).nullable().optional(),
+    operation_status: z.enum(["operated", "not_operated"]).nullable().optional(),
   })
   .transform((d) => ({
     name: d.name,
@@ -238,6 +243,7 @@ export const siteSchema = z
     surfaceM2: d.surfaceM2 ?? d.surface_m2,
     contactName: d.contactName ?? d.contact_name,
     contactEmail: d.contactEmail ?? d.contact_email,
+    operationStatus: d.operationStatus !== undefined ? d.operationStatus : d.operation_status,
   }));
 
 export const adminPlanSchema = z.object({

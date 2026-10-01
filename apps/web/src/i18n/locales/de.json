@@ -158,6 +158,7 @@
     "cbamCalculator": "CBAM-Rechner",
     "login": "Anmelden",
     "platform": "Plattform",
+    "offer": "Angebot",
     "freeDemo": "Kostenlose Demo",
     "bySector": "Nach Branche",
     "allSolutions": "Alle Lösungen",
@@ -357,6 +358,20 @@
       "carbonManagement": "CO₂-Management",
       "lca": "Ökobilanz & Faktoren"
     },
+    "offer": {
+      "enterprises": {
+        "label": "Unternehmen & Organisationen",
+        "description": "Messen Sie Ihren CO₂-Fußabdruck"
+      },
+      "finance": {
+        "label": "Finanzinstitute",
+        "description": "Messen Sie Ihre finanzierten Emissionen"
+      },
+      "transition": {
+        "label": "Transformation",
+        "description": "Vom Messen zum Handeln"
+      }
+    },
     "items": {
       "bilanCarbone": {
         "label": "CO₂-Bilanz®",
@@ -403,6 +418,7 @@
       "wattbim": "WattBim",
       "actionPlan": "Maßnahmenplan",
       "scenarios": "Szenariomodellierung",
+      "methodNotes": "Methodenhinweise",
       "settings": "Einstellungen"
     }
   },
@@ -5936,14 +5952,14 @@
     "hero": {
       "eyebrow": "Carbon & ESG Intelligence",
       "badge": "CO₂-Bilanz · PCF · CBAM",
-      "titleLine1": "Steuern Sie Ihre",
-      "titleLine2": "CO₂-Transformation.",
-      "titleLine3": "Schaffen Sie nachhaltigen Wert.",
+      "titleLine1": "Messen.",
+      "titleLine2": "Reduzieren.",
+      "titleLine3": "Steuern Sie Ihre CO₂-Transformation.",
       "titlePart1": "Dekarbonisierung ist ein ",
       "titleHighlight": "Wettbewerbshebel",
       "titlePart2": "",
-      "subtitle": "Messen Sie Ihre Emissionen, identifizieren Sie Prioritäten und verwandeln Sie CO₂-Daten in konkrete Entscheidungen.",
-      "ctaPrimary": "Meine Bilanz starten",
+      "subtitle": "CarboScan begleitet Unternehmen und Finanzinstitute auf ihrem Weg zur klimafreundlichen Transformation.",
+      "ctaPrimary": "Demo anfragen",
       "ctaSecondary": "CarboScan entdecken",
       "trust": {
         "deploy": "Einfach einzuführen",
@@ -5964,6 +5980,51 @@
       "aiInsightTitle": "Hinweis",
       "aiInsightText": "Scope 2: −12 % gegenüber dem Vorjahr. Weiter so!",
       "aiInsightCta": "Empfehlungen ansehen"
+    },
+    "pillars": {
+      "title": "Drei Kompetenzen. Eine Plattform.",
+      "cta": "Entdecken",
+      "enterprises": {
+        "audience": "Unternehmen & Organisationen",
+        "headline": "Messen Sie Ihren CO₂-Fußabdruck",
+        "description": "Vollständige THG-Bilanz, um die Emissionen Ihrer Organisation zu messen, zu analysieren und zu steuern.",
+        "tags": "Scope 1, 2 & 3 · Multi-Site · Reporting"
+      },
+      "finance": {
+        "audience": "Finanzinstitute",
+        "headline": "Messen Sie Ihre finanzierten Emissionen",
+        "description": "Analysieren Sie den CO₂-Fußabdruck Ihrer Portfolios mit einem an die PCAF-Methodik angelehnten Ansatz.",
+        "tags": "PCAF · Finanzierte Emissionen · Data Quality"
+      },
+      "transition": {
+        "audience": "Transformation",
+        "headline": "Vom Messen zum Handeln",
+        "description": "Bauen Sie Ihre Reduktionspfad auf und steuern Sie Ihren CO₂-Transformationsplan.",
+        "tags": "Ziele · Reduktion · Transformationsplan"
+      }
+    },
+    "africa": {
+      "eyebrow": "Afrika",
+      "title": "CO₂-Transformation für afrikanische Realitäten",
+      "subtitle": "CarboScan ist für afrikanische Unternehmen, Organisationen und Finanzinstitute konzipiert: relevante Emissionsfaktoren, lokale und Multi-Site-Daten, ausgerichtet an internationalen Methoden und Standards.",
+      "points": {
+        "factors": {
+          "title": "Relevante Emissionsfaktoren",
+          "description": "Faktoren für afrikanische Energie- und Industriekontexte – ohne Verlust methodischer Nachvollziehbarkeit."
+        },
+        "localData": {
+          "title": "Lokal verfügbare Daten",
+          "description": "Erfassen und strukturieren Sie die Daten, die vor Ort wirklich verfügbar sind – auch bei fragmentierten Quellen."
+        },
+        "multiSite": {
+          "title": "Multi-Site-Organisationen",
+          "description": "Konsolidieren Sie Emissionen über Tochtergesellschaften, Standorte und Operationen in mehreren Ländern oder Regionen."
+        },
+        "standards": {
+          "title": "Internationale Standards",
+          "description": "Bleiben Sie an GHG Protocol, ISO 14064 und den Reporting-Rahmenwerken Ihrer Stakeholder ausgerichtet."
+        }
+      }
     },
     "suiteModules": {
       "featuredTitle": "Die komplette Suite für Ihre klimafreundliche Transformation",
@@ -7857,6 +7918,7 @@
       "inies": "Umweltdaten Bauwesen",
       "badges": {
         "available": "Verfügbar",
+        "imported": "Importiert",
         "soon": "Demnächst verfügbar",
         "upcoming": "Geplant",
         "study": "In Prüfung"

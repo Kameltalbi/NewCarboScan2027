@@ -6,8 +6,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Loader2, Calculator, Download, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import ExcelJS from 'exceljs';
 import { useAppData } from '@/contexts/AppDataContext';
+import { api } from '@/integrations/api/client';
+import { exportToExcel } from '@/lib/activity-data/ActivityDataExportService';
+import { closedSnapshotsByYear } from '@/lib/activity-data/portableExport';
+import type { ActivityData } from '@/lib/activity-data/types';
 import { useOrganizationData } from '@/hooks/useOrganizationData';
 import { useOrganizationSubcategories } from '@/hooks/useOrganizationSubcategories';
 import { BilanCarboneCalculator, EmissionLineDetail } from '@/lib/calculators/BilanCarboneCalculator';
@@ -201,53 +204,65 @@ export const BilanTracabilite: React.FC = () => {
   }, [details, formatCategoryName]);
 
   const handleExportExcel = useCallback(async () => {
-    if (tableData.length === 0) return;
-
-    const rows = [...tableData]
-      .sort((a, b) => b.emissions - a.emissions)
-      .map(row => ({
-        'Scope': `Scope ${row.scope}`,
-        'Poste d\'émission': row.post,
-        'Quantité': row.quantity ?? '',
-        'Unité': row.unit ?? '',
-        'Facteur d\'émission': row.emissionFactor ?? '',
-        'Unité FE': row.emissionFactorUnit ?? '',
-        'Source FE': row.emissionFactorSource ?? '',
-        'Émissions (kgCO₂e)': Math.round(row.emissions),
-        'Émissions (tCO₂e)': +(row.emissions / 1000).toFixed(2),
-        'Part (%)': +row.percentage.toFixed(1),
-        'Statut': row.dataStatus === 'consolidated' ? 'Consolidé' : row.dataStatus === 'estimated' ? 'Estimé' : row.dataStatus === 'default' ? 'Par défaut' : 'Provisoire',
-      }));
-
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Traçabilité');
-
-    const columns = Object.keys(rows[0]);
-    worksheet.columns = columns.map((key) => ({
-      header: key,
-      key,
-      width: Math.max(
-        key.length,
-        ...rows.map((row) => String((row as Record<string, unknown>)[key] ?? '').length)
-      ) + 2,
+    let snapshotsByYear: ReturnType<typeof closedSnapshotsByYear> = {};
+    let bilansRead = false;
+    try {
+      const listed = await api.listBilans();
+      snapshotsByYear = closedSnapshotsByYear((listed.items || []) as Array<Record<string, unknown>>);
+      bilansRead = true;
+    } catch (error) {
+      console.error('Export sans facteurs figés', error);
+    }
+    const closed = bilansRead ? snapshotsByYear[year] : undefined;
+    if (closed) {
+      let stored: ActivityData[] = [];
+      try {
+        const listed = await api.listActivityData({
+          periodStart: `${year}-01-01`,
+          periodEnd: `${year}-12-31`,
+        });
+        stored = (listed.items || []) as unknown as ActivityData[];
+      } catch {
+        stored = [];
+      }
+      await exportToExcel(stored, { format: 'excel' }, {
+        organizationName: organization?.name,
+        snapshotsByYear: { [year]: closed },
+      });
+      return;
+    }
+    if (!bilansRead || details.length === 0) return;
+    const displayed = details.map((line, index) => ({
+      id: `affiche-${index}`,
+      organization_id: organizationId || '',
+      activity_type: '' as ActivityData['activity_type'],
+      category: (line.category || '') as ActivityData['category'],
+      subcategory: line.subcategory,
+      quantity: line.quantity,
+      unit: line.unit,
+      period_start: `${year}-01-01`,
+      period_end: `${year}-12-31`,
+      data_quality: line.dataQuality,
+      scope_hint: line.scope,
+      data_method: (line.dataMethod ?? null) as ActivityData['data_method'],
+      source_type: (line.sourceType ?? null) as ActivityData['source_type'],
+      uncertainty_pct: line.uncertaintyPct ?? null,
+      created_at: '',
+      updated_at: '',
     }));
-
-    rows.forEach((row) => {
-      worksheet.addRow(row);
+    const currentByActivityId = Object.fromEntries(details.map((line, index) => [`affiche-${index}`, {
+      factorName: line.subcategory,
+      factorValue: line.emissionFactor,
+      factorUnit: line.emissionFactorUnit,
+      factorSource: line.emissionFactorSource,
+      resultKgCo2e: line.emissions,
+      scope: line.scope,
+    }]));
+    await exportToExcel(displayed, { format: 'excel' }, {
+      organizationName: organization?.name,
+      currentByActivityId,
     });
-
-    const orgName = organization?.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'organisation';
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Tracabilite_${orgName}_${year}.xlsx`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, [tableData, organization, year]);
+  }, [details, organization, organizationId, year]);
 
   if (loading || organizationLoading || orgDataLoading) {
     return (

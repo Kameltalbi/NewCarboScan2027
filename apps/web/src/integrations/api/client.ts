@@ -4,7 +4,7 @@
 
 const API_URL =
   import.meta.env.VITE_API_URL ??
-  (import.meta.env.DEV ? "http://localhost:8080" : "");
+  (import.meta.env.DEV ? "http://127.0.0.1:8080" : "");
 
 export type AuthUser = {
   id: string;
@@ -555,6 +555,11 @@ export const api = {
   listFactors: () =>
     request<{ items: Array<Record<string, unknown>>; total: number }>("/v1/factors"),
 
+  listFactorSources: () =>
+    request<{ items: import("@/lib/factors/factorSourceInventory").FactorSourceVersion[] }>(
+      "/v1/factors/sources",
+    ),
+
   /** Registry catalog search (server-side). Do not use for legacy GET /v1/factors. */
   searchEmissionFactors: (params: FactorCatalogSearchParams = {}) => {
     const qs = buildFactorCatalogQuery(params);
@@ -1054,6 +1059,12 @@ export const api = {
       body: JSON.stringify(payload),
     }),
 
+  closeBilan: (id: string, payload: Record<string, unknown>) =>
+    request<{ bilan: Record<string, unknown> }>(`/v1/bilans/${id}/close`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
   deleteBilan: (id: string) =>
     request(`/v1/bilans/${id}`, { method: "DELETE" }),
 
@@ -1231,6 +1242,34 @@ export const api = {
     }),
   deleteClimateAction: (id: string) =>
     request(`/v1/climate/actions/${id}`, { method: "DELETE" }),
+  listClimateRisks: () =>
+    request<{ items: Array<Record<string, unknown>> }>("/v1/climate/risks"),
+  createClimateRisk: (payload: Record<string, unknown>) =>
+    request<{ item: Record<string, unknown> }>("/v1/climate/risks", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  patchClimateRisk: (id: string, payload: Record<string, unknown>) =>
+    request<{ item: Record<string, unknown> }>(`/v1/climate/risks/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+  deleteClimateRisk: (id: string) =>
+    request(`/v1/climate/risks/${id}`, { method: "DELETE" }),
+  listMobilizations: () =>
+    request<{ items: Array<Record<string, unknown>> }>("/v1/climate/mobilizations"),
+  createMobilization: (payload: Record<string, unknown>) =>
+    request<{ item: Record<string, unknown> }>("/v1/climate/mobilizations", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  patchMobilization: (id: string, payload: Record<string, unknown>) =>
+    request<{ item: Record<string, unknown> }>(`/v1/climate/mobilizations/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+  deleteMobilization: (id: string) =>
+    request(`/v1/climate/mobilizations/${id}`, { method: "DELETE" }),
 
   listPcfStudies: () =>
     request<{ items: Array<Record<string, unknown>> }>("/v1/pcf/studies"),
@@ -1344,6 +1383,7 @@ export type OrganizationData = {
   logoUrl: string | null;
   pilotName: string | null;
   legalName: string | null;
+  consolidationMethod?: string | null;
   subscriptionPlan: string | null;
   subscriptionStatus: string | null;
   userId?: string | null;
@@ -1352,6 +1392,8 @@ export type OrganizationData = {
   annualRevenue?: number | null;
   employees?: number | null;
   totalSurface?: number | null;
+  productionUnitLabel?: string | null;
+  productionUnitQuantity?: number | null;
 };
 
 /** Compat session — remplace supabase.auth sans restaurer de gateway table. */

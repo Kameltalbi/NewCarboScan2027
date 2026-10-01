@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { logger } from '@/utils/logger';
 import { SiteAllocationSettings } from '@/components/parametres/SiteAllocationSettings';
+import { MethodNoteLink } from '@/components/method/MethodNoteLink';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -52,7 +53,16 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { supabase, sessionAuth} from "@/integrations/api/client";
+import { api, supabase, sessionAuth} from "@/integrations/api/client";
+import { SiteOperationField } from "@/components/collect/sites/SiteOperationField";
+import {
+  CONSOLIDATION_METHODS,
+  fromOperationChoice,
+  operationStatusLabel,
+  toOperationChoice,
+  type ConsolidationMethod,
+  type OperationChoice,
+} from "@/lib/perimeter/consolidation";
 import { useAuth } from '@/hooks/useAuth';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { useCollectSites, type CollectSite, type CreateSiteInput } from '@/hooks/useCollectSites';
@@ -128,7 +138,10 @@ export const ParametresOrganisationPro: React.FC = () => {
     employees: '',
     totalSurface: '',
     annualRevenue: '',
+    productionUnitLabel: '',
+    productionUnitQuantity: '',
     currency: 'TND',
+    consolidationMethod: 'operational_control' as ConsolidationMethod,
   });
 
   const currencies = [
@@ -152,6 +165,7 @@ export const ParametresOrganisationPro: React.FC = () => {
     employees_count: '',
     surface_m2: '',
     annual_revenue: '',
+    operation_status: 'unspecified' as OperationChoice,
   });
 
   // Récupérer la company de l'utilisateur
@@ -209,52 +223,30 @@ export const ParametresOrganisationPro: React.FC = () => {
       if (!user?.id) return;
 
       try {
-        const { data: org, error } = await supabase
-          .from('organizations')
-          .select('*')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (error) throw error;
+        const { organization: org } = await api.getOrganization();
 
         if (org) {
           setOrgId(org.id);
           setOrgData({
             organizationName: org.name || '',
-            legalName: org.legal_name || '',
-            pilotName: org.pilot_name || '',
+            legalName: org.legalName || '',
+            pilotName: org.pilotName || '',
             country: org.country || 'Tunisie',
             sector: org.sector || '',
-            referenceYear: org.reference_year?.toString() || new Date().getFullYear().toString(),
+            referenceYear: org.referenceYear?.toString() || new Date().getFullYear().toString(),
             employees: org.employees?.toString() || '',
-            totalSurface: org.total_surface?.toString() || '',
-            annualRevenue: org.annual_revenue?.toString() || '',
+            totalSurface: org.totalSurface?.toString() || '',
+            annualRevenue: org.annualRevenue?.toString() || '',
+            productionUnitLabel: org.productionUnitLabel || '',
+            productionUnitQuantity: org.productionUnitQuantity?.toString() || '',
             currency: org.currency || 'TND',
+            consolidationMethod:
+              org.consolidationMethod === 'financial_control'
+                ? 'financial_control'
+                : 'operational_control',
           });
-          
-          if (org.logo_url) setLogoUrl(org.logo_url);
 
-          const { data: orgFiles } = await supabase.storage
-            .from('organization-logos')
-            .list(org.id, { limit: 1, sortBy: { column: 'created_at', order: 'desc' } });
-
-          if (!org.logo_url && orgFiles && orgFiles.length > 0) {
-            const { data: urlData } = supabase.storage
-              .from('organization-logos')
-              .getPublicUrl(`${org.id}/${orgFiles[0].name}`);
-            setLogoUrl(urlData.publicUrl);
-          }
-        }
-
-        const { data: files } = await supabase.storage
-          .from('organization-logos')
-          .list(`${user.id}/`, { limit: 1, sortBy: { column: 'created_at', order: 'desc' } });
-
-        if (!org?.logo_url && files && files.length > 0) {
-          const { data: urlData } = supabase.storage
-            .from('organization-logos')
-            .getPublicUrl(`${user.id}/${files[0].name}`);
-          setLogoUrl(urlData.publicUrl);
+          if (org.logoUrl) setLogoUrl(org.logoUrl);
         }
       } catch (error) {
         console.error('Error loading organization:', error);
@@ -282,43 +274,23 @@ export const ParametresOrganisationPro: React.FC = () => {
 
     setIsSaving(true);
     try {
-      const orgDataToSave = {
+      const { organization: saved } = await api.patchOrganization({
         name: orgData.organizationName,
-        legal_name: orgData.legalName || null,
-        pilot_name: orgData.pilotName || null,
+        legalName: orgData.legalName || null,
+        pilotName: orgData.pilotName || null,
         country: orgData.country,
         sector: orgData.sector || null,
-        reference_year: parseInt(orgData.referenceYear),
+        referenceYear: parseInt(orgData.referenceYear),
         employees: totalEmployees > 0 ? totalEmployees : parseInt(orgData.employees) || null,
-        total_surface: totalSurface > 0 ? totalSurface : parseFloat(orgData.totalSurface) || null,
-        annual_revenue: orgData.annualRevenue ? parseFloat(orgData.annualRevenue) : null,
+        totalSurface: totalSurface > 0 ? totalSurface : parseFloat(orgData.totalSurface) || null,
+        annualRevenue: orgData.annualRevenue ? parseFloat(orgData.annualRevenue) : null,
+        productionUnitLabel: orgData.productionUnitLabel.trim() || null,
+        productionUnitQuantity: orgData.productionUnitQuantity ? parseFloat(orgData.productionUnitQuantity) : null,
         currency: orgData.currency,
-        logo_url: logoUrl,
-        user_id: user.id,
-        updated_at: new Date().toISOString(),
-      };
-
-      let savedOrgId: string | null = orgId;
-      if (orgId) {
-        const { error } = await supabase
-          .from('organizations')
-          .update(orgDataToSave)
-          .eq('id', orgId);
-
-        if (error) throw error;
-      } else {
-        const { data, error } = await supabase
-          .from('organizations')
-          .insert(orgDataToSave)
-          .select()
-          .single();
-
-        if (error) throw error;
-        if (data) {
-          setOrgId(data.id);
-          savedOrgId = data.id;
-        }
-      }
+        consolidationMethod: orgData.consolidationMethod,
+      });
+      const savedOrgId = saved?.id ?? orgId;
+      if (saved?.id) setOrgId(saved.id);
 
       if (savedOrgId) {
         const presetCode = getPresetCodeForSector(orgData.sector || null);
@@ -502,6 +474,7 @@ export const ParametresOrganisationPro: React.FC = () => {
       employees_count: '',
       surface_m2: '',
       annual_revenue: '',
+      operation_status: 'unspecified',
     });
     setEditingSite(null);
     setIsFormOpen(false);
@@ -519,6 +492,7 @@ export const ParametresOrganisationPro: React.FC = () => {
       employees_count: site.employees_count?.toString() || '',
       surface_m2: site.surface_m2?.toString() || '',
       annual_revenue: site.annual_revenue?.toString() || '',
+      operation_status: toOperationChoice(site.operation_status),
     });
     setIsFormOpen(true);
   };
@@ -552,6 +526,7 @@ export const ParametresOrganisationPro: React.FC = () => {
       employees_count: siteFormData.employees_count ? parseInt(siteFormData.employees_count) : undefined,
       surface_m2: siteFormData.surface_m2 ? parseFloat(siteFormData.surface_m2) : undefined,
       annual_revenue: siteFormData.annual_revenue ? parseFloat(siteFormData.annual_revenue) : undefined,
+      operation_status: fromOperationChoice(siteFormData.operation_status),
       is_active: true,
       is_consolidated: true,
     };
@@ -704,6 +679,31 @@ export const ParametresOrganisationPro: React.FC = () => {
             </div>
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="consolidationMethod">Méthode de consolidation</Label>
+            <Select
+              value={orgData.consolidationMethod}
+              onValueChange={(value) =>
+                setOrgData({ ...orgData, consolidationMethod: value as ConsolidationMethod })
+              }
+            >
+              <SelectTrigger id="consolidationMethod" data-testid="consolidation-method">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CONSOLIDATION_METHODS.map((method) => (
+                  <SelectItem key={method.value} value={method.value}>
+                    {method.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Le rapport reprend cette méthode. Tant qu'elle n'est pas changée, il indique le contrôle opérationnel, comme auparavant. Changer de méthode laisse chaque ligne à son scope. La quote-part n'est pas calculée. Ce choix n'est pas une validation ABC.{" "}
+              <MethodNoteLink noteId="perimetres" label="Note de méthode : périmètre" />
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="pilotName">Pilote de la démarche Bilan Carbone®</Label>
@@ -786,8 +786,51 @@ export const ParametresOrganisationPro: React.FC = () => {
               onChange={(e) => setOrgData({ ...orgData, annualRevenue: e.target.value })}
             />
             <p className="text-xs text-muted-foreground">
-              Utilisé pour calculer l'intensité carbone par 1k{orgData.currency} de CA
+              Sert à l&apos;intensité en tCO₂e par million de {orgData.currency}. Un montant vide n&apos;affiche pas d&apos;intensité.
             </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="employees">Effectif</Label>
+              <Input
+                id="employees"
+                type="number"
+                value={orgData.employees}
+                onChange={(e) => setOrgData({ ...orgData, employees: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="totalSurface">Surface (m²)</Label>
+              <Input
+                id="totalSurface"
+                type="number"
+                value={orgData.totalSurface}
+                onChange={(e) => setOrgData({ ...orgData, totalSurface: e.target.value })}
+              />
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            S&apos;il existe des sites avec un effectif ou une surface, l&apos;enregistrement reprend leur somme.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="productionUnitLabel">Unité produite ou KPI métier</Label>
+              <Input
+                id="productionUnitLabel"
+                value={orgData.productionUnitLabel}
+                onChange={(e) => setOrgData({ ...orgData, productionUnitLabel: e.target.value })}
+                placeholder="Ex. : pièce, tonne, heure"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="productionUnitQuantity">Quantité annuelle</Label>
+              <Input
+                id="productionUnitQuantity"
+                type="number"
+                value={orgData.productionUnitQuantity}
+                onChange={(e) => setOrgData({ ...orgData, productionUnitQuantity: e.target.value })}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end pt-4">
@@ -854,6 +897,9 @@ export const ParametresOrganisationPro: React.FC = () => {
                           )}
                           <Badge variant="secondary" className="text-xs font-normal">
                             {typeInfo.label}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs font-normal">
+                            {operationStatusLabel(site.operation_status)}
                           </Badge>
                           {!site.is_active && (
                             <Badge variant="secondary" className="text-xs">Inactif</Badge>
@@ -950,6 +996,11 @@ export const ParametresOrganisationPro: React.FC = () => {
                 />
               </div>
             </div>
+
+            <SiteOperationField
+              value={siteFormData.operation_status}
+              onChange={(operation_status) => setSiteFormData({ ...siteFormData, operation_status })}
+            />
 
             <div className="space-y-2">
               <Label htmlFor="site_type">Type de site *</Label>

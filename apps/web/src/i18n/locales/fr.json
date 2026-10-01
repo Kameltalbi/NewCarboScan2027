@@ -158,6 +158,7 @@
     "cbamCalculator": "Calculateur CBAM",
     "login": "Connexion",
     "platform": "Plateforme",
+    "offer": "Offre",
     "freeDemo": "Démo gratuite",
     "bySector": "Par secteurs",
     "allSolutions": "Toutes les solutions",
@@ -357,6 +358,20 @@
       "carbonManagement": "Gestion carbone",
       "lca": "ACV & facteurs"
     },
+    "offer": {
+      "enterprises": {
+        "label": "Entreprises & organisations",
+        "description": "Mesurez votre empreinte carbone"
+      },
+      "finance": {
+        "label": "Institutions financières",
+        "description": "Mesurez vos émissions financées"
+      },
+      "transition": {
+        "label": "Transition",
+        "description": "Passez de la mesure à l'action"
+      }
+    },
     "items": {
       "bilanCarbone": {
         "label": "Bilan Carbone®",
@@ -404,6 +419,7 @@
       "wattbim": "WattBim",
       "actionPlan": "Plan d'actions",
       "scenarios": "Modélisation scénarios",
+      "methodNotes": "Notes de méthode",
       "settings": "Paramètres"
     }
   },
@@ -5949,14 +5965,14 @@
     "hero": {
       "eyebrow": "Carbon & ESG Intelligence",
       "badge": "Bilan carbone · PCF · CBAM",
-      "titleLine1": "Pilotez votre",
-      "titleLine2": "transition carbone.",
-      "titleLine3": "Créez de la valeur.",
+      "titleLine1": "Mesurez.",
+      "titleLine2": "Réduisez.",
+      "titleLine3": "Pilotez votre transition carbone.",
       "titlePart1": "La décarbonation est un ",
       "titleHighlight": "levier de compétitivité",
       "titlePart2": "",
-      "subtitle": "Mesurez vos émissions, identifiez vos priorités et transformez vos données carbone en décisions concrètes.",
-      "ctaPrimary": "Commencer mon bilan",
+      "subtitle": "CarboScan accompagne les entreprises et institutions financières dans leur transition bas-carbone.",
+      "ctaPrimary": "Demander une démo",
       "ctaSecondary": "Découvrir CarboScan",
       "trust": {
         "deploy": "Simple à déployer",
@@ -5977,6 +5993,51 @@
       "aiInsightTitle": "Insight",
       "aiInsightText": "Scope 2 : -12% vs. l'an dernier. Bravo, continuez !",
       "aiInsightCta": "Voir les recommandations"
+    },
+    "pillars": {
+      "title": "Trois expertises. Une seule plateforme.",
+      "cta": "Découvrir",
+      "enterprises": {
+        "audience": "Entreprises & organisations",
+        "headline": "Mesurez votre empreinte carbone",
+        "description": "Bilan GES complet pour mesurer, analyser et piloter les émissions de votre organisation.",
+        "tags": "Scope 1, 2 & 3 · Multi-sites · Reporting"
+      },
+      "finance": {
+        "audience": "Institutions financières",
+        "headline": "Mesurez vos émissions financées",
+        "description": "Analysez l'empreinte carbone de vos portefeuilles selon une approche alignée sur la méthodologie PCAF.",
+        "tags": "PCAF · Émissions financées · Data Quality"
+      },
+      "transition": {
+        "audience": "Transition",
+        "headline": "Passez de la mesure à l'action",
+        "description": "Construisez votre trajectoire de réduction et pilotez votre plan de transition carbone.",
+        "tags": "Objectifs · Réduction · Plan de transition"
+      }
+    },
+    "africa": {
+      "eyebrow": "Afrique",
+      "title": "La transition carbone adaptée aux réalités africaines",
+      "subtitle": "CarboScan est conçu pour les entreprises, organisations et institutions financières africaines : facteurs d'émission pertinents, données locales et multi-sites, avec un alignement sur les méthodologies et standards internationaux.",
+      "points": {
+        "factors": {
+          "title": "Facteurs d'émission pertinents",
+          "description": "Des facteurs adaptés aux contextes énergétiques et industriels africains, sans renoncer à la traçabilité méthodologique."
+        },
+        "localData": {
+          "title": "Données disponibles localement",
+          "description": "Collectez et structurez les données réellement disponibles sur le terrain, même lorsque les sources sont fragmentées."
+        },
+        "multiSite": {
+          "title": "Organisations multi-sites",
+          "description": "Consolidez les émissions de vos filiales, sites et opérations répartis sur plusieurs pays ou régions."
+        },
+        "standards": {
+          "title": "Standards internationaux",
+          "description": "Restez alignés sur GHG Protocol, ISO 14064 et les référentiels de reporting attendus par vos parties prenantes."
+        }
+      }
     },
     "suiteModules": {
       "featuredTitle": "La suite complète pour votre transition bas-carbone",
@@ -7870,6 +7931,7 @@
       "inies": "Données environnementales construction",
       "badges": {
         "available": "Disponible",
+        "imported": "Importé",
         "soon": "Bientôt disponible",
         "upcoming": "À venir",
         "study": "À l'étude"

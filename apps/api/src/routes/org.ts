@@ -14,6 +14,9 @@ import {
 const ORG_SELECT = `
   id, name, slug, sector, country, status, reference_year, currency,
   energy_unit, mass_unit, distance_unit, logo_url, pilot_name, legal_name,
+  consolidation_method,
+  employees, annual_revenue, total_surface,
+  production_unit_label, production_unit_quantity,
   subscription_plan, subscription_status, user_id, created_at, updated_at
 `;
 
@@ -33,6 +36,7 @@ function mapOrg(row: Record<string, unknown>) {
     logoUrl: row.logo_url,
     pilotName: row.pilot_name,
     legalName: row.legal_name,
+    consolidationMethod: row.consolidation_method ?? "operational_control",
     subscriptionPlan: row.subscription_plan,
     subscriptionStatus: row.subscription_status,
     userId: row.user_id,
@@ -41,6 +45,8 @@ function mapOrg(row: Record<string, unknown>) {
     annualRevenue: row.annual_revenue ?? null,
     employees: row.employees ?? null,
     totalSurface: row.total_surface ?? null,
+    productionUnitLabel: row.production_unit_label ?? null,
+    productionUnitQuantity: row.production_unit_quantity ?? null,
   };
 }
 
@@ -82,6 +88,12 @@ export async function registerOrgRoutes(app: FastifyInstance) {
            distance_unit = COALESCE($10, distance_unit),
            logo_url = CASE WHEN $13 THEN $11 ELSE logo_url END,
            pilot_name = COALESCE($12, pilot_name),
+           consolidation_method = COALESCE($14, consolidation_method),
+           employees = CASE WHEN $15::boolean THEN $16::int ELSE employees END,
+           annual_revenue = CASE WHEN $17::boolean THEN $18::numeric ELSE annual_revenue END,
+           total_surface = CASE WHEN $19::boolean THEN $20::numeric ELSE total_surface END,
+           production_unit_label = CASE WHEN $21::boolean THEN $22::text ELSE production_unit_label END,
+           production_unit_quantity = CASE WHEN $23::boolean THEN $24::numeric ELSE production_unit_quantity END,
            updated_at = now()
          WHERE id = $1
          RETURNING ${ORG_SELECT}`,
@@ -99,6 +111,17 @@ export async function registerOrgRoutes(app: FastifyInstance) {
           d.logoUrl ?? null,
           d.pilotName ?? null,
           setLogo,
+          d.consolidationMethod ?? null,
+          d.employees !== undefined,
+          d.employees ?? null,
+          d.annualRevenue !== undefined,
+          d.annualRevenue ?? null,
+          d.totalSurface !== undefined,
+          d.totalSurface ?? null,
+          d.productionUnitLabel !== undefined,
+          d.productionUnitLabel ?? null,
+          d.productionUnitQuantity !== undefined,
+          d.productionUnitQuantity ?? null,
         ],
       );
       return { organization: mapOrg(rows[0]) };
@@ -383,7 +406,8 @@ export async function registerOrgRoutes(app: FastifyInstance) {
       const { rows } = await pool.query(
         `SELECT id, name, code, address, city, country, site_type, is_active,
                 company_id, employees_count, surface_m2, is_consolidated,
-                contact_name, contact_email, annual_revenue, created_at, updated_at
+                contact_name, contact_email, annual_revenue, operation_status,
+                created_at, updated_at
          FROM collect_sites
          WHERE ${where.join(" AND ")}
          ORDER BY name`,
@@ -408,11 +432,12 @@ export async function registerOrgRoutes(app: FastifyInstance) {
       const { rows } = await pool.query(
         `INSERT INTO collect_sites
            (organization_id, name, code, address, city, country, site_type, is_active,
-            is_consolidated, company_id, employees_count, surface_m2, contact_name, contact_email)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+            is_consolidated, company_id, employees_count, surface_m2, contact_name, contact_email,
+            operation_status)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
          RETURNING id, name, code, address, city, country, site_type, is_active,
                    company_id, employees_count, surface_m2, is_consolidated,
-                   contact_name, contact_email, created_at, updated_at`,
+                   contact_name, contact_email, operation_status, created_at, updated_at`,
         [
           request.user!.organizationId,
           d.name,
@@ -428,6 +453,7 @@ export async function registerOrgRoutes(app: FastifyInstance) {
           d.surfaceM2 ?? null,
           d.contactName ?? null,
           d.contactEmail ?? null,
+          d.operationStatus ?? null,
         ],
       );
       return { site: rows[0] };
@@ -459,11 +485,12 @@ export async function registerOrgRoutes(app: FastifyInstance) {
            surface_m2 = COALESCE($13, surface_m2),
            contact_name = COALESCE($14, contact_name),
            contact_email = COALESCE($15, contact_email),
+           operation_status = CASE WHEN $16::boolean THEN $17::text ELSE operation_status END,
            updated_at = now()
          WHERE id = $1 AND organization_id = $2
          RETURNING id, name, code, address, city, country, site_type, is_active,
                    company_id, employees_count, surface_m2, is_consolidated,
-                   contact_name, contact_email, created_at, updated_at`,
+                   contact_name, contact_email, operation_status, created_at, updated_at`,
         [
           params.data.id,
           request.user!.organizationId,
@@ -480,6 +507,8 @@ export async function registerOrgRoutes(app: FastifyInstance) {
           d.surfaceM2 ?? null,
           d.contactName ?? null,
           d.contactEmail ?? null,
+          d.operationStatus !== undefined,
+          d.operationStatus ?? null,
         ],
       );
       if (!rows[0]) {

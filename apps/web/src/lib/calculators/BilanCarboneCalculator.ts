@@ -8,7 +8,10 @@
  */
 
 import { ActivityDataService } from '../activity-data/ActivityDataService';
+import { matchProcessEmission } from '../activity-data/processEmission';
+import { isUnvalidatedMonetaryDefault, UNVALIDATED_MONETARY_LABEL } from '../activity-data/dataMethod';
 import { ActivityDataFilters } from '../activity-data/types';
+import { resultFromFrozenBilan } from './frozenBilan';
 import { api } from "@/integrations/api/client";
 import { logger } from '@/utils/logger';
 
@@ -54,10 +57,14 @@ export interface EmissionLineDetail {
   unit: string;
   emissionFactor: number;
   emissionFactorUnit: string;
-  emissionFactorSource: 'ADEME/Organisation' | 'ADEME/Taxonomie' | 'ADEME/Base' | 'Non trouvé';
+  emissionFactorSource: string;
   emissions: number;
   scope: 1 | 2 | 3;
   dataQuality: 'real' | 'estimated' | 'default';
+  dataMethod?: string | null;
+  uncertaintyPct?: number | null;
+  sourceType?: string | null;
+  siteId?: string | null;
 }
 
 export interface BilanCarboneResult {
@@ -82,6 +89,9 @@ export interface BilanCarboneResult {
     default: number;
   };
   missingFactors: MissingEmissionFactor[];
+  /** Bilan soumis ou validé : les facteurs affichés sont ceux de la clôture. */
+  frozen?: boolean;
+  frozenAt?: string | null;
 }
 
 export class BilanCarboneCalculator {
@@ -95,13 +105,11 @@ export class BilanCarboneCalculator {
     periodEnd: string,
     siteId?: string // Optionnel: filtrer par site
   ): Promise<BilanCarboneResult> {
-    // Bilan déjà enregistré (import ou publication) : l'afficher tel quel.
-    // Recalcul activity_data seulement s'il n'y a pas de totaux exploitables.
+    // Un bilan soumis ou validé reste sur le snapshot de clôture.
+    // Un brouillon est recalculé depuis les données d'activité.
     if (!siteId) {
-      const legacy = await this.calculateFromLegacyBilans(organizationId, periodStart, periodEnd);
-      if (legacy.totalEmissions > 0) {
-        return legacy;
-      }
+      const frozen = await this.calculateFromClosedBilan(periodStart, periodEnd);
+      if (frozen) return frozen;
     }
 
     // Calculer côté frontend depuis activity_data
@@ -213,6 +221,10 @@ export class BilanCarboneCalculator {
           emissions,
           scope: scope as 1 | 2 | 3,
           dataQuality: activity.data_quality || 'default',
+          dataMethod: activity.data_method ?? null,
+          uncertaintyPct: activity.uncertainty_pct != null ? Number(activity.uncertainty_pct) : null,
+          sourceType: activity.source_type ?? null,
+          siteId: activity.site_id ?? null,
         });
         
         return {
@@ -518,6 +530,18 @@ export class BilanCarboneCalculator {
       if (fromDate != null) return fromDate;
     }
     return null;
+  }
+
+  private static async calculateFromClosedBilan(
+    periodStart: string,
+    periodEnd: string
+  ): Promise<BilanCarboneResult | null> {
+    const { items: bilans } = await api.listBilans();
+    const requestedYear = Number(String(periodStart).slice(0, 4));
+    const rows = (bilans || []) as Array<Record<string, unknown>>;
+    const row = rows.find((item) => this.reportingYearOf(item) === requestedYear);
+    if (!row) return null;
+    return resultFromFrozenBilan(row, periodStart, periodEnd);
   }
 
   private static async calculateFromLegacyBilans(
@@ -874,8 +898,28 @@ export class BilanCarboneCalculator {
     hasFactor: boolean;
     emissionFactor: number;
     emissionFactorUnit: string;
-    emissionFactorSource: 'ADEME/Organisation' | 'ADEME/Taxonomie' | 'ADEME/Base' | 'Non trouvé';
+    emissionFactorSource: string;
   }> {
+    const processLine = matchProcessEmission(activity);
+    if (processLine.kind === 'missing') {
+      return {
+        emissions: 0,
+        hasFactor: false,
+        emissionFactor: 0,
+        emissionFactorUnit: '',
+        emissionFactorSource: 'Non trouvé',
+      };
+    }
+    if (processLine.kind === 'ok') {
+      return {
+        emissions: processLine.kgCO2e,
+        hasFactor: true,
+        emissionFactor: processLine.factor,
+        emissionFactorUnit: processLine.factorUnit,
+        emissionFactorSource: processLine.factorSource,
+      };
+    }
+
     const rawSubcategory = activity.subcategory?.toLowerCase() || '';
     const activityType = activity.activity_type?.toLowerCase() || '';
     let quantity = parseFloat(activity.quantity) || 0;
@@ -1029,12 +1073,13 @@ export class BilanCarboneCalculator {
     const defaultFactor = this.getDefaultFactor(subcategory, activityType);
     if (defaultFactor > 0) {
       logger.debug(`✅ Facteur par défaut: ${subcategory} → ${defaultFactor}`);
+      const monetaryRatio = isUnvalidatedMonetaryDefault(subcategory);
       return { 
         emissions: quantity * defaultFactor, 
         hasFactor: true, 
         emissionFactor: defaultFactor, 
         emissionFactorUnit: 'kgCO₂e/' + (unit || 'unité'), 
-        emissionFactorSource: 'ADEME/Taxonomie' as const 
+        emissionFactorSource: monetaryRatio ? UNVALIDATED_MONETARY_LABEL : 'ADEME/Taxonomie' as const 
       };
     }
 

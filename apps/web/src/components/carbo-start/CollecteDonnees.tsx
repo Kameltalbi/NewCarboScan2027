@@ -85,7 +85,7 @@ export const CollecteDonnees: React.FC = () => {
               <strong>Définir le périmètre organisationnel</strong>
               <br />
               <span className="text-gray-600">
-                Délimitez précisément les entités, sites et activités à inclure dans le bilan selon les critères de contrôle opérationnel ou financier.
+                Choisissez le contrôle opérationnel ou le contrôle financier dans les paramètres. Indiquez si chaque site est opéré ou non opéré. Véhicule en propriété : souvent Scope 1. Site non opéré : souvent Scope 3. Actif loué : l'arbitrage reste le vôtre. Le scope enregistré est celui que vous confirmez sur la donnée.
               </span>
             </div>
           </li>

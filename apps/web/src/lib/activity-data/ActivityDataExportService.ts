@@ -2,6 +2,14 @@
 
 import ExcelJS from 'exceljs';
 import { ActivityData } from './types';
+import {
+  buildPortableExportRows,
+  PORTABLE_HEADERS,
+  type PortableExportInput,
+  type PortableRow,
+} from './portableExport';
+
+export type { PortableExportInput };
 
 export interface ExportOptions {
   format: 'excel' | 'csv' | 'json' | 'audit';
@@ -9,56 +17,18 @@ export interface ExportOptions {
   includeEmissions?: boolean;
 }
 
-/**
- * Exporter les données d'activité en Excel
- */
-export async function exportToExcel(
-  activities: ActivityData[],
-  options: ExportOptions = { format: 'excel' }
-): Promise<void> {
+export async function createPortableWorkbook(
+  rows: PortableRow[],
+  activities: ActivityData[] = [],
+): Promise<ExcelJS.Workbook> {
   const workbook = new ExcelJS.Workbook();
-  
-  // Feuille 1: Données principales
   const dataSheet = workbook.addWorksheet('Données');
-  dataSheet.columns = [
-    { header: 'ID', key: 'id', width: 36 },
-    { header: 'Type d\'activité', key: 'activity_type', width: 15 },
-    { header: 'Catégorie', key: 'category', width: 20 },
-    { header: 'Sous-catégorie', key: 'subcategory', width: 20 },
-    { header: 'Quantité', key: 'quantity', width: 15 },
-    { header: 'Unité', key: 'unit', width: 10 },
-    { header: 'Période début', key: 'period_start', width: 15 },
-    { header: 'Période fin', key: 'period_end', width: 15 },
-    { header: 'Qualité', key: 'data_quality', width: 12 },
-    { header: 'Scope', key: 'scope_hint', width: 8 },
-    { header: 'Score confiance', key: 'confidence_score', width: 15 },
-    { header: 'Site ID', key: 'site_id', width: 36 },
-    { header: 'Produit ID', key: 'product_id', width: 36 },
-    { header: 'Notes', key: 'notes', width: 30 },
-    { header: 'Créé le', key: 'created_at', width: 20 },
-    { header: 'Modifié le', key: 'updated_at', width: 20 },
-  ];
-
-  activities.forEach((activity) => {
-    dataSheet.addRow({
-      id: activity.id,
-      activity_type: activity.activity_type,
-      category: activity.category,
-      subcategory: activity.subcategory || '',
-      quantity: activity.quantity,
-      unit: activity.unit,
-      period_start: formatDate(activity.period_start),
-      period_end: formatDate(activity.period_end),
-      data_quality: activity.data_quality,
-      scope_hint: activity.scope_hint || '',
-      confidence_score: activity.confidence_score || '',
-      site_id: activity.site_id || '',
-      product_id: activity.product_id || '',
-      notes: activity.notes || '',
-      created_at: formatDateTime(activity.created_at),
-      updated_at: formatDateTime(activity.updated_at),
-    });
-  });
+  dataSheet.columns = PORTABLE_HEADERS.map((header) => ({
+    header,
+    key: header,
+    width: Math.min(40, Math.max(14, header.length + 2)),
+  }));
+  rows.forEach((row) => dataSheet.addRow(row));
 
   // Feuille 2: Statistiques
   const statsSheet = workbook.addWorksheet('Statistiques');
@@ -111,7 +81,20 @@ export async function exportToExcel(
     });
   });
 
-  // Générer le fichier
+  return workbook;
+}
+
+/**
+ * Exporter les données d'activité en Excel.
+ * Le classeur reprend les lignes portables. Il ne relit pas le catalogue.
+ */
+export async function exportToExcel(
+  activities: ActivityData[],
+  options: ExportOptions = { format: 'excel' },
+  portable?: Omit<PortableExportInput, 'activities'>,
+): Promise<void> {
+  const rows = buildPortableExportRows({ activities, ...portable });
+  const workbook = await createPortableWorkbook(rows, activities);
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -131,44 +114,16 @@ export async function exportToExcel(
 /**
  * Exporter les données d'activité en CSV
  */
-export function exportToCSV(activities: ActivityData[]): void {
-  const headers = [
-    'ID',
-    'Type d\'activité',
-    'Catégorie',
-    'Sous-catégorie',
-    'Quantité',
-    'Unité',
-    'Période début',
-    'Période fin',
-    'Qualité',
-    'Scope',
-    'Score confiance',
-    'Site ID',
-    'Produit ID',
-    'Notes',
-    'Créé le',
-    'Modifié le',
-  ];
-
-  const rows = activities.map((activity) => [
-    activity.id,
-    activity.activity_type,
-    activity.category,
-    activity.subcategory || '',
-    activity.quantity.toString(),
-    activity.unit,
-    formatDate(activity.period_start),
-    formatDate(activity.period_end),
-    activity.data_quality,
-    activity.scope_hint?.toString() || '',
-    activity.confidence_score?.toString() || '',
-    activity.site_id || '',
-    activity.product_id || '',
-    (activity.notes || '').replace(/"/g, '""'), // Échapper les guillemets
-    formatDateTime(activity.created_at),
-    formatDateTime(activity.updated_at),
-  ]);
+export function exportToCSV(
+  activities: ActivityData[],
+  portable?: Omit<PortableExportInput, 'activities'>,
+): void {
+  const portableRows = buildPortableExportRows({ activities, ...portable });
+  const headers = [...PORTABLE_HEADERS];
+  const rows = portableRows.map((row) => headers.map((header) => {
+    const value = row[header];
+    return value == null ? '' : String(value).replace(/"/g, '""');
+  }));
 
   const csvContent = [
     headers.join(';'),

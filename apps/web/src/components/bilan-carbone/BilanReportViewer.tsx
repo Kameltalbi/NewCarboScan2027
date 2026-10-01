@@ -264,12 +264,13 @@ export const BilanReportViewer: React.FC<BilanReportViewerProps> = ({
           }));
 
       case 'trajectoryData': {
+        const target = reportData?.reductionTarget;
+        if (target == null || !Number.isFinite(Number(target)) || Number(target) <= 0) return [];
         const total = reportData?.totalEmissions ?? 0;
         const year = reportData?.year ?? new Date().getFullYear();
-        const target = reportData?.reductionTarget ?? 42;
         return [
           { year: String(year), value: total, objectif: total },
-          { year: '2030', value: Math.round(total * (1 - target / 100)), objectif: Math.round(total * (1 - target / 100)) },
+          { year: '2030', value: Math.round(total * (1 - Number(target) / 100)), objectif: Math.round(total * (1 - Number(target) / 100)) },
         ];
       }
       

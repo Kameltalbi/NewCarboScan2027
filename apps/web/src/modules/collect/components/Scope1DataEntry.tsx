@@ -6,6 +6,7 @@
  * - Carburants des véhicules (essence, diesel, GPL)
  * - Biomasse énergétique
  * - Émissions fugitives (fluides frigorigènes)
+ * - Procédé / autre émission directe
  */
 
 import React, { useState, useEffect } from 'react';
@@ -21,7 +22,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Save, Loader2, Flame, Fuel, Droplet, Snowflake, MapPin } from 'lucide-react';
+import { Save, Loader2, Flame, Fuel, Droplet, Snowflake, Factory, MapPin } from 'lucide-react';
+import { ProcessEmissionForm } from './ProcessEmissionForm';
+import { SourceUncertaintyFields } from './SourceUncertaintyFields';
+import { MethodNoteLink } from '@/components/method/MethodNoteLink';
+import { parseOptionalUncertainty, type SourceType } from '@/lib/activity-data/uncertaintySummary';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -86,6 +91,13 @@ const SCOPE1_CATEGORIES = [
       { value: 'fugitive_other', label: 'Autre fluide frigorigène', defaultUnit: 'kg' },
     ],
   },
+  {
+    id: 'process_other',
+    label: 'Procédé / autre émission directe',
+    icon: Factory,
+    color: 'bg-violet-600',
+    subcategories: [],
+  },
 ];
 
 interface Scope1DataEntryProps {
@@ -111,6 +123,8 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
     period_start: `${referenceYear}-01-01`,
     period_end: `${referenceYear}-12-31`,
     data_quality: 'estimated' as 'real' | 'estimated' | 'default',
+    source_type: 'unspecified',
+    uncertainty: '',
   });
 
   const currentCategory = SCOPE1_CATEGORIES.find(c => c.id === selectedCategory);
@@ -132,6 +146,12 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
         description: 'Veuillez sélectionner une sous-catégorie',
         variant: 'destructive',
       });
+      return;
+    }
+
+    const uncertainty = parseOptionalUncertainty(formData.uncertainty);
+    if (!uncertainty.ok) {
+      toast({ title: 'Erreur', description: uncertainty.message, variant: 'destructive' });
       return;
     }
 
@@ -161,6 +181,9 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
         notes: formData.description || undefined,
         site_id: selectedSite === 'all' ? null : selectedSite,
         scope_hint: 1,
+        data_method: 'physical',
+        source_type: formData.source_type === 'unspecified' ? null : (formData.source_type as SourceType),
+        uncertainty_pct: uncertainty.value,
       });
 
       toast({
@@ -176,6 +199,8 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
         period_start: formData.period_start,
         period_end: formData.period_end,
         data_quality: 'estimated',
+        source_type: 'unspecified',
+        uncertainty: '',
       });
       setSelectedSubcategory('');
 
@@ -205,7 +230,12 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
       <Alert>
         <Flame className="h-4 w-4" />
         <AlertDescription>
-          <strong>Scope 1 - Émissions directes</strong> : Émissions provenant de sources détenues ou contrôlées par votre organisation (combustibles, véhicules, fuites de gaz).
+          <strong>Scope 1 - Émissions directes</strong> : Émissions provenant de sources détenues ou contrôlées par votre organisation (combustibles, véhicules, fuites de gaz, procédé). Ces quantités sont enregistrées comme donnée physique. Un site non opéré est souvent proposé en Scope 3. Cette fiche enregistre le Scope 1 que vous confirmez, y compris pour un site non opéré.
+          <span className="mt-2 flex flex-wrap gap-3">
+            <MethodNoteLink noteId="procedes" label="Note : procédés" />
+            <MethodNoteLink noteId="fugitives" label="Note : émissions fugitives" />
+            <MethodNoteLink noteId="donnees-physiques" label="Note : données physiques" />
+          </span>
         </AlertDescription>
       </Alert>
 
@@ -214,7 +244,7 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
         <h4 className="text-sm font-medium text-muted-foreground">
           Catégories d'émissions directes ({SCOPE1_CATEGORIES.length})
         </h4>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
           {SCOPE1_CATEGORIES.map(category => {
             const Icon = category.icon;
             const isSelected = selectedCategory === category.id;
@@ -222,6 +252,8 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
             return (
               <button
                 key={category.id}
+                type="button"
+                data-testid={`scope1-category-${category.id}`}
                 onClick={() => {
                   setSelectedCategory(category.id);
                   setSelectedSubcategory('');
@@ -250,8 +282,17 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
         </div>
       </div>
 
+      {selectedCategory === 'process_other' && (
+        <ProcessEmissionForm
+          organizationId={organizationId}
+          sites={sites}
+          referenceYear={referenceYear}
+          onSuccess={onSuccess}
+        />
+      )}
+
       {/* Formulaire de saisie */}
-      {currentCategory && (
+      {selectedCategory !== 'process_other' && currentCategory && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
@@ -379,6 +420,13 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <SourceUncertaintyFields
+                    sourceType={formData.source_type}
+                    uncertainty={formData.uncertainty}
+                    onSourceType={(source_type) => setFormData((prev) => ({ ...prev, source_type }))}
+                    onUncertainty={(uncertaintyValue) => setFormData((prev) => ({ ...prev, uncertainty: uncertaintyValue }))}
+                  />
 
                   {/* Description */}
                   <div className="space-y-2">

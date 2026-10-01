@@ -20,7 +20,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 const API_URL =
   import.meta.env.VITE_API_URL ??
-  (import.meta.env.DEV ? "http://localhost:8080" : "");
+  (import.meta.env.DEV ? "http://127.0.0.1:8080" : "");
 
 const AVAILABLE_SCOPES = [
   { id: 'read:activity', label: 'read:activity', desc: 'Lire les données de collecte' },

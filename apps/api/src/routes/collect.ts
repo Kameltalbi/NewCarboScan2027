@@ -18,8 +18,18 @@ const activityInput = z.object({
   supplier_id: z.string().uuid().optional().nullable(),
   activity_type: z.string().max(80).optional().nullable(),
   data_quality: z.string().max(40).optional().nullable(),
-  scope_hint: z.string().max(40).optional().nullable(),
+  scope_hint: z.union([z.number().int(), z.string().max(40)]).optional().nullable(),
   source_document: z.string().max(500).optional().nullable(),
+  emission_factor_source: z.string().max(500).optional().nullable(),
+  data_method: z
+    .enum(["physical", "monetary", "direct_emission", "supplier_specific", "other"])
+    .optional()
+    .nullable(),
+  source_type: z
+    .enum(["measured", "invoice", "supplier", "estimate", "extrapolation", "monetary_ratio"])
+    .optional()
+    .nullable(),
+  uncertainty_pct: z.number().min(0).max(100).optional().nullable(),
 }).passthrough();
 
 function pickActivity(input: Record<string, unknown>, orgId: string, userId: string) {
@@ -41,6 +51,10 @@ function pickActivity(input: Record<string, unknown>, orgId: string, userId: str
     data_quality: input.data_quality ?? "estimated",
     scope_hint: input.scope_hint ?? null,
     source_document: input.source_document ?? null,
+    emission_factor_source: input.emission_factor_source ?? null,
+    data_method: input.data_method ?? null,
+    source_type: input.source_type ?? null,
+    uncertainty_pct: input.uncertainty_pct ?? null,
     created_by: userId,
   };
 }
@@ -130,14 +144,14 @@ export async function registerCollectRoutes(app: FastifyInstance) {
         const inserted = await pool.query(
           `INSERT INTO activity_data
             (organization_id, category, subcategory, scope, quantity, unit, period_start, period_end,
-             factor_id, notes, site_id, product_id, supplier_id, activity_type, data_quality, scope_hint, source_document, created_by)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+             factor_id, notes, site_id, product_id, supplier_id, activity_type, data_quality, scope_hint, source_document, emission_factor_source, created_by, data_method, source_type, uncertainty_pct)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)
            RETURNING *`,
           [
             row.organization_id, row.category, row.subcategory, row.scope, row.quantity, row.unit,
             row.period_start, row.period_end, row.factor_id, row.notes, row.site_id, row.product_id,
             row.supplier_id, row.activity_type, row.data_quality, row.scope_hint, row.source_document,
-            row.created_by,
+            row.emission_factor_source, row.created_by, row.data_method, row.source_type, row.uncertainty_pct,
           ],
         );
         created.push(inserted.rows[0]);
@@ -169,6 +183,9 @@ export async function registerCollectRoutes(app: FastifyInstance) {
            notes = COALESCE($11, notes),
            site_id = COALESCE($12, site_id),
            data_quality = COALESCE($13, data_quality),
+           data_method = CASE WHEN $14::boolean THEN $15::text ELSE data_method END,
+           source_type = CASE WHEN $16::boolean THEN $17::text ELSE source_type END,
+           uncertainty_pct = CASE WHEN $18::boolean THEN $19::numeric ELSE uncertainty_pct END,
            updated_at = now()
          WHERE id = $1 AND organization_id = $2
          RETURNING *`,
@@ -186,6 +203,12 @@ export async function registerCollectRoutes(app: FastifyInstance) {
           d.notes ?? null,
           d.site_id ?? null,
           d.data_quality ?? null,
+          d.data_method !== undefined,
+          d.data_method ?? null,
+          d.source_type !== undefined,
+          d.source_type ?? null,
+          d.uncertainty_pct !== undefined,
+          d.uncertainty_pct ?? null,
         ],
       );
       if (!rows[0]) {

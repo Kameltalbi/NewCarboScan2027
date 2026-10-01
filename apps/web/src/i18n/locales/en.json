@@ -158,6 +158,7 @@
     "cbamCalculator": "CBAM Calculator",
     "login": "Login",
     "platform": "Platform",
+    "offer": "Offer",
     "freeDemo": "Free demo",
     "bySector": "By sector",
     "allSolutions": "All solutions",
@@ -357,6 +358,20 @@
       "carbonManagement": "Carbon management",
       "lca": "LCA & factors"
     },
+    "offer": {
+      "enterprises": {
+        "label": "Companies & organizations",
+        "description": "Measure your carbon footprint"
+      },
+      "finance": {
+        "label": "Financial institutions",
+        "description": "Measure your financed emissions"
+      },
+      "transition": {
+        "label": "Transition",
+        "description": "Move from measurement to action"
+      }
+    },
     "items": {
       "bilanCarbone": {
         "label": "Carbon Footprint®",
@@ -404,6 +419,7 @@
       "wattbim": "WattBim",
       "actionPlan": "Action plan",
       "scenarios": "Scenario modeling",
+      "methodNotes": "Method notes",
       "settings": "Settings"
     }
   },
@@ -5937,14 +5953,14 @@
     "hero": {
       "eyebrow": "Carbon & ESG Intelligence",
       "badge": "Carbon footprint · PCF · CBAM",
-      "titleLine1": "Steer your",
-      "titleLine2": "carbon transition.",
-      "titleLine3": "Create lasting value.",
+      "titleLine1": "Measure.",
+      "titleLine2": "Reduce.",
+      "titleLine3": "Steer your carbon transition.",
       "titlePart1": "Decarbonization is a ",
       "titleHighlight": "competitive lever",
       "titlePart2": "",
-      "subtitle": "Measure your emissions, identify priorities, and turn carbon data into concrete decisions.",
-      "ctaPrimary": "Start my footprint",
+      "subtitle": "CarboScan supports companies and financial institutions in their low-carbon transition.",
+      "ctaPrimary": "Request a demo",
       "ctaSecondary": "Discover CarboScan",
       "trust": {
         "deploy": "Simple to deploy",
@@ -5965,6 +5981,51 @@
       "aiInsightTitle": "Insight",
       "aiInsightText": "Scope 2: -12% vs. last year. Great job, keep going!",
       "aiInsightCta": "See recommendations"
+    },
+    "pillars": {
+      "title": "Three expertises. One platform.",
+      "cta": "Discover",
+      "enterprises": {
+        "audience": "Companies & organizations",
+        "headline": "Measure your carbon footprint",
+        "description": "A complete GHG inventory to measure, analyze and steer your organization's emissions.",
+        "tags": "Scope 1, 2 & 3 · Multi-site · Reporting"
+      },
+      "finance": {
+        "audience": "Financial institutions",
+        "headline": "Measure your financed emissions",
+        "description": "Assess the carbon footprint of your portfolios with an approach aligned with the PCAF methodology.",
+        "tags": "PCAF · Financed emissions · Data Quality"
+      },
+      "transition": {
+        "audience": "Transition",
+        "headline": "Move from measurement to action",
+        "description": "Build your reduction trajectory and steer your carbon transition plan.",
+        "tags": "Targets · Reduction · Transition plan"
+      }
+    },
+    "africa": {
+      "eyebrow": "Africa",
+      "title": "Carbon transition adapted to African realities",
+      "subtitle": "CarboScan is built for African companies, organizations and financial institutions: relevant emission factors, local and multi-site data, aligned with international methodologies and standards.",
+      "points": {
+        "factors": {
+          "title": "Relevant emission factors",
+          "description": "Factors suited to African energy and industrial contexts, without losing methodological traceability."
+        },
+        "localData": {
+          "title": "Locally available data",
+          "description": "Collect and structure the data that is actually available on the ground, even when sources are fragmented."
+        },
+        "multiSite": {
+          "title": "Multi-site organizations",
+          "description": "Consolidate emissions across subsidiaries, sites and operations spanning multiple countries or regions."
+        },
+        "standards": {
+          "title": "International standards",
+          "description": "Stay aligned with GHG Protocol, ISO 14064 and the reporting frameworks your stakeholders expect."
+        }
+      }
     },
     "suiteModules": {
       "featuredTitle": "The complete suite for your low-carbon transition",
@@ -7858,6 +7919,7 @@
       "inies": "Environmental data for construction",
       "badges": {
         "available": "Available",
+        "imported": "Imported",
         "soon": "Coming soon",
         "upcoming": "Planned",
         "study": "Under review"

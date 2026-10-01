@@ -2,7 +2,7 @@ import { getStoredToken } from "@/integrations/api/client";
 import type { CreatedSession, DiagnosticAnswer, OrgDiagnosticSummary, PublicSnapshot, SessionView } from "./types";
 
 const API_URL =
-  import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "http://localhost:8080" : "");
+  import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "http://127.0.0.1:8080" : "");
 
 export class DiagnosticRequestError extends Error {
   readonly status: number;
