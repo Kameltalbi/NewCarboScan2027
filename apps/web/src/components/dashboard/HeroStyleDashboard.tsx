@@ -343,6 +343,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
   }, [hasReal, data, selectedSiteId, siteNameById]);
 
   const topSites = useMemo(() => siteEmissions.rows.slice(0, 8), [siteEmissions]);
+  const maxSiteTonnes = Math.max(...topSites.map((s) => s.tonnes), 1);
 
   const topCategories = useMemo(() => {
     if (!hasReal || !data) return [];
@@ -417,17 +418,6 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         technicalKey: c.technicalKey,
       })),
     [selectedSiteId, siteSources, topCategories],
-  );
-
-  const siteChartData = useMemo(
-    () =>
-      topSites.map((s) => ({
-        name: s.name.length > 22 ? `${s.name.slice(0, 20)}…` : s.name,
-        fullName: s.name,
-        value: Math.round(s.tonnes * 10) / 10,
-        id: s.id,
-      })),
-    [topSites],
   );
 
   if (loading || organizationLoading) {
@@ -528,7 +518,130 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         />
       </div>
 
-      {/* 1. Principaux postes d'émissions — graphique principal */}
+      {/* CHARTS — disposition d'origine : donut total à gauche, sites à droite */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <h3 className="mb-4 text-lg font-semibold text-foreground">
+            {selectedSite
+              ? `Répartition des émissions — ${selectedSite.name}`
+              : 'Répartition des émissions par scope'}
+          </h3>
+          <div className="flex flex-col items-center gap-6 sm:flex-row">
+            <div className="relative h-52 w-52 shrink-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={scopeData}
+                    dataKey="value"
+                    innerRadius={70}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    stroke="none"
+                  >
+                    {scopeData.map((_, i) => (
+                      <Cell key={i} fill={SCOPE_COLORS[i]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <div className="text-2xl font-bold text-foreground">{fmt(kpis.total)}</div>
+                <div className="text-xs text-muted-foreground">tCO₂e</div>
+              </div>
+            </div>
+            <div className="w-full flex-1 space-y-3">
+              {scopeData.map((s, i) => {
+                const pct = kpis.total ? (s.value / kpis.total) * 100 : 0;
+                return (
+                  <div key={s.name} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="h-2.5 w-2.5 rounded-full"
+                        style={{ background: SCOPE_COLORS[i] }}
+                      />
+                      <span className="text-foreground">{s.name}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-semibold text-foreground">{fmt(s.value)} tCO₂e</span>
+                      <span className="w-10 text-right text-muted-foreground">
+                        {Math.round(pct)}%
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">
+              {selectedSiteId
+                ? `Émissions — ${selectedSite?.name || 'Site'}`
+                : 'Émissions par site — Top 8'}
+            </h3>
+            <MapPin className="h-4 w-4 text-muted-foreground" />
+          </div>
+          {selectedSiteId ? (
+            <div className="space-y-3 py-2">
+              <p className="text-3xl font-bold tabular-nums text-foreground">
+                {fmt(kpis.total)}{' '}
+                <span className="text-sm font-medium text-muted-foreground">tCO₂e</span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Scope 1+2 : {fmt(kpis.s12)} tCO₂e ({Math.round(kpis.s12Pct)} %) · Scope 3 :{' '}
+                {fmt(kpis.s3)} tCO₂e ({Math.round(kpis.s3Pct)} %)
+              </p>
+              <Button variant="outline" size="sm" onClick={() => setSelectedSiteId(null)}>
+                Revenir à la vue consolidée
+              </Button>
+            </div>
+          ) : topSites.length === 0 ? (
+            <p className="flex h-56 items-center justify-center px-4 text-center text-sm text-muted-foreground">
+              {siteEmissions.unassignedKg > 0
+                ? 'Des émissions existent pour cet exercice, mais aucune n’est rattachée à un site (site_id manquant sur les lignes d’activité). Les prochaines collectes/importations doivent sélectionner un site.'
+                : 'Aucune émission rattachée à un site pour cet exercice. Vérifiez le rattachement site dans la collecte.'}
+            </p>
+          ) : (
+            <>
+              <div className="space-y-3">
+                {topSites.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    className="w-full text-left"
+                    onClick={() => setSelectedSiteId(s.id)}
+                  >
+                    <div className="mb-1 flex items-center justify-between text-sm">
+                      <span className="truncate pr-2 font-medium text-foreground">{s.name}</span>
+                      <span className="shrink-0 tabular-nums text-muted-foreground">
+                        <span className="font-semibold text-foreground">{fmt(s.tonnes)}</span> tCO₂e ·{' '}
+                        {Math.round(s.pct)} %
+                      </span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-emerald-500"
+                        style={{ width: `${(s.tonnes / maxSiteTonnes) * 100}%` }}
+                      />
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 hover:text-emerald-800"
+                onClick={() => navigate('/app/bilan-carbone')}
+              >
+                Voir les {sites.length || topSites.length} sites →
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Postes d'émissions */}
       <div className="rounded-2xl border border-border bg-card p-6">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
@@ -555,7 +668,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
             Aucun poste d&apos;émission disponible pour ce périmètre.
           </p>
         ) : (
-          <div className="h-[360px]">
+          <div className="h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={categoryChartData}
@@ -608,145 +721,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         )}
       </div>
 
-      {/* 2. Sites + Scope compact */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        <div className="rounded-2xl border border-border bg-card p-6 lg:col-span-2">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">
-                {selectedSiteId
-                  ? `Émissions — ${selectedSite?.name || 'Site'}`
-                  : 'Sites les plus émetteurs'}
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                {selectedSiteId
-                  ? 'Filtre actif sur un site'
-                  : 'Top 8 · agrégation depuis activity_data.site_id'}
-              </p>
-            </div>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-          </div>
-          {selectedSiteId ? (
-            <div className="space-y-3 py-2">
-              <p className="text-3xl font-bold tabular-nums text-foreground">
-                {fmt(kpis.total)}{' '}
-                <span className="text-sm font-medium text-muted-foreground">tCO₂e</span>
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Scope 1+2 : {fmt(kpis.s12)} tCO₂e · Scope 3 : {fmt(kpis.s3)} tCO₂e
-              </p>
-              <Button variant="outline" size="sm" onClick={() => setSelectedSiteId(null)}>
-                Revenir à la vue consolidée
-              </Button>
-            </div>
-          ) : topSites.length === 0 ? (
-            <p className="flex min-h-[220px] items-center justify-center px-4 text-center text-sm text-muted-foreground">
-              {siteEmissions.unassignedKg > 0
-                ? 'Des émissions existent pour cet exercice, mais aucune n’est rattachée à un site (site_id manquant sur les lignes d’activité). Les prochaines collectes/importations doivent sélectionner un site.'
-                : 'Aucune émission rattachée à un site pour cet exercice. Vérifiez le rattachement site dans la collecte.'}
-            </p>
-          ) : (
-            <div className="h-[280px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={siteChartData}
-                  layout="vertical"
-                  margin={{ top: 4, right: 16, left: 8, bottom: 4 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" />
-                  <XAxis
-                    type="number"
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(v) =>
-                      v >= 1000
-                        ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v / 1000)}k`
-                        : String(v)
-                    }
-                    className="text-xs"
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    width={130}
-                    tickLine={false}
-                    axisLine={false}
-                    className="text-xs"
-                  />
-                  <Tooltip
-                    formatter={(v: number) => [`${fmt(v)} tCO₂e`, 'Émissions']}
-                    labelFormatter={(_, payload) =>
-                      String(payload?.[0]?.payload?.fullName || '')
-                    }
-                    contentStyle={{
-                      background: 'hsl(var(--card))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: 8,
-                    }}
-                  />
-                  <Bar
-                    dataKey="value"
-                    fill="#0ea5e9"
-                    radius={[0, 6, 6, 0]}
-                    cursor="pointer"
-                    onClick={(entry: { id?: string }) => {
-                      if (entry?.id) setSelectedSiteId(entry.id);
-                    }}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-        </div>
-
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <h3 className="mb-1 text-base font-semibold text-foreground">Répartition par scope</h3>
-          <p className="mb-4 text-xs text-muted-foreground">Vue compacte Scope 1 / 2 / 3</p>
-          <div className="relative mx-auto h-40 w-40">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={scopeData}
-                  dataKey="value"
-                  innerRadius={48}
-                  outerRadius={72}
-                  paddingAngle={2}
-                  stroke="none"
-                >
-                  {scopeData.map((_, i) => (
-                    <Cell key={i} fill={SCOPE_COLORS[i]} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <div className="text-lg font-bold text-foreground">{fmt(kpis.total)}</div>
-              <div className="text-[10px] text-muted-foreground">tCO₂e</div>
-            </div>
-          </div>
-          <div className="mt-4 space-y-2">
-            {scopeData.map((s, i) => {
-              const pct = kpis.total ? (s.value / kpis.total) * 100 : 0;
-              return (
-                <div key={s.name} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ background: SCOPE_COLORS[i] }}
-                    />
-                    <span>{s.name}</span>
-                  </div>
-                  <span className="tabular-nums text-muted-foreground">
-                    {fmt(s.value)} · {Math.round(pct)}%
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Évolution — uniquement si ≥ 2 exercices réels */}
+      {/* Évolution — uniquement si ≥ 2 exercices réels */}
       <div className="rounded-2xl border border-border bg-card p-6">
         <h3 className="text-lg font-semibold text-foreground">Évolution des émissions</h3>
         {showEvolution ? (
@@ -822,7 +797,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         </div>
       )}
 
-      {/* 4. Priorités de réduction → Plan d'actions */}
+      {/* Priorités de réduction → Plan d'actions */}
       <div className="rounded-2xl border border-border bg-card p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
