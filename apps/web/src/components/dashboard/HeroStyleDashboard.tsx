@@ -518,8 +518,9 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         />
       </div>
 
-      {/* CHARTS — 2 par ligne desktop, 1 sur mobile */}
+      {/* CHARTS — L1: scope | postes · L2: qualité | sites */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        {/* L1 G1 — Répartition par scope */}
         <div className="rounded-2xl border border-border bg-card p-6">
           <h3 className="mb-4 text-lg font-semibold text-foreground">
             {selectedSite
@@ -574,73 +575,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-foreground">
-              {selectedSiteId
-                ? `Émissions — ${selectedSite?.name || 'Site'}`
-                : 'Émissions par site — Top 8'}
-            </h3>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-          </div>
-          {selectedSiteId ? (
-            <div className="space-y-3 py-2">
-              <p className="text-3xl font-bold tabular-nums text-foreground">
-                {fmt(kpis.total)}{' '}
-                <span className="text-sm font-medium text-muted-foreground">tCO₂e</span>
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Scope 1+2 : {fmt(kpis.s12)} tCO₂e ({Math.round(kpis.s12Pct)} %) · Scope 3 :{' '}
-                {fmt(kpis.s3)} tCO₂e ({Math.round(kpis.s3Pct)} %)
-              </p>
-              <Button variant="outline" size="sm" onClick={() => setSelectedSiteId(null)}>
-                Revenir à la vue consolidée
-              </Button>
-            </div>
-          ) : topSites.length === 0 ? (
-            <p className="flex h-56 items-center justify-center px-4 text-center text-sm text-muted-foreground">
-              {siteEmissions.unassignedKg > 0
-                ? 'Des émissions existent pour cet exercice, mais aucune n’est rattachée à un site (site_id manquant sur les lignes d’activité). Les prochaines collectes/importations doivent sélectionner un site.'
-                : 'Aucune émission rattachée à un site pour cet exercice. Vérifiez le rattachement site dans la collecte.'}
-            </p>
-          ) : (
-            <>
-              <div className="space-y-3">
-                {topSites.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    className="w-full text-left"
-                    onClick={() => setSelectedSiteId(s.id)}
-                  >
-                    <div className="mb-1 flex items-center justify-between text-sm">
-                      <span className="truncate pr-2 font-medium text-foreground">{s.name}</span>
-                      <span className="shrink-0 tabular-nums text-muted-foreground">
-                        <span className="font-semibold text-foreground">{fmt(s.tonnes)}</span> tCO₂e ·{' '}
-                        {Math.round(s.pct)} %
-                      </span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full bg-emerald-500"
-                        style={{ width: `${(s.tonnes / maxSiteTonnes) * 100}%` }}
-                      />
-                    </div>
-                  </button>
-                ))}
-              </div>
-              <button
-                type="button"
-                className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 hover:text-emerald-800"
-                onClick={() => navigate('/app/bilan-carbone')}
-              >
-                Voir les {sites.length || topSites.length} sites →
-              </button>
-            </>
-          )}
-        </div>
-
-        {/* Postes d'émissions */}
+        {/* L1 G2 — Principaux postes */}
         <div className="rounded-2xl border border-border bg-card p-6">
           <div className="mb-4 flex items-start justify-between gap-3">
             <div>
@@ -720,81 +655,144 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           )}
         </div>
 
-        {/* Évolution — uniquement si ≥ 2 exercices réels */}
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <h3 className="text-lg font-semibold text-foreground">Évolution des émissions</h3>
-          {showEvolution ? (
-            <>
-              <p className="mb-4 text-xs text-muted-foreground">
-                Exercices inventoriés uniquement — aucune année extrapolée
-              </p>
-              <div className="h-[280px] md:h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={realEvolution} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="hsdArea" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#22c55e" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                    <XAxis dataKey="year" tickLine={false} axisLine={false} className="text-xs" />
-                    <YAxis
-                      tickLine={false}
-                      axisLine={false}
-                      domain={[0, (max: number) => (max > 0 ? max * 1.15 : 1)]}
-                      tickFormatter={(v) =>
-                        v >= 1000
-                          ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v / 1000)}k`
-                          : fmt(v)
-                      }
-                      className="text-xs"
-                    />
-                    <Tooltip
-                      formatter={(v: number) => [`${fmt(v)} tCO₂e`, 'Émissions']}
-                      contentStyle={{
-                        background: 'hsl(var(--card))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: 8,
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#16a34a"
-                      strokeWidth={2.5}
-                      fill="url(#hsdArea)"
-                      dot={{ r: 4, fill: '#16a34a' }}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </>
-          ) : (
-            <p className="mt-3 flex min-h-[200px] items-center text-sm text-muted-foreground">
-              L&apos;évolution apparaîtra à partir du prochain exercice disponible.
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Qualité / Transparence — derrière le lien méthodologique */}
-      {showDataQualityPanel && (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2" id="dashboard-data-quality">
+        {/* L2 G1 — Transparence & qualité */}
+        <div id="dashboard-data-quality" className="min-h-0">
           <LazyDataQualityRadarChart
             title="Transparence & qualité des données"
             dataQuality={
               data?.dataQuality ?? { real: 0, estimated: 0, default: 100 }
             }
           />
-          <PhysicalVsMonetaryCard
-            lines={(data?.bilanCarbone.detailedBreakdown || []).map((line) => ({
-              method: line.dataMethod,
-              kg: line.emissions,
-              source: line.emissionFactorSource,
-            }))}
-          />
         </div>
+
+        {/* L2 G2 — Émissions par site Top 8 */}
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">
+              {selectedSiteId
+                ? `Émissions — ${selectedSite?.name || 'Site'}`
+                : 'Émissions par site — Top 8'}
+            </h3>
+            <MapPin className="h-4 w-4 text-muted-foreground" />
+          </div>
+          {selectedSiteId ? (
+            <div className="space-y-3 py-2">
+              <p className="text-3xl font-bold tabular-nums text-foreground">
+                {fmt(kpis.total)}{' '}
+                <span className="text-sm font-medium text-muted-foreground">tCO₂e</span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Scope 1+2 : {fmt(kpis.s12)} tCO₂e ({Math.round(kpis.s12Pct)} %) · Scope 3 :{' '}
+                {fmt(kpis.s3)} tCO₂e ({Math.round(kpis.s3Pct)} %)
+              </p>
+              <Button variant="outline" size="sm" onClick={() => setSelectedSiteId(null)}>
+                Revenir à la vue consolidée
+              </Button>
+            </div>
+          ) : topSites.length === 0 ? (
+            <p className="flex h-56 items-center justify-center px-4 text-center text-sm text-muted-foreground">
+              {siteEmissions.unassignedKg > 0
+                ? 'Des émissions existent pour cet exercice, mais aucune n’est rattachée à un site (site_id manquant sur les lignes d’activité). Les prochaines collectes/importations doivent sélectionner un site.'
+                : 'Aucune émission rattachée à un site pour cet exercice. Vérifiez le rattachement site dans la collecte.'}
+            </p>
+          ) : (
+            <>
+              <div className="space-y-3">
+                {topSites.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    className="w-full text-left"
+                    onClick={() => setSelectedSiteId(s.id)}
+                  >
+                    <div className="mb-1 flex items-center justify-between text-sm">
+                      <span className="truncate pr-2 font-medium text-foreground">{s.name}</span>
+                      <span className="shrink-0 tabular-nums text-muted-foreground">
+                        <span className="font-semibold text-foreground">{fmt(s.tonnes)}</span> tCO₂e ·{' '}
+                        {Math.round(s.pct)} %
+                      </span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-emerald-500"
+                        style={{ width: `${(s.tonnes / maxSiteTonnes) * 100}%` }}
+                      />
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-emerald-700 hover:text-emerald-800"
+                onClick={() => navigate('/app/bilan-carbone')}
+              >
+                Voir les {sites.length || topSites.length} sites →
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Évolution — pleine largeur si ≥ 2 exercices */}
+      {showEvolution && (
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <h3 className="text-lg font-semibold text-foreground">Évolution des émissions</h3>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Exercices inventoriés uniquement — aucune année extrapolée
+          </p>
+          <div className="h-[280px] md:h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={realEvolution} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="hsdArea" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#22c55e" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                <XAxis dataKey="year" tickLine={false} axisLine={false} className="text-xs" />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  domain={[0, (max: number) => (max > 0 ? max * 1.15 : 1)]}
+                  tickFormatter={(v) =>
+                    v >= 1000
+                      ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v / 1000)}k`
+                      : fmt(v)
+                  }
+                  className="text-xs"
+                />
+                <Tooltip
+                  formatter={(v: number) => [`${fmt(v)} tCO₂e`, 'Émissions']}
+                  contentStyle={{
+                    background: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: 8,
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#16a34a"
+                  strokeWidth={2.5}
+                  fill="url(#hsdArea)"
+                  dot={{ r: 4, fill: '#16a34a' }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* Détail méthodologique complémentaire */}
+      {showDataQualityPanel && (
+        <PhysicalVsMonetaryCard
+          lines={(data?.bilanCarbone.detailedBreakdown || []).map((line) => ({
+            method: line.dataMethod,
+            kg: line.emissions,
+            source: line.emissionFactorSource,
+          }))}
+        />
       )}
 
       {/* Priorités de réduction → Plan d'actions */}
