@@ -10,8 +10,6 @@ import {
   LayoutDashboard,
   FileBarChart,
   ShoppingCart,
-  Upload,
-  ShieldCheck,
 } from "lucide-react";
 import { FournisseursHome } from "./FournisseursHome";
 import { SupplierAddForm } from "./SupplierAddForm";
@@ -37,6 +35,7 @@ const FournisseursApp: React.FC = () => {
     return <Navigate to="/app/dashboard" replace />;
   }
 
+  // Entreprise : 3 onglets seulement. Import / qualité = contextuels.
   const navItems: NavItem[] = L.isBank
     ? [
         { label: "Méthode de calcul", path: "", icon: BookOpen },
@@ -48,10 +47,8 @@ const FournisseursApp: React.FC = () => {
       ]
     : [
         { label: "Vue d'ensemble", path: "", icon: LayoutDashboard },
-        { label: "Fournisseurs", path: "/liste", icon: Users },
         { label: "Achats", path: "/achats", icon: ShoppingCart },
-        { label: "Import", path: "/import", icon: Upload },
-        { label: "Qualité des données", path: "/qualite", icon: ShieldCheck },
+        { label: "Fournisseurs", path: "/liste", icon: Users },
       ];
 
   return (
@@ -97,12 +94,8 @@ const FournisseursApp: React.FC = () => {
             L.isBank ? <PortfolioReportPage /> : <Navigate to="" replace />
           }
         />
-        {/* legacy aliases */}
         <Route path="engagement" element={<Navigate to="/app/fournisseurs/liste" replace />} />
-        <Route
-          path="*"
-          element={<Navigate to="/app/fournisseurs" replace />}
-        />
+        <Route path="*" element={<Navigate to="/app/fournisseurs" replace />} />
       </Routes>
     </ModuleLayout>
   );

@@ -1,35 +1,42 @@
 /**
- * Table centrale des lignes d'achat + création rapide + détail calcul.
+ * Achats — import-first, formulaire simple, qualité en langage clair.
  */
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { api } from "@/integrations/api/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Loader2, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Trash2, Upload, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
+import { qualityHint, qualityLabel } from "./purchaseQualityLabels";
+import { useOrganizationData } from "@/hooks/useOrganizationData";
 
 const fmt = (n: number, d = 1) =>
   new Intl.NumberFormat("fr-FR", { maximumFractionDigits: d }).format(n);
 
-const METHOD_LABEL: Record<string, string> = {
-  spend: "Dépenses",
-  physical: "Données physiques",
-  supplier_specific: "Données fournisseur",
-  hybrid: "Hybride",
-};
-
 export const PurchasesPage: React.FC = () => {
   const qc = useQueryClient();
+  const { organization } = useOrganizationData();
+  const defaultCurrency = organization?.currency || "TND";
+  const [searchParams, setSearchParams] = useSearchParams();
   const [year, setYear] = useState<string>(String(new Date().getFullYear()));
   const [search, setSearch] = useState("");
-  const [method, setMethod] = useState("");
   const [offset, setOffset] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const limit = 50;
+
+  useEffect(() => {
+    if (searchParams.get("new") === "1") {
+      setShowForm(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete("new");
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const { data: suppliers } = useQuery({
     queryKey: ["suppliers-list"],
@@ -37,12 +44,11 @@ export const PurchasesPage: React.FC = () => {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["purchases", year, search, method, offset],
+    queryKey: ["purchases", year, search, offset],
     queryFn: () =>
       api.listSupplierPurchases({
         year: year || undefined,
         search: search || undefined,
-        method: method || undefined,
         limit,
         offset,
       }),
@@ -57,7 +63,7 @@ export const PurchasesPage: React.FC = () => {
   const createMut = useMutation({
     mutationFn: (payload: Record<string, unknown>) => api.createSupplierPurchase(payload),
     onSuccess: (res) => {
-      toast.success("Achat enregistré et calculé");
+      toast.success("Achat enregistré");
       if (res.warnings?.length) toast.message(res.warnings.join(" · "));
       setShowForm(false);
       void qc.invalidateQueries({ queryKey: ["purchases"] });
@@ -65,6 +71,11 @@ export const PurchasesPage: React.FC = () => {
       void qc.invalidateQueries({ queryKey: ["supplier-dashboard"] });
     },
     onError: () => toast.error("Échec de la création"),
+  });
+
+  const createSupplierMut = useMutation({
+    mutationFn: (name: string) =>
+      api.createSupplier({ name, country: "TN" } as Record<string, unknown>),
   });
 
   const delMut = useMutation({
@@ -100,14 +111,21 @@ export const PurchasesPage: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold">Achats</h2>
           <p className="text-sm text-muted-foreground">
-            Lignes d&apos;achat — source de vérité pour la consolidation au bilan.
+            Importez votre fichier comptable ou ajoutez quelques lignes manuellement.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button asChild variant="outline" size="sm">
-            <Link to="/app/fournisseurs/import">Importer</Link>
+          <Button asChild className="gap-1">
+            <Link to="/app/fournisseurs/import">
+              <Upload className="h-4 w-4" /> Importer mes achats
+            </Link>
           </Button>
-          <Button size="sm" className="gap-1" onClick={() => setShowForm((v) => !v)}>
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1"
+            onClick={() => setShowForm((v) => !v)}
+          >
             <Plus className="h-4 w-4" /> Ajouter un achat
           </Button>
         </div>
@@ -132,19 +150,6 @@ export const PurchasesPage: React.FC = () => {
             setOffset(0);
           }}
         />
-        <select
-          className="rounded-md border border-border bg-background px-2 py-2 text-sm"
-          value={method}
-          onChange={(e) => {
-            setMethod(e.target.value);
-            setOffset(0);
-          }}
-        >
-          <option value="">Toutes méthodes</option>
-          <option value="spend">Dépenses</option>
-          <option value="physical">Données physiques</option>
-          <option value="supplier_specific">Données fournisseur</option>
-        </select>
       </div>
 
       {showForm && (
@@ -155,7 +160,13 @@ export const PurchasesPage: React.FC = () => {
           <CardContent>
             <PurchaseForm
               suppliers={supplierOptions}
-              busy={createMut.isPending}
+              defaultCurrency={defaultCurrency}
+              busy={createMut.isPending || createSupplierMut.isPending}
+              onCreateSupplier={async (name) => {
+                const res = await createSupplierMut.mutateAsync(name);
+                void qc.invalidateQueries({ queryKey: ["suppliers-list"] });
+                return String(res?.item?.id || "");
+              }}
               onSubmit={(payload) => createMut.mutate(payload)}
             />
           </CardContent>
@@ -175,10 +186,8 @@ export const PurchasesPage: React.FC = () => {
                   <tr className="border-b text-left text-xs text-muted-foreground">
                     <th className="px-3 py-2">Exercice</th>
                     <th className="px-3 py-2">Fournisseur</th>
-                    <th className="px-3 py-2">Catégorie</th>
+                    <th className="px-3 py-2">Désignation</th>
                     <th className="px-3 py-2 text-right">Montant</th>
-                    <th className="px-3 py-2 text-right">Qté</th>
-                    <th className="px-3 py-2">Méthode</th>
                     <th className="px-3 py-2">Qualité</th>
                     <th className="px-3 py-2 text-right">tCO₂e</th>
                     <th className="px-3 py-2">Actions</th>
@@ -187,7 +196,9 @@ export const PurchasesPage: React.FC = () => {
                 <tbody>
                   {items.map((p) => (
                     <tr key={String(p.id)} className="border-b border-border/60">
-                      <td className="px-3 py-2 tabular-nums">{String(p.reference_year || "—")}</td>
+                      <td className="px-3 py-2 tabular-nums">
+                        {String(p.reference_year || "—")}
+                      </td>
                       <td className="px-3 py-2">
                         <Link
                           className="font-medium text-teal-800 hover:underline"
@@ -196,25 +207,20 @@ export const PurchasesPage: React.FC = () => {
                           {String(p.supplier_name || "—")}
                         </Link>
                       </td>
-                      <td className="px-3 py-2 text-muted-foreground">
-                        {String(p.purchase_category || "—")}
+                      <td className="max-w-[200px] truncate px-3 py-2 text-muted-foreground">
+                        {String(p.description || p.product_service || p.purchase_category || "—")}
                       </td>
                       <td className="px-3 py-2 text-right tabular-nums">
                         {p.amount != null
                           ? `${fmt(Number(p.amount), 0)} ${String(p.currency || "")}`
                           : "—"}
                       </td>
-                      <td className="px-3 py-2 text-right tabular-nums">
-                        {p.quantity != null
-                          ? `${fmt(Number(p.quantity), 2)} ${String(p.quantity_unit || "")}`
-                          : "—"}
-                      </td>
                       <td className="px-3 py-2">
-                        {METHOD_LABEL[String(p.calculation_method)] || "—"}
-                      </td>
-                      <td className="px-3 py-2">
-                        <span className="rounded bg-muted px-1.5 py-0.5 text-xs font-semibold">
-                          {String(p.data_quality_grade || "—")}
+                        <span
+                          className="rounded bg-muted px-1.5 py-0.5 text-xs font-medium"
+                          title={qualityHint(String(p.data_quality_grade))}
+                        >
+                          {qualityLabel(String(p.data_quality_grade))}
                         </span>
                       </td>
                       <td className="px-3 py-2 text-right font-medium tabular-nums">
@@ -227,8 +233,10 @@ export const PurchasesPage: React.FC = () => {
                           <Button
                             size="sm"
                             variant="ghost"
-                            title="Voir le détail du calcul"
-                            onClick={() => setDetailId(String(p.id))}
+                            onClick={() => {
+                              setDetailId(String(p.id));
+                              setShowAdvanced(false);
+                            }}
                           >
                             Détail
                           </Button>
@@ -256,8 +264,13 @@ export const PurchasesPage: React.FC = () => {
                   ))}
                   {items.length === 0 && (
                     <tr>
-                      <td colSpan={9} className="px-3 py-8 text-center text-muted-foreground">
-                        Aucune ligne d&apos;achat. Importez un fichier ou ajoutez un achat.
+                      <td colSpan={7} className="px-3 py-10 text-center">
+                        <p className="mb-3 text-muted-foreground">Aucun achat pour le moment.</p>
+                        <Button asChild className="gap-1">
+                          <Link to="/app/fournisseurs/import">
+                            <Upload className="h-4 w-4" /> Importer mes achats
+                          </Link>
+                        </Button>
                       </td>
                     </tr>
                   )}
@@ -296,66 +309,61 @@ export const PurchasesPage: React.FC = () => {
       {detailId && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Détail du calcul & historique</CardTitle>
+            <CardTitle className="text-base">Détail de l&apos;achat</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             {(() => {
               const p = items.find((x) => String(x.id) === detailId);
               if (!p) return <p className="text-muted-foreground">Sélectionnez une ligne.</p>;
+              const grade = String(p.data_quality_grade);
               return (
                 <>
                   <p>
-                    <span className="text-muted-foreground">Formule : </span>
-                    {p.emission_factor_value != null &&
-                    (p.quantity != null || p.amount != null) ? (
-                      <span className="font-mono">
-                        {p.quantity != null
-                          ? `${fmt(Number(p.quantity), 2)} × ${p.emission_factor_value}`
-                          : `${fmt(Number(p.amount), 0)} ${p.currency} × facteur`}
-                        {" = "}
-                        {fmt(Number(p.calculated_emissions_kgco2e || 0), 1)} kgCO₂e
-                        {" = "}
-                        {fmt(Number(p.calculated_emissions_kgco2e || 0) / 1000, 2)} tCO₂e
-                      </span>
-                    ) : (
-                      "—"
-                    )}
+                    <span className="text-muted-foreground">Qualité des données : </span>
+                    <strong>{qualityLabel(grade)}</strong>
                   </p>
-                  <p>
-                    Source facteur : {String(p.emission_factor_source || "—")} · Année :{" "}
-                    {String(p.emission_factor_year || "—")} · Géographie :{" "}
-                    {String(p.emission_factor_geography || "—")}
-                  </p>
-                  {p.method_change_note && (
-                    <p className="rounded-md bg-amber-50 px-3 py-2 text-amber-900">
-                      {String(p.method_change_note)} — ce n&apos;est pas automatiquement une
-                      réduction d&apos;émissions réelle.
-                    </p>
-                  )}
-                  {(hist?.items || []).length > 0 && (
-                    <div className="space-y-2">
-                      <p className="font-medium">Historique</p>
-                      {(hist?.items || []).map((h) => (
-                        <div
-                          key={String(h.id)}
-                          className="rounded border border-border px-3 py-2 text-xs"
-                        >
-                          <p className="text-muted-foreground">
-                            {new Date(String(h.changed_at)).toLocaleString("fr-FR")} ·{" "}
-                            {String(h.change_reason || "")}
-                          </p>
-                          <p>
-                            {String(h.previous_method || "—")} → {String(h.new_method || "—")} ·{" "}
-                            {fmt(Number(h.previous_emissions_kgco2e || 0) / 1000, 2)} t →{" "}
-                            {fmt(Number(h.new_emissions_kgco2e || 0) / 1000, 2)} t
-                          </p>
-                          {h.is_methodological_revaluation && (
-                            <p className="text-amber-700">
-                              Réévaluation méthodologique (amélioration des données)
+                  <p className="text-muted-foreground">{qualityHint(grade)}</p>
+                  <Button asChild size="sm" variant="outline">
+                    <Link to={`/app/fournisseurs/fiche/${p.supplier_id}`}>
+                      Améliorer cette donnée
+                    </Link>
+                  </Button>
+
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowAdvanced((v) => !v)}
+                  >
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 transition ${showAdvanced ? "rotate-180" : ""}`}
+                    />
+                    Options avancées
+                  </button>
+                  {showAdvanced && (
+                    <div className="space-y-2 rounded-md border border-border bg-muted/30 p-3 text-xs">
+                      <p>
+                        Facteur : {String(p.emission_factor_value ?? "—")} · Source :{" "}
+                        {String(p.emission_factor_source || "—")}
+                      </p>
+                      <p>
+                        Méthode interne : {String(p.calculation_method || "—")} · Année FE :{" "}
+                        {String(p.emission_factor_year || "—")}
+                      </p>
+                      {p.method_change_note && (
+                        <p className="text-amber-800">{String(p.method_change_note)}</p>
+                      )}
+                      {(hist?.items || []).length > 0 && (
+                        <div className="space-y-1 pt-1">
+                          <p className="font-medium">Historique</p>
+                          {(hist?.items || []).map((h) => (
+                            <p key={String(h.id)} className="text-muted-foreground">
+                              {new Date(String(h.changed_at)).toLocaleString("fr-FR")} ·{" "}
+                              {fmt(Number(h.previous_emissions_kgco2e || 0) / 1000, 2)} t →{" "}
+                              {fmt(Number(h.new_emissions_kgco2e || 0) / 1000, 2)} t
                             </p>
-                          )}
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
                   <Button size="sm" variant="ghost" onClick={() => setDetailId(null)}>
@@ -373,115 +381,217 @@ export const PurchasesPage: React.FC = () => {
 
 const PurchaseForm: React.FC<{
   suppliers: Array<{ id: string; name: string }>;
+  defaultCurrency: string;
   busy?: boolean;
+  onCreateSupplier: (name: string) => Promise<string>;
   onSubmit: (payload: Record<string, unknown>) => void;
-}> = ({ suppliers, busy, onSubmit }) => {
-  const [supplierId, setSupplierId] = useState(suppliers[0]?.id || "");
+}> = ({ suppliers, defaultCurrency, busy, onCreateSupplier, onSubmit }) => {
+  const [supplierQuery, setSupplierQuery] = useState("");
+  const [supplierId, setSupplierId] = useState("");
+  const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState("TND");
+  const [currency, setCurrency] = useState(defaultCurrency);
+  const [hasQty, setHasQty] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [unit, setUnit] = useState("");
-  const [category, setCategory] = useState("Autres");
   const [year, setYear] = useState(String(new Date().getFullYear()));
-  const [description, setDescription] = useState("");
-  const [calcMethod, setCalcMethod] = useState<"spend" | "physical">("spend");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const filtered = useMemo(() => {
+    const q = supplierQuery.trim().toLowerCase();
+    if (!q) return suppliers.slice(0, 8);
+    return suppliers.filter((s) => s.name.toLowerCase().includes(q)).slice(0, 8);
+  }, [suppliers, supplierQuery]);
+
+  const exactMatch = suppliers.find(
+    (s) => s.name.toLowerCase() === supplierQuery.trim().toLowerCase(),
+  );
 
   return (
     <form
-      className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
-      onSubmit={(e) => {
+      className="mx-auto max-w-lg space-y-4"
+      onSubmit={async (e) => {
         e.preventDefault();
-        if (!supplierId) {
-          toast.error("Choisissez un fournisseur");
+        let sid = supplierId;
+        if (!sid && supplierQuery.trim()) {
+          if (exactMatch) {
+            sid = exactMatch.id;
+          } else {
+            sid = await onCreateSupplier(supplierQuery.trim());
+            if (!sid) {
+              toast.error("Impossible de créer le fournisseur");
+              return;
+            }
+          }
+        }
+        if (!sid) {
+          toast.error("Indiquez un fournisseur");
+          return;
+        }
+        if (!amount && !(hasQty && quantity)) {
+          toast.error("Indiquez un montant ou une quantité");
           return;
         }
         onSubmit({
-          supplier_id: supplierId,
+          supplier_id: sid,
           amount: amount ? Number(amount) : null,
           currency,
-          quantity: quantity ? Number(quantity) : null,
-          quantity_unit: unit || null,
-          purchase_category: category,
+          quantity: hasQty && quantity ? Number(quantity) : null,
+          quantity_unit: hasQty ? unit || null : null,
+          purchase_category: "Autres",
           reference_year: Number(year),
           description: description || null,
-          calculation_method: calcMethod,
+          calculation_method: hasQty && quantity ? "physical" : "spend",
           ghg_scope3_category: 1,
           auto_calculate: true,
         });
       }}
     >
-      <label className="text-sm">
+      <label className="block text-sm">
         Fournisseur
-        <select
-          className="mt-1 w-full rounded-md border border-border bg-background px-2 py-2"
-          value={supplierId}
-          onChange={(e) => setSupplierId(e.target.value)}
-        >
-          {suppliers.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+        <Input
+          className="mt-1"
+          placeholder="Rechercher ou saisir un nom…"
+          value={supplierQuery}
+          onChange={(e) => {
+            setSupplierQuery(e.target.value);
+            setSupplierId("");
+          }}
+        />
+        {supplierQuery.trim() && (
+          <ul className="mt-1 max-h-40 overflow-auto rounded-md border border-border bg-background text-sm">
+            {filtered.map((s) => (
+              <li key={s.id}>
+                <button
+                  type="button"
+                  className="w-full px-3 py-1.5 text-left hover:bg-muted"
+                  onClick={() => {
+                    setSupplierId(s.id);
+                    setSupplierQuery(s.name);
+                  }}
+                >
+                  {s.name}
+                </button>
+              </li>
+            ))}
+            {!exactMatch && supplierQuery.trim().length > 1 && (
+              <li>
+                <button
+                  type="button"
+                  className="w-full px-3 py-1.5 text-left font-medium text-teal-800 hover:bg-muted"
+                  onClick={() => setSupplierId("")}
+                >
+                  + Créer « {supplierQuery.trim()} »
+                </button>
+              </li>
+            )}
+          </ul>
+        )}
       </label>
-      <label className="text-sm">
-        Exercice
-        <Input className="mt-1" value={year} onChange={(e) => setYear(e.target.value)} />
+
+      <label className="block text-sm">
+        Qu&apos;avez-vous acheté ?
+        <Input
+          className="mt-1"
+          placeholder="Ex. Ciment CEM II, ordinateurs, maintenance…"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
       </label>
-      <label className="text-sm">
-        Catégorie
-        <Input className="mt-1" value={category} onChange={(e) => setCategory(e.target.value)} />
-      </label>
-      <label className="text-sm">
-        Montant
-        <Input className="mt-1" value={amount} onChange={(e) => setAmount(e.target.value)} />
-      </label>
-      <label className="text-sm">
-        Devise
-        <select
-          className="mt-1 w-full rounded-md border border-border bg-background px-2 py-2"
-          value={currency}
-          onChange={(e) => setCurrency(e.target.value)}
-        >
-          {["TND", "EUR", "USD", "MAD", "DZD", "XOF", "XAF", "EGP"].map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="text-sm">
-        Méthode
-        <select
-          className="mt-1 w-full rounded-md border border-border bg-background px-2 py-2"
-          value={calcMethod}
-          onChange={(e) => setCalcMethod(e.target.value as "spend" | "physical")}
-        >
-          <option value="spend">Dépenses</option>
-          <option value="physical">Données physiques</option>
-        </select>
-      </label>
-      {calcMethod === "physical" && (
-        <>
-          <label className="text-sm">
-            Quantité
-            <Input className="mt-1" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-          </label>
-          <label className="text-sm">
-            Unité
-            <Input className="mt-1" value={unit} onChange={(e) => setUnit(e.target.value)} placeholder="kg, t, L…" />
-          </label>
-        </>
-      )}
-      <label className="text-sm sm:col-span-2">
-        Description
-        <Input className="mt-1" value={description} onChange={(e) => setDescription(e.target.value)} />
-      </label>
-      <div className="flex items-end">
-        <Button type="submit" disabled={busy}>
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enregistrer & calculer"}
-        </Button>
+
+      <div className="grid grid-cols-2 gap-3">
+        <label className="block text-sm">
+          Montant
+          <Input className="mt-1" value={amount} onChange={(e) => setAmount(e.target.value)} />
+        </label>
+        <label className="block text-sm">
+          Devise
+          <select
+            className="mt-1 w-full rounded-md border border-border bg-background px-2 py-2"
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+          >
+            {[defaultCurrency, "TND", "EUR", "USD", "MAD", "DZD", "XOF", "XAF"]
+              .filter((c, i, a) => a.indexOf(c) === i)
+              .map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+          </select>
+        </label>
       </div>
+
+      <div className="space-y-2">
+        <p className="text-sm font-medium">Avez-vous la quantité ?</p>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant={hasQty ? "default" : "outline"}
+            onClick={() => setHasQty(true)}
+          >
+            Oui
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={!hasQty ? "default" : "outline"}
+            onClick={() => setHasQty(false)}
+          >
+            Non
+          </Button>
+        </div>
+        {hasQty && (
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block text-sm">
+              Quantité
+              <Input
+                className="mt-1"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
+            </label>
+            <label className="block text-sm">
+              Unité
+              <Input
+                className="mt-1"
+                placeholder="t, kg, L…"
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+              />
+            </label>
+          </div>
+        )}
+      </div>
+
+      <label className="block text-sm">
+        Exercice
+        <Input
+          className="mt-1 max-w-[140px]"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+        />
+      </label>
+
+      <button
+        type="button"
+        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+        onClick={() => setShowAdvanced((v) => !v)}
+      >
+        <ChevronDown className={`h-3.5 w-3.5 transition ${showAdvanced ? "rotate-180" : ""}`} />
+        Options avancées
+      </button>
+      {showAdvanced && (
+        <p className="text-xs text-muted-foreground">
+          La catégorie, le facteur d&apos;émission et la méthode sont déterminés automatiquement
+          par CarboScan. Vous pourrez les affiner plus tard depuis le détail de l&apos;achat.
+        </p>
+      )}
+
+      <Button type="submit" disabled={busy}>
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enregistrer"}
+      </Button>
     </form>
   );
 };

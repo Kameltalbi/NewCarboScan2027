@@ -121,11 +121,23 @@ export const FournisseursHome: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-xl font-semibold tracking-tight">{L.pageTitle}</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2 text-sm">
-            <LinkIcon className="h-3.5 w-3.5" />
-            {L.inviteCta}
-          </Button>
-          <Button size="sm" onClick={() => navigate('nouveau')} className="gap-2 text-sm">
+          {L.isBank ? (
+            <Button variant="outline" size="sm" className="gap-2 text-sm">
+              <LinkIcon className="h-3.5 w-3.5" />
+              {L.inviteCta}
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 text-sm"
+              onClick={() => navigate("/app/fournisseurs/import")}
+            >
+              <LinkIcon className="h-3.5 w-3.5" />
+              Importer des fournisseurs
+            </Button>
+          )}
+          <Button size="sm" onClick={() => navigate("nouveau")} className="gap-2 text-sm">
             <Plus className="h-3.5 w-3.5" />
             {L.addCta}
           </Button>

@@ -1,23 +1,20 @@
 /**
- * Qualité des données A–E + fournisseurs prioritaires (Pareto).
+ * Amélioration des données — vocabulaire simple, pas de scores techniques.
  */
 import React, { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "@/integrations/api/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { qualityLabel } from "./purchaseQualityLabels";
 
 const fmt = (n: number, d = 1) =>
   new Intl.NumberFormat("fr-FR", { maximumFractionDigits: d }).format(n);
 
 export const PurchasesQualityPage: React.FC = () => {
-  const qc = useQueryClient();
   const [year, setYear] = useState(new Date().getFullYear());
-  const [target, setTarget] = useState<string>("30");
 
   const { data, isLoading } = useQuery({
     queryKey: ["supplier-dashboard", year],
@@ -28,23 +25,6 @@ export const PurchasesQualityPage: React.FC = () => {
     queryFn: () => api.getSupplierStats(year),
   });
 
-  React.useEffect(() => {
-    const t = data?.primaryDataTargetPct ?? statsData?.stats?.primary_data_target_pct;
-    if (t != null) setTarget(String(t));
-  }, [data, statsData]);
-
-  const saveMut = useMutation({
-    mutationFn: () =>
-      api.updateSupplierPurchasesSettings({
-        purchases_primary_data_target_pct: Number(target),
-      }),
-    onSuccess: () => {
-      toast.success("Objectif enregistré");
-      void qc.invalidateQueries({ queryKey: ["supplier-dashboard"] });
-      void qc.invalidateQueries({ queryKey: ["supplier-stats"] });
-    },
-  });
-
   if (isLoading) {
     return (
       <div className="flex justify-center py-16">
@@ -53,14 +33,6 @@ export const PurchasesQualityPage: React.FC = () => {
     );
   }
 
-  const byGrade =
-    (data?.byGrade as Array<{
-      grade: string;
-      label: string;
-      tooltip: string;
-      emissions_tco2e: number;
-      rows: number;
-    }>) || [];
   const byMethod =
     (data?.byMethod as Array<{ label: string; emissions_tco2e: number }>) || [];
   const pareto = data?.pareto as
@@ -73,6 +45,11 @@ export const PurchasesQualityPage: React.FC = () => {
   const primaryPct = Number(statsData?.stats?.primary_data_pct || 0);
   const totalT = Number(statsData?.stats?.total_emissions_tco2e || 0);
 
+  const spendShare = byMethod
+    .filter((m) => /dépenses|estimation/i.test(m.label) || m.label === "Dépenses")
+    .reduce((n, m) => n + Number(m.emissions_tco2e), 0);
+  const estimationPct = totalT > 0 ? Math.round((spendShare / totalT) * 100) : 0;
+
   const priority = (pareto?.suppliers || []).filter((s) => {
     const grade = String(s.main_grade || "");
     const method = String(s.main_method || "");
@@ -80,138 +57,97 @@ export const PurchasesQualityPage: React.FC = () => {
   });
 
   const priorityShare = priority.reduce((n, s) => n + Number(s.share_pct || 0), 0);
+  const list = priority.length ? priority : pareto?.suppliers || [];
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold">Qualité des données</h2>
-        <p className="text-sm text-muted-foreground">
-          Indice de qualité des données CarboScan (A–E). Il permet d&apos;identifier les données à
-          améliorer — il n&apos;évalue pas la performance environnementale du fournisseur.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold">Améliorez votre bilan</h2>
+          <p className="text-sm text-muted-foreground">
+            Identifiez où affiner les estimations — sans jargon méthodologique.
+          </p>
+        </div>
+        <label className="text-sm text-muted-foreground">
+          Exercice{" "}
+          <select
+            className="ml-2 rounded-md border border-border bg-background px-2 py-1"
+            value={year}
+            onChange={(e) => setYear(Number(e.target.value))}
+          >
+            {[year, year - 1, year - 2].map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Qualité actuelle des données achats ({year})</CardTitle>
+          <CardTitle className="text-base">Qualité des données</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <ul className="space-y-2">
-            {byMethod.map((m) => (
-              <li key={m.label} className="flex justify-between gap-3">
-                <span>{m.label}</span>
-                <span className="tabular-nums text-muted-foreground">
-                  {totalT > 0
-                    ? `${fmt((Number(m.emissions_tco2e) / totalT) * 100, 0)} %`
-                    : "—"}{" "}
-                  · {fmt(Number(m.emissions_tco2e), 1)} tCO₂e
-                </span>
-              </li>
-            ))}
-          </ul>
-          <div className="grid gap-2 sm:grid-cols-5">
-            {byGrade.map((g) => (
-              <div
-                key={g.grade}
-                className="rounded-lg border border-border px-3 py-2"
-                title={g.tooltip}
-              >
-                <p className="text-lg font-bold">{g.grade}</p>
-                <p className="text-xs text-muted-foreground line-clamp-2">{g.label}</p>
-                <p className="mt-1 text-xs tabular-nums">{g.rows} lignes</p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Objectif de couverture données primaires</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-wrap items-end gap-3">
-          <label className="text-sm">
-            Cible (%)
-            <Input
-              className="mt-1 w-28"
-              value={target}
-              onChange={(e) => setTarget(e.target.value)}
-            />
-          </label>
-          <Button
-            size="sm"
-            disabled={saveMut.isPending}
-            onClick={() => saveMut.mutate()}
-          >
-            Enregistrer
-          </Button>
-          <p className="text-sm text-muted-foreground">
-            Actuel : {fmt(primaryPct, 1)} % · Cible : {target} %
+        <CardContent className="space-y-2 text-sm">
+          <p>
+            <strong className="text-2xl tabular-nums">{fmt(primaryPct, 0)}&nbsp;%</strong>{" "}
+            <span className="text-muted-foreground">données plus précises</span>
+          </p>
+          <p>
+            <strong>{estimationPct}&nbsp;%</strong> encore en <strong>Estimation</strong> — calcul
+            à partir du montant des achats.
           </p>
         </CardContent>
       </Card>
 
       <Card className="border-amber-200/70 bg-amber-50/30">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Prochaine étape recommandée</CardTitle>
+          <CardTitle className="text-base">
+            {list.length || pareto?.count || 0} fournisseurs à traiter en priorité
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm">
+        <CardContent className="text-sm">
           <p>
-            Collectez des données auprès de vos{" "}
-            <strong>{priority.length || pareto?.count || 0}</strong> principaux fournisseurs
-            (méthode dépenses / qualité D–E) pour améliorer la précision d&apos;environ{" "}
-            <strong>{fmt(priorityShare || 0, 0)} %</strong> des émissions liées aux achats.
+            Ils représentent environ <strong>{fmt(priorityShare || 0, 0)}&nbsp;%</strong> de vos
+            émissions d&apos;achats et sont actuellement calculés principalement à partir des
+            dépenses.
           </p>
-          {pareto && <p className="text-muted-foreground">{pareto.message}</p>}
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Priorité de collecte</CardTitle>
+          <CardTitle className="text-base">Fournisseurs à traiter en priorité</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          {(pareto?.suppliers || []).map((s) => {
-            const elevated =
-              String(s.main_method) === "spend" ||
-              ["D", "E"].includes(String(s.main_grade || ""));
-            return (
-              <div
-                key={String(s.id)}
-                className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-border px-3 py-2 text-sm"
-              >
-                <div>
-                  <Link
-                    className="font-medium text-teal-800 hover:underline"
-                    to={`/app/fournisseurs/fiche/${s.id}`}
-                  >
-                    {String(s.name)}
-                  </Link>
-                  {elevated && (
-                    <p className="mt-1 text-xs text-amber-800">
-                      Priorité élevée — part importante des émissions estimées. Obtenir des données
-                      physiques ou spécifiques améliorerait significativement la précision.
-                    </p>
-                  )}
-                </div>
-                <div className="text-right text-xs text-muted-foreground">
-                  <p className="tabular-nums font-medium text-foreground">
-                    {fmt(Number(s.emissions_tco2e), 1)} tCO₂e · {fmt(Number(s.share_pct), 1)} %
-                  </p>
-                  <p>
-                    Méthode : {String(s.main_method || "—")} · Qualité :{" "}
-                    {String(s.main_grade || "—")}
-                  </p>
-                </div>
+          {list.map((s) => (
+            <div
+              key={String(s.id)}
+              className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border px-3 py-3 text-sm"
+            >
+              <div>
+                <p className="font-medium">{String(s.name)}</p>
+                <p className="text-xs text-muted-foreground">
+                  {fmt(Number(s.emissions_tco2e), 1)} tCO₂e · {fmt(Number(s.share_pct), 0)}
+                  &nbsp;% des émissions achats · Qualité : {qualityLabel(String(s.main_grade))}
+                </p>
               </div>
-            );
-          })}
-          <p className="pt-2 text-xs text-muted-foreground">
-            La collecte fournisseur (lien sécurisé) arrive en P1 — préparez dès maintenant la liste
-            prioritaire.
-          </p>
+              <Button asChild size="sm" variant="outline">
+                <Link to={`/app/fournisseurs/fiche/${s.id}`}>Améliorer les données</Link>
+              </Button>
+            </div>
+          ))}
+          {list.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              Importez d&apos;abord vos achats pour identifier les contributeurs prioritaires.
+            </p>
+          )}
         </CardContent>
       </Card>
+
+      <Button asChild variant="ghost" size="sm">
+        <Link to="/app/fournisseurs">← Retour à la vue d&apos;ensemble</Link>
+      </Button>
     </div>
   );
 };

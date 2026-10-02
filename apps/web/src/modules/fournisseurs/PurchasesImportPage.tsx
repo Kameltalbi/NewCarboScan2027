@@ -1,5 +1,5 @@
 /**
- * Import CSV/Excel (texte) — mapping colonnes + dry-run + commit.
+ * Import CSV — mapping auto, devise org, synthèse métier.
  */
 import React, { useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,20 +9,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useOrganizationData } from "@/hooks/useOrganizationData";
 
 const FIELD_OPTIONS = [
   { key: "ignore", label: "— Ignorer —" },
   { key: "supplier_name", label: "Fournisseur" },
+  { key: "supplier_code", label: "Code fournisseur" },
   { key: "amount", label: "Montant" },
   { key: "currency", label: "Devise" },
   { key: "quantity", label: "Quantité" },
   { key: "quantity_unit", label: "Unité" },
-  { key: "purchase_category", label: "Catégorie" },
+  { key: "purchase_category", label: "Catégorie comptable" },
+  { key: "description", label: "Désignation / libellé" },
   { key: "product_service", label: "Produit / service" },
-  { key: "description", label: "Description / libellé" },
   { key: "site_name", label: "Site" },
   { key: "reference_year", label: "Exercice" },
   { key: "purchase_date", label: "Date" },
+  { key: "invoice_ref", label: "Référence facture" },
   { key: "country", label: "Pays" },
 ] as const;
 
@@ -59,37 +62,48 @@ function parseDelimited(text: string): { headers: string[]; rows: string[][] } {
 }
 
 function guessMapping(header: string): string {
-  const h = header.toLowerCase();
+  const h = header
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+  if (/code.?fourniss|supplier.?code|erp.?code/.test(h)) return "supplier_code";
   if (/fourniss|supplier|vendeur/.test(h)) return "supplier_name";
   if (/montant|amount|ht|ttc|spend/.test(h)) return "amount";
   if (/devise|currency|curr/.test(h)) return "currency";
-  if (/quantit|qty/.test(h)) return "quantity";
-  if (/unit[eé]|uom/.test(h)) return "quantity_unit";
-  if (/cat[eé]gor/.test(h)) return "purchase_category";
+  if (/quantit|qty|qte/.test(h)) return "quantity";
+  if (/unit[e]?|uom/.test(h)) return "quantity_unit";
+  if (/cat[e]?gor|compte.?comptable/.test(h)) return "purchase_category";
   if (/produit|service|article/.test(h)) return "product_service";
-  if (/libell|desc|designation|désignation/.test(h)) return "description";
-  if (/site|établissement|etablissement/.test(h)) return "site_name";
-  if (/exercice|year|ann[eé]e/.test(h)) return "reference_year";
+  if (/libell|desc|designation/.test(h)) return "description";
+  if (/site|etablissement/.test(h)) return "site_name";
+  if (/exercice|year|annee/.test(h)) return "reference_year";
   if (/date/.test(h)) return "purchase_date";
+  if (/facture|invoice|ref.?achat/.test(h)) return "invoice_ref";
   if (/pays|country/.test(h)) return "country";
   return "ignore";
 }
 
 export const PurchasesImportPage: React.FC = () => {
   const qc = useQueryClient();
+  const { organization } = useOrganizationData();
+  const orgCurrency = organization?.currency || "TND";
   const [raw, setRaw] = useState("");
   const [mapping, setMapping] = useState<Record<number, string>>({});
+  const [defaultCurrency, setDefaultCurrency] = useState(orgCurrency);
   const [preview, setPreview] = useState<Record<string, unknown> | null>(null);
   const [result, setResult] = useState<Record<string, unknown> | null>(null);
 
   const parsed = useMemo(() => parseDelimited(raw), [raw]);
 
+  const hasCurrencyCol = useMemo(
+    () => Object.values(mapping).includes("currency"),
+    [mapping],
+  );
+
   const onFile = async (file: File) => {
     const name = file.name.toLowerCase();
     if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
-      toast.message(
-        "Pour l’instant, exportez votre Excel en CSV (séparateur ; ou ,) puis importez-le ici.",
-      );
+      toast.message("Exportez votre Excel en CSV (séparateur ; ou ,) puis importez-le ici.");
       return;
     }
     const text = await file.text();
@@ -100,6 +114,7 @@ export const PurchasesImportPage: React.FC = () => {
       map[i] = guessMapping(h);
     });
     setMapping(map);
+    setDefaultCurrency(orgCurrency);
     setPreview(null);
     setResult(null);
   };
@@ -118,6 +133,7 @@ export const PurchasesImportPage: React.FC = () => {
           obj[field] = rawVal || null;
         }
       });
+      if (!obj.currency) obj.currency = defaultCurrency;
       if (obj.supplier_name) rows.push(obj);
     }
     return rows;
@@ -126,12 +142,16 @@ export const PurchasesImportPage: React.FC = () => {
   const dryMut = useMutation({
     mutationFn: async () => {
       const rows = buildRows();
-      if (!rows.length) throw new Error("Aucune ligne valide (fournisseur requis)");
-      return api.importSupplierPurchases({ dryRun: true, rows });
+      if (!rows.length) throw new Error("Aucune ligne valide (colonne Fournisseur requise)");
+      return api.importSupplierPurchases({
+        dryRun: true,
+        rows,
+        defaultCurrency,
+      });
     },
     onSuccess: (res) => {
       setPreview(res);
-      toast.success("Prévisualisation prête — validez l’import");
+      toast.success("Vérifiez le résumé puis continuez");
     },
     onError: (e: Error) => toast.error(e.message || "Échec prévisualisation"),
   });
@@ -139,7 +159,11 @@ export const PurchasesImportPage: React.FC = () => {
   const commitMut = useMutation({
     mutationFn: async () => {
       const rows = buildRows();
-      return api.importSupplierPurchases({ dryRun: false, rows });
+      return api.importSupplierPurchases({
+        dryRun: false,
+        rows,
+        defaultCurrency,
+      });
     },
     onSuccess: (res) => {
       setResult(res);
@@ -147,7 +171,6 @@ export const PurchasesImportPage: React.FC = () => {
       void qc.invalidateQueries({ queryKey: ["supplier-stats"] });
       void qc.invalidateQueries({ queryKey: ["supplier-dashboard"] });
       void qc.invalidateQueries({ queryKey: ["suppliers"] });
-      toast.success("Import terminé");
     },
     onError: () => toast.error("Échec de l’import"),
   });
@@ -162,19 +185,33 @@ export const PurchasesImportPage: React.FC = () => {
       }
     | undefined;
 
+  const recognizedCols = Object.values(mapping).filter((v) => v && v !== "ignore").length;
+
+  const createdPurchases = Number(result?.createdPurchases || 0);
+  const createdSuppliers = Number(result?.createdSuppliers || 0);
+  const suggestedTotal = Object.values(p?.suggestedCategories || {}).reduce(
+    (n, v) => n + Number(v),
+    0,
+  );
+  const baseTotal = createdPurchases || Number(p?.total || 0);
+  const categorizedPct =
+    baseTotal > 0 && suggestedTotal > 0
+      ? Math.min(100, Math.round((suggestedTotal / baseTotal) * 100))
+      : 0;
+
   return (
     <div className="mx-auto max-w-4xl space-y-5">
       <div>
         <h2 className="text-lg font-semibold">Importer mes achats</h2>
         <p className="text-sm text-muted-foreground">
-          CSV (.csv) — Excel : enregistrez d&apos;abord en CSV. Les classifications carbone restent à
-          valider (suggestions CarboScan uniquement).
+          Un fichier simple suffit : Fournisseur, Désignation, Montant. Les autres colonnes sont
+          facultatives.
         </p>
       </div>
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">1. Fichier</CardTitle>
+          <CardTitle className="text-base">1. Votre fichier</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <input
@@ -187,7 +224,8 @@ export const PurchasesImportPage: React.FC = () => {
           />
           {parsed.headers.length > 0 && (
             <p className="text-xs text-muted-foreground">
-              {parsed.headers.length} colonnes · {parsed.rows.length} lignes détectées
+              {parsed.headers.length} colonnes · {parsed.rows.length} lignes · {recognizedCols}{" "}
+              reconnues automatiquement
             </p>
           )}
         </CardContent>
@@ -196,80 +234,116 @@ export const PurchasesImportPage: React.FC = () => {
       {parsed.headers.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">2. Mapping des colonnes</CardTitle>
+            <CardTitle className="text-base">2. Colonnes reconnues</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            {parsed.headers.map((h, i) => (
-              <div key={`${h}-${i}`} className="flex flex-wrap items-center gap-3 text-sm">
-                <span className="min-w-[160px] font-medium text-foreground">{h}</span>
-                <span className="text-muted-foreground">→</span>
-                <select
-                  className="rounded-md border border-border bg-background px-2 py-1"
-                  value={mapping[i] || "ignore"}
-                  onChange={(e) => setMapping((m) => ({ ...m, [i]: e.target.value }))}
-                >
-                  {FIELD_OPTIONS.map((o) => (
-                    <option key={o.key} value={o.key}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="truncate text-xs text-muted-foreground">
-                  ex. {parsed.rows[0]?.[i] || "—"}
-                </span>
+          <CardContent className="space-y-3">
+            {parsed.headers.map((h, i) => {
+              const mapped = mapping[i] && mapping[i] !== "ignore";
+              if (!mapped) return null;
+              return (
+                <div key={`${h}-${i}`} className="flex flex-wrap items-center gap-3 text-sm">
+                  <span className="min-w-[140px] font-medium">{h}</span>
+                  <span className="text-muted-foreground">→</span>
+                  <select
+                    className="rounded-md border border-border bg-background px-2 py-1"
+                    value={mapping[i]}
+                    onChange={(e) => setMapping((m) => ({ ...m, [i]: e.target.value }))}
+                  >
+                    {FIELD_OPTIONS.map((o) => (
+                      <option key={o.key} value={o.key}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="truncate text-xs text-muted-foreground">
+                    ex. {parsed.rows[0]?.[i] || "—"}
+                  </span>
+                </div>
+              );
+            })}
+
+            {parsed.headers.some((_, i) => !mapping[i] || mapping[i] === "ignore") && (
+              <div className="space-y-2 border-t border-border pt-3">
+                <p className="text-sm font-medium">Colonnes non reconnues — à mapper si besoin</p>
+                {parsed.headers.map((h, i) => {
+                  if (mapping[i] && mapping[i] !== "ignore") return null;
+                  return (
+                    <div key={`${h}-u-${i}`} className="flex flex-wrap items-center gap-3 text-sm">
+                      <span className="min-w-[140px] text-muted-foreground">{h}</span>
+                      <span>→</span>
+                      <select
+                        className="rounded-md border border-border bg-background px-2 py-1"
+                        value={mapping[i] || "ignore"}
+                        onChange={(e) => setMapping((m) => ({ ...m, [i]: e.target.value }))}
+                      >
+                        {FIELD_OPTIONS.map((o) => (
+                          <option key={o.key} value={o.key}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-            <Button
-              className="mt-3"
-              disabled={dryMut.isPending}
-              onClick={() => dryMut.mutate()}
-            >
-              {dryMut.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "3. Prévisualiser"
+            )}
+
+            <div className="rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
+              <span className="font-medium">Devise appliquée : {defaultCurrency}</span>
+              {!hasCurrencyCol && (
+                <span className="text-muted-foreground">
+                  {" "}
+                  (aucune colonne devise dans le fichier)
+                </span>
               )}
+              <select
+                className="ml-3 rounded-md border border-border bg-background px-2 py-1 text-sm"
+                value={defaultCurrency}
+                onChange={(e) => setDefaultCurrency(e.target.value)}
+              >
+                {["TND", "EUR", "USD", "MAD", "DZD", "XOF", "XAF", "EGP"].map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <Button className="mt-2" disabled={dryMut.isPending} onClick={() => dryMut.mutate()}>
+              {dryMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Continuer"}
             </Button>
           </CardContent>
         </Card>
       )}
 
-      {p && (
+      {p && !result && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Prévisualisation</CardTitle>
+            <CardTitle className="text-base">Fournisseurs détectés</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm">
+          <CardContent className="space-y-3 text-sm">
+            <p className="text-lg font-semibold tabular-nums">
+              {(p.newSuppliers || 0) + (p.matchedSuppliers || 0)} fournisseurs
+            </p>
             <p>
-              {p.total} lignes · {p.matchedSuppliers} fournisseurs existants ·{" "}
-              {p.newSuppliers} nouveaux · {p.withAmount} avec montant
+              <strong>{p.newSuppliers}</strong> nouveaux · <strong>{p.matchedSuppliers}</strong>{" "}
+              déjà présents
             </p>
             <p className="text-muted-foreground">
-              Suggestions de catégories CarboScan (à confirmer à l&apos;import) :{" "}
-              {Object.entries(p.suggestedCategories || {})
-                .map(([k, v]) => `${k} (${v})`)
-                .join(", ")}
+              {p.total} lignes d&apos;achat · {p.withAmount} avec montant · Devise :{" "}
+              {defaultCurrency}
             </p>
-            {!result && (
-              <Button
-                disabled={commitMut.isPending}
-                onClick={() => {
-                  if (
-                    confirm(
-                      "Importer et calculer les émissions ? Les suggestions de catégories seront appliquées.",
-                    )
-                  ) {
-                    commitMut.mutate();
-                  }
-                }}
-              >
-                {commitMut.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "4. Valider l’import"
-                )}
-              </Button>
-            )}
+            <p className="text-xs text-muted-foreground">
+              Les nouveaux fournisseurs seront créés automatiquement (nom uniquement). Les
+              catégories proposées restent à confirmer ensuite.
+            </p>
+            <Button disabled={commitMut.isPending} onClick={() => commitMut.mutate()}>
+              {commitMut.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Créer et calculer"
+              )}
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -277,19 +351,32 @@ export const PurchasesImportPage: React.FC = () => {
       {result && !result.dryRun && (
         <Card className="border-teal-200 bg-teal-50/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Votre première analyse achats est prête</CardTitle>
+            <CardTitle className="text-base">Votre analyse est prête</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <p>
-              {String(result.createdSuppliers)} fournisseurs créés ·{" "}
-              {String(result.createdPurchases)} lignes d&apos;achat importées
-            </p>
+          <CardContent className="space-y-3 text-sm">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <p>
+                <strong className="text-xl tabular-nums">{createdPurchases}</strong> achats
+              </p>
+              <p>
+                <strong className="text-xl tabular-nums">
+                  {createdSuppliers + Number(p?.matchedSuppliers || 0)}
+                </strong>{" "}
+                fournisseurs
+              </p>
+            </div>
+            {categorizedPct > 0 && (
+              <p>
+                <strong>{categorizedPct}&nbsp;%</strong> catégorisés automatiquement ·{" "}
+                <strong>{100 - categorizedPct}&nbsp;%</strong> pourront nécessiter une vérification
+              </p>
+            )}
             <div className="flex flex-wrap gap-2 pt-2">
               <Button asChild>
-                <Link to="/app/fournisseurs">Voir la vue d&apos;ensemble</Link>
+                <Link to="/app/fournisseurs/achats">Vérifier les achats</Link>
               </Button>
               <Button asChild variant="outline">
-                <Link to="/app/fournisseurs/qualite">Voir les fournisseurs prioritaires</Link>
+                <Link to="/app/fournisseurs">Voir mon empreinte achats</Link>
               </Button>
             </div>
           </CardContent>

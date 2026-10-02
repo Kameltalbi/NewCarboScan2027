@@ -181,16 +181,115 @@ export const SupplierAddForm: React.FC = () => {
         has_iso14001: form.has_iso14001,
         has_ecovadis: form.has_ecovadis,
         ecovadis_score: form.ecovadis_score ? parseInt(form.ecovadis_score) : null,
-        engagement_status: form.send_invitation ? 'invited' : 'not_contacted',
+        engagement_status: L.isBank && form.send_invitation ? 'invited' : 'not_contacted',
         notes: form.notes || null,
       } as any);
-      navigate('/app/fournisseurs');
+      navigate(L.isBank ? '/app/fournisseurs' : '/app/fournisseurs/liste');
     } catch {
       // error handled by hook
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Entreprise : formulaire minimal (pas d'infos carbone à la création)
+  if (!L.isBank) {
+    return (
+      <div className="mx-auto max-w-lg space-y-6">
+        <button
+          onClick={() => navigate('/app/fournisseurs/liste')}
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Retour aux fournisseurs
+        </button>
+        <h2 className="text-xl font-semibold">Ajouter un fournisseur</h2>
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleSubmit();
+          }}
+        >
+          <div>
+            <Label htmlFor="name">Nom *</Label>
+            <Input
+              id="name"
+              className="mt-1.5"
+              value={form.name}
+              onChange={(e) => update('name', e.target.value)}
+              placeholder="Ex. Ciments ABC"
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="country">Pays</Label>
+            <Select value={form.country} onValueChange={(v) => update('country', v)}>
+              <SelectTrigger className="mt-1.5">
+                <SelectValue placeholder="Pays" />
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map((c) => (
+                  <SelectItem key={c.code} value={c.code}>
+                    {c.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="sector">Secteur</Label>
+            <Select
+              value={form.purchase_category || undefined}
+              onValueChange={(v) => update('purchase_category', v)}
+            >
+              <SelectTrigger className="mt-1.5">
+                <SelectValue placeholder="Secteur (facultatif)" />
+              </SelectTrigger>
+              <SelectContent>
+                {supplierPurchaseCategories.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="contact_name">Contact (facultatif)</Label>
+            <Input
+              id="contact_name"
+              className="mt-1.5"
+              value={form.contact_name}
+              onChange={(e) => update('contact_name', e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="contact_email">Email (facultatif)</Label>
+            <Input
+              id="contact_email"
+              type="email"
+              className="mt-1.5"
+              value={form.contact_email}
+              onChange={(e) => update('contact_email', e.target.value)}
+            />
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate('/app/fournisseurs/liste')}
+            >
+              Annuler
+            </Button>
+            <Button type="submit" disabled={isSubmitting || !form.name.trim()}>
+              {isSubmitting ? 'Enregistrement…' : 'Enregistrer'}
+            </Button>
+          </div>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[500px]">
