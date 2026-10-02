@@ -518,8 +518,8 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
         />
       </div>
 
-      {/* CHARTS — disposition d'origine : donut total à gauche, sites à droite */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+      {/* CHARTS — 2 par ligne desktop, 1 sur mobile */}
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div className="rounded-2xl border border-border bg-card p-6">
           <h3 className="mb-4 text-lg font-semibold text-foreground">
             {selectedSite
@@ -639,148 +639,148 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
             </>
           )}
         </div>
-      </div>
 
-      {/* Postes d'émissions */}
-      <div className="rounded-2xl border border-border bg-card p-6">
-        <div className="mb-4 flex items-start justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">
-              {selectedSite
-                ? `Principaux postes — ${selectedSite.name}`
-                : "Principaux postes d'émissions"}
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Classement réel des catégories du bilan · tCO₂e
-            </p>
+        {/* Postes d'émissions */}
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="mb-4 flex items-start justify-between gap-3">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">
+                {selectedSite
+                  ? `Principaux postes — ${selectedSite.name}`
+                  : "Principaux postes d'émissions"}
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Classement réel des catégories du bilan · tCO₂e
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-emerald-700"
+              onClick={() => navigate('/app/bilan-carbone')}
+            >
+              Détail bilan <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-emerald-700"
-            onClick={() => navigate('/app/bilan-carbone')}
-          >
-            Détail bilan <ArrowRight className="ml-1 h-3.5 w-3.5" />
-          </Button>
-        </div>
-        {categoryChartData.length === 0 ? (
-          <p className="flex h-64 items-center justify-center text-sm text-muted-foreground">
-            Aucun poste d&apos;émission disponible pour ce périmètre.
-          </p>
-        ) : (
-          <div className="h-[320px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={categoryChartData}
-                margin={{ top: 8, right: 12, left: 4, bottom: 64 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="name"
-                  tickLine={false}
-                  axisLine={false}
-                  interval={0}
-                  angle={-28}
-                  textAnchor="end"
-                  height={70}
-                  className="text-[11px]"
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(v) =>
-                    v >= 1000
-                      ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v / 1000)}k`
-                      : String(v)
-                  }
-                  className="text-xs"
-                />
-                <Tooltip
-                  formatter={(v: number) => [`${fmt(v)} tCO₂e`, 'Émissions']}
-                  labelFormatter={(_, payload) =>
-                    String(payload?.[0]?.payload?.fullName || '')
-                  }
-                  contentStyle={{
-                    background: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 8,
-                  }}
-                />
-                <Bar
-                  dataKey="value"
-                  fill="#16a34a"
-                  radius={[6, 6, 0, 0]}
-                  cursor="pointer"
-                  onClick={(entry: { technicalKey?: string }) => {
-                    if (entry?.technicalKey) navigate('/app/bilan-carbone');
-                  }}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
-
-      {/* Évolution — uniquement si ≥ 2 exercices réels */}
-      <div className="rounded-2xl border border-border bg-card p-6">
-        <h3 className="text-lg font-semibold text-foreground">Évolution des émissions</h3>
-        {showEvolution ? (
-          <>
-            <p className="mb-4 text-xs text-muted-foreground">
-              Exercices inventoriés uniquement — aucune année extrapolée
+          {categoryChartData.length === 0 ? (
+            <p className="flex h-64 items-center justify-center text-sm text-muted-foreground">
+              Aucun poste d&apos;émission disponible pour ce périmètre.
             </p>
-            <div className="h-56">
+          ) : (
+            <div className="h-[280px] md:h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={realEvolution} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="hsdArea" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#22c55e" stopOpacity={0.35} />
-                      <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                  <XAxis dataKey="year" tickLine={false} axisLine={false} className="text-xs" />
+                <BarChart
+                  data={categoryChartData}
+                  margin={{ top: 8, right: 12, left: 4, bottom: 64 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                  <XAxis
+                    dataKey="name"
+                    tickLine={false}
+                    axisLine={false}
+                    interval={0}
+                    angle={-28}
+                    textAnchor="end"
+                    height={70}
+                    className="text-[11px]"
+                  />
                   <YAxis
                     tickLine={false}
                     axisLine={false}
-                    domain={[0, (max: number) => (max > 0 ? max * 1.15 : 1)]}
                     tickFormatter={(v) =>
                       v >= 1000
                         ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v / 1000)}k`
-                        : fmt(v)
+                        : String(v)
                     }
                     className="text-xs"
                   />
                   <Tooltip
                     formatter={(v: number) => [`${fmt(v)} tCO₂e`, 'Émissions']}
+                    labelFormatter={(_, payload) =>
+                      String(payload?.[0]?.payload?.fullName || '')
+                    }
                     contentStyle={{
                       background: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: 8,
                     }}
                   />
-                  <Area
-                    type="monotone"
+                  <Bar
                     dataKey="value"
-                    stroke="#16a34a"
-                    strokeWidth={2.5}
-                    fill="url(#hsdArea)"
-                    dot={{ r: 4, fill: '#16a34a' }}
+                    fill="#16a34a"
+                    radius={[6, 6, 0, 0]}
+                    cursor="pointer"
+                    onClick={(entry: { technicalKey?: string }) => {
+                      if (entry?.technicalKey) navigate('/app/bilan-carbone');
+                    }}
                   />
-                </AreaChart>
+                </BarChart>
               </ResponsiveContainer>
             </div>
-          </>
-        ) : (
-          <p className="mt-3 text-sm text-muted-foreground">
-            L&apos;évolution apparaîtra à partir du prochain exercice disponible.
-          </p>
-        )}
+          )}
+        </div>
+
+        {/* Évolution — uniquement si ≥ 2 exercices réels */}
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <h3 className="text-lg font-semibold text-foreground">Évolution des émissions</h3>
+          {showEvolution ? (
+            <>
+              <p className="mb-4 text-xs text-muted-foreground">
+                Exercices inventoriés uniquement — aucune année extrapolée
+              </p>
+              <div className="h-[280px] md:h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={realEvolution} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="hsdArea" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#22c55e" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                    <XAxis dataKey="year" tickLine={false} axisLine={false} className="text-xs" />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      domain={[0, (max: number) => (max > 0 ? max * 1.15 : 1)]}
+                      tickFormatter={(v) =>
+                        v >= 1000
+                          ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v / 1000)}k`
+                          : fmt(v)
+                      }
+                      className="text-xs"
+                    />
+                    <Tooltip
+                      formatter={(v: number) => [`${fmt(v)} tCO₂e`, 'Émissions']}
+                      contentStyle={{
+                        background: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: 8,
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#16a34a"
+                      strokeWidth={2.5}
+                      fill="url(#hsdArea)"
+                      dot={{ r: 4, fill: '#16a34a' }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </>
+          ) : (
+            <p className="mt-3 flex min-h-[200px] items-center text-sm text-muted-foreground">
+              L&apos;évolution apparaîtra à partir du prochain exercice disponible.
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Qualité / Transparence — derrière le lien méthodologique */}
       {showDataQualityPanel && (
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2" id="dashboard-data-quality">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2" id="dashboard-data-quality">
           <LazyDataQualityRadarChart
             title="Transparence & qualité des données"
             dataQuality={
