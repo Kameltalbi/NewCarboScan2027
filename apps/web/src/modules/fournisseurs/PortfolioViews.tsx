@@ -225,13 +225,15 @@ export const PortfolioEmissionsView: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">Intensité portefeuille</p>
+            <p className="text-xs text-muted-foreground">
+              {L.isBank ? "Intensité portefeuille" : "Intensité achats"}
+            </p>
             <p className="text-2xl font-bold tabular-nums">
               {totalAmount > 0
                 ? fmt((totalEmissions * 1000) / (totalAmount / 1000), 1)
                 : "—"}{" "}
               <span className="text-sm font-medium text-muted-foreground">
-                kgCO₂e / k encours
+                {L.isBank ? "kgCO₂e / k encours" : "kgCO₂e / k TND d'achats"}
               </span>
             </p>
           </CardContent>

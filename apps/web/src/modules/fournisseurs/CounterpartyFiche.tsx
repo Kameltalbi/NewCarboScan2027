@@ -1,5 +1,6 @@
 /**
- * Fiche contrepartie / fournisseur — détail + traçabilité PCAF (émissions financées).
+ * Fiche contrepartie (PCAF) ou fournisseur classique (Scope 3 achats).
+ * PCAF uniquement si financed_emissions_enabled est actif sur l'org.
  */
 import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -35,10 +36,22 @@ const scoreColors: Record<string, string> = {
   E: "bg-red-600 text-white",
 };
 
+const GHG_CAT_LABELS: Record<number, string> = {
+  1: "Scope 3 — catégorie 1 (biens et services achetés)",
+  2: "Scope 3 — catégorie 2 (biens immobilisés)",
+  4: "Scope 3 — catégorie 4 (transport amont)",
+  5: "Scope 3 — catégorie 5 (déchets)",
+  6: "Scope 3 — catégorie 6 (déplacements professionnels)",
+  7: "Scope 3 — catégorie 7 (domicile-travail)",
+  9: "Scope 3 — catégorie 9 (transport aval)",
+  15: "Scope 3 — catégorie 15 (investments / financed emissions)",
+};
+
 export const CounterpartyFiche: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const L = useSupplierLabels();
+  const isPcaf = L.financedEmissionsEnabled;
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["supplier-detail", id],
@@ -55,13 +68,15 @@ export const CounterpartyFiche: React.FC = () => {
 
   const outstanding =
     Number(primary?.amount) || Number(item?.annual_spend) || 0;
-  const financedKg = purchases.reduce(
+  const emissionsKg = purchases.reduce(
     (sum, p) => sum + (Number(p.calculated_emissions_kgco2e) || 0),
     0,
   );
   const currency = String(
     primary?.currency || item?.annual_spend_currency || "TND",
   );
+  const ghgCat = Number(item?.scope3_ghg_category) || (isPcaf ? 15 : 1);
+  const emissionsT = emissionsKg / 1000;
 
   const rawLegacy =
     item?.raw_legacy && typeof item.raw_legacy === "object"
@@ -69,10 +84,10 @@ export const CounterpartyFiche: React.FC = () => {
       : null;
 
   const trace = useMemo(() => {
-    if (!item) return null;
+    if (!item || !isPcaf) return null;
     return buildPcafTrace({
       outstanding,
-      financedKg,
+      financedKg: emissionsKg,
       currency,
       dataMethod: String(primary?.data_method || item.data_method || ""),
       sourceType: primary?.source_type ? String(primary.source_type) : null,
@@ -84,7 +99,7 @@ export const CounterpartyFiche: React.FC = () => {
         item.confidence_index != null ? Number(item.confidence_index) : null,
       rawLegacy,
     });
-  }, [item, outstanding, financedKg, currency, primary, rawLegacy]);
+  }, [item, isPcaf, outstanding, emissionsKg, currency, primary, rawLegacy]);
 
   if (isLoading) {
     return (
@@ -94,20 +109,26 @@ export const CounterpartyFiche: React.FC = () => {
     );
   }
 
-  if (error || !item || !trace) {
+  if (error || !item || (isPcaf && !trace)) {
     return (
       <div className="space-y-4 py-10 text-center">
         <p className="text-muted-foreground">
           Impossible de charger cette {L.entitySingular}.
         </p>
         <Button variant="outline" onClick={() => navigate("/app/fournisseurs")}>
-          Retour au portefeuille
+          Retour
         </Button>
       </div>
     );
   }
 
   const carbonScore = item.carbon_score ? String(item.carbon_score) : null;
+  const dataMethod = String(primary?.data_method || item.data_method || "");
+  const sourceType = primary?.source_type ? String(primary.source_type) : null;
+  const uncertaintyPct =
+    primary?.uncertainty_percent != null
+      ? Number(primary.uncertainty_percent)
+      : null;
 
   return (
     <div className="space-y-6">
@@ -136,10 +157,14 @@ export const CounterpartyFiche: React.FC = () => {
                 {carbonScore}
               </span>
             )}
-            {L.isBank && (
+            {isPcaf ? (
               <Badge variant="outline" className="gap-1 border-emerald-200 text-emerald-800">
                 <Landmark className="h-3 w-3" />
                 PCAF · Scope 3 cat. 15
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="gap-1 border-border text-muted-foreground">
+                Fournisseur · Scope 3 cat. {ghgCat}
               </Badge>
             )}
           </div>
@@ -152,15 +177,14 @@ export const CounterpartyFiche: React.FC = () => {
         </div>
       </div>
 
-      {/* KPI strip */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">{L.colOutstanding}</p>
             <p className="mt-1 text-xl font-bold tabular-nums">
-              {fmt(trace.outstanding)}{" "}
+              {fmt(outstanding)}{" "}
               <span className="text-sm font-medium text-muted-foreground">
-                {trace.currency}
+                {currency}
               </span>
             </p>
           </CardContent>
@@ -169,7 +193,7 @@ export const CounterpartyFiche: React.FC = () => {
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">{L.colEmissions}</p>
             <p className="mt-1 text-xl font-bold tabular-nums">
-              {fmt(trace.financedEmissionsTco2e, 1)}{" "}
+              {fmt(isPcaf ? (trace?.financedEmissionsTco2e ?? emissionsT) : emissionsT, 1)}{" "}
               <span className="text-sm font-medium text-muted-foreground">
                 tCO₂e
               </span>
@@ -178,41 +202,56 @@ export const CounterpartyFiche: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">Score qualité PCAF</p>
+            <p className="text-xs text-muted-foreground">
+              {isPcaf ? "Score qualité PCAF" : "Indice de confiance"}
+            </p>
             <p className="mt-1 text-xl font-bold">
-              {trace.dataQuality}
-              <span className="text-sm font-medium text-muted-foreground">
-                {" "}
-                / 5
-              </span>
+              {isPcaf ? (
+                <>
+                  {trace!.dataQuality}
+                  <span className="text-sm font-medium text-muted-foreground"> / 5</span>
+                </>
+              ) : (
+                <>
+                  {fmt(Number(item.confidence_index) || 0)}
+                  <span className="text-sm font-medium text-muted-foreground"> %</span>
+                </>
+              )}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">Attribution</p>
+            <p className="text-xs text-muted-foreground">
+              {isPcaf ? "Attribution" : "Catégorie GHG"}
+            </p>
             <p className="mt-1 text-xl font-bold tabular-nums">
-              {fmt(trace.attributionFactor * 100, 1)} %
+              {isPcaf
+                ? `${fmt((trace?.attributionFactor ?? 0) * 100, 1)} %`
+                : `Cat. ${ghgCat}`}
             </p>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-5">
-        {/* Left: identity + engagement */}
         <div className="space-y-5 lg:col-span-2">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Building2 className="h-4 w-4 text-muted-foreground" />
-                {L.isBank ? "Contrepartie financée" : "Identité fournisseur"}
+                {isPcaf ? "Contrepartie financée" : "Identité fournisseur"}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <Row label="Secteur" value={String(item.purchase_category || "—")} />
               <Row
-                label="Type d'actif"
-                value={L.isBank ? "Prêt / financement (business loans)" : String(item.purchase_subcategory || "Achats")}
+                label={isPcaf ? "Type d'actif" : "Sous-catégorie"}
+                value={
+                  isPcaf
+                    ? "Prêt / financement (business loans)"
+                    : String(item.purchase_subcategory || "Achats")
+                }
               />
               <Row
                 label="Localisation"
@@ -229,16 +268,21 @@ export const CounterpartyFiche: React.FC = () => {
               />
               <Row
                 label="Catégorie GHG"
-                value="Scope 3 — catégorie 15 (investments / financed emissions)"
+                value={GHG_CAT_LABELS[ghgCat] || `Scope 3 — catégorie ${ghgCat}`}
               />
               {item.has_sbti_target ? (
                 <Row label="SBTi" value="Cible science-based déclarée" />
               ) : null}
-              {item.has_carbon_footprint ? (
-                <Row label="Bilan GES emprunteur" value="Disponible" />
-              ) : (
-                <Row label="Bilan GES emprunteur" value="Non fourni — proxy / estimation" />
-              )}
+              <Row
+                label={isPcaf ? "Bilan GES emprunteur" : "Bilan carbone fournisseur"}
+                value={
+                  item.has_carbon_footprint
+                    ? "Disponible"
+                    : isPcaf
+                      ? "Non fourni — proxy / estimation"
+                      : "Non fourni — estimation"
+                }
+              />
             </CardContent>
           </Card>
 
@@ -250,31 +294,42 @@ export const CounterpartyFiche: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
-              <p className="font-medium text-foreground">{trace.dataQualityLabel}</p>
-              <p className="leading-relaxed text-muted-foreground">
-                {trace.dataQualityDescription}
-              </p>
-              <Row label="Option PCAF" value={trace.optionLabel} />
+              {isPcaf && trace ? (
+                <>
+                  <p className="font-medium text-foreground">{trace.dataQualityLabel}</p>
+                  <p className="leading-relaxed text-muted-foreground">
+                    {trace.dataQualityDescription}
+                  </p>
+                  <Row label="Option PCAF" value={trace.optionLabel} />
+                </>
+              ) : (
+                <p className="leading-relaxed text-muted-foreground">
+                  Qualité basée sur la méthode de collecte des données d&apos;achats
+                  (factures, déclarations fournisseur ou estimation).
+                </p>
+              )}
               <Row
                 label="Méthode saisie"
                 value={
-                  trace.dataMethod === "supplier_specific"
-                    ? "Données spécifiques emprunteur"
+                  dataMethod === "supplier_specific"
+                    ? isPcaf
+                      ? "Données spécifiques emprunteur"
+                      : "Données spécifiques fournisseur"
                     : "Estimation / proxy"
                 }
               />
-              {trace.sourceType && (
+              {sourceType && (
                 <Row
                   label="Source"
                   value={
-                    trace.sourceType === "invoice"
+                    sourceType === "invoice"
                       ? "Reporting / pièce justificative"
                       : "Estimation documentée"
                   }
                 />
               )}
-              {trace.uncertaintyPct != null && (
-                <Row label="Incertitude" value={`± ${fmt(trace.uncertaintyPct)} %`} />
+              {uncertaintyPct != null && (
+                <Row label="Incertitude" value={`± ${fmt(uncertaintyPct)} %`} />
               )}
               <Row
                 label="Indice de confiance"
@@ -284,94 +339,110 @@ export const CounterpartyFiche: React.FC = () => {
           </Card>
         </div>
 
-        {/* Right: calculation */}
         <div className="space-y-5 lg:col-span-3">
-          <Card className="border-emerald-200/70 bg-emerald-50/30">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Calculator className="h-4 w-4 text-emerald-700" />
-                Méthode de calcul PCAF
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                Calcul conforme à {trace.citation} — {trace.assetClassSection}{" "}
-                <span className="font-medium text-foreground">{trace.assetClass}</span>
-                {" "}(société {trace.listing === "listed" ? "cotée" : "non cotée"}).
-              </p>
-
-              <div className="rounded-lg border border-emerald-200 bg-white px-4 py-3 space-y-1">
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
-                  Formule PCAF §5.2
+          {isPcaf && trace ? (
+            <Card className="border-emerald-200/70 bg-emerald-50/30">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Calculator className="h-4 w-4 text-emerald-700" />
+                  Méthode de calcul PCAF
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Calcul conforme à {trace.citation} — {trace.assetClassSection}{" "}
+                  <span className="font-medium text-foreground">{trace.assetClass}</span>
+                  {" "}(société {trace.listing === "listed" ? "cotée" : "non cotée"}).
                 </p>
-                <p className="font-mono text-sm text-foreground">{trace.formula}</p>
-                <p className="font-mono text-xs text-muted-foreground">
-                  {trace.attributionFormula}
-                </p>
-              </div>
 
-              <ol className="space-y-3">
-                {trace.steps.map((step, i) => (
-                  <li
-                    key={step.label}
-                    className="flex gap-3 rounded-lg border border-border bg-card px-3 py-2.5"
-                  >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800">
-                      {i + 1}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium text-muted-foreground">
-                        {step.label}
-                      </p>
-                      <p className="text-sm font-semibold text-foreground">
-                        {step.value}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-
-              <div className="grid gap-2 rounded-lg border border-border bg-card p-3 text-sm sm:grid-cols-2">
-                <div>
-                  <p className="text-xs text-muted-foreground">Classe d&apos;actifs</p>
-                  <p className="font-medium">{trace.assetClass}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Option / score</p>
-                  <p className="font-medium">
-                    {trace.optionLabel} · Score {trace.dataQuality}/5
+                <div className="rounded-lg border border-emerald-200 bg-white px-4 py-3 space-y-1">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
+                    Formule PCAF §5.2
+                  </p>
+                  <p className="font-mono text-sm text-foreground">{trace.formula}</p>
+                  <p className="font-mono text-xs text-muted-foreground">
+                    {trace.attributionFormula}
                   </p>
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Scopes emprunteur</p>
-                  <p className="font-medium">{trace.scopesCovered}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Référence</p>
-                  <p className="text-xs leading-snug text-muted-foreground">
-                    {trace.citation}
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex items-start gap-2 rounded-lg bg-muted/50 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
-                <Scale className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                <p>{trace.reportingNote}</p>
-              </div>
-            </CardContent>
-          </Card>
+                <ol className="space-y-3">
+                  {trace.steps.map((step, i) => (
+                    <li
+                      key={step.label}
+                      className="flex gap-3 rounded-lg border border-border bg-card px-3 py-2.5"
+                    >
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800">
+                        {i + 1}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-muted-foreground">
+                          {step.label}
+                        </p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {step.value}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+
+                <div className="flex items-start gap-2 rounded-lg bg-muted/50 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
+                  <Scale className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <p>{trace.reportingNote}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-border bg-muted/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Calculator className="h-4 w-4 text-muted-foreground" />
+                  Méthode de calcul — achats
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm">
+                <p className="leading-relaxed text-muted-foreground">
+                  Émissions liées aux achats auprès de ce fournisseur (Scope 3,
+                  catégorie {ghgCat}). Pas de calcul PCAF : ce module suit la
+                  chaîne d&apos;approvisionnement, pas les émissions financées.
+                </p>
+                <div className="rounded-lg border border-border bg-card px-4 py-3 space-y-2">
+                  <Row
+                    label="Montant d'achats"
+                    value={`${fmt(outstanding)} ${currency}`}
+                  />
+                  <Row
+                    label="Émissions estimées"
+                    value={`${fmt(emissionsT, 1)} tCO₂e`}
+                  />
+                  <Row
+                    label="Méthode"
+                    value={
+                      dataMethod === "supplier_specific"
+                        ? "Données spécifiques fournisseur"
+                        : "Estimation / facteur monétaire ou physique"
+                    }
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Leaf className="h-4 w-4 text-muted-foreground" />
-                Lignes d&apos;encours {primary?.reference_year || ""}
+                {isPcaf
+                  ? `Lignes d'encours ${primary?.reference_year || ""}`
+                  : `Lignes d'achats ${primary?.reference_year || ""}`}
               </CardTitle>
             </CardHeader>
             <CardContent>
               {purchases.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  Aucune ligne d&apos;encours enregistrée.
+                  {isPcaf
+                    ? "Aucune ligne d'encours enregistrée."
+                    : "Aucune ligne d'achat enregistrée."}
                 </p>
               ) : (
                 <div className="overflow-x-auto">
