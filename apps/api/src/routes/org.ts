@@ -83,7 +83,7 @@ export async function registerOrgRoutes(app: FastifyInstance) {
       const orgId = request.user!.organizationId!;
       const setLogo = d.logoUrl !== undefined;
 
-      let nextType = d.organizationType;
+      const nextType = d.organizationType;
       let nextFinanced = d.financedEmissionsEnabled;
       if (nextType !== undefined && nextFinanced === undefined) {
         nextFinanced = defaultFinancedEmissionsEnabled(nextType);

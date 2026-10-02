@@ -839,12 +839,9 @@ export async function registerClimateRoutes(app: FastifyInstance) {
 
       const results: Array<Record<string, unknown>> = [];
       for (let year = baselineYear; year <= Math.max(baselineYear, targetYear); year++) {
-        const applied = year === baselineYear ? 0 : reductionTco2e;
-        const projected = Math.max(0, baseline - (year >= baselineYear + 1 || targetYear === baselineYear ? reductionTco2e : applied));
-        // Instant What-If: dès l'année de référence (ou année cible), appliquer la réduction pleine.
-        const projectedInstant =
+        // Instant What-If: dès l'année de référence, appliquer la réduction pleine.
+        const useProjected =
           year >= baselineYear ? Math.max(0, baseline - reductionTco2e) : baseline;
-        const useProjected = projectedInstant;
         const reductionPct = baseline > 0 ? ((baseline - useProjected) / baseline) * 100 : 0;
         const { rows } = await pool.query(
           `INSERT INTO climate_scenario_results
@@ -1194,7 +1191,7 @@ export async function registerClimateRoutes(app: FastifyInstance) {
         return reply.code(400).send({ error: "L'année cible doit être postérieure à l'année de référence" });
       }
       // Never auto-mark as SBTi-validated
-      let validationStatus = d.validation_status ?? "company_objective";
+      const validationStatus = d.validation_status ?? "company_objective";
       if (validationStatus === "validated" && !d.validation_body && !d.validation_reference) {
         return reply.code(400).send({
           error: "Statut « validé » exige un organisme et/ou une référence de validation",
