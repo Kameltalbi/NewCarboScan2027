@@ -260,7 +260,7 @@ export const TransitionTrajectoriesPage: React.FC = () => {
             onChange={setShowCompany}
             label="Objectif entreprise"
           />
-          <Toggle id="tr-s" checked={showScenario} onChange={setShowScenario} label="Scénario" />
+          <Toggle id="tr-s" checked={showScenario} onChange={setShowScenario} label="Scénario What-If" />
         </div>
         <TransitionTrajectoryChart
           points={chartPoints}
@@ -268,6 +268,23 @@ export const TransitionTrajectoriesPage: React.FC = () => {
           showCompany={showCompany && !!compareObjective}
           showScenario={showScenario && d.scenarioSeries.length > 0}
           showReference15={showReference && !!ref}
+          meta={{
+            baselineYear: ref?.base_year ?? compareObjective?.baseline_year ?? null,
+            baselineEmissionsT:
+              ref != null
+                ? Number(ref.baseline_emissions)
+                : compareObjective?.baseline_value != null
+                  ? Number(compareObjective.baseline_value)
+                  : d.actuals.find((a) => a.year === (compareObjective?.baseline_year ?? d.defaultYear))
+                      ?.emissionsT ?? null,
+            targetYear: ref?.target_year ?? compareObjective?.target_year ?? null,
+            targetEmissionsT:
+              ref != null
+                ? Number(ref.target_emissions)
+                : resolveTargetEmissions(compareObjective) ?? null,
+            dlarrPercent: ref != null ? Number(ref.dlarr_percent) : null,
+            onOpenMethod: () => setMethodOpen(true),
+          }}
         />
         <ul className="mt-4 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
           <li>
@@ -283,8 +300,8 @@ export const TransitionTrajectoriesPage: React.FC = () => {
             objectif choisi par l&apos;organisation.
           </li>
           <li>
-            <span className="font-medium text-foreground">Scénario</span> = résultat estimé
-            des actions envisagées.
+            <span className="font-medium text-foreground">Scénario What-If</span> = résultat
+            estimé des leviers envisagés (projection).
           </li>
         </ul>
       </div>

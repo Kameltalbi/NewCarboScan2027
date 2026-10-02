@@ -162,7 +162,7 @@ export const TransitionOverviewPage: React.FC = () => {
               id="ov-scen"
               checked={showScenario}
               onChange={setShowScenario}
-              label="Scénario"
+              label="Scénario What-If"
             />
           </div>
         </div>
@@ -197,6 +197,27 @@ export const TransitionOverviewPage: React.FC = () => {
           showCompany={showCompany && !!d.primary}
           showScenario={showScenario && d.scenarioSeries.length > 0}
           showReference15={showReference && d.referenceTrajectoryReady}
+          meta={{
+            baselineYear:
+              d.referenceTrajectory?.base_year ?? d.primary?.baseline_year ?? null,
+            baselineEmissionsT:
+              d.referenceTrajectory != null
+                ? Number(d.referenceTrajectory.baseline_emissions)
+                : d.primary?.baseline_value != null
+                  ? Number(d.primary.baseline_value)
+                  : d.actuals[0]?.emissionsT ?? null,
+            targetYear:
+              d.referenceTrajectory?.target_year ?? d.primary?.target_year ?? null,
+            targetEmissionsT:
+              d.referenceTrajectory != null
+                ? Number(d.referenceTrajectory.target_emissions)
+                : companyTarget,
+            dlarrPercent:
+              d.referenceTrajectory != null
+                ? Number(d.referenceTrajectory.dlarr_percent)
+                : null,
+            onOpenMethod: () => setMethodOpen(true),
+          }}
         />
 
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
