@@ -5,11 +5,13 @@ import { HorizontalNav, NavItem } from "@/components/layout/HorizontalNav";
 import {
   Users,
   BarChart3,
-  FileText,
   Landmark,
   BookOpen,
   LayoutDashboard,
   FileBarChart,
+  ShoppingCart,
+  Upload,
+  ShieldCheck,
 } from "lucide-react";
 import { FournisseursHome } from "./FournisseursHome";
 import { SupplierAddForm } from "./SupplierAddForm";
@@ -20,6 +22,10 @@ import {
   PortfolioEmissionsView,
   ScoringQualityView,
 } from "./PortfolioViews";
+import { PurchasesOverview } from "./PurchasesOverview";
+import { PurchasesPage } from "./PurchasesPage";
+import { PurchasesImportPage } from "./PurchasesImportPage";
+import { PurchasesQualityPage } from "./PurchasesQualityPage";
 import { useSupplierLabels } from "@/hooks/useSupplierLabels";
 import { useAppData } from "@/contexts/AppDataContext";
 
@@ -27,7 +33,6 @@ const FournisseursApp: React.FC = () => {
   const L = useSupplierLabels();
   const { hasModule } = useAppData();
 
-  // PCAF uniquement si flag tenant ; sinon module Fournisseurs classique requis.
   if (!L.financedEmissionsEnabled && !hasModule("fournisseurs")) {
     return <Navigate to="/app/dashboard" replace />;
   }
@@ -42,10 +47,11 @@ const FournisseursApp: React.FC = () => {
         { label: "Rapport", path: "/rapport", icon: FileBarChart },
       ]
     : [
-        { label: "Avancée de l'engagement", path: "", icon: Users },
-        { label: "CDP & SBTi", path: "/cdp-sbti", icon: FileText },
-        { label: "Émissions de GES", path: "/emissions", icon: BarChart3 },
-        { label: "Score CarboScan", path: "/scoring", icon: BarChart3 },
+        { label: "Vue d'ensemble", path: "", icon: LayoutDashboard },
+        { label: "Fournisseurs", path: "/liste", icon: Users },
+        { label: "Achats", path: "/achats", icon: ShoppingCart },
+        { label: "Import", path: "/import", icon: Upload },
+        { label: "Qualité des données", path: "/qualite", icon: ShieldCheck },
       ];
 
   return (
@@ -54,7 +60,7 @@ const FournisseursApp: React.FC = () => {
       <Routes>
         <Route
           index
-          element={L.isBank ? <MethodeCalculPage /> : <FournisseursHome />}
+          element={L.isBank ? <MethodeCalculPage /> : <PurchasesOverview />}
         />
         <Route
           path="vue"
@@ -64,6 +70,10 @@ const FournisseursApp: React.FC = () => {
         />
         <Route path="portefeuille" element={<FournisseursHome />} />
         <Route path="contreparties" element={<FournisseursHome />} />
+        <Route path="liste" element={<FournisseursHome />} />
+        <Route path="achats" element={<PurchasesPage />} />
+        <Route path="import" element={<PurchasesImportPage />} />
+        <Route path="qualite" element={<PurchasesQualityPage />} />
         <Route path="nouveau" element={<SupplierAddForm />} />
         <Route path="fiche/:id" element={<CounterpartyFiche />} />
         <Route path="cdp-sbti" element={<ClimateEngagementView />} />
@@ -77,18 +87,22 @@ const FournisseursApp: React.FC = () => {
             )
           }
         />
-        <Route path="scoring" element={<ScoringQualityView />} />
         <Route
-          path="methode"
-          element={
-            L.isBank ? <Navigate to="" replace /> : <Navigate to="" replace />
-          }
+          path="scoring"
+          element={L.isBank ? <ScoringQualityView /> : <PurchasesQualityPage />}
         />
         <Route
           path="rapport"
-          element={L.isBank ? <PortfolioReportPage /> : <Navigate to="" replace />}
+          element={
+            L.isBank ? <PortfolioReportPage /> : <Navigate to="" replace />
+          }
         />
-        <Route path="*" element={<Navigate to="" replace />} />
+        {/* legacy aliases */}
+        <Route path="engagement" element={<Navigate to="/app/fournisseurs/liste" replace />} />
+        <Route
+          path="*"
+          element={<Navigate to="/app/fournisseurs" replace />}
+        />
       </Routes>
     </ModuleLayout>
   );

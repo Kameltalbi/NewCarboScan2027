@@ -815,13 +815,24 @@ export const api = {
     return request<{ items: Array<Record<string, unknown>> }>(`/v1/org/sites${q}`);
   },
 
-  listSuppliers: (opts?: { active?: boolean }) => {
-    const q = opts?.active === false ? "?active=false" : "";
+  listSuppliers: (opts?: {
+    active?: boolean;
+    search?: string;
+    country?: string;
+    category?: string;
+  }) => {
+    const params = new URLSearchParams();
+    if (opts?.active === false) params.set("active", "false");
+    if (opts?.search) params.set("search", opts.search);
+    if (opts?.country) params.set("country", opts.country);
+    if (opts?.category) params.set("category", opts.category);
+    const q = params.toString() ? `?${params}` : "";
     return request<{ items: Array<Record<string, unknown>> }>(`/v1/suppliers${q}`);
   },
 
-  getSupplierStats: () =>
-    request<{
+  getSupplierStats: (year?: number) => {
+    const q = year ? `?year=${year}` : "";
+    return request<{
       stats: {
         total_suppliers: number;
         engaged_suppliers: number;
@@ -829,15 +840,87 @@ export const api = {
         top_performers: number;
         total_spend: number;
         total_emissions: number;
+        total_emissions_tco2e?: number;
         avg_confidence: number;
         questionnaires_sent: number;
         questionnaires_completed: number;
         countries_count: number;
+        purchase_rows?: number;
+        coverage_pct?: number;
+        primary_data_pct?: number;
+        primary_data_target_pct?: number;
+        year?: number | null;
       };
-    }>("/v1/suppliers/stats"),
+    }>(`/v1/suppliers/stats${q}`);
+  },
 
-  listSupplierPurchases: () =>
-    request<{ items: Array<Record<string, unknown>> }>("/v1/suppliers/purchases"),
+  getSuppliersDashboard: (year?: number) => {
+    const q = year ? `?year=${year}` : "";
+    return request<Record<string, unknown>>(`/v1/suppliers/dashboard${q}`);
+  },
+
+  listSupplierPurchases: (filters: Record<string, string | number | undefined> = {}) => {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== "") params.set(k, String(v));
+    });
+    const q = params.toString() ? `?${params}` : "";
+    return request<{
+      items: Array<Record<string, unknown>>;
+      total: number;
+      limit: number;
+      offset: number;
+    }>(`/v1/suppliers/purchases${q}`);
+  },
+
+  createSupplierPurchase: (payload: Record<string, unknown>) =>
+    request<{
+      item: Record<string, unknown>;
+      calculation?: Record<string, unknown>;
+      warnings?: string[];
+    }>("/v1/suppliers/purchases", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  updateSupplierPurchase: (id: string, payload: Record<string, unknown>) =>
+    request<{
+      item: Record<string, unknown>;
+      calculation?: Record<string, unknown>;
+      warnings?: string[];
+    }>(`/v1/suppliers/purchases/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+
+  deleteSupplierPurchase: (id: string) =>
+    request<{ ok: boolean }>(`/v1/suppliers/purchases/${id}`, { method: "DELETE" }),
+
+  recalculateSupplierPurchase: (id: string) =>
+    request<{
+      item: Record<string, unknown>;
+      calculation?: Record<string, unknown>;
+      warnings?: string[];
+    }>(`/v1/suppliers/purchases/${id}/recalculate`, { method: "POST" }),
+
+  getSupplierPurchaseHistory: (id: string) =>
+    request<{ items: Array<Record<string, unknown>> }>(
+      `/v1/suppliers/purchases/${id}/history`,
+    ),
+
+  importSupplierPurchases: (payload: Record<string, unknown>) =>
+    request<Record<string, unknown>>("/v1/suppliers/purchases/import", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  updateSupplierPurchasesSettings: (payload: {
+    purchases_primary_data_target_pct: number;
+  }) =>
+    request<{ item: Record<string, unknown> }>("/v1/suppliers/settings", {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
 
   createSupplier: (payload: Record<string, unknown>) =>
     request<{ item: Record<string, unknown> }>("/v1/suppliers", {
