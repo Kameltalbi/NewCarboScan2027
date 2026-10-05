@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import { screen } from '@testing-library/dom';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { api } from '@/integrations/api/client';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -114,5 +115,21 @@ describe('SimplifiedSidebar', () => {
     expect(screen.getByText('Transition & trajectoires')).toBeDefined();
     expect(screen.queryByText("Plan d'actions")).toBeNull();
     expect(screen.queryByText('Modélisation scénarios')).toBeNull();
+  });
+
+  it('keeps the organization logo colors on the dark sidebar', async () => {
+    vi.mocked(api.getOrganization).mockResolvedValueOnce({
+      organization: { logoUrl: 'https://example.com/logo.png' },
+    } as Awaited<ReturnType<typeof api.getOrganization>>);
+    const { SimplifiedSidebar } = await import('@/components/layout/SimplifiedSidebar');
+    render(
+      <MemoryRouter initialEntries={['/app/dashboard']}>
+        <SimplifiedSidebar />
+      </MemoryRouter>
+    );
+
+    const logo = await screen.findByAltText('Logo organisation');
+    expect(logo).toHaveAttribute('src', 'https://example.com/logo.png');
+    expect(logo.className).not.toMatch(/invert|brightness-0/);
   });
 });

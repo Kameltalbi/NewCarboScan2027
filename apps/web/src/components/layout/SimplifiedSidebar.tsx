@@ -350,7 +350,7 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
             <img
               src={orgLogoUrl}
               alt={t('navigation.orgLogoAlt')}
-              className="h-9 w-auto max-w-[140px] object-contain brightness-0 invert"
+              className="h-9 w-auto max-w-[140px] rounded-md bg-white object-contain p-1"
             />
           ) : (
             <BrandLogo variant="dark" className="h-9" />
