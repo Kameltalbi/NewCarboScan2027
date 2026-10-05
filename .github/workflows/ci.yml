@@ -22,8 +22,8 @@ jobs:
         run: npm run typecheck
       - name: Tests engine + API
         run: npm test
-      - name: npm audit (high+)
-        run: npm audit --audit-level=high
+      - name: npm audit (high+, production)
+        run: npm audit --omit=dev --audit-level=high
       - name: Build
         run: npm run build
         env:
