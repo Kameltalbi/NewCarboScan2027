@@ -24,6 +24,7 @@ import {
   ArrowRight,
   Loader2,
   ClipboardList,
+  Landmark,
   MapPin,
   Target,
 } from 'lucide-react';
@@ -38,6 +39,11 @@ import { DashboardContextBar } from '@/components/dashboard/DashboardContextBar'
 import { LazyDataQualityRadarChart } from '@/components/dashboard/LazyCharts';
 import { PhysicalVsMonetaryCard } from '@/components/dashboard/PhysicalVsMonetaryCard';
 import { categoryDisplayLabel } from '@/lib/dashboard/categoryDisplayLabel';
+import {
+  contributionFromBusinessLoan,
+  summarizeFinancedPortfolio,
+} from '@/lib/dashboard/institutionFootprint';
+import { assessCounterpartyRaw } from '@/lib/pcaf/methodology';
 import { rollupSites } from '@/lib/perimeter/siteRollup';
 
 import {
@@ -79,6 +85,8 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
   const [yearlyTotals, setYearlyTotals] = useState<Array<{ year: number; value: number }>>([]);
   const [loading, setLoading] = useState(true);
   const [showDataQualityPanel, setShowDataQualityPanel] = useState(false);
+  const [financedTotal, setFinancedTotal] = useState<number | null>(null);
+  const financialInstitution = Boolean(organization?.financed_emissions_enabled);
 
   const setActiveYear = (year: number) => {
     setHeaderYear(year);
@@ -164,6 +172,33 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
     };
     load();
   }, [user, organizationId, organizationLoading, activeYear, selectedSiteId]);
+
+  useEffect(() => {
+    if (!financialInstitution || !organizationId || organizationLoading) {
+      setFinancedTotal(null);
+      return;
+    }
+    let cancelled = false;
+    api
+      .listSuppliers()
+      .then(({ items }) => {
+        if (cancelled) return;
+        const summary = summarizeFinancedPortfolio(
+          (items || [])
+            .map((row) => assessCounterpartyRaw(row.raw_legacy))
+            .filter((result): result is NonNullable<typeof result> => result != null)
+            .map(contributionFromBusinessLoan),
+          activeYear,
+        );
+        setFinancedTotal(summary.scope12Tco2e + summary.scope3Tco2e);
+      })
+      .catch(() => {
+        if (!cancelled) setFinancedTotal(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [financialInstitution, organizationId, organizationLoading, activeYear]);
 
   const hasReal = !!data && data.bilanCarbone.totalEmissions > 0;
   const selectedSite = selectedSiteId
@@ -516,6 +551,15 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           unit="tCO₂e"
           footer={`${Math.round(kpis.s3Pct)}% des émissions totales`}
         />
+        {financialInstitution && (
+          <KpiCard
+            icon={<Landmark className="h-6 w-6 text-teal-700" />}
+            iconBg="bg-teal-50"
+            label="ÉMISSIONS FINANCÉES"
+            value={financedTotal == null ? '—' : fmt(financedTotal)}
+            unit="tCO₂e"
+          />
+        )}
       </div>
 
       {/* CHARTS — L1: scope | postes · L2: qualité | sites */}
