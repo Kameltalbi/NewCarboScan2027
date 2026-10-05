@@ -20,6 +20,7 @@ import { useSupplierLabels } from "@/hooks/useSupplierLabels";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/integrations/api/client";
 import { useOrganizationId } from "@/hooks/useOrganizationId";
+import { assessCounterpartyRaw } from "@/lib/pcaf/methodology";
 
 // Score colors matching Greenly style
 const scoreConfig: Record<string, { bg: string; text: string }> = {
@@ -281,7 +282,21 @@ export const FournisseursHome: React.FC = () => {
               <tbody>
                 {filtered.map((f) => {
                   const agg = purchasesBySupplier[f.id];
-                  const emissionsT = agg ? agg.emissions_kg / 1000 : 0;
+                  const assessment = L.isBank ? assessCounterpartyRaw(f.raw_legacy) : null;
+                  const scope12T =
+                    assessment?.scope12.status === "calculated"
+                      ? assessment.scope12.financedEmissionsTco2e
+                      : null;
+                  const scope3T =
+                    assessment?.scope3.status === "calculated"
+                      ? assessment.scope3.financedEmissionsTco2e
+                      : null;
+                  const emissionsT = assessment
+                    ? (scope12T ?? 0) + (scope3T ?? 0)
+                    : agg
+                      ? agg.emissions_kg / 1000
+                      : 0;
+                  const outstanding = assessment?.outstandingAmount ?? agg?.amount;
                   return (
                     <tr
                       key={f.id}
@@ -298,10 +313,19 @@ export const FournisseursHome: React.FC = () => {
                         <span className="text-sm text-muted-foreground">{f.purchase_category || '—'}</span>
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">
-                        <span className="text-sm">{agg ? fmtInt(agg.amount) : '—'}</span>
+                        <span className="text-sm">{outstanding != null ? fmtInt(outstanding) : '—'}</span>
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">
-                        <span className="text-sm font-medium">{agg ? fmtInt(emissionsT) : '—'}</span>
+                        <span className="text-sm font-medium">
+                          {assessment ? (
+                            <>
+                              {scope12T == null ? "—" : fmtInt(scope12T)}
+                              <span className="block text-xs font-normal text-muted-foreground">
+                                S3 {scope3T == null ? "—" : fmtInt(scope3T)}
+                              </span>
+                            </>
+                          ) : agg ? fmtInt(emissionsT) : '—'}
+                        </span>
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-sm text-muted-foreground">{fmtLastBilan(f.last_data_update)}</span>
@@ -314,9 +338,16 @@ export const FournisseursHome: React.FC = () => {
                 })}
                 {filtered.length > 0 && (() => {
                   const totals = filtered.reduce((acc, f) => {
+                    const assessment = L.isBank ? assessCounterpartyRaw(f.raw_legacy) : null;
                     const agg = purchasesBySupplier[f.id];
-                    if (agg) {
-                      acc.amount += agg.amount;
+                    if (assessment?.outstandingAmount) acc.amount += assessment.outstandingAmount;
+                    else if (agg) acc.amount += agg.amount;
+                    if (assessment) {
+                      acc.emissions_kg += (assessment.scope12.financedEmissionsTco2e ?? 0) * 1000;
+                      if (assessment.scope3.status === "calculated") {
+                        acc.emissions_kg += (assessment.scope3.financedEmissionsTco2e ?? 0) * 1000;
+                      }
+                    } else if (agg) {
                       acc.emissions_kg += agg.emissions_kg;
                     }
                     return acc;

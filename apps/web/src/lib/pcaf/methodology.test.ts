@@ -1,38 +1,63 @@
 import { describe, expect, it } from "vitest";
-import { buildPcafTrace, toPcafDataQuality } from "./methodology";
+import { ATLAS_COUNTERPARTIES } from "./atlasDemoPortfolio";
+import { calculateBusinessLoan } from "./businessLoans";
+import {
+  assessCounterpartyRaw,
+  businessLoanInputToRaw,
+  portfolioQuality,
+} from "./methodology";
 
-describe("PCAF Part A 2025 — business loans", () => {
-  it("applique Outstanding / (equity+debt) × company emissions", () => {
-    const trace = buildPcafTrace({
-      outstanding: 48_500_000,
-      financedKg: 20_370_000,
-      currency: "TND",
-      dataMethod: "supplier_specific",
-      confidenceIndex: 88,
-      rawLegacy: {
-        pcaf_data_quality: 2,
-        pcaf_option: "1b",
-        listing: "private",
-        attribution_factor: 0.25,
-        total_equity_plus_debt_tnd: 194_000_000,
-        company_emissions_tco2e: 81_480,
-        financed_emissions_tco2e: 20_370,
-      },
-    });
-    expect(trace.citation).toContain("PCAF (2025)");
-    expect(trace.assetClassSection).toBe("§5.2");
-    expect(trace.optionCode).toBe("1b");
-    expect(trace.dataQuality).toBe(2);
-    expect(trace.attributionFactor).toBe(0.25);
-    expect(trace.companyValueLabel).toContain("equity + debt");
-    expect(Math.round(trace.attributionFactor * trace.companyEmissionsTco2e)).toBe(
-      20_370,
-    );
+describe("Banque Atlas — le moteur recalcule les entrées", () => {
+  it("Médina Textile : option 1a, attribution 25 %, scopes séparés", () => {
+    const medina = ATLAS_COUNTERPARTIES.find((row) => row.name.startsWith("Médina"));
+    expect(medina).toBeTruthy();
+    const result = calculateBusinessLoan(medina!.input);
+    expect(result.scope12.optionCode).toBe("1a");
+    expect(result.scope12.score).toBe(1);
+    expect(result.scope12.denominator).toBe(194_000_000);
+    expect(result.scope12.attributionFactor).toBeCloseTo(0.25);
+    expect(result.scope12.borrowerEmissionsTco2e).toBe(52_000);
+    expect(result.scope12.financedEmissionsTco2e).toBeCloseTo(13_000);
+    expect(result.scope3.optionCode).toBe("1a");
+    expect(result.scope3.borrowerEmissionsTco2e).toBe(28_000);
+    expect(result.scope3.financedEmissionsTco2e).toBeCloseTo(7_000);
+    expect(result.complementaryTotalTco2e).toBeCloseTo(20_000);
+
+    const replay = assessCounterpartyRaw(businessLoanInputToRaw(medina!.input));
+    expect(replay?.scope12.financedEmissionsTco2e).toBeCloseTo(13_000);
+    expect(replay?.scope3.score).toBe(1);
   });
 
-  it("normalise le score qualité 1–5 (Table 5.2-1)", () => {
-    expect(toPcafDataQuality(1)).toBe(1);
-    expect(toPcafDataQuality(9)).toBe(5);
-    expect(toPcafDataQuality(null)).toBe(5);
+  it("Numéris est cotée : le dénominateur est l'EVIC", () => {
+    const row = ATLAS_COUNTERPARTIES.find((item) => item.name.startsWith("Numéris"));
+    const result = calculateBusinessLoan(row!.input);
+    expect(result.scope12.denominatorLabel).toMatch(/EVIC/);
+    expect(result.scope12.attributionFactor).toBeCloseTo(0.2);
+    expect(result.scope12.financedEmissionsTco2e).toBeCloseTo(1_600);
+  });
+
+  it("Delta Immobilière reste un business loan en option 3b", () => {
+    const row = ATLAS_COUNTERPARTIES.find((item) => item.name.startsWith("Delta"));
+    const result = calculateBusinessLoan(row!.input);
+    expect(result.status).not.toBe("not_implemented");
+    expect(result.scope12.optionCode).toBe("3b");
+    expect(result.scope12.attributionFactor).toBeNull();
+    expect(result.scope12.financedEmissionsTco2e).toBeCloseTo(32_960);
+  });
+
+  it("le score portefeuille est pondéré par l'encours", () => {
+    const results = ATLAS_COUNTERPARTIES.map((row) => calculateBusinessLoan(row.input));
+    const quality = portfolioQuality(results);
+    const arithmetic =
+      results.reduce((sum, row) => sum + (row.scope12.score ?? 0), 0) / results.length;
+    expect(quality.scope12).not.toBeNull();
+    expect(quality.scope3).not.toBeNull();
+    expect(quality.scope12).not.toBeCloseTo(arithmetic);
+    const outstanding = results.reduce((sum, row) => sum + (row.outstandingAmount ?? 0), 0);
+    const weighted = results.reduce(
+      (sum, row) => sum + (row.outstandingAmount ?? 0) * (row.scope12.score ?? 0),
+      0,
+    );
+    expect(quality.scope12).toBeCloseTo(weighted / outstanding);
   });
 });

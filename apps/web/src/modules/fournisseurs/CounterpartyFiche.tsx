@@ -21,7 +21,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/integrations/api/client";
 import { useSupplierLabels } from "@/hooks/useSupplierLabels";
-import { buildPcafTrace } from "@/lib/pcaf/methodology";
+import { assessCounterpartyRaw } from "@/lib/pcaf/methodology";
+import type { ScopeCalculation } from "@/lib/pcaf/businessLoans";
 import { cn } from "@/lib/utils";
 
 const fmt = (n: number, digits = 0) =>
@@ -66,12 +67,12 @@ export const CounterpartyFiche: React.FC = () => {
   const purchases = data?.purchases || [];
   const primary = purchases[0];
 
-  const outstanding =
-    Number(primary?.amount) || Number(item?.annual_spend) || 0;
   const emissionsKg = purchases.reduce(
     (sum, p) => sum + (Number(p.calculated_emissions_kgco2e) || 0),
     0,
   );
+  const purchaseOutstanding =
+    Number(primary?.amount) || Number(item?.annual_spend) || 0;
   const currency = String(
     primary?.currency || item?.annual_spend_currency || "TND",
   );
@@ -83,23 +84,12 @@ export const CounterpartyFiche: React.FC = () => {
       ? (item.raw_legacy as Record<string, unknown>)
       : null;
 
-  const trace = useMemo(() => {
-    if (!item || !isPcaf) return null;
-    return buildPcafTrace({
-      outstanding,
-      financedKg: emissionsKg,
-      currency,
-      dataMethod: String(primary?.data_method || item.data_method || ""),
-      sourceType: primary?.source_type ? String(primary.source_type) : null,
-      uncertaintyPct:
-        primary?.uncertainty_percent != null
-          ? Number(primary.uncertainty_percent)
-          : null,
-      confidenceIndex:
-        item.confidence_index != null ? Number(item.confidence_index) : null,
-      rawLegacy,
-    });
-  }, [item, isPcaf, outstanding, emissionsKg, currency, primary, rawLegacy]);
+  const assessment = useMemo(() => {
+    if (!isPcaf) return null;
+    return assessCounterpartyRaw(rawLegacy);
+  }, [isPcaf, rawLegacy]);
+
+  const outstanding = assessment?.outstandingAmount ?? purchaseOutstanding;
 
   if (isLoading) {
     return (
@@ -109,7 +99,7 @@ export const CounterpartyFiche: React.FC = () => {
     );
   }
 
-  if (error || !item || (isPcaf && !trace)) {
+  if (error || !item) {
     return (
       <div className="space-y-4 py-10 text-center">
         <p className="text-muted-foreground">
@@ -191,25 +181,35 @@ export const CounterpartyFiche: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">{L.colEmissions}</p>
-            <p className="mt-1 text-xl font-bold tabular-nums">
-              {fmt(isPcaf ? (trace?.financedEmissionsTco2e ?? emissionsT) : emissionsT, 1)}{" "}
-              <span className="text-sm font-medium text-muted-foreground">
-                tCO₂e
-              </span>
+            <p className="text-xs text-muted-foreground">
+              {isPcaf ? "Financé — scope 1+2" : L.colEmissions}
             </p>
+            <p className="mt-1 text-xl font-bold tabular-nums">
+              {fmt(
+                isPcaf
+                  ? assessment?.scope12.financedEmissionsTco2e ?? 0
+                  : emissionsT,
+                1,
+              )}{" "}
+              <span className="text-sm font-medium text-muted-foreground">tCO₂e</span>
+            </p>
+            {isPcaf && assessment?.scope12.status !== "calculated" && (
+              <p className="mt-1 text-xs text-muted-foreground">Non calculé</p>
+            )}
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">
-              {isPcaf ? "Score qualité PCAF" : "Indice de confiance"}
+              {isPcaf ? "Financé — scope 3" : "Indice de confiance"}
             </p>
-            <p className="mt-1 text-xl font-bold">
+            <p className="mt-1 text-xl font-bold tabular-nums">
               {isPcaf ? (
                 <>
-                  {trace!.dataQuality}
-                  <span className="text-sm font-medium text-muted-foreground"> / 5</span>
+                  {assessment?.scope3.status === "calculated"
+                    ? fmt(assessment.scope3.financedEmissionsTco2e ?? 0, 1)
+                    : "—"}{" "}
+                  <span className="text-sm font-medium text-muted-foreground">tCO₂e</span>
                 </>
               ) : (
                 <>
@@ -223,11 +223,11 @@ export const CounterpartyFiche: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground">
-              {isPcaf ? "Attribution" : "Catégorie GHG"}
+              {isPcaf ? "Score PCAF S1+2 / S3" : "Catégorie GHG"}
             </p>
             <p className="mt-1 text-xl font-bold tabular-nums">
               {isPcaf
-                ? `${fmt((trace?.attributionFactor ?? 0) * 100, 1)} %`
+                ? `${assessment?.scope12.score ?? "—"} / ${assessment?.scope3.score ?? "—"}`
                 : `Cat. ${ghgCat}`}
             </p>
           </CardContent>
@@ -294,13 +294,24 @@ export const CounterpartyFiche: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
-              {isPcaf && trace ? (
+              {isPcaf && assessment ? (
                 <>
-                  <p className="font-medium text-foreground">{trace.dataQualityLabel}</p>
-                  <p className="leading-relaxed text-muted-foreground">
-                    {trace.dataQualityDescription}
-                  </p>
-                  <Row label="Option PCAF" value={trace.optionLabel} />
+                  <Row
+                    label="Scope 1+2"
+                    value={
+                      assessment.scope12.optionLabel
+                        ? `${assessment.scope12.optionLabel} — score ${assessment.scope12.score}`
+                        : "Non calculé"
+                    }
+                  />
+                  <Row
+                    label="Scope 3"
+                    value={
+                      assessment.scope3.optionLabel
+                        ? `${assessment.scope3.optionLabel} — score ${assessment.scope3.score}`
+                        : "Non calculé"
+                    }
+                  />
                 </>
               ) : (
                 <p className="leading-relaxed text-muted-foreground">
@@ -340,55 +351,46 @@ export const CounterpartyFiche: React.FC = () => {
         </div>
 
         <div className="space-y-5 lg:col-span-3">
-          {isPcaf && trace ? (
+          {isPcaf ? (
             <Card className="border-emerald-200/70 bg-emerald-50/30">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Calculator className="h-4 w-4 text-emerald-700" />
-                  Méthode de calcul PCAF
+                  Voir le calcul
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  Calcul conforme à {trace.citation} — {trace.assetClassSection}{" "}
-                  <span className="font-medium text-foreground">{trace.assetClass}</span>
-                  {" "}(société {trace.listing === "listed" ? "cotée" : "non cotée"}).
+                  PCAF (2025) Part A §5.2 — Business loans and unlisted equity.
+                  Société {assessment?.listing === "listed" ? "cotée (EVIC)" : "non cotée (equity + dette)"}.
+                  Les scopes 1+2 et le scope 3 sont calculés séparément.
                 </p>
-
-                <div className="rounded-lg border border-emerald-200 bg-white px-4 py-3 space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
-                    Formule PCAF §5.2
+                {assessment ? (
+                  <>
+                    <ScopeCalc scopeLabel="Scope 1 et 2" result={assessment.scope12} />
+                    <ScopeCalc scopeLabel="Scope 3" result={assessment.scope3} />
+                    {assessment.complementaryTotalTco2e != null && (
+                      <p className="text-sm text-muted-foreground">
+                        Total complémentaire (somme des deux périmètres calculés) :{" "}
+                        <span className="font-semibold text-foreground">
+                          {fmt(assessment.complementaryTotalTco2e, 1)} tCO₂e
+                        </span>
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Données insuffisantes pour calculer les émissions financées.
+                    Ajoutez l&apos;encours, le type cotée / non cotée, et soit un
+                    inventaire, soit une activité physique ou économique.
                   </p>
-                  <p className="font-mono text-sm text-foreground">{trace.formula}</p>
-                  <p className="font-mono text-xs text-muted-foreground">
-                    {trace.attributionFormula}
-                  </p>
-                </div>
-
-                <ol className="space-y-3">
-                  {trace.steps.map((step, i) => (
-                    <li
-                      key={step.label}
-                      className="flex gap-3 rounded-lg border border-border bg-card px-3 py-2.5"
-                    >
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800">
-                        {i + 1}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-xs font-medium text-muted-foreground">
-                          {step.label}
-                        </p>
-                        <p className="text-sm font-semibold text-foreground">
-                          {step.value}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-
+                )}
                 <div className="flex items-start gap-2 rounded-lg bg-muted/50 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
                   <Scale className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                  <p>{trace.reportingNote}</p>
+                  <p>
+                    À reporter en Scope 3 catégorie 15. Ce total n&apos;entre pas dans
+                    le bilan opérationnel de la banque.
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -486,6 +488,57 @@ export const CounterpartyFiche: React.FC = () => {
     </div>
   );
 };
+
+const ScopeCalc: React.FC<{ scopeLabel: string; result: ScopeCalculation }> = ({
+  scopeLabel,
+  result,
+}) => (
+  <div className="space-y-3 rounded-lg border border-emerald-200 bg-white px-4 py-3">
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
+        {scopeLabel}
+      </p>
+      <p className="mt-1 text-sm font-medium text-foreground">
+        {result.optionLabel ?? "Méthode PCAF non calculable"}
+      </p>
+      {result.score != null && (
+        <p className="text-xs text-muted-foreground">Qualité : score {result.score}</p>
+      )}
+    </div>
+    <p className="text-sm leading-relaxed text-muted-foreground">
+      <span className="font-medium text-foreground">Pourquoi cette méthode ? </span>
+      {result.why}
+    </p>
+    {result.equation && (
+      <p className="font-mono text-xs text-foreground">{result.equation}</p>
+    )}
+    {result.steps.length > 0 && (
+      <ol className="space-y-2">
+        {result.steps.map((step, i) => (
+          <li key={`${step.label}-${i}`} className="text-sm">
+            <span className="text-muted-foreground">{step.label} — </span>
+            <span className="font-medium">{step.value}</span>
+          </li>
+        ))}
+      </ol>
+    )}
+    {result.improvements.length > 0 && result.status !== "calculated" && (
+      <ul className="list-disc space-y-1 pl-4 text-sm text-muted-foreground">
+        {result.improvements.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    )}
+    {result.traces.map((trace) => (
+      <p key={trace} className="text-xs text-muted-foreground">
+        {trace}
+      </p>
+    ))}
+    {result.reference && (
+      <p className="text-xs text-muted-foreground">{result.reference}</p>
+    )}
+  </div>
+);
 
 const Row: React.FC<{ label: string; value: React.ReactNode }> = ({
   label,

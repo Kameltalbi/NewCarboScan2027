@@ -12,6 +12,9 @@
  */
 import { createHash } from "node:crypto";
 import { writeFileSync } from "node:fs";
+import { calculateBusinessLoan } from "../apps/web/src/lib/pcaf/businessLoans.ts";
+import { ATLAS_COUNTERPARTIES } from "../apps/web/src/lib/pcaf/atlasDemoPortfolio.ts";
+import { businessLoanInputToRaw } from "../apps/web/src/lib/pcaf/methodology.ts";
 
 const ORG = "a7a50000-0000-4000-8000-00000000b001";
 const USER = "a7a50000-0000-4000-8000-00000000b002";
@@ -53,22 +56,10 @@ const SITES = [
   { id: "a7a50000-0000-4000-8000-00000000b01e", code: "DC-TUN", name: "Data Center Banque Atlas — Tunis", city: "Tunis", type: "datacenter", surface: 2100, employees: 42, profile: "datacenter" },
 ];
 
-const COUNTERPARTIES = [
-  { id: "d101", name: "Médina Textile SA", city: "Monastir", cat: "Industrie textile", score: "A", conf: 88, spend: 48500000, kg: 20370000, dq: 2, attr: 0.25 },
-  { id: "d102", name: "Carthage Agro SARL", city: "Béja", cat: "Agroalimentaire", score: "B", conf: 72, spend: 31200000, kg: 26520000, dq: 3, attr: 0.22 },
-  { id: "d103", name: "Numéris Soft TN", city: "Tunis", cat: "Services numériques", score: "A+", conf: 92, spend: 15800000, kg: 2844000, dq: 1, attr: 0.18 },
-  { id: "d104", name: "Sahel Constructions", city: "Sousse", cat: "BTP", score: "C", conf: 55, spend: 27600000, kg: 40020000, dq: 4, attr: 0.28 },
-  { id: "d105", name: "Oasis Énergies", city: "Gabès", cat: "Énergie", score: "B", conf: 68, spend: 52400000, kg: 57640000, dq: 3, attr: 0.30 },
-  { id: "d106", name: "Cap Bon Logistique", city: "Nabeul", cat: "Transport & logistique", score: "B", conf: 70, spend: 18900000, kg: 17955000, dq: 3, attr: 0.20 },
-  { id: "d107", name: "Golfe Pharma Distribution", city: "Sfax", cat: "Santé / distribution", score: "A", conf: 84, spend: 22100000, kg: 12155000, dq: 2, attr: 0.24 },
-  { id: "d108", name: "Virtus Courtage Assurances", city: "Tunis", cat: "Services financiers", score: "A+", conf: 90, spend: 9400000, kg: 1128000, dq: 1, attr: 0.15 },
-  { id: "d109", name: "Horizon Hôtels Groupe", city: "Hammamet", cat: "Tourisme", score: "C", conf: 48, spend: 36700000, kg: 60555000, dq: 4, attr: 0.32 },
-  { id: "d110", name: "Delta Immobilière", city: "Ariana", cat: "Immobilier", score: "D", conf: 35, spend: 41200000, kg: 86520000, dq: 5, attr: 0.35 },
-  { id: "d111", name: "SoftPay Fintech", city: "Tunis", cat: "Fintech", score: "A", conf: 86, spend: 7200000, kg: 1584000, dq: 2, attr: 0.16 },
-  { id: "d112", name: "Green Olive Export", city: "Sfax", cat: "Agro-export", score: "B", conf: 65, spend: 14300000, kg: 11154000, dq: 3, attr: 0.21 },
-];
-
-const PCAF_OPTION_BY_DQ = { 1: "1a", 2: "1b", 3: "2b", 4: "3a", 5: "3b" };
+const COUNTERPARTIES = ATLAS_COUNTERPARTIES.map((row) => ({
+  ...row,
+  result: calculateBusinessLoan(row.input),
+}));
 
 function uid(suffix) {
   return `a7a50000-0000-4000-8000-00000000${suffix}`;
@@ -750,26 +741,13 @@ function buildSql() {
 
   const supplierValues = COUNTERPARTIES.map((c) => {
     const sid = uid(c.id);
-    const financedT = c.kg / 1000;
-    const companyValue = Math.round(c.spend / c.attr);
-    const companyEmissions = Math.round((financedT / c.attr) * 10) / 10;
-    const option = PCAF_OPTION_BY_DQ[c.dq];
+    const option = c.result.scope12.optionCode;
+    const reported = option === "1a" || option === "1b";
+    const physical = option === "2a" || option === "2b";
     const raw = JSON.stringify({
       demo: true,
       label: "DEMO DATA — FICTIONAL ORGANIZATION",
-      pcaf_standard: "PCAF Part A Financed Emissions Third Edition 2025",
-      pcaf_section: "5.2",
-      asset_class: "business_loans",
-      listing: "private",
-      pcaf_data_quality: c.dq,
-      pcaf_option: option,
-      outstanding_tnd: c.spend,
-      total_equity_plus_debt_tnd: companyValue,
-      attribution_factor: c.attr,
-      company_emissions_tco2e: companyEmissions,
-      financed_emissions_tco2e: financedT,
-      scopes_covered: "1+2 (+3 séparément)",
-      currency: "TND",
+      ...businessLoanInputToRaw(c.input),
     }).replace(/'/g, "''");
     return `(${[
       sqlStr(sid),
@@ -777,21 +755,21 @@ function buildSql() {
       sqlStr(c.name),
       sqlStr("TN"),
       sqlStr(c.city),
-      sqlStr(c.cat),
+      sqlStr(c.sectorLabel),
       sqlStr("Prêt / financement"),
       "15",
-      sqlStr(c.score),
+      sqlStr(c.carbonScore),
       "NULL",
-      sqlNum(c.conf),
+      sqlNum(c.confidence),
       sqlStr("engaged"),
-      sqlStr(c.dq <= 2 ? "supplier_specific" : "estimated"),
-      c.dq <= 3 ? "true" : "false",
-      c.dq <= 2 ? "true" : "false",
-      sqlNum(c.spend),
+      sqlStr(reported ? "supplier_specific" : physical ? "physical" : "estimated"),
+      reported ? "true" : "false",
+      option === "1a" ? "true" : "false",
+      sqlNum(c.input.outstandingAmount),
       sqlStr("TND"),
       sqlNum(YEAR),
       sqlStr("high"),
-      sqlStr(`DEMO — contrepartie fictive. PCAF Option ${option}, data quality score ${c.dq}.`),
+      sqlStr("DEMO — entrées PCAF. Les émissions financées sont calculées par le moteur, pas stockées comme source."),
       "true",
       sqlStr(LEGACY),
       sqlStr(`cp-${c.id}`),
@@ -803,26 +781,31 @@ function buildSql() {
   const purchaseValues = COUNTERPARTIES.map((c, i) => {
     const sid = uid(c.id);
     const pid = uid(`e${(0x201 + i).toString(16)}`);
+    const fin12 = c.result.scope12.financedEmissionsTco2e ?? 0;
+    const fin3 = c.result.scope3.status === "calculated" ? c.result.scope3.financedEmissionsTco2e ?? 0 : 0;
+    const option = c.result.scope12.optionCode;
+    const reported = option === "1a" || option === "1b";
+    const physical = option === "2a" || option === "2b";
     return `(${[
       sqlStr(pid),
       sqlStr(ORG),
       sqlStr(sid),
       sqlNum(YEAR),
       sqlStr(`Encours ${c.name} 2025`),
-      sqlNum(c.spend),
+      sqlNum(c.input.outstandingAmount),
       sqlStr("TND"),
-      sqlStr(c.cat),
+      sqlStr(c.sectorLabel),
       "15",
-      sqlNum(c.kg),
-      sqlStr(c.dq <= 2 ? "supplier_specific" : "estimated"),
-      sqlNum(15 + c.dq * 8),
-      sqlStr(c.dq <= 2 ? "invoice" : "estimate"),
+      sqlNum(Math.round((fin12 + fin3) * 1000)),
+      sqlStr(reported ? "supplier_specific" : physical ? "physical" : "estimated"),
+      "NULL",
+      sqlStr("pcaf_engine"),
       "true",
-      sqlStr("DEMO — émissions financées (hors bilan opérationnel)"),
+      sqlStr("DEMO — cache du moteur PCAF (scope 1+2 + scope 3 calculés). Source = entrées contrepartie."),
       sqlStr(LEGACY),
       sqlStr(`pur-${c.id}`),
       "now()",
-      `'{"demo":true,"pcaf":true}'::jsonb`,
+      `'{"demo":true,"pcaf":true,"calculated_by":"business_loan_engine"}'::jsonb`,
     ].join(",")})`;
   }).join(",\n");
 

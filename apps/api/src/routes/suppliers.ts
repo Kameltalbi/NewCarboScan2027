@@ -127,6 +127,82 @@ async function applyCalcToPurchase(
   input: z.infer<typeof purchaseInputSchema>,
   changeReason?: string,
 ): Promise<{ purchase: Record<string, unknown>; calc: PurchaseCalcResult }> {
+  if (Number(input.ghg_scope3_category) === 15) {
+    if (previous?.activity_data_id) {
+      await deleteSyncedActivity(
+        client,
+        orgId,
+        purchaseId,
+        String(previous.activity_data_id),
+      );
+    }
+    const { rows } = await client.query(
+      `UPDATE supplier_purchases SET
+         supplier_id = COALESCE($3, supplier_id),
+         reference_year = COALESCE($4, reference_year),
+         description = COALESCE($5, description),
+         amount = COALESCE($6, amount),
+         currency = COALESCE($7, currency),
+         purchase_category = COALESCE($8, purchase_category),
+         ghg_scope3_category = 15,
+         calculation_method = NULL,
+         data_quality_grade = NULL,
+         emission_factor_id = NULL,
+         emission_factor_value = NULL,
+         emission_factor_unit = NULL,
+         emission_factor_source = NULL,
+         emission_factor_year = NULL,
+         emission_factor_geography = NULL,
+         activity_data_id = NULL,
+         notes = COALESCE($9, notes),
+         updated_at = now()
+       WHERE id = $1 AND organization_id = $2
+       RETURNING ${PURCHASE_SELECT}`,
+      [
+        purchaseId,
+        orgId,
+        input.supplier_id,
+        input.reference_year ?? null,
+        input.description ?? null,
+        input.amount ?? null,
+        input.currency ?? "TND",
+        input.purchase_category ?? null,
+        input.notes ?? null,
+      ],
+    );
+    const purchase = rows[0] as Record<string, unknown>;
+    return {
+      purchase,
+      calc: {
+        calculationMethod: "supplier_specific",
+        dataQualityGrade: "E",
+        emissionsKg:
+          purchase.calculated_emissions_kgco2e != null
+            ? Number(purchase.calculated_emissions_kgco2e)
+            : 0,
+        factorId: null,
+        factorValue: null,
+        factorUnit: null,
+        factorSource: null,
+        factorYear: null,
+        factorGeography: null,
+        uncertaintyPct: null,
+        quantityUsed: null,
+        quantityUnitUsed: null,
+        amountOriginal: input.amount ?? null,
+        currencyOriginal: String(input.currency || "TND"),
+        conversionRate: null,
+        conversionSource: null,
+        factorCurrency: null,
+        formula:
+          "Catégorie 15 — le facteur monétaire achats n'est pas appliqué.",
+        warnings: [
+          "Émissions financées calculées par le moteur PCAF business loans. Aucun facteur kgCO₂e/TND générique. Ligne non recopiée dans le bilan opérationnel.",
+        ],
+      },
+    };
+  }
+
   const method = deriveCalculationMethod({
     amount: input.amount,
     currency: input.currency,

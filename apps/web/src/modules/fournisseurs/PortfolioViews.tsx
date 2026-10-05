@@ -12,7 +12,11 @@ import { useSuppliers } from "@/hooks/useSuppliers";
 import { useSupplierLabels } from "@/hooks/useSupplierLabels";
 import { api } from "@/integrations/api/client";
 import { useOrganizationId } from "@/hooks/useOrganizationId";
-import { buildPcafTrace, toPcafDataQuality } from "@/lib/pcaf/methodology";
+import {
+  assessCounterpartyRaw,
+  portfolioQuality,
+  type BusinessLoanResult,
+} from "@/lib/pcaf/methodology";
 import { cn } from "@/lib/utils";
 
 const fmt = (n: number, d = 0) =>
@@ -169,19 +173,27 @@ export const PortfolioEmissionsView: React.FC = () => {
     return suppliers
       .map((s) => {
         const p = purchases[s.id];
-        const emissionsT = (p?.emissions_kg || 0) / 1000;
-        const amount = p?.amount || Number(s.annual_spend) || 0;
-        const raw =
-          (s as { raw_legacy?: Record<string, unknown> }).raw_legacy || null;
-        const dq = toPcafDataQuality(
-          raw?.pcaf_data_quality ??
-            (s.data_method === "supplier_specific" ? 2 : 4),
-        );
-        return { s, amount, emissionsT, dq };
+        const assessment = L.isBank ? assessCounterpartyRaw(s.raw_legacy) : null;
+        const scope12 = assessment?.scope12.financedEmissionsTco2e ?? 0;
+        const scope3 = assessment?.scope3.financedEmissionsTco2e ?? 0;
+        const emissionsT = assessment
+          ? scope12 + (assessment.scope3.status === "calculated" ? scope3 : 0)
+          : (p?.emissions_kg || 0) / 1000;
+        const amount =
+          assessment?.outstandingAmount ||
+          p?.amount ||
+          Number(s.annual_spend) ||
+          0;
+        return { s, amount, emissionsT, scope12, scope3, assessment };
       })
       .sort((a, b) => b.emissionsT - a.emissionsT);
-  }, [suppliers, purchases]);
+  }, [suppliers, purchases, L.isBank]);
 
+  const totalScope12 = rows.reduce((n, r) => n + r.scope12, 0);
+  const totalScope3 = rows.reduce(
+    (n, r) => n + (r.assessment?.scope3.status === "calculated" ? r.scope3 : 0),
+    0,
+  );
   const totalEmissions = rows.reduce((n, r) => n + r.emissionsT, 0);
   const totalAmount = rows.reduce((n, r) => n + r.amount, 0);
   const maxE = Math.max(...rows.map((r) => r.emissionsT), 1);
@@ -210,11 +222,18 @@ export const PortfolioEmissionsView: React.FC = () => {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">{L.colEmissions}</p>
+            <p className="text-xs text-muted-foreground">
+              {L.isBank ? "Financé scope 1+2" : L.colEmissions}
+            </p>
             <p className="text-2xl font-bold tabular-nums">
-              {fmt(totalEmissions)}{" "}
+              {fmt(L.isBank ? totalScope12 : totalEmissions)}{" "}
               <span className="text-sm font-medium text-muted-foreground">tCO₂e</span>
             </p>
+            {L.isBank && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Scope 3 : {fmt(totalScope3, 1)} tCO₂e
+              </p>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -288,51 +307,29 @@ export const ScoringQualityView: React.FC = () => {
   const navigate = useNavigate();
   const L = useSupplierLabels();
   const { suppliers, isLoading } = useSuppliers();
-  const { data: purchases = {} } = usePurchasesBySupplier();
+
+  const assessments = useMemo(
+    () =>
+      suppliers.map((s) => ({
+        supplier: s,
+        result: assessCounterpartyRaw(s.raw_legacy),
+      })),
+    [suppliers],
+  );
 
   const distribution = useMemo(() => {
     const buckets: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    for (const s of suppliers) {
-      const raw = (s as { raw_legacy?: Record<string, unknown> }).raw_legacy;
-      const dq = toPcafDataQuality(
-        raw?.pcaf_data_quality ??
-          (s.data_method === "supplier_specific"
-            ? s.confidence_index >= 90
-              ? 1
-              : 2
-            : 4),
-      );
-      buckets[dq] += 1;
+    for (const row of assessments) {
+      const score = row.result?.scope12.score;
+      if (score) buckets[score] += 1;
     }
     return buckets;
-  }, [suppliers]);
+  }, [assessments]);
 
-  const avgDq = useMemo(() => {
-    if (!suppliers.length) return 0;
-    let sum = 0;
-    for (const s of suppliers) {
-      const raw = (s as { raw_legacy?: Record<string, unknown> }).raw_legacy;
-      sum += toPcafDataQuality(
-        raw?.pcaf_data_quality ??
-          (s.data_method === "supplier_specific" ? 2 : 4),
-      );
-    }
-    return sum / suppliers.length;
-  }, [suppliers]);
-
-  const sample = suppliers[0];
-  const sampleTrace = useMemo(() => {
-    if (!sample) return null;
-    const p = purchases[sample.id];
-    return buildPcafTrace({
-      outstanding: p?.amount || Number(sample.annual_spend) || 0,
-      financedKg: p?.emissions_kg || 0,
-      currency: "TND",
-      dataMethod: sample.data_method,
-      confidenceIndex: sample.confidence_index,
-      rawLegacy: (sample as { raw_legacy?: Record<string, unknown> }).raw_legacy,
-    });
-  }, [sample, purchases]);
+  const weighted = useMemo(
+    () => portfolioQuality(assessments.map((row) => row.result).filter((row): row is BusinessLoanResult => !!row)),
+    [assessments],
+  );
 
   if (isLoading) {
     return (
@@ -350,7 +347,7 @@ export const ScoringQualityView: React.FC = () => {
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
           {L.isBank
-            ? "Distribution des scores de qualité 1–5 (PCAF Part A 2025, Table 5.2-1) sur le portefeuille."
+            ? "Score pondéré par l'encours, séparément pour le scope 1+2 et le scope 3 (PCAF 2025, chapitre 6)."
             : "Méthodologie et détails du scoring carbone CarboScan."}
         </p>
       </div>
@@ -358,13 +355,14 @@ export const ScoringQualityView: React.FC = () => {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">Score PCAF moyen</p>
+            <p className="text-xs text-muted-foreground">Score pondéré scope 1+2</p>
             <p className="text-2xl font-bold tabular-nums">
-              {fmt(avgDq, 1)}{" "}
+              {weighted.scope12 == null ? "—" : fmt(weighted.scope12, 2)}{" "}
               <span className="text-sm font-medium text-muted-foreground">/ 5</span>
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              1 = meilleur · 5 = proxy sectoriel
+              Scope 3 : {weighted.scope3 == null ? "—" : fmt(weighted.scope3, 2)} / 5
+              · Σ (encours × score) / Σ encours
             </p>
           </CardContent>
         </Card>
@@ -406,14 +404,14 @@ export const ScoringQualityView: React.FC = () => {
                     Score {score}
                     <span className="ml-2 text-xs text-muted-foreground">
                       {score === 1
-                        ? "Option 1a vérifiée"
+                        ? "Option 1a"
                         : score === 2
-                          ? "Option 1b reportée"
+                          ? "Options 1b ou 2a"
                           : score === 3
-                            ? "Option 2 physique"
+                            ? "Option 2b"
                             : score === 4
-                              ? "Option 3a économique"
-                              : "Option 3b/c proxy"}
+                              ? "Option 3a"
+                              : "Options 3b ou 3c"}
                     </span>
                   </span>
                   <span className="tabular-nums text-muted-foreground">
@@ -439,30 +437,22 @@ export const ScoringQualityView: React.FC = () => {
         </CardContent>
       </Card>
 
-      {L.isBank && sampleTrace && (
+      {L.isBank && (
         <Card className="border-emerald-200/70 bg-emerald-50/30">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <Target className="h-4 w-4 text-emerald-700" />
-              Rappel de la formule PCAF §5.2
+              Score pondéré PCAF
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <p className="font-mono text-foreground">{sampleTrace.formula}</p>
-            <p className="font-mono text-xs text-muted-foreground">
-              {sampleTrace.attributionFormula}
+            <p className="font-mono text-foreground">
+              Σ (encours × score) / Σ encours
             </p>
             <p className="text-xs leading-relaxed text-muted-foreground">
-              {sampleTrace.citation} Cliquez une {L.entitySingular} dans le
-              portefeuille pour voir le détail ligne à ligne.
+              PCAF (2025) Part A, chapitre 6, encadré 6.1-6. Le score scope 3 est
+              calculé à part. Ouvrez une contrepartie pour voir la méthode choisie.
             </p>
-            <button
-              type="button"
-              className="text-sm font-medium text-emerald-800 hover:underline"
-              onClick={() => navigate("/app/fournisseurs")}
-            >
-              Ouvrir le portefeuille →
-            </button>
           </CardContent>
         </Card>
       )}
@@ -473,7 +463,9 @@ export const ScoringQualityView: React.FC = () => {
             <thead>
               <tr className="border-b text-left text-xs text-muted-foreground">
                 <th className="px-4 py-3 font-medium">Nom</th>
-                <th className="px-4 py-3 text-center font-medium">Score PCAF</th>
+                <th className="px-4 py-3 text-center font-medium">Score S1+2</th>
+                <th className="px-4 py-3 text-center font-medium">Score S3</th>
+                <th className="px-4 py-3 text-center font-medium">Option S1+2</th>
                 <th className="px-4 py-3 text-center font-medium">
                   {L.colScore}
                 </th>
@@ -481,28 +473,28 @@ export const ScoringQualityView: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {suppliers.map((s) => {
-                const raw = (s as { raw_legacy?: Record<string, unknown> })
-                  .raw_legacy;
-                const dq = toPcafDataQuality(
-                  raw?.pcaf_data_quality ??
-                    (s.data_method === "supplier_specific" ? 2 : 4),
-                );
-                return (
+              {assessments.map(({ supplier: s, result }) => (
                   <tr
                     key={s.id}
                     className="cursor-pointer border-b border-border/50 hover:bg-muted/30"
                     onClick={() => navigate(`/app/fournisseurs/fiche/${s.id}`)}
                   >
                     <td className="px-4 py-3 font-medium">{s.name}</td>
-                    <td className="px-4 py-3 text-center">{dq}/5</td>
+                    <td className="px-4 py-3 text-center">
+                      {result?.scope12.score ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {result?.scope3.score ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-center text-xs">
+                      {result?.scope12.optionCode ?? "—"}
+                    </td>
                     <td className="px-4 py-3 text-center">{s.carbon_score || "—"}</td>
                     <td className="px-4 py-3 text-right tabular-nums">
                       {s.confidence_index}%
                     </td>
                   </tr>
-                );
-              })}
+              ))}
             </tbody>
           </table>
         </div>
