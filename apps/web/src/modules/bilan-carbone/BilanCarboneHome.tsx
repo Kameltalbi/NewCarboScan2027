@@ -1,29 +1,14 @@
 // Page d'accueil du module Bilan Carbone - flux unifié activity_data
-import { logger } from '@/utils/logger';
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Database, ArrowRight, FileText, BarChart3, Plus, TrendingUp, Calendar, Download, Presentation, ChevronDown, AlertTriangle } from 'lucide-react';
+import { Database, ArrowRight, FileText, BarChart3, Plus, TrendingUp, Calendar } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrganizationData } from '@/hooks/useOrganizationData';
 import { BilanCarboneCalculator } from '@/lib/calculators/BilanCarboneCalculator';
-import { Loader2 } from 'lucide-react';
-import { useBilanReport } from '@/hooks/useBilanReport';
-import { BilanReportViewer } from '@/components/bilan-carbone/BilanReportViewer';
 import { api } from "@/integrations/api/client";
-import { ReportGeneratorService } from '@/lib/services/ReportGeneratorService';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { generateBilanPPTX } from '@/lib/exports/generateBilanPPTX';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,24 +34,9 @@ export const BilanCarboneHome: React.FC = () => {
   const { organizationId, referenceYear, loading: orgLoading } = useOrganizationData();
   const [bilanData, setBilanData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [orgMeta, setOrgMeta] = useState<{ name: string; employees: number | null; sector?: string; revenue: number | null; currency: string }>({ name: 'Mon Organisation', employees: null, sector: undefined, revenue: null, currency: 'TND' });
-  const [exporting, setExporting] = useState<null | 'pptx'>(null);
-  const [showGenerateConfirm, setShowGenerateConfirm] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
   const [closing, setClosing] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
-
-  const { 
-    isGenerating, 
-    reportData, 
-    showReport, 
-    generationProgress, 
-    generationStep, 
-    organizationId: reportOrgId,
-    year: reportYear,
-    generateReport, 
-    closeReport 
-  } = useBilanReport();
 
   useEffect(() => {
     const loadBilan = async () => {
@@ -85,17 +55,6 @@ export const BilanCarboneHome: React.FC = () => {
         
         setBilanData(result);
 
-        // Charger les méta-données de l'organisation pour les exports
-        const { organization: orgData } = await api.getOrganization();
-        const og: any = orgData || {};
-        setOrgMeta({
-          name: og.name || 'Mon Organisation',
-          employees: og.employees ?? null,
-          sector: og.sector ?? undefined,
-          revenue: og.annualRevenue ?? og.revenue ?? null,
-          currency: og.currency || 'TND',
-        });
-        
         // Sauvegarder automatiquement le bilan dans bilans_carbone
         if (result && result.totalEmissions > 0 && user) {
           await saveBilanToHistory(result, organizationId, referenceYear);
@@ -293,13 +252,15 @@ export const BilanCarboneHome: React.FC = () => {
               
               <div className="flex flex-col gap-2">
                 <Button
-                  onClick={() => setShowGenerateConfirm(true)}
-                  disabled={isGenerating}
+                  onClick={() => navigate('/app/bilan-carbone/rapports')}
                   className="bg-[#4C7D7F] hover:bg-[#5F9E6B] text-white"
                 >
                   <FileText className="h-4 w-4 mr-2" />
-                  Générer le rapport
+                  Générer un rapport
                 </Button>
+                <p className="text-xs text-muted-foreground max-w-[220px]">
+                  PDF, PowerPoint ou Excel. Les émissions financées sont proposées à part.
+                </p>
                 {!bilanData.frozen && bilanData.detailedBreakdown?.length > 0 && (
                   <Button
                     variant="outline"
@@ -395,129 +356,6 @@ export const BilanCarboneHome: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Barre de progression génération IA */}
-      {isGenerating && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#5F9E6B]/10 rounded-full mb-4">
-                <Loader2 className="h-8 w-8 text-[#5F9E6B] animate-spin" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                Génération de votre rapport
-              </h3>
-              <p className="text-sm text-slate-600">
-                L'IA analyse vos données et génère votre rapport personnalisé
-              </p>
-            </div>
-
-            {/* Barre de progression */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-slate-700">
-                  {generationStep}
-                </span>
-                <span className="text-sm font-semibold text-[#5F9E6B]">
-                  {generationProgress}%
-                </span>
-              </div>
-              <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-[#4C7D7F] to-[#5F9E6B] h-2.5 rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${generationProgress}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Étapes */}
-            <div className="space-y-2 mt-6">
-              <div className={`flex items-center gap-2 text-sm ${generationProgress >= 15 ? 'text-[#5F9E6B]' : 'text-slate-400'}`}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${generationProgress >= 15 ? 'bg-[#5F9E6B]' : 'bg-slate-200'}`}>
-                  {generationProgress >= 15 && <span className="text-white text-xs">✓</span>}
-                </div>
-                <span>Analyse des données</span>
-              </div>
-              <div className={`flex items-center gap-2 text-sm ${generationProgress >= 50 ? 'text-[#5F9E6B]' : 'text-slate-400'}`}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${generationProgress >= 50 ? 'bg-[#5F9E6B]' : 'bg-slate-200'}`}>
-                  {generationProgress >= 50 && <span className="text-white text-xs">✓</span>}
-                </div>
-                <span>Calcul des émissions</span>
-              </div>
-              <div className={`flex items-center gap-2 text-sm ${generationProgress >= 85 ? 'text-[#5F9E6B]' : 'text-slate-400'}`}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${generationProgress >= 85 ? 'bg-[#5F9E6B]' : 'bg-slate-200'}`}>
-                  {generationProgress >= 85 && <span className="text-white text-xs">✓</span>}
-                </div>
-                <span>Génération des recommandations</span>
-              </div>
-              <div className={`flex items-center gap-2 text-sm ${generationProgress >= 100 ? 'text-[#5F9E6B]' : 'text-slate-400'}`}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${generationProgress >= 100 ? 'bg-[#5F9E6B]' : 'bg-slate-200'}`}>
-                  {generationProgress >= 100 && <span className="text-white text-xs">✓</span>}
-                </div>
-                <span>Finalisation du rapport</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de rapport - 12 pages avec navigation */}
-      {showReport && reportData && (
-        <BilanReportViewer
-          formData={reportData.formData}
-          emissionsResult={reportData.emissionsResult}
-          companyInfo={reportData.companyInfo}
-          organizationId={reportOrgId}
-          year={reportYear}
-          onClose={closeReport}
-        />
-      )}
-
-      {/* Avertissement avant génération */}
-      <AlertDialog open={showGenerateConfirm} onOpenChange={setShowGenerateConfirm}>
-        <AlertDialogContent className="border-t-4 border-t-amber-500 bg-white shadow-2xl">
-          <AlertDialogHeader className="sm:text-left">
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
-                <AlertTriangle className="h-6 w-6 text-amber-600" />
-              </div>
-              <div className="flex-1">
-                <AlertDialogTitle className="text-amber-600 text-xl">
-                  Document préliminaire
-                </AlertDialogTitle>
-                <AlertDialogDescription className="space-y-3 text-left mt-2 text-slate-700">
-                  <span className="block">
-                    Ce rapport est généré automatiquement par intelligence artificielle à partir
-                    de vos données saisies dans le module Collecte de données.
-                  </span>
-                  <span className="block">
-                    Il sera vérifié et validé par un expert en comptabilité carbone avant de vous
-                    être transmis par e-mail dans sa version définitive.
-                  </span>
-                </AlertDialogDescription>
-              </div>
-            </div>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-[#4C7D7F] hover:bg-[#5F9E6B] text-white"
-              onClick={() => {
-                if (!organizationId) {
-                  toast.error('Organisation introuvable. Reconnectez-vous pour générer le rapport.');
-                  return;
-                }
-                void generateReport(organizationId, referenceYear).catch((error: unknown) => {
-                  const message = error instanceof Error ? error.message : 'Impossible de générer le rapport';
-                  toast.error(message);
-                });
-              }}
-            >
-              Générer le rapport
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <AlertDialog open={showCloseConfirm} onOpenChange={setShowCloseConfirm}>
         <AlertDialogContent>

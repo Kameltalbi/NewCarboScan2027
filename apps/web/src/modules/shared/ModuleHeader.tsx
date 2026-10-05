@@ -24,6 +24,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { OrganizationSwitcher } from "@/components/shared/OrganizationSwitcher";
 import { useSupplierLabels } from "@/hooks/useSupplierLabels";
+import { useOrganizationData } from "@/hooks/useOrganizationData";
 
 const formatDateTime = () => {
   const now = new Date();
@@ -54,7 +55,9 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
   const location = useLocation();
   const { signOut } = useAuth();
   const { organizationId } = useAppData();
+  const { organization } = useOrganizationData();
   const supplierLabels = useSupplierLabels();
+  const orgLogoUrl = organization?.logo_url ?? null;
   const [currentDateTime, setCurrentDateTime] = useState(formatDateTime());
 
   useEffect(() => {
@@ -182,8 +185,8 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
       aria-label="En-tête du module"
       className={
         isBilanCarboneDashboard
-          ? "min-h-16 border-b border-dashboard-separator/20 bg-dashboard-header px-3 sm:px-4 py-3 flex items-center justify-between"
-          : "h-16 border-b border-border bg-background px-3 sm:px-4 flex items-center justify-between"
+          ? "min-h-16 border-b border-dashboard-separator/20 bg-dashboard-header px-3 sm:px-4 py-3 grid grid-cols-[1fr_auto_1fr] items-center"
+          : "h-20 border-b border-border bg-background px-3 sm:px-4 grid grid-cols-[1fr_auto_1fr] items-center"
       }
     >
       <div className="flex items-center gap-4 min-w-0">
@@ -261,7 +264,18 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
         )}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-center px-3">
+        {orgLogoUrl ? (
+          <img
+            src={orgLogoUrl}
+            alt={user.company ? `Logo ${user.company}` : "Logo de l'organisation"}
+            className="hidden shrink-0 object-contain md:block"
+            style={{ height: 60, width: "auto", maxWidth: "none" }}
+          />
+        ) : null}
+      </div>
+
+      <div className="flex items-center justify-end gap-4">
         <OrganizationSwitcher />
         <div className="hidden sm:flex items-center gap-2 text-sm text-primary">
           <Clock className="h-4 w-4" />

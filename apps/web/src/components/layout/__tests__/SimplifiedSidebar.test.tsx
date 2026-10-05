@@ -3,13 +3,13 @@ import { render } from '@testing-library/react';
 import { screen } from '@testing-library/dom';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { api } from '@/integrations/api/client';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const map: Record<string, string> = {
         'sidebarNav.items.dashboard': 'Dashboard',
+        'sidebarNav.items.diagnostics': 'Mes diagnostics',
         'sidebarNav.items.collect': 'Collecte',
         'sidebarNav.items.emissionFactors': "Facteurs d'émission",
         'sidebarNav.items.bilanCarbone': 'Bilan Carbone',
@@ -51,7 +51,11 @@ vi.mock('@/hooks/useSupplierLabels', () => ({
 
 vi.mock('@/contexts/AppDataContext', () => ({
   useAppData: () => ({
-    modules: [{ slug: 'bilan-carbone', name: 'Bilan Carbone' }],
+    modules: [
+      { slug: 'bilan-carbone', name: 'Bilan Carbone' },
+      { slug: 'fournisseurs', name: 'Fournisseurs' },
+      { slug: 'decarbotech', name: 'Transition' },
+    ],
     modulesLoading: false,
     organizationId: 'test-org',
     organizationLoading: false,
@@ -63,12 +67,6 @@ vi.mock('@/hooks/useAuth', () => ({
     user: { id: 'test-user', email: 'test@example.com' },
     signOut: vi.fn(),
   }),
-}));
-
-vi.mock('@/integrations/api/client', () => ({
-  api: {
-    getOrganization: vi.fn().mockResolvedValue({ organization: null }),
-  },
 }));
 
 vi.mock('@/components/ui/sidebar', () => ({
@@ -102,6 +100,9 @@ describe('SimplifiedSidebar', () => {
     );
 
     expect(screen.getByText('Dashboard')).toBeDefined();
+    expect(screen.queryByText('Mes diagnostics')).toBeNull();
+    expect(screen.queryByText('Méthode')).toBeNull();
+    expect(screen.queryByText('Notes de méthode')).toBeNull();
   });
 
   it('keeps a single Transition hub entry and no separate action/scenario items', async () => {
@@ -115,12 +116,17 @@ describe('SimplifiedSidebar', () => {
     expect(screen.getByText('Transition & trajectoires')).toBeDefined();
     expect(screen.queryByText("Plan d'actions")).toBeNull();
     expect(screen.queryByText('Modélisation scénarios')).toBeNull();
+
+    const labels = screen.getAllByRole('menuitem').map((item) => item.textContent ?? '');
+    const suppliers = labels.findIndex((label) => label.includes('Fournisseurs'));
+    const transition = labels.findIndex((label) => label.includes('Transition & trajectoires'));
+    const product = labels.findIndex((label) => label.includes('Empreinte Produit'));
+    expect(suppliers).toBeGreaterThanOrEqual(0);
+    expect(transition).toBe(suppliers + 1);
+    expect(product).toBeGreaterThan(transition);
   });
 
-  it('keeps the organization logo colors on the dark sidebar', async () => {
-    vi.mocked(api.getOrganization).mockResolvedValueOnce({
-      organization: { logoUrl: 'https://example.com/logo.png' },
-    } as Awaited<ReturnType<typeof api.getOrganization>>);
+  it('keeps the white CarboScan logo at the top of the sidebar', async () => {
     const { SimplifiedSidebar } = await import('@/components/layout/SimplifiedSidebar');
     render(
       <MemoryRouter initialEntries={['/app/dashboard']}>
@@ -128,8 +134,8 @@ describe('SimplifiedSidebar', () => {
       </MemoryRouter>
     );
 
-    const logo = await screen.findByAltText('Logo organisation');
-    expect(logo).toHaveAttribute('src', 'https://example.com/logo.png');
-    expect(logo.className).not.toMatch(/invert|brightness-0/);
+    const logo = screen.getByAltText('CarboScan');
+    expect(logo.getAttribute('src')).toContain('carboscan-logo-dark');
+    expect(screen.queryByAltText('Logo organisation')).toBeNull();
   });
 });

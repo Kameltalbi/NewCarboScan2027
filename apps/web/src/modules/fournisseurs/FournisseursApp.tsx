@@ -8,13 +8,12 @@ import {
   Landmark,
   BookOpen,
   LayoutDashboard,
-  FileBarChart,
   ShoppingCart,
 } from "lucide-react";
 import { FournisseursHome } from "./FournisseursHome";
 import { SupplierAddForm } from "./SupplierAddForm";
 import { CounterpartyFiche } from "./CounterpartyFiche";
-import { MethodeCalculPage, PortfolioReportPage } from "./MethodeCalculPage";
+import { MethodeCalculPage } from "./MethodeCalculPage";
 import {
   ClimateEngagementView,
   PortfolioEmissionsView,
@@ -41,9 +40,7 @@ const FournisseursApp: React.FC = () => {
         { label: "Méthode de calcul", path: "", icon: BookOpen },
         { label: "Vue d'ensemble", path: "/vue", icon: LayoutDashboard },
         { label: "Portefeuille", path: "/portefeuille", icon: Landmark },
-        { label: "Contreparties", path: "/contreparties", icon: Users },
         { label: "Qualité des données", path: "/scoring", icon: BarChart3 },
-        { label: "Rapport", path: "/rapport", icon: FileBarChart },
       ]
     : [
         { label: "Vue d'ensemble", path: "", icon: LayoutDashboard },
@@ -66,7 +63,7 @@ const FournisseursApp: React.FC = () => {
           }
         />
         <Route path="portefeuille" element={<FournisseursHome />} />
-        <Route path="contreparties" element={<FournisseursHome />} />
+        <Route path="contreparties" element={<Navigate to="/app/fournisseurs/portefeuille" replace />} />
         <Route path="liste" element={<FournisseursHome />} />
         <Route path="achats" element={<PurchasesPage />} />
         <Route path="import" element={<PurchasesImportPage />} />
@@ -91,7 +88,11 @@ const FournisseursApp: React.FC = () => {
         <Route
           path="rapport"
           element={
-            L.isBank ? <PortfolioReportPage /> : <Navigate to="" replace />
+            L.isBank ? (
+              <Navigate to="/app/fournisseurs/portefeuille" replace />
+            ) : (
+              <Navigate to="" replace />
+            )
           }
         />
         <Route path="engagement" element={<Navigate to="/app/fournisseurs/liste" replace />} />

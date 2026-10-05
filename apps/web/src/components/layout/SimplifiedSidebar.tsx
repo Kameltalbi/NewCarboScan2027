@@ -2,7 +2,6 @@
 // Groupée par responsabilité : Pilotage > Données > Analyse > Action > Système
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { logger } from '@/utils/logger';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppData } from '@/contexts/AppDataContext';
 import {
@@ -27,13 +26,9 @@ import {
   Construction,
   Zap,
   Leaf,
-  ClipboardList,
-  BookOpen,
 } from 'lucide-react';
 
-import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
-import { api } from "@/integrations/api/client";
 import { useSupplierLabels } from '@/hooks/useSupplierLabels';
 import { useTranslation } from 'react-i18next';
 
@@ -57,13 +52,6 @@ const dashboardItem: ModuleItem = {
   labelKey: 'sidebarNav.items.dashboard',
   path: '/app/dashboard',
   icon: LayoutDashboard,
-};
-
-const diagnosticsItem: ModuleItem = {
-  id: 'diagnostics',
-  labelKey: 'sidebarNav.items.diagnostics',
-  path: '/app/diagnostics',
-  icon: ClipboardList,
 };
 
 const sidebarGroups: SidebarGroupDef[] = [
@@ -90,17 +78,18 @@ const sidebarGroups: SidebarGroupDef[] = [
         requiresModule: 'bilan-carbone',
       },
       {
-        id: 'methode',
-        labelKey: 'sidebarNav.items.methodNotes',
-        path: '/app/methode',
-        icon: BookOpen,
-      },
-      {
         id: 'fournisseurs',
         labelKey: 'sidebarNav.items.suppliers',
         path: '/app/fournisseurs',
         icon: Users,
         requiresModule: 'fournisseurs',
+      },
+      {
+        id: 'transition',
+        labelKey: 'sidebarNav.items.transition',
+        path: '/app/transition',
+        icon: Target,
+        requiresModule: 'decarbotech',
       },
     ],
   },
@@ -136,18 +125,6 @@ const sidebarGroups: SidebarGroupDef[] = [
     ],
   },
   {
-    labelKey: 'sidebarNav.groups.climateStrategy',
-    items: [
-      {
-        id: 'transition',
-        labelKey: 'sidebarNav.items.transition',
-        path: '/app/transition',
-        icon: Target,
-        requiresModule: 'decarbotech',
-      },
-    ],
-  },
-  {
     labelKey: 'sidebarNav.groups.system',
     items: [
       {
@@ -169,9 +146,7 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
   const location = useLocation();
   const { t } = useTranslation();
   const { modules, modulesLoading, organizationLoading } = useAppData();
-  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [orgLogoUrl, setOrgLogoUrl] = useState<string | null>(null);
   const supplierLabels = useSupplierLabels();
 
   const resolveLabel = (item: ModuleItem): string => {
@@ -197,27 +172,6 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
     () => ({ ...dashboardItem, label: t(dashboardItem.labelKey) }),
     [t],
   );
-
-  const diagnosticsDisplay = useMemo(
-    () => ({ ...diagnosticsItem, label: t(diagnosticsItem.labelKey) }),
-    [t],
-  );
-
-  useEffect(() => {
-    const loadOrgLogo = async () => {
-      if (!user?.id) return;
-      try {
-        const { organization } = await api.getOrganization();
-        setOrgLogoUrl(organization?.logoUrl ?? null);
-      } catch (error) {
-        logger.error('Error loading org logo:', error);
-      }
-    };
-    loadOrgLogo();
-    const handleLogoUpdate = () => loadOrgLogo();
-    window.addEventListener('orgLogoUpdated', handleLogoUpdate);
-    return () => window.removeEventListener('orgLogoUpdated', handleLogoUpdate);
-  }, [user?.id]);
 
   useEffect(() => {
     if (!organizationLoading) {
@@ -346,15 +300,7 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
     <Sidebar className={cn("border-r-0", className)} aria-label={t('navigation.mainNavAria')}>
       <SidebarHeader className="px-5 pt-6 pb-4 bg-[hsl(var(--sidebar))]">
         <div className="flex items-center gap-3">
-          {orgLogoUrl ? (
-            <img
-              src={orgLogoUrl}
-              alt={t('navigation.orgLogoAlt')}
-              className="h-9 w-auto max-w-[140px] rounded-md bg-white object-contain p-1"
-            />
-          ) : (
-            <BrandLogo variant="dark" className="h-9" />
-          )}
+          <BrandLogo variant="dark" className="h-9" />
         </div>
       </SidebarHeader>
 
@@ -365,7 +311,6 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
       >
         <SidebarMenu>
           <div className="mb-1">{renderItem(dashboardDisplay)}</div>
-          <div className="mb-1">{renderItem(diagnosticsDisplay)}</div>
 
           {displayGroups.map((group) => {
             const visibleItems = group.items.filter(isFournisseursNavVisible);

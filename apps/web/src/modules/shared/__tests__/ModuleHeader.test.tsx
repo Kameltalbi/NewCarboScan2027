@@ -29,6 +29,20 @@ vi.mock('@/contexts/AppDataContext', () => ({
   useAppData: () => ({ organizationId: 'org-test' }),
 }));
 
+const organizationMock = vi.hoisted(() => ({
+  current: { logo_url: null as string | null },
+}));
+
+vi.mock('@/hooks/useOrganizationData', () => ({
+  useOrganizationData: () => ({
+    organization: organizationMock.current,
+    organizationId: 'org-test',
+    referenceYear: 2025,
+    loading: false,
+    error: null,
+  }),
+}));
+
 vi.mock('@/components/ui/sidebar', () => ({
   SidebarTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
@@ -54,6 +68,7 @@ describe('ModuleHeader', () => {
       moduleTitle: 'Fournisseurs',
       pageTitle: 'Engagement fournisseurs',
     };
+    organizationMock.current = { logo_url: null };
   });
 
   it('renders with banner role and aria-label', () => {
@@ -128,5 +143,17 @@ describe('ModuleHeader', () => {
       </MemoryRouter>
     );
     expect(screen.getByLabelText('Ouvrir/Fermer le menu latéral')).toBeInTheDocument();
+  });
+
+  it('places the organization logo in the center of the header', () => {
+    organizationMock.current = { logo_url: 'https://example.com/banque.png' };
+    render(
+      <MemoryRouter initialEntries={['/app/dashboard']}>
+        <ModuleHeader user={defaultUser} />
+      </MemoryRouter>
+    );
+    const logo = screen.getByAltText('Logo TestCorp');
+    expect(logo).toHaveAttribute('src', 'https://example.com/banque.png');
+    expect(logo).toHaveStyle({ height: "60px", maxWidth: "none" });
   });
 });
