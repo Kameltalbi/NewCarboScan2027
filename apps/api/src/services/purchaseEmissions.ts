@@ -258,7 +258,7 @@ export async function calculatePurchaseEmissions(
     if (!Number.isFinite(qty) || qty <= 0) {
       warnings.push("Quantité physique manquante — repli spend si montant disponible.");
     } else {
-      let factor = input.factorId
+      const factor = input.factorId
         ? await loadFactor(db, input.factorId)
         : null;
       if (!factor) {
@@ -303,7 +303,6 @@ export async function calculatePurchaseEmissions(
   // --- Spend-based (default / fallback) ---
   const amount = Number(input.amount);
   if (!Number.isFinite(amount) || amount <= 0) {
-    const grade = deriveDataQualityGrade({ method: "spend" });
     return {
       calculationMethod: "spend",
       dataQualityGrade: "E",
