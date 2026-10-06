@@ -10,6 +10,7 @@ import {
 import { renderGesExcel } from "./exportGesExcel";
 import { renderGesPdf } from "./exportGesPdf";
 import { renderGesPptx } from "./exportGesPptx";
+import { reportFileBlob } from "./renderGesReport";
 import { planExecutiveSlides } from "./gesReportSlides";
 
 const classicBilan = {
@@ -86,6 +87,9 @@ describe("rapport GES — entreprise", () => {
     const pptx = await renderGesPptx(dataset);
     const xlsx = await renderGesExcel(dataset);
     expect(Buffer.from(pdf).subarray(0, 4).toString()).toBe("%PDF");
+    const blob = reportFileBlob(pdf, "application/pdf");
+    expect(blob.size).toBe(pdf.byteLength);
+    expect(blob.type).toBe("application/pdf");
     expect(Buffer.from(pptx).subarray(0, 2).toString()).toBe("PK");
     expect(await cell(xlsx, "01_Synthese", "Empreinte opérationnelle")).toBe(900);
     expect(await cell(xlsx, "01_Synthese", "Scope 3 hors catégorie 15")).toBe(200);

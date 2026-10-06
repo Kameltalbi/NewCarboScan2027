@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { FileSpreadsheet, FileText, Loader2, Presentation } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Download, FileSpreadsheet, FileText, Loader2, Presentation, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -18,7 +18,7 @@ import {
   type ReportFormat,
   type ReportHistoryPoint,
 } from "@/lib/reporting/gesReportDataset";
-import { downloadGesReport, renderGesReport } from "@/lib/reporting/renderGesReport";
+import { downloadGesReport, renderGesReport, reportObjectUrl } from "@/lib/reporting/renderGesReport";
 
 const FORMATS: Array<{ id: ReportFormat; title: string; subtitle: string; detail: string; icon: typeof FileText }> = [
   {
@@ -44,6 +44,13 @@ const FORMATS: Array<{ id: ReportFormat; title: string; subtitle: string; detail
   },
 ];
 
+interface ReportPreview {
+  url: string;
+  filename: string;
+  mime: string;
+  format: ReportFormat;
+}
+
 export const GenerateGesReport: React.FC = () => {
   const { organizationId } = useOrganizationId();
   const { organization } = useOrganizationData();
@@ -55,6 +62,10 @@ export const GenerateGesReport: React.FC = () => {
   const [format, setFormat] = useState<ReportFormat>("pdf");
   const [includeFinanced, setIncludeFinanced] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<ReportPreview | null>(null);
+  const previewUrl = useRef<string | null>(null);
 
   const financialInstitution = Boolean(organization?.financed_emissions_enabled);
 
@@ -66,16 +77,38 @@ export const GenerateGesReport: React.FC = () => {
     setIncludeFinanced(financialInstitution);
   }, [financialInstitution, organizationId]);
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl.current) URL.revokeObjectURL(previewUrl.current);
+    };
+  }, []);
+
+  const openPreview = (next: ReportPreview) => {
+    if (previewUrl.current) URL.revokeObjectURL(previewUrl.current);
+    previewUrl.current = next.url;
+    setPreview(next);
+  };
+
+  const closePreview = () => {
+    if (previewUrl.current) URL.revokeObjectURL(previewUrl.current);
+    previewUrl.current = null;
+    setPreview(null);
+  };
+
   const generate = async () => {
     if (!organizationId || !year) {
+      setError("Choisissez un exercice.");
       toast({ title: "Choisissez un exercice", variant: "destructive" });
       return;
     }
     setBusy(true);
+    setError(null);
+    setStatus("Calcul du bilan…");
     try {
       const current = await BilanCarboneCalculator.calculate(organizationId, `${year}-01-01`, `${year}-12-31`);
       const site = sites.find((item) => item.id === perimeter);
       const bilan = applySite(current, perimeter === "all" ? null : perimeter);
+      setStatus("Lecture de l'historique…");
       const history = await loadHistory(
         organizationId,
         year,
@@ -83,6 +116,7 @@ export const GenerateGesReport: React.FC = () => {
         perimeter === "all" ? null : perimeter,
         Boolean(organization?.financed_emissions_enabled),
       );
+      setStatus(financialInstitution && includeFinanced ? "Lecture des émissions financées…" : "Mise en page du rapport…");
       const financedLines = financialInstitution && includeFinanced ? await loadFinancedLines() : [];
       const dataset = buildGesReportDataset({
         organizationName: organization?.name || "Organisation",
@@ -98,12 +132,21 @@ export const GenerateGesReport: React.FC = () => {
         history,
         financedLines,
       });
+      setStatus("Mise en page du rapport…");
       const file = await renderGesReport(dataset, format);
-      downloadGesReport(file.bytes, file.filename, file.mime);
-      toast({ title: "Rapport prêt", description: file.filename });
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Échec de génération";
-      toast({ title: "Erreur", description: message, variant: "destructive" });
+      if (file.bytes.byteLength < 8) {
+        throw new Error("Le fichier généré est vide.");
+      }
+      const url = reportObjectUrl(file.bytes, file.mime);
+      openPreview({ url, filename: file.filename, mime: file.mime, format });
+      setStatus(null);
+      if (format !== "pdf") downloadGesReport(file.bytes, file.filename, file.mime);
+      toast({ title: format === "pdf" ? "Rapport ouvert" : "Rapport prêt", description: file.filename });
+    } catch (failure: unknown) {
+      const message = failure instanceof Error ? failure.message : "Échec de génération";
+      setError(message);
+      setStatus(null);
+      toast({ title: "Le rapport n'a pas pu être généré", description: message, variant: "destructive" });
     } finally {
       setBusy(false);
     }
@@ -166,9 +209,61 @@ export const GenerateGesReport: React.FC = () => {
         </label>
         <Button onClick={() => void generate()} disabled={busy || !year || !organizationId}>
           {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          Générer
+          {busy ? status || "Génération…" : "Générer"}
         </Button>
       </div>
+
+      {error && (
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          {error}
+        </div>
+      )}
+
+      {preview && preview.format !== "pdf" && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card px-4 py-3">
+          <p className="text-sm">
+            <span className="font-medium">{preview.filename}</span>
+            <span className="block text-muted-foreground">Si le téléchargement ne démarre pas, utilisez le bouton.</span>
+          </p>
+          <a
+            href={preview.url}
+            download={preview.filename}
+            className="inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Télécharger
+          </a>
+        </div>
+      )}
+
+      {preview?.format === "pdf" && (
+        <div className="fixed inset-0 z-[80] flex flex-col bg-white">
+          <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-3">
+            <div className="flex min-w-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={closePreview}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100"
+                aria-label="Fermer le rapport"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <p className="truncate text-sm font-medium">{preview.filename}</p>
+            </div>
+            <a
+              href={preview.url}
+              download={preview.filename}
+              className="inline-flex h-8 items-center rounded-md bg-[#5F9E6B] px-3 text-sm font-medium text-white hover:bg-[#4A7D56]"
+            >
+              <Download className="mr-1.5 h-3.5 w-3.5" />
+              Télécharger
+            </a>
+          </header>
+          <object data={preview.url} type={preview.mime} className="min-h-0 w-full flex-1">
+            <iframe title={preview.filename} src={preview.url} className="h-full w-full" />
+          </object>
+        </div>
+      )}
 
       {financialInstitution && (
         <label className="flex items-start gap-3 text-sm">

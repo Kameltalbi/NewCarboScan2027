@@ -27,12 +27,25 @@ export async function renderGesReport(
   };
 }
 
+/** Copie autonome : un Uint8Array peut n'être qu'une vue d'un buffer plus grand. */
+export function reportFileBlob(bytes: Uint8Array, mime: string): Blob {
+  const copy = new Uint8Array(bytes.byteLength);
+  copy.set(bytes);
+  return new Blob([copy], { type: mime });
+}
+
+export function reportObjectUrl(bytes: Uint8Array, mime: string): string {
+  return URL.createObjectURL(reportFileBlob(bytes, mime));
+}
+
 export function downloadGesReport(bytes: Uint8Array, filename: string, mime: string) {
-  const blob = new Blob([bytes], { type: mime });
-  const url = URL.createObjectURL(blob);
+  const url = reportObjectUrl(bytes, mime);
   const link = document.createElement("a");
   link.href = url;
   link.download = filename;
+  link.rel = "noopener";
+  document.body.appendChild(link);
   link.click();
-  URL.revokeObjectURL(url);
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
