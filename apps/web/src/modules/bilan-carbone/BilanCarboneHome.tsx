@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Database, ArrowRight, FileText, BarChart3, Plus, TrendingUp, Calendar } from 'lucide-react';
+import { Database, ArrowRight, FileText, BarChart3, Plus, TrendingUp, Calendar, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrganizationData } from '@/hooks/useOrganizationData';
 import { BilanCarboneCalculator } from '@/lib/calculators/BilanCarboneCalculator';
