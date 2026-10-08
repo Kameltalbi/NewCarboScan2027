@@ -113,7 +113,8 @@ const BlogPost = () => {
             <OptimizedBlogImage
               src={post.featured_image_url}
               alt={post.title}
-              className="w-full h-72 object-cover rounded-xl mb-8"
+              fit="contain"
+              className="w-full rounded-xl mb-8"
             />
           )}
 
@@ -146,7 +147,7 @@ const BlogPost = () => {
           </header>
 
           <div
-            className="prose prose-lg max-w-none"
+            className="prose prose-lg max-w-none [&_img]:max-w-full [&_img]:h-auto"
             dangerouslySetInnerHTML={{ __html: safeHtml }}
           />
         </article>

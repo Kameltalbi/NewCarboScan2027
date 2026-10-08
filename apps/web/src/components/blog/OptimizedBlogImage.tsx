@@ -6,6 +6,7 @@ interface OptimizedBlogImageProps {
   alt: string;
   className?: string;
   aspectRatio?: "video" | "hero";
+  fit?: "cover" | "contain";
   sizes?: string;
 }
 
@@ -33,6 +34,7 @@ export const OptimizedBlogImage: React.FC<OptimizedBlogImageProps> = ({
   alt,
   className,
   aspectRatio = "video",
+  fit = "cover",
   sizes = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw",
 }) => {
   const [loaded, setLoaded] = useState(false);
@@ -58,8 +60,10 @@ export const OptimizedBlogImage: React.FC<OptimizedBlogImageProps> = ({
   return (
     <div
       className={cn(
-        "overflow-hidden bg-muted relative",
-        aspectRatio === "hero" ? "h-64 md:h-96" : "aspect-video",
+        "bg-muted relative",
+        fit === "contain"
+          ? "overflow-visible"
+          : cn("overflow-hidden", aspectRatio === "hero" ? "h-64 md:h-96" : "aspect-video"),
         className
       )}
     >
@@ -68,19 +72,24 @@ export const OptimizedBlogImage: React.FC<OptimizedBlogImageProps> = ({
         <div className="absolute inset-0 bg-muted animate-pulse" />
       )}
       <img
-        src={fallbackSrc}
-        srcSet={srcSet}
-        sizes={sizes}
+        src={fit === "contain" ? src : fallbackSrc}
+        srcSet={fit === "contain" ? undefined : srcSet}
+        sizes={fit === "contain" ? undefined : sizes}
         alt={alt}
         loading="lazy"
         decoding="async"
         onLoad={() => setLoaded(true)}
         onError={() => setError(true)}
         className={cn(
-          "w-full h-full transition-opacity duration-300",
-          aspectRatio === "hero" ? "object-contain" : "object-cover",
+          "w-full transition-opacity duration-300",
+          fit === "contain" ? "h-auto max-h-none object-contain" : "h-full object-cover",
           loaded ? "opacity-100" : "opacity-0"
         )}
+        style={
+          fit === "contain"
+            ? { width: "100%", height: "auto", maxHeight: "none", objectFit: "contain" }
+            : undefined
+        }
       />
     </div>
   );
