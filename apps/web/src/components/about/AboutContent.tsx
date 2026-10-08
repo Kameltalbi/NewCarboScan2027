@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { ArrowRight, BarChart3, CheckCircle2, Target, TrendingDown, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { SafeHtml } from "@/components/SafeHtml";
