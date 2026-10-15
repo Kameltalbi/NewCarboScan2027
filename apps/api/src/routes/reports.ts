@@ -6,8 +6,9 @@ import {
   type CalculationResult,
 } from "@newcarboscan/carbon-engine";
 import { withOrgClient } from "../db.js";
-import { reportFromRunSchema } from "../schemas/index.js";
+import { reportFromRunSchema, standardReportSchema } from "../schemas/index.js";
 import { clientSafeError } from "../lib/safeError.js";
+import { buildStandardReport } from "../services/standardReport.js";
 
 /**
  * Remplace generate-carbon-report (P0).
@@ -203,6 +204,36 @@ export async function registerReportRoutes(app: FastifyInstance) {
         return { report };
       } catch (err) {
         return reply.code(400).send({
+          error: clientSafeError(err, "Report generation failed"),
+        });
+      }
+    },
+  );
+
+  app.post(
+    "/v1/reports/standard",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const parsed = standardReportSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.code(400).send({ error: parsed.error.flatten() });
+      }
+      const orgId = request.user!.organizationId!;
+      try {
+        const file = await withOrgClient(orgId, (client) =>
+          buildStandardReport(client, orgId, parsed.data.year, parsed.data.runId),
+        );
+        return reply
+          .header("Content-Type", "application/pdf")
+          .header("Content-Disposition", `attachment; filename="${file.filename}"`)
+          .header("X-Report-Generated", String(file.generated))
+          .header("X-Report-Rejected", String(file.rejected))
+          .header("X-Report-Fallback", String(file.fallback))
+          .send(file.pdf);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Report generation failed";
+        const missing = message.includes("Aucun inventaire publié");
+        return reply.code(missing ? 404 : 400).send({
           error: clientSafeError(err, "Report generation failed"),
         });
       }

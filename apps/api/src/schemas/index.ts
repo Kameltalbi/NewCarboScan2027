@@ -85,6 +85,11 @@ export const reportFromRunSchema = z.object({
   title: z.string().min(1).max(200),
 });
 
+export const standardReportSchema = z.object({
+  year: z.number().int().min(1990).max(2100),
+  runId: z.string().uuid().optional(),
+});
+
 export const orgIdParamSchema = z.object({
   id: z.string().uuid(),
 });

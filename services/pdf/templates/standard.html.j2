@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>{{ report.document.pdfTitle }}</title>
+  <meta name="author" content="CarboScan">
+  <meta name="description" content="{{ report.document.pdfDescription }}">
+</head>
+<body data-footer="{{ report.document.footerLeft }}">
+  <section class="cover" id="couverture">
+    <p class="brand">CarboScan</p>
+    <p class="kicker">Rapport de bilan GES</p>
+    <h1>{{ report.document.companyName }}</h1>
+    <p class="subtitle">Bilan des émissions de gaz à effet de serre</p>
+    <div class="cover-rule"></div>
+    <p class="cover-year">{{ report.document.exerciseLabel }}</p>
+    <p class="cover-meta">{{ report.document.coverMeta }}</p>
+    <p class="cover-total">{{ report.document.totalDisplay }}</p>
+    <p class="cover-unit">{{ report.document.totalUnit }}</p>
+    <p class="cover-foot">{{ report.document.coverFoot }}</p>
+  </section>
+
+  {% macro render_block(block) %}
+    {% if block.type == "paragraphs" %}
+      {% for item in block["items"] %}
+      {% for para in item.text.split('\n\n') %}
+      <p>{{ para }}</p>
+      {% endfor %}
+      {% endfor %}
+    {% elif block.type == "kpis" %}
+      <div class="kpi-grid">
+        {% for item in block["items"] %}
+        <div class="kpi">
+          <span class="label">{{ item.label }}</span>
+          <span class="value">{{ item.value }} {{ item.unit }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    {% elif block.type == "chart" %}
+      <figure class="figure{% if block.compact %} compact{% endif %}">
+        <p class="chart-title">{{ block.title }}</p>
+        {{ block.svg | safe }}
+        <p class="note">{{ block.caption }}</p>
+      </figure>
+    {% elif block.type == "cards" %}
+      {% for item in block["items"] %}
+      <article class="action-card">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.comment }}</p>
+        <dl>
+          {% for row in item.rows %}
+          <div>
+            <dt>{{ row.label }}</dt>
+            <dd>{{ row.value }}</dd>
+          </div>
+          {% endfor %}
+        </dl>
+      </article>
+      {% endfor %}
+    {% elif block.type == "pair" %}
+      <div class="pair{% if block.emphasis == 'right' %} wide-right{% endif %}">
+        <div>{{ render_block(block.left) }}</div>
+        <div>{{ render_block(block.right) }}</div>
+      </div>
+    {% elif block.type == "messages" %}
+      <div class="messages">
+        {% for item in block["items"] %}
+        <div class="message">
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.text }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    {% elif block.type == "table" %}
+      <table class="data{% if block.dense %} dense{% endif %}">
+        <thead>
+          <tr>
+            {% for col in block.columns %}
+            <th class="{{ col.align }}"{% if col.width %} style="width: {{ col.width }}"{% endif %}>{{ col.label }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in block.rows %}
+          <tr>
+            {% for col in block.columns %}
+            <td class="{{ col.align }}">{{ row[col.key] }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if block.note %}<p class="note">{{ block.note }}</p>{% endif %}
+    {% elif block.type == "callout" %}
+      <aside class="callout {{ block.kind }}">
+        <p class="kicker">{{ block.title }}</p>
+        <p>{{ block.text }}</p>
+      </aside>
+    {% elif block.type == "list" %}
+      <ul class="plain">
+        {% for item in block["items"] %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    {% elif block.type == "subhead" %}
+      <h3>{{ block.text }}</h3>
+    {% endif %}
+  {% endmacro %}
+
+  {% macro render_section(section) %}
+  <section id="{{ section.id }}" class="{% if section.breakAfter %}page-end{% endif %}{% if section.compact %} compact{% endif %}">
+    <h2><span class="num">{{ section.number }}</span><span class="title">{{ section.title }}</span></h2>
+    {% for block in section.blocks %}
+      {{ render_block(block) }}
+    {% endfor %}
+  </section>
+  {% endmacro %}
+
+  <section id="sommaire">
+    <h2><span class="title">Sommaire</span></h2>
+    <ol class="toc">
+      {% for section in report.sections %}
+      <li><span class="toc-num">{{ section.number }}</span><a href="#{{ section.id }}">{{ section.title }}</a></li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  {% for section in report.sections %}
+    {{ render_section(section) }}
+  {% endfor %}
+</body>
+</html>

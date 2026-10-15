@@ -1,0 +1,14 @@
+export { SCHEMA_VERSION, DEFAULT_ANALYSIS_OPTIONS } from "./types.js";
+export type { AnalysisOptions, ReportData } from "./types.js";
+export { analyze } from "./analyze.js";
+export type { Analysis } from "./analyze.js";
+export { ateliersDuSahel } from "./fixtures/ateliersDuSahel.js";
+export { reportDataFromRun } from "./fromRun.js";
+export type { LedgerLineInput, RunReportContext } from "./fromRun.js";
+export { buildReferenceModel, buildViewModel } from "./viewModel.js";
+export type { ReportViewModel } from "./viewModel.js";
+export { assertReportProse, proseOf } from "./proseGuard.js";
+export { PROMPT_VERSION, SYSTEM_PROMPT } from "./ai/contract.js";
+export { createNarrativeProvider } from "./ai/fallback.js";
+export { enrichReport } from "./ai/compose.js";
+export type { NarrativeDraft, NarrativeProvider, NarrativeRequest, NarrativeSlot } from "./ai/contract.js";

@@ -103,8 +103,18 @@ export const GenerateGesReport: React.FC = () => {
     }
     setBusy(true);
     setError(null);
-    setStatus("Calcul du bilan…");
     try {
+      if (format === "pdf") {
+        setStatus("Rédaction du rapport à partir de l'inventaire publié…");
+        const file = await api.downloadStandardReport(year);
+        if (file.bytes.byteLength < 8) throw new Error("Le fichier généré est vide.");
+        const url = reportObjectUrl(file.bytes, file.mime);
+        openPreview({ url, filename: file.filename, mime: file.mime, format });
+        setStatus(null);
+        toast({ title: "Rapport ouvert", description: file.filename });
+        return;
+      }
+      setStatus("Calcul du bilan…");
       const current = await BilanCarboneCalculator.calculate(organizationId, `${year}-01-01`, `${year}-12-31`);
       const site = sites.find((item) => item.id === perimeter);
       const bilan = applySite(current, perimeter === "all" ? null : perimeter);
@@ -157,7 +167,7 @@ export const GenerateGesReport: React.FC = () => {
       <div>
         <h2 className="text-lg font-semibold">Générer un rapport</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Les trois formats lisent les mêmes résultats. L'empreinte de l'organisation et les émissions financées restent séparées.
+          Le PDF est rédigé côté serveur à partir de l'inventaire publié. Excel et PowerPoint restent des exports des résultats affichés.
         </p>
       </div>
 

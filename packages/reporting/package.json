@@ -1,0 +1,32 @@
+{
+  "name": "@newcarboscan/reporting",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Contrat ReportData, analyses éditoriales et modèle de rapport. Ne calcule pas les émissions à la place du moteur carbone.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx --test src/*.test.ts src/**/*.test.ts",
+    "export:reference": "tsx src/cli.ts --out ../../services/pdf/samples/ateliers-du-sahel.model.json",
+    "export:narrative": "tsx src/narrativeCli.ts --out ../../services/pdf/samples/ateliers-du-sahel.narrative.json",
+    "export:ch06-preview": "tsx src/previewCli.ts --out ../../services/pdf/samples/ateliers-du-sahel.ch06-preview.json"
+  },
+  "dependencies": {
+    "@newcarboscan/carbon-engine": "1.1.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.12",
+    "typescript": "^5.7.3"
+  }
+}

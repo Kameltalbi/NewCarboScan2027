@@ -1,0 +1,270 @@
+@font-face {
+  font-family: "Source Sans 3";
+  src: url("../fonts/SourceSans3-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Sans 3";
+  src: url("../fonts/SourceSans3-Semibold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Sans 3";
+  src: url("../fonts/SourceSans3-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("../fonts/SourceSerif4-Semibold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Source Serif 4 Display";
+  src: url("../fonts/SourceSerif4Display-Semibold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+:root {
+  --ink: #1a2421;
+  --muted: #5c6763;
+  --green: #073f35;
+  --line: #d5dbd8;
+  --paper: #f4f6f5;
+  --sand: #8c7340;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  font-family: "Source Sans 3", sans-serif;
+  color: var(--ink);
+  font-size: 10.5pt;
+  line-height: 1.45;
+  -weasy-hyphens: auto;
+  hyphens: auto;
+}
+
+@page {
+  size: A4;
+  margin: 16mm 14mm 16mm 14mm;
+  @top-left {
+    content: "CarboScan  ·  Bilan GES";
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 8pt;
+    color: var(--muted);
+  }
+  @top-right {
+    content: string(chapter);
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 8pt;
+    color: var(--muted);
+  }
+  @bottom-left {
+    content: string(footer);
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 8pt;
+    color: var(--muted);
+  }
+  @bottom-right {
+    content: counter(page);
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 9pt;
+    font-weight: 600;
+    color: var(--green);
+  }
+}
+
+@page cover {
+  margin: 0;
+  background: #073f35;
+  @top-left { content: none; }
+  @top-right { content: none; }
+  @bottom-left { content: none; }
+  @bottom-right { content: none; }
+}
+
+body {
+  margin: 0;
+  string-set: footer attr(data-footer);
+}
+
+.cover {
+  page: cover;
+  break-after: page;
+  color: white;
+  padding: 22mm 18mm 16mm;
+}
+.cover .brand {
+  font-size: 9pt;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.cover .kicker {
+  margin: 8mm 0 0;
+  color: #c6a15b;
+  font-size: 10pt;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cover h1 {
+  font-family: "Source Serif 4 Display", serif;
+  font-weight: 600;
+  font-size: 32pt;
+  line-height: 1.08;
+  margin: 4mm 0 0;
+  color: white;
+}
+.cover .subtitle { margin: 4mm 0 0; font-size: 12pt; color: #d7e4e0; }
+.cover-rule { width: 28mm; height: 1.6pt; background: #c6a15b; margin: 8mm 0; }
+.cover-year { margin: 0; font-size: 13pt; font-weight: 600; }
+.cover-meta { margin: 1mm 0 0; color: #d7e4e0; }
+.cover-total {
+  font-family: "Source Serif 4 Display", serif;
+  font-size: 36pt;
+  line-height: 1;
+  margin: 12mm 0 0;
+}
+.cover-unit { margin: 2mm 0 0; font-size: 11pt; color: #d7e4e0; }
+.cover-foot {
+  margin-top: 18mm;
+  font-size: 9pt;
+  line-height: 1.4;
+  color: #d7e4e0;
+  max-width: 150mm;
+}
+
+h2 {
+  font-family: "Source Serif 4", serif;
+  font-weight: 600;
+  font-size: 16pt;
+  color: var(--green);
+  margin: 4mm 0 2mm;
+  break-after: avoid;
+  break-before: auto;
+  bookmark-level: 1;
+}
+h2 + p, h3 + p, h2 + .kpi-grid, h3 + table, h2 + aside { break-before: avoid; }
+h2 .num {
+  display: block;
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 8.5pt;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--sand);
+}
+h2 .title { string-set: chapter content(); }
+section > h2 { break-before: page; }
+#sommaire > h2 { break-before: auto; }
+tr { break-inside: avoid; }
+table.data + .note { break-before: avoid; }
+h3 {
+  font-size: 12pt;
+  font-weight: 600;
+  color: var(--green);
+  margin: 3.5mm 0 1.5mm;
+  break-after: avoid;
+  bookmark-level: 2;
+}
+p { margin: 0 0 2mm; orphans: 3; widows: 3; }
+.note { font-size: 8.5pt; color: var(--muted); margin-top: 1.5mm; }
+
+#sommaire { break-before: page; break-after: page; }
+#synthese { break-before: page; }
+#sommaire h2 { margin: 2mm 0 8mm; }
+#sommaire .toc { margin: 0; }
+#sommaire .toc li { margin: 0 0 4.6mm; font-size: 12pt; }
+.toc { list-style: none; padding: 0; margin: 0 0 4mm; break-inside: avoid; }
+.toc li { margin: 0 0 1.1mm; }
+.toc-num {
+  display: inline-block;
+  width: 8mm;
+  color: var(--sand);
+  font-weight: 600;
+}
+.toc a { color: inherit; text-decoration: none; }
+.toc a::after {
+  content: leader(".") target-counter(attr(href), page);
+  color: var(--muted);
+}
+
+.identity { width: 100%; border-collapse: collapse; margin: 0 0 4mm; }
+.identity th, .identity td {
+  text-align: left;
+  vertical-align: top;
+  padding: 1.4mm 2mm;
+  border-bottom: 0.4pt solid var(--line);
+  font-weight: 400;
+}
+.identity th { width: 42mm; color: var(--muted); font-weight: 600; }
+
+.kpi-grid { display: table; width: 100%; border-spacing: 3mm 0; margin: 0 0 4mm; break-inside: avoid; }
+.kpi { display: table-cell; width: 33%; vertical-align: top; background: var(--paper); border-top: 2.4pt solid var(--green); padding: 3mm; }
+.kpi .label { display: block; font-size: 8pt; font-weight: 600; color: var(--muted); }
+.kpi .value { display: block; margin-top: 1.5mm; font-size: 16pt; font-weight: 600; color: var(--green); line-height: 1.15; font-variant-numeric: tabular-nums; }
+.kpi .unit { font-size: 10pt; font-weight: 600; }
+
+.callout { border-left: 2.4pt solid var(--green); background: var(--paper); padding: 3mm 4mm; margin: 0 0 4mm; break-inside: avoid; }
+.callout.limit, .callout.hypothesis { border-left-color: var(--sand); }
+.callout .kicker { margin: 0 0 1mm; font-size: 8pt; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green); }
+.callout p { margin: 0; }
+
+.page-end { break-after: auto; }
+.pair { display: table; width: 100%; border-spacing: 5mm 0; margin: 0 0 3mm; }
+.pair > div { display: table-cell; width: 50%; vertical-align: top; }
+.pair.wide-right > div:first-child { width: 48%; }
+.pair.wide-right > div:last-child { width: 52%; }
+.messages { margin: 1.5mm 0 0; }
+.message { break-inside: avoid; margin: 0 0 2.5mm; }
+.message h3 { margin: 0 0 1mm; font-family: "Source Sans 3", sans-serif; font-size: 10.5pt; font-weight: 600; color: var(--green); }
+.message p { margin: 0; }
+.figure { margin: 1mm 0 2.5mm; break-inside: avoid; }
+.figure.compact { width: 92mm; }
+.figure.compact svg { width: 92mm; }
+.action-card { break-inside: avoid; border-top: 2pt solid var(--green); margin: 0 0 3mm; padding-top: 1.5mm; }
+.action-card h3 { margin: 0 0 1.5mm; font-size: 12pt; }
+.action-card p { margin: 0 0 2mm; }
+.action-card dl { margin: 0; }
+.action-card dl div { display: table; width: 100%; margin: 0 0 1.2mm; }
+.action-card dt, .action-card dd { display: table-cell; vertical-align: top; }
+.action-card dt { width: 42mm; color: var(--muted); font-weight: 600; font-size: 8.5pt; padding-top: 0.4mm; }
+.action-card dd { margin: 0; }
+section.compact h3 { margin: 2.5mm 0 1mm; }
+section.compact table.dense th, section.compact table.dense td { padding: 0.7mm 1.2mm; }
+section.compact ul.plain { margin-bottom: 1.5mm; }
+section.compact ul.plain li { margin: 0 0 0.4mm; }
+.figure .chart-title { margin: 0 0 1mm; font-size: 9pt; font-weight: 600; }
+.figure svg { display: block; width: 100%; height: auto; }
+.figure .note { margin: 1mm 0 0; }
+
+table.data { width: 100%; border-collapse: collapse; margin: 1mm 0 1mm; }
+table.data:not(.dense) { break-inside: avoid; }
+table.data th {
+  text-align: left;
+  background: var(--green);
+  color: white;
+  font-weight: 600;
+  font-size: 8pt;
+  padding: 1.6mm 1.8mm;
+}
+table.data td, table.data th { hyphens: manual; -weasy-hyphens: manual; }
+table.data td {
+  padding: 1.5mm 1.8mm;
+  border-bottom: 0.3pt solid var(--line);
+  vertical-align: top;
+}
+table.data tr { break-inside: avoid; }
+table.data thead { display: table-header-group; }
+table.data tbody tr:nth-child(even) td { background: #f7f8f7; }
+table.data .right, table.data td.right, table.data th.right { text-align: right; font-variant-numeric: tabular-nums; }
+table.dense { font-size: 8.5pt; }
+table.dense th, table.dense td { padding: 1.3mm 1.6mm; }
+ul.plain { margin: 0 0 3mm; padding-left: 4.5mm; }
+ul.plain li { margin: 0 0 1.2mm; orphans: 3; widows: 3; }

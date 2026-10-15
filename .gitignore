@@ -32,6 +32,9 @@ id_ed25519
 *.sln
 *.sw?
 
+services/pdf/.venv/
+services/pdf/samples/preview/
+
 # Newcarboscan
 .env
 .env.local

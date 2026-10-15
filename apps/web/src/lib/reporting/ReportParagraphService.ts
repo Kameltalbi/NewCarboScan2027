@@ -71,7 +71,7 @@ export class ReportParagraphService {
       throw new Error(`Erreur récupération paragraphes: ${error.message}`);
     }
 
-    return data || [];
+    return (data || []).map(asParagraph);
   }
 
   /**
@@ -89,7 +89,7 @@ export class ReportParagraphService {
       throw new Error(`Erreur récupération paragraphes section: ${error.message}`);
     }
 
-    return data || [];
+    return (data || []).map(asParagraph);
   }
 
   /**
@@ -110,7 +110,7 @@ export class ReportParagraphService {
       throw new Error(`Erreur récupération paragraphe: ${error.message}`);
     }
 
-    return data;
+    return asParagraph(data);
   }
 
   /**
@@ -143,7 +143,7 @@ export class ReportParagraphService {
     }
 
     // Filtrer selon les conditions d'activation
-    return data.filter((paragraph) => {
+    return data.map(asParagraph).filter((paragraph) => {
       // Si mandatory, toujours inclure
       if (paragraph.is_mandatory) {
         return true;
@@ -279,14 +279,14 @@ export class ReportParagraphService {
         ...report,
         generated_by: (await sessionAuth.getUser()).data.user?.id,
       })
-      .select('report_id')
+      .select('id, report_id')
       .single();
 
     if (error) {
       throw new Error(`Erreur sauvegarde rapport: ${error.message}`);
     }
 
-    return data.report_id;
+    return data.report_id ?? data.id;
   }
 
   /**
@@ -353,14 +353,14 @@ export class ReportParagraphService {
     const { data, error } = await supabase
       .from('report_paragraphs')
       .insert(paragraph)
-      .select('paragraph_id')
+      .select('id, paragraph_id')
       .single();
 
     if (error) {
       throw new Error(`Erreur création paragraphe: ${error.message}`);
     }
 
-    return data.paragraph_id;
+    return data.paragraph_id ?? data.id;
   }
 
   /**
@@ -373,7 +373,7 @@ export class ReportParagraphService {
     const { error } = await supabase
       .from('report_paragraphs')
       .update(updates)
-      .eq('paragraph_id', paragraphId);
+      .or(`id.eq.${paragraphId},paragraph_id.eq.${paragraphId}`);
 
     if (error) {
       throw new Error(`Erreur mise à jour paragraphe: ${error.message}`);
@@ -387,10 +387,14 @@ export class ReportParagraphService {
     const { error } = await supabase
       .from('report_paragraphs')
       .update({ status: 'deprecated' })
-      .eq('paragraph_id', paragraphId);
+      .or(`id.eq.${paragraphId},paragraph_id.eq.${paragraphId}`);
 
     if (error) {
       throw new Error(`Erreur suppression paragraphe: ${error.message}`);
     }
   }
+}
+
+function asParagraph(row: ReportParagraph & { id?: string }): ReportParagraph {
+  return { ...row, paragraph_id: row.paragraph_id || row.id || "" };
 }

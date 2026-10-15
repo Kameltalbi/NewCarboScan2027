@@ -8,6 +8,7 @@ COPY package.json package-lock.json ./
 COPY apps/api/package.json ./apps/api/
 COPY apps/web/package.json ./apps/web/
 COPY packages/carbon-engine/package.json ./packages/carbon-engine/
+COPY packages/reporting/package.json ./packages/reporting/
 
 RUN npm ci
 

@@ -1,0 +1,8 @@
+weasyprint==70.0
+Jinja2==3.1.6
+pyphen==0.18.1
+cssselect2==0.10.1
+fonttools==4.66.1
+pydyf==0.12.1
+tinycss2==1.5.1
+tinyhtml5==2.1.0

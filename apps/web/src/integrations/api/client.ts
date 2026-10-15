@@ -611,6 +611,34 @@ export const api = {
       body: JSON.stringify({ runId, title }),
     }),
 
+  downloadStandardReport: async (year: number) => {
+    const headers = new Headers();
+    const token = getStoredToken();
+    const orgId = getStoredOrgId();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    if (orgId) headers.set("X-Organization-Id", orgId);
+    headers.set("Content-Type", "application/json");
+    const res = await fetch(`${API_URL}/v1/reports/standard`, {
+      method: "POST",
+      headers,
+      credentials: "include",
+      body: JSON.stringify({ year }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      const message = typeof body?.error === "string" ? body.error : `HTTP ${res.status}`;
+      throw new Error(message);
+    }
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    const disposition = res.headers.get("Content-Disposition") ?? "";
+    const match = disposition.match(/filename="([^"]+)"/);
+    return {
+      bytes,
+      filename: match?.[1] ?? `CarboScan_${year}_Rapport-standard.pdf`,
+      mime: "application/pdf",
+    };
+  },
+
   listFunctions: () => request("/v1/functions"),
 
   adminListOrganizations: () =>

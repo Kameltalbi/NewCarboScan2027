@@ -16,6 +16,7 @@
     "@fastify/helmet": "^13.0.1",
     "@fastify/rate-limit": "^10.2.2",
     "@newcarboscan/carbon-engine": "file:../../packages/carbon-engine",
+    "@newcarboscan/reporting": "file:../../packages/reporting",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.7",
     "fastify": "^5.2.1",

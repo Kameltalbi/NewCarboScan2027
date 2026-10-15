@@ -14,47 +14,47 @@ vi.mock("@/hooks/useOrganizationYears", () => ({
 }));
 vi.mock("@/hooks/useOrganizationSites", () => ({ useOrganizationSites: () => ({ sites: [] }) }));
 
-const calculate = vi.fn();
+const { calculate, downloadStandardReport } = vi.hoisted(() => ({
+  calculate: vi.fn(),
+  downloadStandardReport: vi.fn(),
+}));
+
+vi.mock("@/integrations/api/client", () => ({
+  api: { downloadStandardReport: (...args: unknown[]) => downloadStandardReport(...args) },
+}));
 vi.mock("@/lib/calculators/BilanCarboneCalculator", () => ({
   BilanCarboneCalculator: {
     calculate: (...args: unknown[]) => calculate(...args),
   },
 }));
 
-const bilan = {
-  totalEmissions: 1_500_000,
-  scope1: 400_000,
-  scope2: 300_000,
-  scope3: 800_000,
-  breakdown: [{ category: "Gaz", emissions: 400_000, percentage: 26.7 }],
-  detailedBreakdown: [
-    { category: "Énergie", subcategory: "Gaz", emissions: 400_000, scope: 1 as const, dataQuality: "real" as const },
-    { category: "Énergie", subcategory: "Électricité", emissions: 300_000, scope: 2 as const, dataQuality: "real" as const },
-    { category: "Achats", subcategory: "Services", emissions: 800_000, scope: 3 as const, dataQuality: "estimated" as const },
-  ],
-};
-
 describe("GenerateGesReport", () => {
   beforeEach(() => {
     calculate.mockReset();
+    downloadStandardReport.mockReset();
     URL.createObjectURL = vi.fn(() => "blob:ges-report");
     URL.revokeObjectURL = vi.fn();
   });
 
-  it("ouvre le PDF à l'écran", async () => {
-    calculate.mockResolvedValue(bilan);
+  it("ouvre le PDF rédigé depuis l'inventaire publié", async () => {
+    downloadStandardReport.mockResolvedValue({
+      bytes: new Uint8Array([37, 80, 68, 70, 45, 49, 46, 55]),
+      filename: "CarboScan_Banque-Atlas_2025_Rapport-standard.pdf",
+      mime: "application/pdf",
+    });
     render(<GenerateGesReport />);
     fireEvent.click(await screen.findByRole("button", { name: "Générer" }));
-    expect(await screen.findByText("CarboScan_Banque-Atlas_2025_Rapport-GES.pdf")).toBeInTheDocument();
+    expect(await screen.findByText("CarboScan_Banque-Atlas_2025_Rapport-standard.pdf")).toBeInTheDocument();
+    expect(downloadStandardReport).toHaveBeenCalledWith(2025);
+    expect(calculate).not.toHaveBeenCalled();
     expect(document.querySelector("object")?.getAttribute("data")).toBe("blob:ges-report");
-    expect(screen.getByRole("link", { name: "Télécharger" })).toHaveAttribute("download", "CarboScan_Banque-Atlas_2025_Rapport-GES.pdf");
   });
 
   it("affiche l'erreur au lieu d'une page vide", async () => {
-    calculate.mockRejectedValue(new Error("Bilan indisponible"));
+    downloadStandardReport.mockRejectedValue(new Error("Aucun inventaire publié pour cet exercice."));
     render(<GenerateGesReport />);
     fireEvent.click(await screen.findByRole("button", { name: "Générer" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("Bilan indisponible");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Aucun inventaire publié");
     expect(document.querySelector("object")).toBeNull();
   });
 });
