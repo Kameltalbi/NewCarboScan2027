@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { existsSync } from "node:fs";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -176,9 +177,19 @@ function methodLabel(method: string): string {
   return method || "GHG Protocol";
 }
 
+function pdfRoot(): string {
+  let dir = fileURLToPath(new URL(".", import.meta.url));
+  for (let i = 0; i < 8; i += 1) {
+    if (existsSync(join(dir, "services/pdf/render.py"))) return dir;
+    const parent = resolve(dir, "..");
+    if (parent === dir) break;
+    dir = parent;
+  }
+  throw new Error("Le moteur PDF est introuvable sur le serveur.");
+}
+
 async function renderPdf(model: unknown): Promise<Buffer> {
-  const here = fileURLToPath(new URL(".", import.meta.url));
-  const root = resolve(here, "../../..");
+  const root = pdfRoot();
   const python = process.env.REPORT_PDF_PYTHON ?? join(root, "services/pdf/.venv/bin/python");
   const script = join(root, "services/pdf/render.py");
   const dir = await mkdtemp(join(tmpdir(), "ncs-report-"));

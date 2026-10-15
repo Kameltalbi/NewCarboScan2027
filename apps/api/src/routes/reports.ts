@@ -231,6 +231,7 @@ export async function registerReportRoutes(app: FastifyInstance) {
           .header("X-Report-Fallback", String(file.fallback))
           .send(file.pdf);
       } catch (err) {
+        request.log.error({ err }, "standard report failed");
         const message = err instanceof Error ? err.message : "Report generation failed";
         const missing = message.includes("Aucun inventaire publié");
         return reply.code(missing ? 404 : 400).send({

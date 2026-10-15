@@ -30,15 +30,7 @@ COPY packages/reporting/package.json ./packages/reporting/
 
 RUN npm ci --omit=dev
 
-COPY --from=build /app/packages/carbon-engine/dist ./packages/carbon-engine/dist
-COPY --from=build /app/packages/reporting/dist ./packages/reporting/dist
-COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY services/pdf/requirements.txt ./services/pdf/requirements.txt
-COPY services/pdf/render.py ./services/pdf/render.py
-COPY services/pdf/templates ./services/pdf/templates
-COPY services/pdf/static ./services/pdf/static
-COPY services/pdf/fonts ./services/pdf/fonts
-
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       python3 python3-venv \
@@ -47,6 +39,14 @@ RUN apt-get update \
  && python3 -m venv /opt/pdf-venv \
  && /opt/pdf-venv/bin/pip install --no-cache-dir -r /app/services/pdf/requirements.txt \
  && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app/packages/carbon-engine/dist ./packages/carbon-engine/dist
+COPY --from=build /app/packages/reporting/dist ./packages/reporting/dist
+COPY --from=build /app/apps/api/dist ./apps/api/dist
+COPY services/pdf/render.py ./services/pdf/render.py
+COPY services/pdf/templates ./services/pdf/templates
+COPY services/pdf/static ./services/pdf/static
+COPY services/pdf/fonts ./services/pdf/fonts
 
 ENV REPORT_PDF_PYTHON=/opt/pdf-venv/bin/python
 
