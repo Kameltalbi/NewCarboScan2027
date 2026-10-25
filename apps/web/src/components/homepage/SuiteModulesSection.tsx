@@ -12,15 +12,15 @@ const TAG_ICONS = {
 
 const MODULE_META = [
   { key: "bilanCarbone", icon: BarChart3, href: "/bilan-carbone", iconBg: "bg-[#0E7C66]" },
-  { key: "acv", icon: Recycle, href: "/empreinte-produit", iconBg: "bg-[#1B3A2D]" },
+  { key: "acv", icon: Recycle, href: "/acv-landing", iconBg: "bg-[#1B3A2D]" },
   { key: "pcf", icon: Package, href: "/empreinte-produit", iconBg: "bg-[#4B5563]" },
 ] as const;
 
 const SECONDARY_META = [
   { key: "collect", icon: Database, href: "/collect", iconBg: "bg-[#6B7280]" },
-  { key: "suppliers", icon: Truck, href: "/fournisseurs", iconBg: "bg-[#1B3A2D]" },
+  { key: "suppliers", icon: Truck, href: "/engagement-fournisseurs", iconBg: "bg-[#1B3A2D]" },
   { key: "cbam", icon: Globe2, href: "/cbam", iconBg: "bg-[#374151]" },
-  { key: "monitoring", icon: Activity, href: "/monitoring", iconBg: "bg-[#16585C]" },
+  { key: "monitoring", icon: Activity, href: "/decarbotech", iconBg: "bg-[#16585C]" },
 ] as const;
 
 export const SuiteModulesSection: React.FC = () => {
@@ -132,7 +132,7 @@ export const SuiteModulesSection: React.FC = () => {
             </div>
             <div className="shrink-0">
               <Link
-                to="/developpeurs"
+                to="/developers"
                 className="inline-flex items-center gap-2 text-foreground font-semibold hover:text-primary transition-colors group"
               >
                 {t("homepage.integrationsApi.cta")}

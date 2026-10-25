@@ -1,16 +1,17 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
+  BarChart3,
   Building2,
   ChevronDown,
-  CloudFog,
-  Flag,
-  Globe2,
+  Database,
   Landmark,
+  Leaf,
   Menu,
-  RefreshCcw,
+  Package,
   Route,
-  Truck,
+  Shield,
+  Target,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -24,12 +25,7 @@ type PlatformItem = {
   descriptionKey: string;
   to: string;
   icon: LucideIcon;
-  tone: "green" | "purple" | "amber";
-};
-
-type PlatformSection = {
-  titleKey: string;
-  items: PlatformItem[];
+  tone: "green" | "blue" | "purple" | "orange" | "teal" | "amber";
 };
 
 const OFFER_ITEMS: PlatformItem[] = [
@@ -56,64 +52,64 @@ const OFFER_ITEMS: PlatformItem[] = [
   },
 ];
 
-const PLATFORM_SECTIONS: PlatformSection[] = [
+const PLATFORM_ITEMS: PlatformItem[] = [
   {
-    titleKey: "homeHeader.sections.carbonManagement",
-    items: [
-      {
-        labelKey: "homeHeader.items.bilanCarbone.label",
-        descriptionKey: "homeHeader.items.bilanCarbone.description",
-        to: "/bilan-carbone",
-        icon: Globe2,
-        tone: "green",
-      },
-      {
-        labelKey: "homeHeader.items.suppliers.label",
-        descriptionKey: "homeHeader.items.suppliers.description",
-        to: "/engagement-fournisseurs",
-        icon: Truck,
-        tone: "green",
-      },
-      {
-        labelKey: "homeHeader.items.decarbonation.label",
-        descriptionKey: "homeHeader.items.decarbonation.description",
-        to: "/strategie-decarbonation",
-        icon: Flag,
-        tone: "green",
-      },
-      {
-        labelKey: "homeHeader.items.wattbim.label",
-        descriptionKey: "homeHeader.items.wattbim.description",
-        to: "/wattbim",
-        icon: Zap,
-        tone: "amber",
-      },
-    ],
+    labelKey: "navigation.solutionsMenu.bilanCarbone.title",
+    descriptionKey: "navigation.solutionsMenu.bilanCarbone.description",
+    to: "/bilan-carbone",
+    icon: BarChart3,
+    tone: "green",
   },
   {
-    titleKey: "homeHeader.sections.lca",
-    items: [
-      {
-        labelKey: "homeHeader.items.emissionFactors.label",
-        descriptionKey: "homeHeader.items.emissionFactors.description",
-        to: "/facteurs-emission",
-        icon: CloudFog,
-        tone: "purple",
-      },
-      {
-        labelKey: "homeHeader.items.acv.label",
-        descriptionKey: "homeHeader.items.acv.description",
-        to: "/acv-landing",
-        icon: RefreshCcw,
-        tone: "purple",
-      },
-    ],
+    labelKey: "navigation.solutionsMenu.empreinteProduit.title",
+    descriptionKey: "navigation.solutionsMenu.empreinteProduit.description",
+    to: "/empreinte-produit",
+    icon: Package,
+    tone: "blue",
+  },
+  {
+    labelKey: "navigation.solutionsMenu.acv.title",
+    descriptionKey: "navigation.solutionsMenu.acv.description",
+    to: "/acv-landing",
+    icon: Leaf,
+    tone: "purple",
+  },
+  {
+    labelKey: "navigation.solutionsMenu.cbam.title",
+    descriptionKey: "navigation.solutionsMenu.cbam.description",
+    to: "/cbam",
+    icon: Shield,
+    tone: "orange",
+  },
+  {
+    labelKey: "navigation.solutionsMenu.collect.title",
+    descriptionKey: "navigation.solutionsMenu.collect.description",
+    to: "/collect",
+    icon: Database,
+    tone: "teal",
+  },
+  {
+    labelKey: "navigation.solutionsMenu.monitoring.title",
+    descriptionKey: "navigation.solutionsMenu.monitoring.description",
+    to: "/decarbotech",
+    icon: Target,
+    tone: "green",
+  },
+  {
+    labelKey: "homeHeader.items.wattbim.label",
+    descriptionKey: "homeHeader.items.wattbim.description",
+    to: "/wattbim",
+    icon: Zap,
+    tone: "amber",
   },
 ];
 
 const toneClass = {
   green: "text-[#0F9F6E]",
+  blue: "text-blue-600",
   purple: "text-[#7C3AED]",
+  orange: "text-orange-500",
+  teal: "text-teal-600",
   amber: "text-amber-500",
 } as const;
 
@@ -269,45 +265,36 @@ export const HomeHeader: React.FC = () => {
             </button>
             {platformOpen && (
               <div
-                className="absolute left-1/2 top-full z-50 w-[640px] -translate-x-1/2 pt-3"
+                className="absolute left-1/2 top-full z-50 w-[720px] -translate-x-1/2 pt-3"
                 onMouseEnter={cancelPlatformClose}
               >
-                <div className="rounded-[4px] border border-[#EEF2F0] bg-white p-5 shadow-[0_16px_40px_rgba(7,61,48,0.1)]">
-                  <div className="grid grid-cols-2 divide-x divide-[#EEF2F0]">
-                    {PLATFORM_SECTIONS.map((section) => (
-                      <div key={section.titleKey} className="px-4 first:pl-0 last:pr-0">
-                        <p className="mb-3 text-[12px] font-medium text-[#6B7280]">
-                          {t(section.titleKey)}
-                        </p>
-                        <div className="space-y-1">
-                          {section.items.map((item) => {
-                            const Icon = item.icon;
-                            return (
-                              <Link
-                                key={item.to}
-                                to={item.to}
-                                onClick={closePlatform}
-                                className="group flex items-start gap-3 rounded-[4px] p-2.5 transition-colors hover:bg-[#F4F7F5]"
-                              >
-                                <Icon
-                                  className={`mt-0.5 h-5 w-5 shrink-0 ${toneClass[item.tone]}${item.tone === "amber" ? " fill-amber-300" : ""}`}
-                                  strokeWidth={1.75}
-                                  aria-hidden="true"
-                                />
-                                <span className="min-w-0">
-                                  <span className="block text-[14px] font-semibold text-[#111827]">
-                                    {t(item.labelKey)}
-                                  </span>
-                                  <span className="mt-0.5 block text-[13px] leading-snug text-[#6B7280]">
-                                    {t(item.descriptionKey)}
-                                  </span>
-                                </span>
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
+                <div className="rounded-[4px] border border-[#EEF2F0] bg-white p-3 shadow-[0_16px_40px_rgba(7,61,48,0.1)]">
+                  <div className="grid grid-cols-2 gap-1">
+                    {PLATFORM_ITEMS.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          onClick={closePlatform}
+                          className="group flex items-start gap-3 rounded-[4px] p-2.5 transition-colors hover:bg-[#F4F7F5]"
+                        >
+                          <Icon
+                            className={`mt-0.5 h-5 w-5 shrink-0 ${toneClass[item.tone]}${item.tone === "amber" ? " fill-amber-300" : ""}`}
+                            strokeWidth={1.75}
+                            aria-hidden="true"
+                          />
+                          <span className="min-w-0">
+                            <span className="block text-[14px] font-semibold text-[#111827]">
+                              {t(item.labelKey)}
+                            </span>
+                            <span className="mt-0.5 block text-[13px] leading-snug text-[#6B7280]">
+                              {t(item.descriptionKey)}
+                            </span>
+                          </span>
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -363,8 +350,8 @@ export const HomeHeader: React.FC = () => {
                 <Menu className="h-5 w-5" />
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80 bg-white pt-10">
-              <nav className="flex flex-col gap-1">
+            <SheetContent side="right" className="flex h-full w-80 flex-col gap-0 overflow-hidden bg-white p-0 pt-12">
+              <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-6">
                 <div className="mb-3">
                   <p className="px-3 pb-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#073D30]/45">
                     {t("navigation.offer")}
@@ -395,38 +382,36 @@ export const HomeHeader: React.FC = () => {
                     );
                   })}
                 </div>
-                {PLATFORM_SECTIONS.map((section) => (
-                  <div key={section.titleKey} className="mb-3">
-                    <p className="px-3 pb-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#073D30]/45">
-                      {t(section.titleKey)}
-                    </p>
-                    {section.items.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <Link
-                          key={item.to}
-                          to={item.to}
-                          onClick={() => setOpen(false)}
-                          className="flex items-start gap-3 rounded-[4px] px-3 py-2.5 hover:bg-[#F4F7F5]"
-                        >
-                          <Icon
-                            className={`mt-0.5 h-5 w-5 shrink-0 ${toneClass[item.tone]}${item.tone === "amber" ? " fill-amber-300" : ""}`}
-                            strokeWidth={1.75}
-                            aria-hidden="true"
-                          />
-                          <span>
-                            <span className="block text-[14px] font-semibold text-[#111827]">
-                              {t(item.labelKey)}
-                            </span>
-                            <span className="mt-0.5 block text-[12px] leading-snug text-[#6B7280]">
-                              {t(item.descriptionKey)}
-                            </span>
+                <div className="mb-3">
+                  <p className="px-3 pb-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#073D30]/45">
+                    {t("navigation.platform")}
+                  </p>
+                  {PLATFORM_ITEMS.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        onClick={() => setOpen(false)}
+                        className="flex items-start gap-3 rounded-[4px] px-3 py-2.5 hover:bg-[#F4F7F5]"
+                      >
+                        <Icon
+                          className={`mt-0.5 h-5 w-5 shrink-0 ${toneClass[item.tone]}${item.tone === "amber" ? " fill-amber-300" : ""}`}
+                          strokeWidth={1.75}
+                          aria-hidden="true"
+                        />
+                        <span>
+                          <span className="block text-[14px] font-semibold text-[#111827]">
+                            {t(item.labelKey)}
                           </span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                ))}
+                          <span className="mt-0.5 block text-[12px] leading-snug text-[#6B7280]">
+                            {t(item.descriptionKey)}
+                          </span>
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
                 {navLinks.map((link) => (
                   <Link
                     key={link.to}
@@ -445,9 +430,11 @@ export const HomeHeader: React.FC = () => {
                   <Zap className="h-4 w-4 fill-amber-300 text-amber-500" aria-hidden="true" />
                   WattBim
                 </Link>
+              </nav>
+              <div className="shrink-0 space-y-2 border-t border-[#EEF2F0] p-4">
                 <button
                   type="button"
-                  className="mt-4 rounded-[4px] border border-[#07563F] px-3 py-3 text-left text-[15px] font-semibold text-[#07563F]"
+                  className="w-full rounded-[4px] border border-[#07563F] px-3 py-3 text-left text-[15px] font-semibold text-[#07563F]"
                   onClick={() => {
                     setOpen(false);
                     navigate("/auth");
@@ -457,7 +444,7 @@ export const HomeHeader: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  className="rounded-[4px] bg-[#07563F] px-3 py-3 text-left text-[15px] font-semibold text-white"
+                  className="w-full rounded-[4px] bg-[#07563F] px-3 py-3 text-left text-[15px] font-semibold text-white"
                   onClick={() => {
                     setOpen(false);
                     navigate("/bilan-gratuit");
@@ -465,7 +452,7 @@ export const HomeHeader: React.FC = () => {
                 >
                   {diagnosticLabel}
                 </button>
-              </nav>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
