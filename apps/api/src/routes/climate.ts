@@ -1135,7 +1135,7 @@ export async function registerClimateRoutes(app: FastifyInstance) {
     owner_name: z.string().max(200).optional().nullable(),
     notes: z.string().max(8000).optional().nullable(),
     status: z.enum(["draft", "active", "archived"]).optional(),
-    parameters: z.record(z.unknown()).optional().nullable(),
+    parameters: z.record(z.string(), z.unknown()).optional().nullable(),
   });
 
   app.get(

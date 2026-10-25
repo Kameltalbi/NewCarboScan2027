@@ -24,7 +24,7 @@ const studySchema = z.object({
 
 const versionSchema = z.object({
   studyId: z.string().uuid(),
-  snapshot: z.record(z.unknown()).optional(),
+  snapshot: z.record(z.string(), z.unknown()).optional(),
   comment: z.string().max(2000).optional().nullable(),
 });
 

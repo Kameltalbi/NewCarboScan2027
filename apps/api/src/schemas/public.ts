@@ -8,7 +8,7 @@ export const publicLeadSchema = z.object({
   companyName: z.string().max(200).optional(),
   fullName: z.string().max(200).optional(),
   message: z.string().max(5000).optional(),
-  payload: z.record(z.unknown()).optional(),
+  payload: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const registerSchema = z.object({
@@ -28,7 +28,7 @@ export const registerSchema = z.object({
 });
 
 export const freeBilanSchema = z.object({
-  answers: z.record(z.string()).refine((o) => Object.keys(o).length > 0, {
+  answers: z.record(z.string(), z.string()).refine((o) => Object.keys(o).length > 0, {
     message: "answers required",
   }),
   lead: z

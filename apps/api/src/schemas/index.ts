@@ -308,7 +308,7 @@ export const adminOrderPatchSchema = z.object({
   status: z.enum(["pending", "validated", "rejected", "suspended", "cancelled"]).optional(),
   planType: z.string().max(64).optional(),
   userId: z.string().uuid().optional(),
-  userData: z.record(z.unknown()).optional(),
+  userData: z.record(z.string(), z.unknown()).optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
 });

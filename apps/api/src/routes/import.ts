@@ -98,7 +98,7 @@ export async function registerImportRoutes(app: FastifyInstance) {
             .array(
               z.object({
                 legacyId: z.string().optional().nullable(),
-                payload: z.record(z.unknown()),
+                payload: z.record(z.string(), z.unknown()),
               }),
             )
             .min(1)

@@ -27,7 +27,7 @@ export const ParametresMonCompte: React.FC = () => {
     e.preventDefault();
     const parsed = passwordSchema.safeParse({ current, next, confirm });
     if (!parsed.success) {
-      toast({ title: 'Erreur', description: parsed.error.errors[0].message, variant: 'destructive' });
+      toast({ title: 'Erreur', description: parsed.error.issues[0]?.message ?? 'Données invalides', variant: 'destructive' });
       return;
     }
     if (!user?.email) {
