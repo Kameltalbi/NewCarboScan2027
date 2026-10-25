@@ -12,7 +12,6 @@ import { RedirectCarboStart } from "@/components/RedirectCarboStart";
 import { CookieBanner } from "@/components/CookieBanner";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AnalyticsRouteListener } from "@/components/analytics/AnalyticsRouteListener";
-import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
 import { initErrorMonitoring } from "@/utils/errorMonitoring";
 
 
@@ -41,6 +40,7 @@ const LegalMentions = lazy(() => import("./pages/LegalMentions"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const CGV = lazy(() => import("./pages/CGV"));
 const BilanGratuit = lazy(() => import("./pages/BilanGratuit"));
+const TesteurGratuit = lazy(() => import("./pages/TesteurGratuit"));
 const Changelog = lazy(() => import("./pages/Changelog"));
 
 // Landing pages modules — lazy loaded
@@ -125,7 +125,6 @@ function App() {
           <ErrorBoundary>
           <Toaster />
           <Sonner />
-          <PWAInstallPrompt />
           <BrowserRouter>
             <SkipToContent />
             <AnalyticsRouteListener />
@@ -150,6 +149,7 @@ function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/cgv" element={<CGV />} />
               <Route path="/bilan-gratuit" element={<BilanGratuit />} />
+              <Route path="/testeur-gratuit" element={<TesteurGratuit />} />
 
               <Route path="/changelog" element={<Changelog />} />
               <Route path="/developers" element={<Developers />} />

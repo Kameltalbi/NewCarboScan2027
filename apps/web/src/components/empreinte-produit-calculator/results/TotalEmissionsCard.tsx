@@ -23,7 +23,9 @@ export const TotalEmissionsCard: React.FC<TotalEmissionsCardProps> = ({ totalEmi
           {t("carbonCalculator.results.totalEmissions")}
         </p>
         <div className="text-5xl font-extrabold text-primary tabular-nums">
-          {Math.round(totalEmissions).toLocaleString("fr-FR")}
+          {(totalEmissions < 10
+            ? totalEmissions.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            : Math.round(totalEmissions).toLocaleString("fr-FR"))}
         </div>
         <p className="text-sm text-muted-foreground font-medium">{t("carbonCalculator.results.tonnesCO2e")}</p>
       </div>

@@ -25,7 +25,7 @@ export const ScopeBreakdown: React.FC<ScopeBreakdownProps> = ({ results }) => {
 
   const chartData = scopes
     .filter((s) => s.value > 0)
-    .map((s) => ({ name: s.name, value: Math.round(s.value) }));
+    .map((s) => ({ name: s.name, value: s.value, color: s.color }));
 
   return (
     <div className="space-y-6">
@@ -48,8 +48,8 @@ export const ScopeBreakdown: React.FC<ScopeBreakdownProps> = ({ results }) => {
                 dataKey="value"
                 stroke="none"
               >
-                {chartData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={SCOPE_COLORS[index]} />
+                {chartData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.color} />
                 ))}
               </Pie>
               <Tooltip
@@ -84,7 +84,9 @@ export const ScopeBreakdown: React.FC<ScopeBreakdownProps> = ({ results }) => {
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-foreground tabular-nums">
-                    {Math.round(s.value).toLocaleString("fr-FR")}
+                    {(s.value < 10
+                      ? s.value.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                      : Math.round(s.value).toLocaleString("fr-FR"))}
                   </p>
                   <p className="text-xs text-muted-foreground">{pct}%</p>
                 </div>

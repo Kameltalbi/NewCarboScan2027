@@ -44,7 +44,12 @@ export function assertReadyToPublish(records: NarrativeRecord[]): void {
 export async function enrichReport(
   data: ReportData = ateliersDuSahel,
   options: AnalysisOptions = DEFAULT_ANALYSIS_OPTIONS,
-  input: { allowNetwork?: boolean; provider?: NarrativeProvider; catalog?: ParagraphModel[] } = {},
+  input: {
+    allowNetwork?: boolean;
+    provider?: NarrativeProvider;
+    catalog?: ParagraphModel[];
+    onProgress?: (done: number, total: number) => void;
+  } = {},
 ): Promise<EnrichedReport> {
   const model = buildViewModel(data, options);
   const analysis = analyze(data, options);
@@ -59,6 +64,7 @@ export async function enrichReport(
   let provider = input.provider ?? (input.allowNetwork ? new OpenAiNarrativeProvider() : new FallbackNarrativeProvider());
   const records: NarrativeRecord[] = [];
   let apiFailed = false;
+  input.onProgress?.(0, jobs.length);
 
   for (const job of jobs) {
     const brief = briefs[job.slotKey];
@@ -95,6 +101,7 @@ export async function enrichReport(
       usage: draft.usage,
       failureReason: draft.failureReason,
     });
+    input.onProgress?.(records.length, jobs.length);
   }
 
   markProvenance(model, records);

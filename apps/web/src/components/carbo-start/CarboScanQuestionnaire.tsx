@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { logger } from '@/utils/logger';
 import { useNavigate } from "react-router-dom";
-import { EmpreinteProduitReportGenerator } from "@/components/empreinte-produit-report/EmpreinteProduitReportGenerator";
 import { Button } from "@/components/ui/button";
+import { downloadTesterBilanPdf } from "@/lib/generateTesterBilanPdf";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
@@ -365,7 +364,8 @@ const getTranslatedQuestions = (t: any) => {
     allowNA: true
   },
 
-  // Section 5: Scope 1 - Fluides (28-30)
+  // Section 5: Scope 1 - Fluides. Une seule question : la recharge annuelle
+  // est la mesure des fuites (on recharge ce qui a fui).
   {
     id: 28,
     section: t("questionnaire.questions.sections.refrigerants"),
@@ -377,23 +377,30 @@ const getTranslatedQuestions = (t: any) => {
     allowNA: true
   },
   {
-    id: 29,
-    section: t("questionnaire.questions.sections.refrigerants"),
-    question: t("questionnaire.questions.refrigerants.leaks"),
-    type: "number",
-    field: "fluides_fuites_kg",
-    placeholder: t("questionnaire.questions.placeholders.leaks"),
-    icon: Factory,
-    allowNA: true
-  },
-  {
     id: 30,
     section: t("questionnaire.questions.sections.industrialProcesses"),
-    question: t("questionnaire.questions.industrialProcesses.processes"),
+    question: "Avez-vous des procédés industriels qui émettent des gaz à effet de serre, en dehors des chaudières, des véhicules et des fluides déjà indiqués ?",
+    help: "Par exemple une cimenterie, un procédé chimique ou un four métallurgique. Si ce n'est pas votre cas, répondez Non.",
+    type: "select",
+    field: "a_procedes_industriels",
+    placeholder: "Choisissez une réponse",
+    icon: Factory,
+    required: true,
+    options: [
+      { value: "non", label: "Non, aucun" },
+      { value: "oui", label: "Oui" }
+    ]
+  },
+  {
+    id: 301,
+    section: t("questionnaire.questions.sections.industrialProcesses"),
+    question: "Lesquels ? Décrivez-les en une phrase.",
     type: "textarea",
     field: "procedes_industriels",
-    placeholder: t("questionnaire.questions.placeholders.industrialProcesses"),
-    icon: Factory
+    placeholder: "Ex. : four de ciment, réaction chimique",
+    icon: Factory,
+    required: true,
+    conditionalOn: { field: "a_procedes_industriels", value: "oui" }
   },
 
   // Section 6: Scope 3 - Achats (31-32)
@@ -418,91 +425,140 @@ const getTranslatedQuestions = (t: any) => {
     required: true
   },
 
-  // Section 7: Scope 3 - Déplacements professionnels (33-36)
+  // Déplacements professionnels : une distance par mode, et trois familles de vols.
   {
     id: 33,
     section: t("questionnaire.questions.sections.travel"),
-    question: t("questionnaire.questions.businessTravel.carTrips"),
+    question: "Distance totale des déplacements professionnels en voiture (km), aller et retour compris.",
+    help: "Additionnez les kilomètres de tous les salariés. S'il n'y en a pas, cochez « Aucun ».",
     type: "number",
-    field: "deplacements_voiture",
-    placeholder: t("questionnaire.questions.placeholders.carTrips"),
+    field: "deplacements_voiture_km",
+    placeholder: "Ex. : 12000",
     icon: Car,
-    allowNA: true
+    allowNA: true,
+    naLabel: "Aucun déplacement en voiture"
   },
   {
     id: 34,
     section: t("questionnaire.questions.sections.travel"),
-    question: t("questionnaire.questions.businessTravel.trainTrips"),
+    question: "Distance totale des déplacements professionnels en train (km).",
     type: "number",
-    field: "deplacements_train",
-    placeholder: t("questionnaire.questions.placeholders.trainTrips"),
+    field: "deplacements_train_km",
+    placeholder: "Ex. : 8000",
     icon: Plane,
-    allowNA: true
+    allowNA: true,
+    naLabel: "Aucun déplacement en train"
   },
   {
     id: 35,
     section: t("questionnaire.questions.sections.travel"),
-    question: t("questionnaire.questions.businessTravel.flightTrips"),
+    question: "Distance totale des vols court-courrier (km). Un court-courrier fait moins de 1 000 km.",
+    help: "Exemple : Tunis–Djerba. Comptez chaque passager et l'aller-retour.",
     type: "number",
-    field: "deplacements_avion",
-    placeholder: t("questionnaire.questions.placeholders.flightTrips"),
+    field: "avion_court_km",
+    placeholder: "Ex. : 2000",
     icon: Plane,
-    allowNA: true
+    allowNA: true,
+    naLabel: "Aucun vol court-courrier"
   },
   {
-    id: 36,
+    id: 351,
     section: t("questionnaire.questions.sections.travel"),
-    question: t("questionnaire.questions.businessTravel.averageDistance"),
+    question: "Distance totale des vols moyen-courrier (km). Un moyen-courrier fait de 1 000 à 3 000 km.",
+    help: "Exemple : Tunis–Paris.",
     type: "number",
-    field: "distance_moyenne_deplacement",
-    placeholder: t("questionnaire.questions.placeholders.averageDistance"),
+    field: "avion_moyen_km",
+    placeholder: "Ex. : 15000",
     icon: Plane,
-    allowNA: true
+    allowNA: true,
+    naLabel: "Aucun vol moyen-courrier"
+  },
+  {
+    id: 352,
+    section: t("questionnaire.questions.sections.travel"),
+    question: "Distance totale des vols long-courrier (km). Un long-courrier fait plus de 3 000 km.",
+    help: "Exemple : Tunis–Montréal.",
+    type: "number",
+    field: "avion_long_km",
+    placeholder: "Ex. : 14000",
+    icon: Plane,
+    allowNA: true,
+    naLabel: "Aucun vol long-courrier"
   },
 
-  // Section 8: Scope 3 - Domicile-travail (37-39)
+  // Domicile-travail. En mixte, une distance par mode.
   {
     id: 37,
     section: t("questionnaire.questions.sections.travel"),
-    question: t("questionnaire.questions.businessTravel.commuteMode"),
+    question: "Comment vos employés viennent-ils travailler, dans l'ensemble ?",
     type: "select",
     field: "transport_domicile_travail",
-    placeholder: t("questionnaire.questions.placeholders.commuteMode"),
+    placeholder: "Choisissez un mode",
     icon: Car,
+    required: true,
     options: [
-      { value: "voiture", label: t("questionnaire.questions.commuteTransport.car") },
-      { value: "transport_public", label: t("questionnaire.questions.commuteTransport.publicTransport") },
-      { value: "mixte", label: t("questionnaire.questions.commuteTransport.mixed") },
-      { value: "autre", label: t("questionnaire.questions.fuelTypes.other") }
+      { value: "voiture", label: "En voiture" },
+      { value: "transport_public", label: "En transport en commun" },
+      { value: "velo", label: "À vélo ou à pied" },
+      { value: "mixte", label: "Mixte : voiture et transport en commun" }
     ]
   },
   {
     id: 38,
     section: t("questionnaire.questions.sections.travel"),
-    question: t("questionnaire.questions.businessTravel.commuteDistance"),
+    question: "Distance moyenne domicile-travail, en km (aller simple).",
+    help: "Un seul trajet, pas l'aller-retour. L'aller-retour est pris en compte dans le calcul.",
     type: "number",
     field: "distance_domicile_travail",
-    placeholder: t("questionnaire.questions.placeholders.commuteDistance"),
+    placeholder: "Ex. : 12",
     icon: Car,
-    required: true
+    required: true,
+    conditionalOn: { field: "transport_domicile_travail", value: ["voiture", "transport_public"] }
+  },
+  {
+    id: 381,
+    section: t("questionnaire.questions.sections.travel"),
+    question: "Sur 100 employés, combien viennent en voiture ?",
+    help: "Le reste est compté en transport en commun.",
+    type: "number",
+    field: "part_voiture_pourcent",
+    placeholder: "Ex. : 40",
+    icon: Car,
+    required: true,
+    conditionalOn: { field: "transport_domicile_travail", value: "mixte" }
+  },
+  {
+    id: 382,
+    section: t("questionnaire.questions.sections.travel"),
+    question: "Distance aller simple de ceux qui viennent en voiture (km).",
+    type: "number",
+    field: "distance_domicile_voiture",
+    placeholder: "Ex. : 15",
+    icon: Car,
+    required: true,
+    conditionalOn: { field: "transport_domicile_travail", value: "mixte" }
+  },
+  {
+    id: 383,
+    section: t("questionnaire.questions.sections.travel"),
+    question: "Distance aller simple de ceux qui viennent en transport en commun (km).",
+    type: "number",
+    field: "distance_domicile_transport",
+    placeholder: "Ex. : 8",
+    icon: Car,
+    required: true,
+    conditionalOn: { field: "transport_domicile_travail", value: "mixte" }
   },
   {
     id: 39,
     section: t("questionnaire.questions.sections.travel"),
-    question: t("questionnaire.questions.businessTravel.commuteFrequency"),
+    question: "Combien de jours par semaine vos employés font-ils ce trajet ?",
     type: "number",
     field: "frequence_trajet_semaine",
-    placeholder: t("questionnaire.questions.placeholders.commuteFrequency"),
+    placeholder: "De 1 à 7",
     icon: Car,
     required: true,
-    allowNA: true,
-    validation: (value: string) => {
-      const num = parseFloat(value);
-      if (isNaN(num) || num < 1 || num > 7 || !Number.isInteger(num)) {
-        return t("questionnaire.questions.validation.commuteFrequency");
-      }
-      return null;
-    }
+    conditionalOn: { field: "transport_domicile_travail", value: ["voiture", "transport_public", "mixte"] }
   },
 
   // Section 9: Scope 3 - Logistique (40-42)
@@ -525,93 +581,121 @@ const getTranslatedQuestions = (t: any) => {
     placeholder: t("questionnaire.questions.placeholders.transportMode"),
     icon: Car,
     options: [
-      { value: "camion", label: t("questionnaire.questions.transportModes.truck") },
-      { value: "maritime", label: t("questionnaire.questions.transportModes.maritime") },
-      { value: "mixte", label: t("questionnaire.questions.transportModes.mixed") },
-      { value: "aucun", label: t("questionnaire.questions.transportModes.none") },
-      { value: "autre", label: t("questionnaire.questions.fuelTypes.other") }
+      { value: "camion", label: "Camion" },
+      { value: "maritime", label: "Bateau" },
+      { value: "train", label: "Train" },
+      { value: "avion", label: "Avion" },
+      { value: "mixte", label: "Plusieurs modes" },
+      { value: "aucun", label: "Pas de transport de marchandises" }
     ]
   },
   {
     id: 42,
     section: t("questionnaire.questions.sections.freight"),
-    question: t("questionnaire.questions.logistics.freightDistance"),
+    question: "Quelle distance moyenne parcourent ces marchandises (km) ?",
+    help: "Une distance par envoi, du départ à l'arrivée.",
     type: "number",
     field: "distance_marchandises",
-    placeholder: t("questionnaire.questions.placeholders.freightDistance"),
+    placeholder: "Ex. : 250",
     icon: Car,
-    allowNA: true
+    allowNA: true,
+    naLabel: "Distance inconnue",
+    conditionalOn: { field: "transport_logistique", value: ["camion", "maritime", "train", "avion", "mixte"] }
   },
 
   // Section 10: Scope 3 - Déchets (43-45)
   {
     id: 43,
     section: t("questionnaire.questions.sections.waste"),
-    question: t("questionnaire.questions.waste.wasteProduction"),
+    question: "Combien de tonnes de déchets votre entreprise a-t-elle produites dans l'année ?",
+    help: "Indiquez 0 s'il n'y en a pas. Les deux questions suivantes n'apparaissent que si ce tonnage est supérieur à zéro.",
     type: "number",
     field: "dechets_tonnes",
-    placeholder: t("questionnaire.questions.placeholders.wasteProduction"),
+    placeholder: "Ex. : 12",
     icon: Recycle,
     required: true
   },
   {
     id: 44,
     section: t("questionnaire.questions.sections.waste"),
-    question: t("questionnaire.questions.waste.wasteTypes"),
-    type: "textarea",
+    question: "Quel type de déchets représente la plus grande part de ce tonnage ?",
+    type: "select",
     field: "types_dechets",
-    placeholder: t("questionnaire.questions.waste.wasteTypesDescription"),
-    icon: Recycle
+    placeholder: "Choisissez un type",
+    icon: Recycle,
+    required: true,
+    conditionalOn: { field: "dechets_tonnes", min: 0 },
+    options: [
+      { value: "ordures", label: "Ordures ménagères" },
+      { value: "papier", label: "Papier et carton" },
+      { value: "plastique", label: "Plastiques" },
+      { value: "organique", label: "Déchets organiques" },
+      { value: "dangereux", label: "Déchets dangereux" },
+      { value: "melange", label: "Un mélange de plusieurs types" }
+    ]
   },
   {
     id: 45,
     section: t("questionnaire.questions.sections.waste"),
-    question: t("questionnaire.questions.waste.wasteTreatment"),
+    question: "Que deviennent ces déchets ?",
     type: "select",
     field: "traitement_dechets",
-    placeholder: t("questionnaire.questions.placeholders.wasteTreatment"),
+    placeholder: "Choisissez une filière",
     icon: Recycle,
+    required: true,
+    conditionalOn: { field: "dechets_tonnes", min: 0 },
     options: [
-      { value: "recyclage", label: t("questionnaire.questions.wasteTreatment.recycling") },
-      { value: "incineration", label: t("questionnaire.questions.wasteTreatment.incineration") },
-      { value: "decharge", label: t("questionnaire.questions.wasteTreatment.landfill") },
-      { value: "mixte", label: t("questionnaire.questions.wasteTreatment.mixed") }
+      { value: "recyclage", label: "Ils sont recyclés" },
+      { value: "incineration", label: "Ils sont incinérés" },
+      { value: "decharge", label: "Ils vont en décharge" },
+      { value: "mixte", label: "Plusieurs filières à la fois" }
     ]
   },
 
-  // Section 11: Scope 3 - Utilisation et fin de vie (46-48)
   {
     id: 46,
     section: t("questionnaire.questions.sections.productUse"),
-    question: t("questionnaire.questions.waste.productUse"),
+    question: "Vos clients émettent-ils des gaz à effet de serre en utilisant ce que vous leur vendez ?",
+    help: "Par exemple l'électricité consommée par un appareil, ou le carburant d'un véhicule vendu. Une activité de services répond en général Non.",
     type: "select",
     field: "emissions_utilisation",
-    placeholder: t("questionnaire.questions.placeholders.productUse"),
+    placeholder: "Choisissez une réponse",
     icon: Building2,
+    required: true,
     options: [
-      { value: "oui", label: t("questionnaire.questions.yesNoOptions.yes") },
-      { value: "non", label: t("questionnaire.questions.yesNoOptions.no") },
-      { value: "ne_sais_pas", label: t("questionnaire.questions.yesNoOptions.dontKnow") }
+      { value: "oui", label: "Oui" },
+      { value: "non", label: "Non" },
+      { value: "ne_sais_pas", label: "Je ne sais pas" }
     ]
   },
   {
     id: 47,
     section: t("questionnaire.questions.sections.endOfLife"),
-    question: t("questionnaire.questions.waste.endOfLife"),
-    type: "textarea",
+    question: "Que deviennent vos produits quand vos clients n'en ont plus l'usage ?",
+    help: "Cela concerne uniquement les objets que vous vendez. Si vous ne vendez pas de produit physique, prenez la première réponse.",
+    type: "select",
     field: "fin_de_vie_produits",
-    placeholder: t("questionnaire.questions.waste.endOfLifeDescription"),
-    icon: Recycle
+    placeholder: "Choisissez une réponse",
+    icon: Recycle,
+    required: true,
+    options: [
+      { value: "pas_de_produit", label: "Nous ne vendons pas de produit physique" },
+      { value: "ordures", label: "Ils partent avec les ordures" },
+      { value: "recyclage", label: "Ils sont recyclés" },
+      { value: "reemploi", label: "Ils sont repris ou réemployés" },
+      { value: "ne_sais_pas", label: "Je ne sais pas" }
+    ]
   },
   {
     id: 48,
     section: t("questionnaire.questions.sections.endOfLife"),
-    question: t("questionnaire.questions.waste.recyclingRate"),
+    question: "Quel pourcentage de ces produits est recyclé ?",
     type: "number",
     field: "recyclage_fin_vie_pourcent",
-    placeholder: t("questionnaire.questions.placeholders.recyclingRate"),
+    placeholder: "Ex. : 60",
     icon: Recycle,
-    allowNA: true
+    required: true,
+    conditionalOn: { field: "fin_de_vie_produits", value: "recyclage" }
   }
 ];
 };
@@ -620,7 +704,7 @@ interface FormData {
   [key: string]: string | number;
 }
 
-export const CarboScanQuestionnaire: React.FC = () => {
+export const CarboScanQuestionnaire: React.FC<{ publicAccess?: boolean }> = ({ publicAccess = false }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [formData, setFormData] = useState<FormData>({});
   const [isCompleted, setIsCompleted] = useState(false);
@@ -637,7 +721,7 @@ export const CarboScanQuestionnaire: React.FC = () => {
 
   // Filtrer les questions selon le plan de l'utilisateur
   const allQuestions = getTranslatedQuestions(t);
-  const showScope3 = shouldShowScope3(userPlan?.planType || 'essential');
+  const showScope3 = publicAccess || shouldShowScope3(userPlan?.planType || 'essential');
   logger.debug('[CarboScanQuestionnaire] planType=', userPlan?.planType, ' showScope3=', showScope3);
   
   // Questions filtrées selon le plan (exclure les questions Scope 3 pour plan Essential)
@@ -649,11 +733,12 @@ export const CarboScanQuestionnaire: React.FC = () => {
   // Fonction pour vérifier si une question doit être affichée
   const shouldShowQuestion = (question: any) => {
     if (!question.conditionalOn) return true;
-    
-    const conditionalField = question.conditionalOn.field;
-    const conditionalValue = question.conditionalOn.value;
-    
-    return formData[conditionalField] === conditionalValue;
+
+    const { field, value, min } = question.conditionalOn;
+    if (min !== undefined) return Number(formData[field]) > min;
+
+    const actual = formData[field];
+    return Array.isArray(value) ? value.includes(actual) : actual === value;
   };
   
   // Questions visibles après application de la logique conditionnelle
@@ -661,6 +746,7 @@ export const CarboScanQuestionnaire: React.FC = () => {
 
   // Vérifier l'authentification
   useEffect(() => {
+    if (publicAccess) return;
     if (!authLoading && !isAuthenticated) {
       toast({
         title: t("questionnaire.auth.required"),
@@ -670,7 +756,7 @@ export const CarboScanQuestionnaire: React.FC = () => {
       navigate('/auth');
       return;
     }
-  }, [authLoading, isAuthenticated, navigate, toast]);
+  }, [publicAccess, authLoading, isAuthenticated, navigate, toast]);
 
   // Récupérer l'ID utilisateur et charger les données sauvegardées
   useEffect(() => {
@@ -766,7 +852,7 @@ export const CarboScanQuestionnaire: React.FC = () => {
       carburantEmissions = carburantLitres * (emissionFactors.combustibles.essence + emissionFactors.combustibles.diesel) / 2;
     }
 
-    const fluides = ((Number(formData.fluides_recharge_kg) || 0) + (Number(formData.fluides_fuites_kg) || 0)) * emissionFactors.fluides_frigorigenes.r134a;
+    const fluides = (Number(formData.fluides_recharge_kg) || 0) * emissionFactors.fluides_frigorigenes.r134a;
 
     scope1Total = gazNaturel + fioul + charbon + carburantEmissions + fluides;
     
@@ -795,30 +881,52 @@ export const CarboScanQuestionnaire: React.FC = () => {
       const matieres = (Number(formData.matieres_premieres_tonnes) || 0) * emissionFactors.achats.matieres_premieres;
       const biomasse = (Number(formData.biomasse_tonnes) || 0) * 100; // Reporté en Scope 3 avec facteur estimé
 
-      // Déplacements professionnels
-      const distanceMoyenne = Number(formData.distance_moyenne_deplacement) || 200;
-      const deplacementsVoiture = (Number(formData.deplacements_voiture) || 0) * distanceMoyenne * emissionFactors.transports.voiture_moyenne;
-      const deplacementsTrain = (Number(formData.deplacements_train) || 0) * distanceMoyenne * emissionFactors.transports.train;
-      const deplacementsAvion = (Number(formData.deplacements_avion) || 0) * distanceMoyenne * emissionFactors.transports.avion_court;
+      // Déplacements professionnels : kilomètres saisis par mode.
+      // Le fichier de facteurs n'a pas de moyen-courrier : on prend la moyenne
+      // du court-courrier et du long-courrier déjà présents.
+      const deplacementsVoiture = (Number(formData.deplacements_voiture_km) || 0) * emissionFactors.transports.voiture_moyenne;
+      const deplacementsTrain = (Number(formData.deplacements_train_km) || 0) * emissionFactors.transports.train;
+      const avionMoyen = (emissionFactors.transports.avion_court + emissionFactors.transports.avion_long) / 2;
+      const deplacementsAvion =
+        (Number(formData.avion_court_km) || 0) * emissionFactors.transports.avion_court +
+        (Number(formData.avion_moyen_km) || 0) * avionMoyen +
+        (Number(formData.avion_long_km) || 0) * emissionFactors.transports.avion_long;
 
       // Domicile-travail
-      const nbEmployes = Number(formData.nb_employes) || 0;
-      const distanceDomicile = Number(formData.distance_domicile_travail) || 0;
-      const frequenceTrajet = Number(formData.frequence_trajet_semaine) || 5;
-      const transportFactor = formData.transport_domicile_travail === 'voiture' ? emissionFactors.transports.voiture_moyenne : emissionFactors.transports.transport_public;
-      const domicileTravail = nbEmployes * distanceDomicile * 2 * frequenceTrajet * 50 * transportFactor; // 50 semaines par an
+      const nbEmployes = (Number(formData.nb_employes_permanents) || 0) + (Number(formData.nb_employes_temporaires) || 0);
+      const frequenceTrajet = Math.min(7, Math.max(0, Number(formData.frequence_trajet_semaine) || 0));
+      const trajetsAnnuels = 2 * frequenceTrajet * 50;
+      let domicileTravail = 0;
+      if (formData.transport_domicile_travail === 'voiture') {
+        domicileTravail = nbEmployes * (Number(formData.distance_domicile_travail) || 0) * trajetsAnnuels * emissionFactors.transports.voiture_moyenne;
+      } else if (formData.transport_domicile_travail === 'transport_public') {
+        domicileTravail = nbEmployes * (Number(formData.distance_domicile_travail) || 0) * trajetsAnnuels * emissionFactors.transports.transport_public;
+      } else if (formData.transport_domicile_travail === 'mixte') {
+        const partVoiture = Math.min(100, Math.max(0, Number(formData.part_voiture_pourcent) || 0)) / 100;
+        domicileTravail =
+          nbEmployes * partVoiture * (Number(formData.distance_domicile_voiture) || 0) * trajetsAnnuels * emissionFactors.transports.voiture_moyenne +
+          nbEmployes * (1 - partVoiture) * (Number(formData.distance_domicile_transport) || 0) * trajetsAnnuels * emissionFactors.transports.transport_public;
+      }
 
       // Logistique
       const marchandises = Number(formData.marchandises_tonnes) || 0;
       const distanceMarchandises = Number(formData.distance_marchandises) || 0;
-      const logistiqueFactor = formData.transport_logistique === 'maritime' ? emissionFactors.logistique.maritime : emissionFactors.logistique.camion;
+      const logistiqueFactor = formData.transport_logistique === 'maritime'
+        ? emissionFactors.logistique.maritime
+        : formData.transport_logistique === 'camion'
+          ? emissionFactors.logistique.camion
+          : formData.transport_logistique === 'aucun'
+            ? 0
+            : emissionFactors.logistique.autre;
       const logistique = marchandises * distanceMarchandises * logistiqueFactor;
 
       // Déchets
       const dechets = Number(formData.dechets_tonnes) || 0;
-      const dechetsFactor = formData.traitement_dechets === 'recyclage' ? emissionFactors.dechets.recyclage : 
-                           formData.traitement_dechets === 'incineration' ? emissionFactors.dechets.incineration : 
-                           emissionFactors.dechets.decharge;
+      const dechetsFactor = formData.traitement_dechets === 'recyclage' ? emissionFactors.dechets.recyclage :
+                           formData.traitement_dechets === 'incineration' ? emissionFactors.dechets.incineration :
+                           formData.traitement_dechets === 'mixte'
+                             ? (emissionFactors.dechets.recyclage + emissionFactors.dechets.incineration + emissionFactors.dechets.decharge) / 3
+                             : emissionFactors.dechets.decharge;
       const dechetsEmissions = dechets * dechetsFactor;
 
       scope3Total = achats + matieres + biomasse + deplacementsVoiture + deplacementsTrain + deplacementsAvion + domicileTravail + logistique + dechetsEmissions;
@@ -1070,42 +1178,48 @@ export const CarboScanQuestionnaire: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Rapport PDF */}
-          <Card className="bg-gradient-to-r from-primary to-secondary text-primary-foreground">
-            <CardContent className="p-6 text-center">
-              <h3 className="text-xl font-bold mb-4">Obtenez votre rapport détaillé</h3>
-              <p className="mb-4 opacity-90">
-                Téléchargez un rapport professionnel avec votre bilan complet et nos recommandations
-              </p>
-              <EmpreinteProduitReportGenerator
-                emissionsData={{
-                  totalEmissions: emissions.total,
-                  scope1: emissions.scope1,
-                  scope2: emissions.scope2,
-                  scope3: emissions.scope3,
-                  categoryBreakdown: emissions.categories
-                }}
-                companyInfo={{
-                  name: user?.user_metadata?.company || 'Votre Entreprise',
-                  sector: formData.secteur_activite as string || 'Services',
-                  employees: formData.nb_employes,
-                  studiedYear: formData.annee_etude,
-                  revenue: formData.ca_annuel,
-                  size: 'PME'
-                }}
-                onGenerate={() => {
-                  logger.debug('Génération du rapport PDF...');
-                }}
-              />
-            </CardContent>
-          </Card>
+          <div className="text-center">
+            <Button
+              size="lg"
+              onClick={() => {
+                const sectorLabel = [
+                  ["btp", "BTP / Construction"],
+                  ["agroalimentaire", "Agroalimentaire"],
+                  ["industrie_textile", "Industrie textile"],
+                  ["services", "Services"],
+                  ["commerce", "Commerce"],
+                  ["transport", "Transport / Logistique"],
+                  ["industrie", "Industrie"],
+                  ["sante", "Santé"],
+                  ["education", "Éducation"],
+                  ["hotellerie", "Hôtellerie / Tourisme"],
+                  ["autre", "Autre"],
+                ].find(([value]) => value === formData.secteur_activite)?.[1];
+                downloadTesterBilanPdf({
+                  companyName: (formData.nom_entreprise as string) || "Votre organisation",
+                  sector: sectorLabel,
+                  year: formData.annee_etude,
+                  totalKg: emissions.total,
+                  scope1Kg: emissions.scope1,
+                  scope2Kg: emissions.scope2,
+                  scope3Kg: emissions.scope3,
+                  categories: emissions.categories,
+                });
+              }}
+            >
+              Télécharger le rapport PDF
+            </Button>
+            <p className="mt-3 text-sm text-gray-600">
+              Deux pages : total, répartition par scope, postes principaux et recommandations.
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
   // Loader d'authentification
-  if (authLoading) {
+  if (!publicAccess && authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -1117,7 +1231,7 @@ export const CarboScanQuestionnaire: React.FC = () => {
   }
 
   // Redirection si non authentifié
-  if (!isAuthenticated) {
+  if (!publicAccess && !isAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -1138,7 +1252,7 @@ export const CarboScanQuestionnaire: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <Badge variant="outline" className="bg-white">
-              {t("questionnaire.progress.question", { current: currentQuestion + 1, total: questions.length })}
+              {t("questionnaire.progress.question", { current: currentVisibleQuestionIndex, total: visibleQuestionsCount })}
             </Badge>
             <Badge variant="secondary">
               {currentSection}
@@ -1149,7 +1263,9 @@ export const CarboScanQuestionnaire: React.FC = () => {
               {Math.round(progress)}% complété
             </span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <div className="h-3 w-full overflow-hidden rounded-full bg-[#E4EBE8]" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100}>
+            <div className="h-full rounded-full bg-[#00BF72]" style={{ width: `${progress}%` }} />
+          </div>
         </div>
 
         {/* Question */}
@@ -1166,6 +1282,9 @@ export const CarboScanQuestionnaire: React.FC = () => {
             <CardTitle className="text-xl">
               {currentQuestionData.question}
             </CardTitle>
+            {currentQuestionData.help && (
+              <p className="text-sm text-gray-600 pt-2">{currentQuestionData.help}</p>
+            )}
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Input */}
@@ -1195,7 +1314,7 @@ export const CarboScanQuestionnaire: React.FC = () => {
                         className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
                       />
                       <label htmlFor="na-checkbox" className="text-sm text-gray-600">
-                        Non applicable (N/A)
+                        {currentQuestionData.naLabel || "Non concerné"}
                       </label>
                     </div>
                   )}
@@ -1266,7 +1385,7 @@ export const CarboScanQuestionnaire: React.FC = () => {
                 onClick={handleNext}
                 disabled={!isAnswered()}
               >
-                {currentQuestion === questions.length - 1 ? t("questionnaire.actions.finish") : t("questionnaire.actions.next")}
+                {questions.findIndex(q => q.id === currentQuestionData?.id) === questions.length - 1 ? t("questionnaire.actions.finish") : t("questionnaire.actions.next")}
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             </div>

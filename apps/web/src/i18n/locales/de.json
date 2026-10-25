@@ -2974,7 +2974,7 @@
         "name": "Amel Souissi",
         "role": "Gründerin & CEO Archibat | Mitgründerin CarboScan",
         "description": "Kommunikationsfachfrau spezialisiert auf Architektur, Stadtplanung, Bauwesen und Nachhaltigkeit. Sie leitet Projekte, die Medien, ökologische Transformation und bürgerschaftliches Engagement verbinden. Über Archibat fördert sie nachhaltiges Bauen in Tunesien, indem sie ein Netzwerk von Akteuren um Klimafragen und die Transformation der Branchenpraktiken zusammenführt. Ihr besonderes Interesse gilt Innovationsmechanismen, ESG/CSR-Strategien und nachhaltiger Entwicklung.",
-        "image": "/__l5e/assets-v1/5716f564-7bda-45b0-a12a-1807f549156d/Portrait_Amel_Souissi_Talbi_1.png"
+        "image": "/amel-souissi.jpg"
       },
       {
         "name": "Insaf Arfa",
@@ -2986,13 +2986,13 @@
         "name": "Kamel Talbi",
         "role": "Mitgründer CarboScan",
         "description": "Ich begleite Unternehmen bei der Messung, Analyse und Reduktion ihrer CO₂-Bilanz, um wirtschaftliche Leistung und Klimatransition zu vereinen. Seit mehr als acht Jahren helfe ich Organisationen, ihre CO₂-Herausforderungen in strategische Entscheidungen und konkrete Maßnahmen zu verwandeln.",
-        "image": "/__l5e/assets-v1/8f6d43f8-db81-4410-ab7b-2bd5f883e41f/kamel-talbi.png"
+        "image": "/kamel-talbi.jpg"
       },
       {
         "name": "Omar Talbi",
         "role": "Machine Learning Engineer | Mitgründer CarboScan",
         "description": "Machine-Learning-Ingenieur mit solider Ausbildung in Informatik, spezialisiert auf KI und Data Science an der Polytechnique Montréal. Vielfältige Erfahrung in Full-Stack-Entwicklung, DevOps und künstlicher Intelligenz bei Unternehmen wie Intact, DRONE DES CHAMPS und Anuvu. Zertifizierter Google Cloud Professional Data Engineer, Experte für PyTorch, FastAPI und Cloud-Technologien. Leidenschaftlich für die Anwendung von KI auf Umweltherausforderungen und die Entwicklung nachhaltiger technologischer Lösungen.",
-        "image": "/Omar Talbi.png"
+        "image": "/omar-talbi.jpg"
       }
     ],
     "vision": {

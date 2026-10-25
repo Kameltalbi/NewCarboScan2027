@@ -18,16 +18,35 @@ export interface StandardReportFile {
   fallback: number;
 }
 
+export interface StandardReportProgress {
+  percent: number;
+  label: string;
+}
+
 export async function buildStandardReport(
   client: pg.PoolClient,
   orgId: string,
   year: number,
   runId?: string,
+  onProgress?: (progress: StandardReportProgress) => void,
 ): Promise<StandardReportFile> {
+  const report = (percent: number, label: string) => {
+    onProgress?.({ percent: Math.max(0, Math.min(99, Math.round(percent))), label });
+  };
+  report(8, "Lecture de l'inventaire publié…");
   const context = await loadRunContext(client, orgId, year, runId);
+  report(14, "Préparation du dossier…");
   const data = reportDataFromRun(context);
-  const enriched = await enrichReport(data, undefined, { allowNetwork: true });
+  const enriched = await enrichReport(data, undefined, {
+    allowNetwork: true,
+    onProgress: (done, total) => {
+      const ratio = total === 0 ? 1 : done / total;
+      report(14 + ratio * 72, total === 0 ? "Rédaction du rapport…" : `Rédaction ${done} / ${total}`);
+    },
+  });
+  report(90, "Mise en page du PDF…");
   const pdf = await renderPdf(enriched.model);
+  report(98, "Finalisation du fichier…");
   const slug = context.companyName
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")

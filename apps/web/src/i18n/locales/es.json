@@ -2974,7 +2974,7 @@
         "name": "Amel Souissi",
         "role": "Fundadora y CEO Archibat | Cofundadora CarboScan",
         "description": "Profesional de la comunicación especializada en arquitectura, urbanismo, construcción y sostenibilidad. Lidera proyectos que combinan medios, transición ecológica y compromiso ciudadano. A través de Archibat, promueve la construcción sostenible en Túnez, federando una red de actores en torno a los retos climáticos y la transformación de las prácticas del sector. Le interesan especialmente los mecanismos de innovación, las estrategias ESG/RSC y el desarrollo sostenible.",
-        "image": "/__l5e/assets-v1/5716f564-7bda-45b0-a12a-1807f549156d/Portrait_Amel_Souissi_Talbi_1.png"
+        "image": "/amel-souissi.jpg"
       },
       {
         "name": "Insaf Arfa",
@@ -2986,13 +2986,13 @@
         "name": "Kamel Talbi",
         "role": "Cofundador CarboScan",
         "description": "Acompaño a las empresas en la medición, el análisis y la reducción de su huella de carbono para conciliar rendimiento económico y transición climática. Desde hace más de ocho años, ayudo a las organizaciones a transformar sus retos de carbono en decisiones estratégicas y acciones concretas.",
-        "image": "/__l5e/assets-v1/8f6d43f8-db81-4410-ab7b-2bd5f883e41f/kamel-talbi.png"
+        "image": "/kamel-talbi.jpg"
       },
       {
         "name": "Omar Talbi",
         "role": "Ingeniero de Machine Learning | Cofundador CarboScan",
         "description": "Ingeniero en aprendizaje automático con una sólida formación en informática especializada en IA y ciencia de datos de Polytechnique Montréal. Experiencia diversificada en desarrollo full-stack, DevOps e inteligencia artificial en empresas como Intact, DRONE DES CHAMPS y Anuvu. Certificado Google Cloud Professional Data Engineer, experto en PyTorch, FastAPI y tecnologías cloud. Apasionado por la aplicación de la IA a los retos ambientales y la creación de soluciones tecnológicas sostenibles.",
-        "image": "/Omar Talbi.png"
+        "image": "/omar-talbi.jpg"
       }
     ],
     "vision": {

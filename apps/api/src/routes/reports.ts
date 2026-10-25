@@ -1,3 +1,4 @@
+import type { OutgoingHttpHeaders } from "node:http";
 import type { FastifyInstance } from "fastify";
 import {
   buildFactualReportCommentary,
@@ -219,25 +220,51 @@ export async function registerReportRoutes(app: FastifyInstance) {
         return reply.code(400).send({ error: parsed.error.flatten() });
       }
       const orgId = request.user!.organizationId!;
+      reply.hijack();
+      const headers: OutgoingHttpHeaders = {
+        "Content-Type": "text/event-stream; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        "X-Accel-Buffering": "no",
+        Connection: "keep-alive",
+      };
+      for (const [key, value] of Object.entries(reply.getHeaders())) {
+        if (value != null && key.toLowerCase().startsWith("access-control-")) headers[key] = value;
+      }
+      reply.raw.writeHead(200, headers);
+      const send = (payload: unknown) => {
+        const data = JSON.stringify(payload);
+        const padding = " ".repeat(Math.max(0, 8192 - data.length));
+        reply.raw.write(`data: ${data}${padding}\n\n`);
+      };
+      const sendProgress = (progress: { percent: number; label: string }) => {
+        send({ type: "progress", ...progress });
+      };
       try {
+        sendProgress({ percent: 4, label: "Connexion au serveur…" });
         const file = await withOrgClient(orgId, (client) =>
-          buildStandardReport(client, orgId, parsed.data.year, parsed.data.runId),
+          buildStandardReport(client, orgId, parsed.data.year, parsed.data.runId, sendProgress),
         );
-        return reply
-          .header("Content-Type", "application/pdf")
-          .header("Content-Disposition", `attachment; filename="${file.filename}"`)
-          .header("X-Report-Generated", String(file.generated))
-          .header("X-Report-Rejected", String(file.rejected))
-          .header("X-Report-Fallback", String(file.fallback))
-          .send(file.pdf);
+        send({
+          type: "result",
+          filename: file.filename,
+          pdf: file.pdf.toString("base64"),
+          generated: file.generated,
+          rejected: file.rejected,
+          fallback: file.fallback,
+        });
       } catch (err) {
         request.log.error({ err }, "standard report failed");
         const message = err instanceof Error ? err.message : "Report generation failed";
-        const missing = message.includes("Aucun inventaire publié");
-        return reply.code(missing ? 404 : 400).send({
-          error: clientSafeError(err, "Report generation failed"),
+        send({
+          type: "error",
+          message: message.includes("Aucun inventaire publié")
+            ? message
+            : clientSafeError(err, "Report generation failed"),
         });
+      } finally {
+        reply.raw.end();
       }
+      return;
     },
   );
 }

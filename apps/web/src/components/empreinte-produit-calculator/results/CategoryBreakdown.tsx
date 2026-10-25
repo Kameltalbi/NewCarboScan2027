@@ -25,7 +25,7 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ categories
 
   const chartData = sorted.map((cat) => ({
     name: cat.name,
-    value: Math.round(cat.value),
+    value: cat.value,
     scope: cat.scope,
   }));
 

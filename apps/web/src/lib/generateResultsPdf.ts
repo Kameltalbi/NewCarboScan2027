@@ -4,6 +4,7 @@ import { EmissionsResult, IntensityMetrics } from "@/types/empreinteProduit";
 // ── Helpers ──
 const fmt = (n: number) => Math.round(n).toLocaleString("fr-FR");
 const fmtDec = (n: number) => n < 10 ? n.toFixed(2) : Math.round(n).toLocaleString("fr-FR");
+const show = (n: number) => (n < 10 ? fmtDec(n) : fmt(n));
 const pct = (v: number, t: number) => (t > 0 ? ((v / t) * 100).toFixed(1) : "0");
 
 // ── Colors ──
@@ -196,7 +197,7 @@ export async function generateResultsPdf(
   txt(doc, C.teal);
   doc.setFontSize(42);
   doc.setFont("helvetica", "bold");
-  doc.text(fmt(total), W / 2, boxY + 37, { align: "center" });
+  doc.text(show(total), W / 2, boxY + 37, { align: "center" });
 
   txt(doc, C.muted);
   doc.setFontSize(13);
@@ -280,7 +281,7 @@ export async function generateResultsPdf(
   txt(doc, C.navy);
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text(fmt(total), donutCx, donutCy - 1, { align: "center" });
+  doc.text(show(total), donutCx, donutCy - 1, { align: "center" });
   txt(doc, C.muted);
   doc.setFontSize(7);
   doc.setFont("helvetica", "normal");

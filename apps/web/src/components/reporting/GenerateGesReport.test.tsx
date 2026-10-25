@@ -45,9 +45,45 @@ describe("GenerateGesReport", () => {
     render(<GenerateGesReport />);
     fireEvent.click(await screen.findByRole("button", { name: "Générer" }));
     expect(await screen.findByText("CarboScan_Banque-Atlas_2025_Rapport-standard.pdf")).toBeInTheDocument();
-    expect(downloadStandardReport).toHaveBeenCalledWith(2025);
+    expect(downloadStandardReport).toHaveBeenCalledWith(2025, expect.any(Function));
     expect(calculate).not.toHaveBeenCalled();
     expect(document.querySelector("object")?.getAttribute("data")).toBe("blob:ges-report");
+  });
+
+  it("affiche la progression du PDF", async () => {
+    downloadStandardReport.mockImplementation((_year: number, onProgress?: (event: { percent: number; label: string }) => void) => {
+      onProgress?.({ percent: 42, label: "Rédaction 3 / 14" });
+      return new Promise(() => undefined);
+    });
+    render(<GenerateGesReport />);
+    fireEvent.click(await screen.findByRole("button", { name: "Générer" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("Rédaction 3 / 14");
+    expect(dialog).toHaveTextContent("42 %");
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "42");
+  });
+
+  it("affiche la progression pendant le calcul Excel", async () => {
+    calculate.mockImplementation(() => new Promise(() => undefined));
+    render(<GenerateGesReport />);
+    fireEvent.click(await screen.findByRole("button", { name: /Excel/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Générer" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("Excel");
+    expect(dialog).toHaveTextContent("Calcul du bilan");
+    expect(dialog).toHaveTextContent("%");
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
+  });
+
+  it("affiche la progression pendant le calcul PowerPoint", async () => {
+    calculate.mockImplementation(() => new Promise(() => undefined));
+    render(<GenerateGesReport />);
+    fireEvent.click(await screen.findByRole("button", { name: /PowerPoint/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Générer" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("PowerPoint");
+    expect(dialog).toHaveTextContent("Calcul du bilan");
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 
   it("affiche l'erreur au lieu d'une page vide", async () => {

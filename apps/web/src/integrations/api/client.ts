@@ -269,6 +269,61 @@ function buildFactorCatalogQuery(
   return qs ? `?${qs}` : "";
 }
 
+async function readStandardReportStream(
+  res: Response,
+  year: number,
+  onProgress?: (progress: { percent: number; label: string }) => void,
+) {
+  if (!res.body) throw new Error("Le serveur n'a pas renvoyé le rapport.");
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let result: { filename?: string; pdf?: string } | null = null;
+  const consume = (chunk: string) => {
+    const frames = chunk.split("\n\n");
+    buffer = frames.pop() ?? "";
+    for (const frame of frames) {
+      const data = frame
+        .split("\n")
+        .filter((line) => line.startsWith("data:"))
+        .map((line) => line.slice(5).trim())
+        .join("");
+      if (!data) continue;
+      const event = JSON.parse(data) as {
+        type?: string;
+        percent?: number;
+        label?: string;
+        message?: string;
+        filename?: string;
+        pdf?: string;
+      };
+      if (event.type === "progress" && typeof event.percent === "number" && event.label) {
+        onProgress?.({ percent: event.percent, label: event.label });
+      } else if (event.type === "error") {
+        throw new Error(event.message || "Échec de génération");
+      } else if (event.type === "result") {
+        result = event;
+      }
+    }
+  };
+  while (true) {
+    const { done, value } = await reader.read();
+    buffer += decoder.decode(value ?? new Uint8Array(), { stream: !done });
+    consume(buffer);
+    if (done) break;
+  }
+  if (buffer.trim()) consume(`${buffer}\n\n`);
+  if (!result?.pdf) throw new Error("Le fichier généré est vide.");
+  const binary = atob(result.pdf);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return {
+    bytes,
+    filename: result.filename || `CarboScan_${year}_Rapport-standard.pdf`,
+    mime: "application/pdf",
+  };
+}
+
 export const api = {
   health: () => request<{ ok: boolean }>("/health", {}, { auth: false }),
 
@@ -611,13 +666,17 @@ export const api = {
       body: JSON.stringify({ runId, title }),
     }),
 
-  downloadStandardReport: async (year: number) => {
+  downloadStandardReport: async (
+    year: number,
+    onProgress?: (progress: { percent: number; label: string }) => void,
+  ) => {
     const headers = new Headers();
     const token = getStoredToken();
     const orgId = getStoredOrgId();
     if (token) headers.set("Authorization", `Bearer ${token}`);
     if (orgId) headers.set("X-Organization-Id", orgId);
     headers.set("Content-Type", "application/json");
+    headers.set("Accept", "text/event-stream");
     const res = await fetch(`${API_URL}/v1/reports/standard`, {
       method: "POST",
       headers,
@@ -629,14 +688,18 @@ export const api = {
       const message = typeof body?.error === "string" ? body.error : `HTTP ${res.status}`;
       throw new Error(message);
     }
-    const bytes = new Uint8Array(await res.arrayBuffer());
-    const disposition = res.headers.get("Content-Disposition") ?? "";
-    const match = disposition.match(/filename="([^"]+)"/);
-    return {
-      bytes,
-      filename: match?.[1] ?? `CarboScan_${year}_Rapport-standard.pdf`,
-      mime: "application/pdf",
-    };
+    const contentType = res.headers.get("Content-Type") ?? "";
+    if (contentType.includes("application/pdf")) {
+      const bytes = new Uint8Array(await res.arrayBuffer());
+      const disposition = res.headers.get("Content-Disposition") ?? "";
+      const match = disposition.match(/filename="([^"]+)"/);
+      return {
+        bytes,
+        filename: match?.[1] ?? `CarboScan_${year}_Rapport-standard.pdf`,
+        mime: "application/pdf",
+      };
+    }
+    return readStandardReportStream(res, year, onProgress);
   },
 
   listFunctions: () => request("/v1/functions"),

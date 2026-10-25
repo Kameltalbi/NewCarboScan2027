@@ -2807,7 +2807,7 @@
         "name": "Amel Souissi",
         "role": "Fondatrice & CEO Archibat | Co-fondatrice CarboScan",
         "description": "Professionnelle de la communication spécialisée dans les domaines de l'architecture, de l'urbanisme, du bâtiment et de la durabilité, je pilote des projets mêlant média, transition écologique et engagement citoyen. À travers Archibat, j'œuvre à la promotion de la construction durable en Tunisie, en fédérant un réseau d'acteurs autour des enjeux climatiques et de la transformation des pratiques du secteur. Je m'intéresse particulièrement aux mécanismes d'innovation, aux stratégies ESG/RSE et au développement durable.",
-        "image": "/__l5e/assets-v1/5716f564-7bda-45b0-a12a-1807f549156d/Portrait_Amel_Souissi_Talbi_1.png"
+        "image": "/amel-souissi.jpg"
       },
       {
         "name": "Insaf Arfa",
@@ -2819,13 +2819,13 @@
         "name": "Kamel Talbi",
         "role": "Co-fondateur CarboScan",
         "description": "J'accompagne les entreprises dans la mesure, l'analyse et la réduction de leur empreinte carbone afin de concilier performance économique et transition climatique. Depuis plus de huit ans, j'aide les organisations à transformer leurs enjeux carbone en décisions stratégiques et en actions concrètes.",
-        "image": "/__l5e/assets-v1/8f6d43f8-db81-4410-ab7b-2bd5f883e41f/kamel-talbi.png"
+        "image": "/kamel-talbi.jpg"
       },
       {
         "name": "Omar Talbi",
         "role": "Machine Learning Engineer | Co-fondateur CarboScan",
         "description": "Ingénieur en apprentissage automatique avec une solide formation en informatique spécialisée en IA et science des données de Polytechnique Montréal. Expérience diversifiée en développement full-stack, DevOps et intelligence artificielle chez des entreprises comme Intact, DRONE DES CHAMPS et Anuvu. Certifié Google Cloud Professional Data Engineer, expert en PyTorch, FastAPI et technologies cloud. Passionné par l'application de l'IA aux défis environnementaux et la création de solutions technologiques durables.",
-        "image": "/Omar Talbi.png"
+        "image": "/omar-talbi.jpg"
       }
     ],
     "vision": {

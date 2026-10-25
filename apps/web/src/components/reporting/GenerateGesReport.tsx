@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Download, FileSpreadsheet, FileText, Loader2, Presentation, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useOrganizationData } from "@/hooks/useOrganizationData";
@@ -51,6 +52,12 @@ interface ReportPreview {
   format: ReportFormat;
 }
 
+interface ReportProgress {
+  percent: number;
+  label: string;
+  format: ReportFormat;
+}
+
 export const GenerateGesReport: React.FC = () => {
   const { organizationId } = useOrganizationId();
   const { organization } = useOrganizationData();
@@ -62,7 +69,7 @@ export const GenerateGesReport: React.FC = () => {
   const [format, setFormat] = useState<ReportFormat>("pdf");
   const [includeFinanced, setIncludeFinanced] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState<string | null>(null);
+  const [progress, setProgress] = useState<ReportProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<ReportPreview | null>(null);
   const previewUrl = useRef<string | null>(null);
@@ -101,39 +108,50 @@ export const GenerateGesReport: React.FC = () => {
       toast({ title: "Choisissez un exercice", variant: "destructive" });
       return;
     }
+    const selected = format;
+    const advance = (percent: number, label: string) => {
+      setProgress({ percent: Math.max(0, Math.min(100, Math.round(percent))), label, format: selected });
+    };
     setBusy(true);
     setError(null);
+    advance(2, "Préparation…");
     try {
-      if (format === "pdf") {
-        setStatus("Rédaction du rapport à partir de l'inventaire publié…");
-        const file = await api.downloadStandardReport(year);
+      if (selected === "pdf") {
+        const file = await api.downloadStandardReport(year, (event) => advance(event.percent, event.label));
         if (file.bytes.byteLength < 8) throw new Error("Le fichier généré est vide.");
+        advance(100, "Rapport prêt");
+        await pause(350);
+        setProgress(null);
         const url = reportObjectUrl(file.bytes, file.mime);
-        openPreview({ url, filename: file.filename, mime: file.mime, format });
-        setStatus(null);
+        openPreview({ url, filename: file.filename, mime: file.mime, format: selected });
         toast({ title: "Rapport ouvert", description: file.filename });
         return;
       }
-      setStatus("Calcul du bilan…");
+      advance(12, "Calcul du bilan…");
       const current = await BilanCarboneCalculator.calculate(organizationId, `${year}-01-01`, `${year}-12-31`);
       const site = sites.find((item) => item.id === perimeter);
       const bilan = applySite(current, perimeter === "all" ? null : perimeter);
-      setStatus("Lecture de l'historique…");
+      const siteId = perimeter === "all" ? null : perimeter;
+      advance(40, "Lecture de l'historique…");
       const history = await loadHistory(
         organizationId,
         year,
         years.allowedYears,
-        perimeter === "all" ? null : perimeter,
+        siteId,
         Boolean(organization?.financed_emissions_enabled),
+        (done, total) => {
+          advance(40 + (total === 0 ? 32 : (done / total) * 32), total === 0 ? "Lecture de l'historique…" : `Historique ${done} / ${total}`);
+        },
       );
-      setStatus(financialInstitution && includeFinanced ? "Lecture des émissions financées…" : "Mise en page du rapport…");
-      const financedLines = financialInstitution && includeFinanced ? await loadFinancedLines() : [];
+      const withFinanced = financialInstitution && includeFinanced;
+      advance(76, withFinanced ? "Lecture des émissions financées…" : "Préparation de la mise en page…");
+      const financedLines = withFinanced ? await loadFinancedLines() : [];
       const dataset = buildGesReportDataset({
         organizationName: organization?.name || "Organisation",
         year,
         perimeterLabel: site ? site.name : "Périmètre consolidé",
         financialInstitution,
-        includeFinancedEmissions: financialInstitution && includeFinanced,
+        includeFinancedEmissions: withFinanced,
         currency: organization?.currency,
         sector: organization?.sector,
         employees: organization?.employees,
@@ -142,20 +160,22 @@ export const GenerateGesReport: React.FC = () => {
         history,
         financedLines,
       });
-      setStatus("Mise en page du rapport…");
-      const file = await renderGesReport(dataset, format);
+      advance(88, "Mise en page du rapport…");
+      const file = await renderGesReport(dataset, selected);
       if (file.bytes.byteLength < 8) {
         throw new Error("Le fichier généré est vide.");
       }
+      advance(100, "Rapport prêt");
+      await pause(350);
+      setProgress(null);
       const url = reportObjectUrl(file.bytes, file.mime);
-      openPreview({ url, filename: file.filename, mime: file.mime, format });
-      setStatus(null);
-      if (format !== "pdf") downloadGesReport(file.bytes, file.filename, file.mime);
-      toast({ title: format === "pdf" ? "Rapport ouvert" : "Rapport prêt", description: file.filename });
+      openPreview({ url, filename: file.filename, mime: file.mime, format: selected });
+      if (selected !== "pdf") downloadGesReport(file.bytes, file.filename, file.mime);
+      toast({ title: "Rapport prêt", description: file.filename });
     } catch (failure: unknown) {
       const message = failure instanceof Error ? failure.message : "Échec de génération";
+      setProgress(null);
       setError(message);
-      setStatus(null);
       toast({ title: "Le rapport n'a pas pu être généré", description: message, variant: "destructive" });
     } finally {
       setBusy(false);
@@ -219,9 +239,29 @@ export const GenerateGesReport: React.FC = () => {
         </label>
         <Button onClick={() => void generate()} disabled={busy || !year || !organizationId}>
           {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          {busy ? status || "Génération…" : "Générer"}
+          {busy ? "Génération…" : "Générer"}
         </Button>
       </div>
+
+      {progress && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-900/45 p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="report-progress-title"
+            aria-describedby="report-progress-step"
+            className="w-full max-w-md rounded-2xl border bg-white p-6 shadow-2xl"
+          >
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {FORMATS.find((item) => item.id === progress.format)?.title}
+            </p>
+            <h3 id="report-progress-title" className="mt-1 text-lg font-semibold">Génération en cours</h3>
+            <p id="report-progress-step" className="mt-4 text-sm text-slate-700">{progress.label}</p>
+            <Progress value={progress.percent} className="mt-3 h-2" aria-label="Avancement de la génération" />
+            <p className="mt-2 text-right text-sm font-semibold tabular-nums">{progress.percent} %</p>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
@@ -309,33 +349,44 @@ async function loadHistory(
   allowedYears: number[],
   siteId: string | null,
   financialInstitution: boolean,
+  onStep?: (done: number, total: number) => void,
 ): Promise<ReportHistoryPoint[]> {
-  const years = [...new Set(allowedYears.filter((item) => item <= year))].sort((a, b) => a - b).slice(-4);
+  const historyYears = [...new Set(allowedYears.filter((item) => item <= year))].sort((a, b) => a - b).slice(-4);
+  const pending = historyYears.filter((item) => item !== year);
   const points: ReportHistoryPoint[] = [];
-  for (const item of years) {
-    if (item === year) continue;
+  onStep?.(0, pending.length);
+  for (const [index, item] of pending.entries()) {
     try {
       const bilan = applySite(
         await BilanCarboneCalculator.calculate(organizationId, `${item}-01-01`, `${item}-12-31`),
         siteId,
       );
-      if (financialInstitution && !scope3VentilationSufficient(bilan)) continue;
-      const dataset = buildGesReportDataset({
-        organizationName: "",
-        year: item,
-        perimeterLabel: "",
-        financialInstitution,
-        includeFinancedEmissions: false,
-        currency: "EUR",
-        bilan,
-      });
-      if (dataset.operational.totalT == null) continue;
-      points.push({ year: item, operationalT: dataset.operational.totalT });
+      if (financialInstitution && !scope3VentilationSufficient(bilan)) {
+        // Un scope 3 trop agrégé ne fournit pas de point de comparaison.
+      } else {
+        const dataset = buildGesReportDataset({
+          organizationName: "",
+          year: item,
+          perimeterLabel: "",
+          financialInstitution,
+          includeFinancedEmissions: false,
+          currency: "EUR",
+          bilan,
+        });
+        if (dataset.operational.totalT != null) {
+          points.push({ year: item, operationalT: dataset.operational.totalT });
+        }
+      }
     } catch {
       // Un exercice sans bilan ne bloque pas l'export.
     }
+    onStep?.(index + 1, pending.length);
   }
   return points;
+}
+
+function pause(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function applySite(bilan: BilanCarboneResult, siteId: string | null): BilanLike {

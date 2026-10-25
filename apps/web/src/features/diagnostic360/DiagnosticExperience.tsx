@@ -411,7 +411,7 @@ export function DiagnosticExperience({ language = "fr" }: { language?: string })
       {phase === "invalid" && (
         <section className="mx-auto max-w-xl rounded-2xl border border-[#E4EBE7] bg-white p-8">
           <p role="alert" className="text-[#073D30]">{text.invalid}</p>
-          <button type="button" className={primaryBtn} onClick={() => { clearResume(); setPhase("intro"); setError(null); }}>
+          <button type="button" className={`${primaryBtn} mt-6`} onClick={() => { clearResume(); setPhase("intro"); setError(null); }}>
             {text.restart}
           </button>
         </section>
@@ -490,8 +490,8 @@ export function DiagnosticExperience({ language = "fr" }: { language?: string })
   );
 }
 
-const primaryBtn = "mt-6 inline-flex h-12 items-center justify-center rounded-[4px] bg-[#075C43] px-6 text-[15px] font-semibold text-white hover:bg-[#054C37] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C43] disabled:opacity-60";
-const secondaryBtn = "inline-flex h-12 items-center justify-center rounded-[4px] border border-[#075C43] px-6 text-[15px] font-semibold text-[#075C43] hover:bg-[#E8F4EE] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C43]";
+const primaryBtn = "inline-flex h-12 items-center justify-center rounded-[4px] border border-transparent bg-[#075C43] px-6 text-[15px] font-semibold text-white hover:bg-[#054C37] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C43] disabled:opacity-60";
+const secondaryBtn = "inline-flex h-12 items-center justify-center rounded-[4px] border border-[#075C43] bg-white px-6 text-[15px] font-semibold text-[#075C43] hover:bg-[#E8F4EE] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C43] disabled:opacity-60";
 
 function Intro({
   text,
@@ -520,7 +520,7 @@ function Intro({
       </ul>
       <p className="mt-8 max-w-2xl text-sm leading-relaxed text-[#52615C]">{text.disclaimer}</p>
       {error && <p role="alert" className="mt-4 text-sm text-[#8A3B2C]">{error}</p>}
-      <button type="button" className={primaryBtn} onClick={onStart} disabled={saving}>
+      <button type="button" className={`${primaryBtn} mt-6`} onClick={onStart} disabled={saving}>
         {text.start}
       </button>
     </section>
@@ -618,11 +618,11 @@ function QuestionStep(props: {
           </button>
         )}
         {props.error && <p role="alert" className="mt-4 text-sm text-[#8A3B2C]">{props.error}</p>}
-        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
+        <div className="mt-8 flex flex-col-reverse items-start gap-3 sm:flex-row sm:items-center">
           <button type="button" className={secondaryBtn} onClick={props.onPrevious} disabled={props.isFirst}>
             {text.previous}
           </button>
-          <button type="button" className={primaryBtn + " mt-0"} onClick={props.onContinue} disabled={props.saveState === "saving"}>
+          <button type="button" className={primaryBtn} onClick={props.onContinue} disabled={props.saveState === "saving"}>
             {props.isLast ? text.see : text.next}
           </button>
         </div>
@@ -768,7 +768,7 @@ function Result({
         })}
       </ol>
       {primary && primaryLink && (
-        <button type="button" className={primaryBtn} onClick={() => onCta(primaryLink.href, primary.module)}>
+        <button type="button" className={`${primaryBtn} mt-6`} onClick={() => onCta(primaryLink.href, primary.module)}>
           {primaryLink.label}
         </button>
       )}
