@@ -155,7 +155,6 @@ const CbamVerifierPage = () => {
         </div>}
       </section>
       <section className="mt-12" aria-labelledby="verifier-faq"><h2 id="verifier-faq" className="text-2xl font-bold">{c.ui.faqTitle}</h2><div className="mt-6 space-y-6">{c.faqs.map(faq => <article key={faq.question}><h3 className="text-lg font-semibold">{faq.question}</h3><p className="mt-2 leading-relaxed text-muted-foreground">{faq.answer}</p></article>)}</div></section>
-      <p className="mt-8 text-sm"><a className="underline text-primary" href={c.customs.source} target="_blank" rel="noopener noreferrer">{c.ui.sourceLabel}</a></p>
     </div>
   </SolutionLandingShell>;
 };
