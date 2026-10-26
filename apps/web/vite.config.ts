@@ -80,10 +80,12 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        navigateFallback: "/index.html",
+        navigateFallback: "/spa.html",
+        navigateFallbackAllowlist: [/^\/(app|superadmin|admin|auth|onboarding|checkout|payment)(\/|$)/],
         // Les grandes photos publiques restent disponibles en ligne mais ne
         // doivent pas gonfler le cache d'installation initial.
-        globPatterns: ["**/*.{js,css,html,ico,svg,webp,woff2}"],
+        globPatterns: ["**/*.{js,css,ico,svg,webp,woff2}"],
+        additionalManifestEntries: [{ url: "/spa.html", revision: new Date().toISOString() }],
         cleanupOutdatedCaches: true,
         skipWaiting: true,
         clientsClaim: true,
@@ -111,6 +113,7 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@cbam-verifier": path.resolve(__dirname, "../../packages/carbon-engine/src/cbam-verifier/index.ts"),
     },
   },
   // Optimize dependencies

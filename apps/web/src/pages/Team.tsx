@@ -1,4 +1,5 @@
 import React from "react";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { MainHeader } from "@/components/MainHeader";
 import { NewFooter } from "@/components/NewFooter";
 import { useTranslation } from "react-i18next";
@@ -12,6 +13,7 @@ const Team = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead path="/team" jsonLd={{ '@context': 'https://schema.org', '@type': 'Person', name: 'Kamel Talbi', jobTitle: 'Fondateur de CarboScan', sameAs: ['https://www.linkedin.com/in/kamel-talbi-kt-consulting/'], url: 'https://carboscan.io/team', worksFor: { '@type': 'Organization', name: 'CarboScan', url: 'https://carboscan.io' } }} />
       <MainHeader />
       
       <main className="pt-20">
@@ -46,6 +48,7 @@ const Team = () => {
                         <div className="w-48 h-48 rounded-full overflow-hidden shadow-lg border-4 border-white">
                           <img
                             src={member.image}
+                            width={192} height={192} loading="lazy"
                             alt={member.name}
                             className="w-full h-full object-cover object-top"
 
@@ -69,6 +72,7 @@ const Team = () => {
                         <p className="text-muted-foreground leading-relaxed">
                           {member.description}
                         </p>
+                        {member.name === 'Kamel Talbi' && <a className="inline-block mt-4 text-primary underline" href="https://www.linkedin.com/in/kamel-talbi-kt-consulting/" target="_blank" rel="noopener noreferrer">Profil LinkedIn de Kamel Talbi</a>}
                       </div>
                     </div>
                   </div>

@@ -1,0 +1,15 @@
+{
+  "status": 200,
+  "faqCount": 12,
+  "exactFaqSchemaParity": true,
+  "rawHtmlVerified": true,
+  "desktopWidth": 1440,
+  "mobileWidth": 390,
+  "horizontalOverflow": false,
+  "analyticsEvents": [
+    "cbam_calculator_click",
+    "cbam_expert_click",
+    "cbam_whatsapp_click"
+  ],
+  "productionDeployed": false
+}

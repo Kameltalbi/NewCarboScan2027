@@ -1,3 +1,4 @@
+import { SEOHead } from "@/components/seo/SEOHead";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -13,6 +14,7 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <SEOHead path={location.pathname} title="Page introuvable | CarboScan" description="Cette page est introuvable. Retrouvez les solutions carbone de CarboScan depuis l’accueil." noindex />
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-4">404</h1>
         <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>

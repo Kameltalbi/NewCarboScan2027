@@ -11,7 +11,8 @@ const ROOT = path.resolve(__dirname, "..");
 const SITE_URL = "https://carboscan.io";
 
 /** All publicly indexable marketing / SEO pages */
-const PUBLIC_SITEMAP_ROUTES = [
+export const PUBLIC_SITEMAP_ROUTES = [
+  { path: "/verificateur-cbam", changefreq: "monthly", priority: 0.9 },
   { path: "/", changefreq: "weekly", priority: 1.0 },
   { path: "/about", changefreq: "monthly", priority: 0.8 },
   { path: "/team", changefreq: "monthly", priority: 0.6 },
@@ -54,7 +55,6 @@ const PUBLIC_SITEMAP_ROUTES = [
   { path: "/carbo-pro", changefreq: "monthly", priority: 0.5 },
   { path: "/carbo-omnibus", changefreq: "monthly", priority: 0.5 },
   { path: "/premium", changefreq: "monthly", priority: 0.5 },
-  { path: "/calculateur-carbone", changefreq: "monthly", priority: 0.7 },
   { path: "/empreinte-produit-calculator", changefreq: "monthly", priority: 0.6 },
   { path: "/cbam-calculator", changefreq: "monthly", priority: 0.6 },
   { path: "/simulateur-economique", changefreq: "monthly", priority: 0.5 },
@@ -102,19 +102,16 @@ ${urls}
 
 export function writeSeoFiles(outDir) {
   fs.mkdirSync(outDir, { recursive: true });
-  const lastmod = new Date().toISOString().slice(0, 10);
+  const lastmod = process.env.SEO_LASTMOD || new Date().toISOString().slice(0, 10);
   fs.writeFileSync(path.join(outDir, "sitemap.xml"), buildSitemapXml(lastmod), "utf8");
   fs.writeFileSync(path.join(outDir, "robots.txt"), ROBOTS_TXT, "utf8");
 }
 
-/** Vite plugin: write sitemap.xml + robots.txt into public/ and dist/. */
+/** Vite plugin: seed SEO files into dist; prerender finalizes the sitemap. */
 export function seoStaticFilesPlugin() {
-  const publicDir = path.join(ROOT, "public");
   return {
     name: "carboscan-seo-static-files",
-    buildStart() {
-      writeSeoFiles(publicDir);
-    },
+
     closeBundle() {
       const distDir = path.join(ROOT, "dist");
       if (fs.existsSync(distDir)) {
@@ -124,4 +121,4 @@ export function seoStaticFilesPlugin() {
   };
 }
 
-writeSeoFiles(path.join(ROOT, "public"));
+if (process.argv[1] === fileURLToPath(import.meta.url)) writeSeoFiles(path.join(ROOT, "public"));

@@ -1,0 +1,127 @@
+{
+  "rawHtml": true,
+  "faqCount": 4,
+  "questionnaire": [
+    {
+      "family": "steel",
+      "threshold": "yes",
+      "code": null,
+      "verdict": "concerned",
+      "score": 0,
+      "shownQuestions": 7
+    },
+    {
+      "family": "steel",
+      "threshold": "yes",
+      "code": null,
+      "verdict": "concerned",
+      "score": 0,
+      "shownQuestions": 7
+    },
+    {
+      "family": "cement",
+      "threshold": "unknown",
+      "code": null,
+      "verdict": "probable",
+      "score": 0,
+      "shownQuestions": 7
+    },
+    {
+      "family": "electricity",
+      "code": null,
+      "verdict": "concerned",
+      "score": 0,
+      "shownQuestions": 6
+    },
+    {
+      "family": "other",
+      "threshold": "yes",
+      "code": null,
+      "verdict": "not_direct",
+      "score": 0,
+      "shownQuestions": 7
+    },
+    {
+      "family": "steel",
+      "threshold": "yes",
+      "code": "7318",
+      "verdict": "concerned",
+      "score": 0,
+      "shownQuestions": 7
+    },
+    {
+      "family": "steel",
+      "threshold": "yes",
+      "code": null,
+      "verdict": "concerned",
+      "score": 100,
+      "shownQuestions": 7
+    }
+  ],
+  "promotions": {
+    "placements": [
+      "header",
+      "banner",
+      "section",
+      "slideout"
+    ],
+    "slideoutDoesNotCoverContent": true,
+    "dismissalDays": 30,
+    "expiredDismissalReappears": true,
+    "bannerHeaderOffset": {
+      "open": 40,
+      "closed": 0,
+      "dismissedBeforeHydration": 0
+    },
+    "routeExclusionsVerified": true,
+    "noMobileSlideout": true
+  },
+  "finalForm": {
+    "ordinateur": {
+      "consentInitiallyUnchecked": true,
+      "submitted": true,
+      "noPreFormPersistence": true,
+      "noHorizontalOverflow": true
+    },
+    "mobile": {
+      "consentInitiallyUnchecked": true,
+      "submitted": true,
+      "noPreFormPersistence": true,
+      "noHorizontalOverflow": true
+    }
+  },
+  "analytics": {
+    "ordinateur": [
+      "cbam_verifier_started",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_result_viewed",
+      "cbam_verifier_lead_submitted"
+    ],
+    "mobile": [
+      "cbam_verifier_started",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_question_validated",
+      "cbam_verifier_result_viewed",
+      "cbam_verifier_lead_submitted"
+    ],
+    "resultCtas": [
+      "cbam_verifier_whatsapp_click",
+      "cbam_verifier_demo_click"
+    ],
+    "abandonmentQuestion": "family"
+  },
+  "productionDeployed": false,
+  "emailDelivery": "Transport simulated; example emails only",
+  "database": "In-memory repository; migration not applied"
+}

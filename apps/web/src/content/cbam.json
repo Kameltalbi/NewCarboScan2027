@@ -1,0 +1,173 @@
+{
+  "seo": {
+    "title": "CBAM Tunisie et Maroc : guide de conformité des exportateurs",
+    "description": "Exportateurs vers l’UE : qui est concerné par le CBAM, calendrier, données à fournir à vos clients européens. Estimez votre coût carbone.",
+    "h1": "CBAM : ce que les exportateurs tunisiens doivent préparer dès maintenant",
+    "badge": "En vigueur depuis le 1er janvier 2026",
+    "updated": "26 octobre 2026"
+  },
+  "blocks": {
+    "1": {
+      "title": "En-tête",
+      "paragraphs": [
+        "Badge : En vigueur depuis le 1er janvier 2026",
+        "H1 : CBAM : ce que les exportateurs tunisiens doivent préparer dès maintenant",
+        "Introduction : Depuis le 1er janvier 2026, le mécanisme d’ajustement carbone aux frontières de l’Union européenne (CBAM, ou MACF) fait payer aux importateurs européens le carbone contenu dans certains produits. Pour vous, exportateur, cela change une chose essentielle : vos clients européens vont exiger des données d’émissions fiables sur ce que vous leur vendez. Ceux qui pourront les fournir garderont leurs marchés.",
+        "Boutons : Estimer mon coût CBAM · Parler à un expert"
+      ]
+    },
+    "2": {
+      "title": "Le CBAM en bref",
+      "paragraphs": [
+        "Le CBAM applique aux produits importés le même prix du carbone que celui payé par les industriels européens. L’importateur déclare chaque année les émissions contenues dans les marchandises achetées hors de l’UE, puis achète des certificats CBAM pour les couvrir. Le coût dépend donc directement des émissions de votre production : plus vos données sont précises et vos émissions basses, plus vous êtes compétitif face aux autres fournisseurs."
+      ]
+    },
+    "3": {
+      "title": "Êtes-vous concerné ?",
+      "paragraphs": [
+        "Directement, si vous exportez vers l’UE des produits de ces six secteurs : ciment, fer et acier, aluminium, engrais, hydrogène, électricité. Cela inclut de nombreux produits transformés, comme les vis, boulons, tubes ou profilés en acier et en aluminium.",
+        "Indirectement, si vous fournissez des matières ou des composants à des entreprises de ces filières : vos clients auront besoin de vos données pour calculer les leurs.",
+        "Par ricochet, si vous exportez dans d’autres secteurs (textile, composants automobiles, agroalimentaire) : vos donneurs d’ordre européens demandent de plus en plus vos émissions pour leur propre reporting climat. Le CBAM n’est que la première étape.",
+        "Attention au seuil de 50 tonnes : il concerne votre client importateur, pas vous. Il se calcule sur tout ce qu’il importe en un an, tous fournisseurs confondus. Si vous vendez 30 tonnes à un client qui en importe 5 000, vos 30 tonnes sont concernées.",
+        "Vous ne savez pas si vos produits sont concernés ? Le code douanier de chaque produit permet de le vérifier."
+      ]
+    },
+    "4": {
+      "title": "Le calendrier",
+      "paragraphs": [
+        "Date",
+        "Ce qui se passe",
+        "2023 – 2025",
+        "Phase transitoire : déclaration des émissions, sans paiement",
+        "1er janvier 2026",
+        "Phase définitive : chaque importation génère un coût carbone",
+        "Février 2027",
+        "Début de la vente des certificats CBAM",
+        "30 septembre 2027",
+        "Première déclaration annuelle et remise des certificats, pour les importations de 2026",
+        "2026 – 2034",
+        "Montée progressive : la part du carbone à payer augmente chaque année jusqu’à 100 %",
+        "Les données de vos expéditions de 2026 serviront à la première déclaration. Les émissions de cette année comptent déjà."
+      ]
+    },
+    "5": {
+      "title": "Ce que vos clients européens vont vous demander",
+      "paragraphs": [
+        "Pour remplir leur déclaration, vos clients ont besoin de données que vous seul détenez :",
+        "les émissions directes de votre usine, par produit (combustibles, procédés comme la cuisson du calcaire) ;",
+        "les émissions liées à l’électricité consommée, pour le ciment et les engrais ;",
+        "les émissions contenues dans vos matières intermédiaires (clinker, fonte…) ;",
+        "la vérification de ces chiffres par un vérificateur indépendant accrédité en Europe, avec visite de votre usine : sans elle, vos chiffres réels ne comptent pas ;",
+        "le prix du carbone éventuellement payé dans votre pays.",
+        "La Tunisie n’ayant pas de taxe carbone, aucune déduction n’est possible : le coût total est supporté au moment de l’importation, et votre client le prendra en compte dans ses négociations."
+      ]
+    },
+    "6": {
+      "title": "Le vrai risque : les valeurs par défaut",
+      "paragraphs": [
+        "Si vous ne fournissez pas de données réelles, votre client doit utiliser des valeurs par défaut fixées par l’Union européenne. Elles sont volontairement prudentes, donc souvent plus élevées que vos émissions réelles, et majorées progressivement pour inciter à fournir des données vérifiées.",
+        "Exemple : une cimenterie qui vend 100 000 tonnes par an en Europe et émet 0,70 t de CO2 par tonne. Avec ses chiffres réels vérifiés, le coût CBAM de son client est d’environ 1,8 million d’euros en 2026. Avec la valeur par défaut, il grimpe à environ 9 millions d’euros. Face à un concurrent capable de prouver ses émissions, elle devient le fournisseur le plus cher."
+      ]
+    },
+    "7": {
+      "title": "Votre plan d’action en 5 étapes",
+      "paragraphs": [
+        "Lister les produits vendus en Europe et vérifier leurs codes douaniers.",
+        "Identifier les clients européens qui dépassent 50 tonnes par an.",
+        "Collecter les données de 2026 : production, combustibles, électricité, matières premières.",
+        "Calculer les émissions de chaque produit selon la méthode CBAM.",
+        "Faire vérifier les chiffres par un vérificateur accrédité, à réserver tôt, puis les transmettre à vos clients via le registre CBAM."
+      ]
+    },
+    "8": {
+      "title": "Comment CarboScan vous accompagne",
+      "paragraphs": [
+        "Estimer votre exposition en quelques minutes avec notre calculateur CBAM : coût potentiel selon votre secteur et vos volumes.",
+        "Calculer les émissions de chaque produit sur notre plateforme, selon le GHG Protocol et les règles CBAM, avec une collecte de données guidée.",
+        "Fournir à vos clients européens des rapports prêts à l’emploi, et préparer la vérification.",
+        "Réduire vos émissions grâce à un plan d’action chiffré, priorisé selon le coût et l’impact.",
+        "Bouton : Estimer mon coût CBAM"
+      ]
+    },
+    "9": {
+      "title": "Pourquoi CarboScan",
+      "paragraphs": [
+        "Une plateforme tunisienne, conçue pour les réalités des industriels du Maghreb : données disponibles, sources d’énergie, contraintes de terrain.",
+        "Une expertise reconnue : accompagnement par Kamel Talbi, expert Bilan Carbone formé par l’Association pour la transition Bas Carbone (ABC).",
+        "Label Startup obtenu en septembre 2026.",
+        "Une méthode alignée sur le GHG Protocol et les règles de calcul CBAM.",
+        ""
+      ]
+    },
+    "10": {
+      "title": "Appel à l’action final",
+      "paragraphs": [
+        "Titre : Les données de 2026 comptent déjà",
+        "Texte : Vos clients européens prépareront leur première déclaration en 2027 à partir de vos expéditions de cette année. Les exportateurs qui leur fournissent dès maintenant des données fiables deviennent des fournisseurs prioritaires. Faites le point sur votre situation en 30 minutes, sans engagement.",
+        "Boutons : Estimer mon coût CBAM · Réserver un échange avec un expert"
+      ]
+    },
+    "11": {
+      "title": "Solutions par secteur (bloc existant, texte d’introduction à remplacer)",
+      "paragraphs": [
+        "Titre : Votre secteur, vos enjeux",
+        "Texte : Découvrez comment CarboScan s’adapte aux spécificités de votre activité.",
+        "(Remplace la phrase actuelle « Pages marketing dédiées pour relier votre métier aux modules CarboScan ».)"
+      ]
+    }
+  },
+  "faqs": [
+    {
+      "question": "C’est quoi, le CBAM (ou MACF) ?",
+      "answer": "Les usines européennes paient pour le CO2 qu’elles émettent. Pour que la concurrence soit équitable, l’Europe fait maintenant payer le même prix aux produits qui y entrent. Chaque tonne de ciment vendue en Europe a désormais un prix carbone."
+    },
+    {
+      "question": "Quels produits sont concernés ?",
+      "answer": "Les produits en acier, aluminium, ciment et engrais, ainsi que l’hydrogène et l’électricité. Notre cimenterie est donc concernée."
+    },
+    {
+      "question": "Je vends moins de 50 tonnes par an en Europe. Suis-je exempté ?",
+      "answer": "Pas forcément : c’est le piège le plus fréquent. Le seuil de 50 tonnes concerne l’importateur, pas l’exportateur. Il se calcule sur tout ce que votre client importe en un an, tous fournisseurs et tous produits confondus (acier, aluminium, ciment, engrais), hors hydrogène et électricité. Si vous vendez 30 tonnes à un client qui en importe 5 000, vos 30 tonnes sont concernées. Et ce ne sont pas « 50 tonnes gratuites » : au-delà du seuil, toutes les tonnes de l’année comptent."
+    },
+    {
+      "question": "Qui paie ?",
+      "answer": "Sur le papier, l’importateur européen. Dans la réalité, il demandera une baisse de prix, ou ira chez un concurrent moins émetteur."
+    },
+    {
+      "question": "Quelles émissions sont concernées, et comment les calcule-t-on ?",
+      "answer": "Uniquement les émissions liées à la fabrication du produit, dans l’usine qui le fabrique : les émissions intrinsèques. Elles sont de trois sortes : les émissions directes : combustible brûlé dans le four, CO2 libéré par la cuisson du calcaire ; les émissions indirectes, liées à l’électricité : elles comptent pour le ciment et les engrais, pas pour l’acier, l’aluminium et l’hydrogène ; les matières intermédiaires, comme le clinker dans le ciment ou la fonte dans l’acier. On additionne ces émissions sur l’année à partir des données réelles de l’usine (tonnes de combustible, kWh, production), puis on divise par la quantité produite. Pour notre cimenterie : environ 0,65 t de CO2 pour le four et le calcaire, plus 0,05 t pour l’électricité, soit 0,70 t de CO2 par tonne de ciment, ou 70 000 t de CO2 pour 100 000 t exportées."
+    },
+    {
+      "question": "Est-ce que c’est un bilan carbone ?",
+      "answer": "Non, et la confusion est fréquente. Un bilan carbone mesure toutes les émissions d’une entreprise sur un an : usines, bureaux, camions, achats, déplacements, déchets. Le CBAM demande beaucoup moins large, mais beaucoup plus précis : les émissions d’un produit, par tonne, dans l’usine qui le fabrique. Un bilan carbone est utile, mais il ne remplace pas le calcul CBAM."
+    },
+    {
+      "question": "Combien ça coûte ?",
+      "answer": "L’Europe offre encore des quotas gratuits à ses usines, calculés sur une référence : les émissions des usines européennes les plus performantes. En 2026, 97,5 % de cette référence reste gratuite, et l’importateur bénéficie de la même déduction. Il paie tout ce qui dépasse. Notre cimenterie émet 0,70 t par tonne ; la part gratuite est d’environ 0,48 t. Son client paie donc sur environ 0,22 t, soit environ 18 € par tonne avec un prix du carbone autour de 82 € . Pour 100 000 tonnes : environ 1,8 million d’euros dès 2026. En 2034, quand la part gratuite aura disparu : environ 5,7 millions d’euros par an."
+    },
+    {
+      "question": "Et si la cimenterie ne donne pas ses chiffres ?",
+      "answer": "Le client utilise une valeur par défaut fixée par l’Europe, souvent plus élevée que la réalité, et majorée : +10 % en 2026, jusqu’à +30 % à partir de 2028. Pour le ciment, elle peut atteindre 1,58 t de CO2 par tonne en 2026 , au lieu de 0,70. La facture passe alors d’environ 1,8 à 9 millions d’euros dès 2026 : plus de 7 millions d’euros perdus en un an, simplement faute d’avoir fourni ses vrais chiffres."
+    },
+    {
+      "question": "Qui vérifie les chiffres ?",
+      "answer": "Des chiffres réels ne comptent que s’ils sont vérifiés par un vérificateur indépendant, accrédité par un organisme d’accréditation européen. Il peut être basé en Europe ou ailleurs, mais son accréditation doit venir d’Europe. C’est l’exportateur qui le choisit et le paie, et il doit être indépendant : le consultant qui a fait les calculs ne peut pas les vérifier. Les chiffres vérifiés sont ensuite partagés avec les clients européens via le registre officiel du CBAM."
+    },
+    {
+      "question": "Où se passe la vérification ?",
+      "answer": "Dans l’usine qui fabrique le produit. Le vérificateur visite le site, observe la production, contrôle les compteurs et leur étalonnage, examine factures et registres, et interroge les équipes. Pour les données de 2026, la visite sur place est obligatoire dans chaque usine. Ensuite, si rien n’a changé, elle peut parfois se faire à distance, mais une visite physique reste obligatoire au moins tous les deux ans. Les vérificateurs accrédités sont encore peu nombreux : mieux vaut réserver tôt."
+    },
+    {
+      "question": "C’est pour quand ?",
+      "answer": "La déclaration et la restitution des certificats pour l’année 2026 auront lieu au plus tard le 30 septembre 2027. Les chiffres de 2026, c’est donc maintenant qu’il faut les collecter, pas en 2027."
+    },
+    {
+      "question": "Que doit faire un exportateur dès maintenant ?",
+      "answer": "Cinq actions : lister les produits vendus en Europe et vérifier leurs codes douaniers ; identifier les clients européens qui dépassent 50 tonnes par an ; collecter les données de 2026 (production, combustibles, électricité, matières premières) ; calculer les émissions de chaque produit ; réserver un vérificateur accrédité, puis transmettre les chiffres vérifiés à ses clients."
+    }
+  ],
+  "faqNotes": [
+    "À retenir : donner ses vrais chiffres n’est pas seulement une obligation, c’est un argument commercial. La cimenterie qui prouve qu’elle émet moins devient le fournisseur le moins cher pour ses clients européens.",
+    "Vous êtes exportateur et ne savez pas par où commencer ? Contactez CarboScan sur WhatsApp : +216 55 053 033."
+  ]
+}

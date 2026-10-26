@@ -481,6 +481,18 @@ export const api = {
       };
     }>(`/v1/public/promo-codes/${encodeURIComponent(code)}`, {}, { auth: false }),
 
+  downloadCbamVerifierCsv: async (): Promise<Blob> => {
+    const headers = new Headers();
+    const token = getStoredToken();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    const response = await fetch(`${API_URL}/v1/admin/cbam-verifier/leads.csv`, { headers, credentials: "include" });
+    if (!response.ok || !response.headers.get("content-type")?.includes("text/csv")) throw new Error("CBAM export failed");
+    return response.blob();
+  },
+
+  submitCbamVerifierLead: (payload: { requestId?: string; fullName: string; companyName: string; email: string; country: string; phone?: string; consent: boolean; website?: string; answers: Record<string, string | undefined>; customsCode?: string }) =>
+    request<{ ok: boolean; id: string; delivery: string }>("/v1/public/cbam-verifier/leads", { method: "POST", body: JSON.stringify(payload) }, { auth: false }),
+
   listBlog: (lang = "fr") =>
     request<{ items: Array<Record<string, unknown>> }>(
       `/v1/public/blog?lang=${encodeURIComponent(lang)}`,

@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -213,3 +212,25 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Campaign geometry is set by the small head script before the first paint. */
+:root { --cbam-banner-height: 0px; }
+:root[data-cbam-banner="visible"] { --cbam-banner-height: 64px; }
+body { padding-top: var(--cbam-banner-height); }
+[data-public-header] { top: var(--cbam-banner-height); }
+.cbam-announcement { position: fixed; inset: 0 0 auto; z-index: 60; height: var(--cbam-banner-height); display: flex; align-items: center; justify-content: center; background: #073D30; color: white; padding: 6px 48px 6px 16px; font-size: 12px; line-height: 1.35; }
+:root[data-cbam-banner="hidden"] .cbam-announcement { display: none; }
+.cbam-announcement-link { max-width: 1080px; text-align: center; text-decoration: underline; text-underline-offset: 3px; }
+.cbam-announcement-close { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 4px; }
+.cbam-announcement-close:hover { background: rgb(255 255 255 / 12%); }
+.cbam-slideout { display: none; }
+@media (min-width: 640px) { .cbam-announcement { font-size: 14px; } }
+@media (min-width: 1024px) {
+  :root[data-cbam-banner="visible"] { --cbam-banner-height: 40px; }
+  /* Reserve a rail from first paint: the slideout never covers the article. */
+  :root[data-cbam-slide="eligible"] #main-content,
+  :root[data-cbam-slide="eligible"] footer { margin-right: 320px; }
+  .cbam-slideout { display: block; position: fixed; z-index: 40; right: 16px; bottom: 24px; width: 288px; max-height: calc(100vh - 180px); overflow-y: auto; animation: cbam-slide-in 180ms ease-out; }
+}
+@keyframes cbam-slide-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .cbam-slideout { animation: none; } }

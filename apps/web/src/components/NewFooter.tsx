@@ -8,6 +8,17 @@ export const NewFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
   const footerSections = [
+    { title: "Bilan carbone et CBAM", links: [
+      { name: "Bilan carbone en Tunisie", href: "/bilan-carbone" },
+      { name: "Guide CBAM Tunisie et Maroc", href: "/cbam" },
+      { name: "Calculateur CBAM", href: "/cbam-calculator" },
+      { name: "Bilan carbone industrie", href: "/bilan-carbone-industrie" },
+      { name: "Bilan carbone transport", href: "/bilan-carbone-transport" },
+      { name: "Bilan carbone BTP", href: "/bilan-carbone-btp" },
+      { name: "Bilan carbone services", href: "/bilan-carbone-services" },
+      { name: "Demander une démo", href: "/demo" },
+      { name: "Équipe et fondateur", href: "/team" },
+    ] },
     {
       title: t("newHomepage.footer.sections.product.title"),
       links: [

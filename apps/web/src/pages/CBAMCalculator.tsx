@@ -6,20 +6,18 @@ import { CBAMQuestionnaire } from '@/components/cbam-calculator/CBAMQuestionnair
 
 const CBAMCalculator: React.FC = () => {
   return (
-    <PlanFeatureGuard 
-      feature="canAccessCBAM" 
-      featureName="le calculateur CBAM"
-      description="Le calculateur CBAM vous permet d'estimer les taxes carbone aux frontières pour vos exportations vers l'Europe."
-      upgradeMessage="Le calculateur CBAM est disponible à partir du Plan Complet (2400 DT/an). Contactez-nous pour une mise à niveau."
-    >
-      <div className="min-h-screen flex flex-col">
-        <MainHeader />
-        <main className="flex-grow">
+    <div className="min-h-screen flex flex-col">
+      <MainHeader />
+      <main className="flex-grow container mx-auto px-4 py-16">
+        <h1 className="text-4xl font-bold mb-6">Calculateur CBAM : estimez le coût carbone de vos exportations</h1>
+        <p className="mb-4">Évaluez les émissions liées à vos exportations vers l’Union européenne selon votre secteur et vos volumes. L’accès au calculateur nécessite un compte et un abonnement compatible.</p>
+        <a className="text-primary underline" href="/cbam">Comprendre les exigences CBAM pour les exportateurs tunisiens et marocains</a>
+        <PlanFeatureGuard feature="canAccessCBAM" featureName="le calculateur CBAM">
           <CBAMQuestionnaire />
-        </main>
-        <NewFooter />
-      </div>
-    </PlanFeatureGuard>
+        </PlanFeatureGuard>
+      </main>
+      <NewFooter />
+    </div>
   );
 };
 

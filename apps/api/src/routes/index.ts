@@ -1,3 +1,4 @@
+import { registerCbamVerifierRoutes } from "./cbamVerifier.js";
 import type { FastifyInstance } from "fastify";
 import { registerAuthRoutes } from "./auth.js";
 import { registerCalculateRoutes } from "./calculate.js";
@@ -27,6 +28,7 @@ import { registerSupplierRoutes } from "./suppliers.js";
 export async function registerRoutes(app: FastifyInstance) {
   await registerAuthRoutes(app);
   await registerPublicRoutes(app);
+  await registerCbamVerifierRoutes(app);
   await registerDiagnosticRoutes(app);
   await registerWebhookRoutes(app);
   await registerPrivacyRoutes(app);

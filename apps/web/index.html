@@ -2,6 +2,16 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <!-- Resolve campaign visibility before styles/first paint (also for prerendered HTML). -->
+    <script>
+      (function () {
+        var path = location.pathname.replace(/\/+$/, '') || '/';
+        var publicPage = path !== '/verificateur-cbam' && !/^\/(app|auth|superadmin|admin|onboarding|checkout|payment|carbo-start|preview)(\/|$)/.test(path);
+        function dismissed(key) { try { var until = Number(localStorage.getItem(key)); return Number.isFinite(until) && until > Date.now(); } catch (_) { return false; } }
+        document.documentElement.dataset.cbamBanner = publicPage && !dismissed('carboscan_cbam_banner_until') ? 'visible' : 'hidden';
+        document.documentElement.dataset.cbamSlide = publicPage && (path === '/cbam' || /^\/blog\/[^/]*(cbam|macf)[^/]*$/i.test(path)) && !dismissed('carboscan_cbam_slide_until') ? 'eligible' : 'hidden';
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#073F35" />
     <meta name="application-name" content="CarboScan" />
@@ -48,6 +58,7 @@
     <meta data-rh="true" name="twitter:image" content="https://carboscan.io/brand/carboscan-logo-light.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=Manrope:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Sora:wght@400;500;600;700&amp;display=swap" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="preconnect" href="https://www.google-analytics.com" />

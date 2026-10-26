@@ -19,12 +19,17 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@cbam-verifier": [
+        "../../packages/carbon-engine/src/cbam-verifier/index.ts"
       ]
     },
     "skipLibCheck": true,
     "strict": false,
     "target": "ES2020",
-    "types": ["vitest/globals"],
+    "types": [
+      "vitest/globals"
+    ],
     "useDefineForClassFields": true
   },
   "include": [

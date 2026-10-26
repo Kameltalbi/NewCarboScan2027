@@ -17,6 +17,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@cbam-verifier': path.resolve(__dirname, '../../packages/carbon-engine/src/cbam-verifier/index.ts'),
     },
   },
 });

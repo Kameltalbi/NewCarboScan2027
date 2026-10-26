@@ -37,7 +37,7 @@ type SEOHeadProps = {
 function absoluteUrl(path: string) {
   if (path.startsWith('http')) return path;
   const clean = path.startsWith('/') ? path : `/${path}`;
-  return `${SITE_URL}${clean === '/' ? '' : clean}`;
+  return `${SITE_URL}${clean === '/' ? '/' : clean.replace(/\/+$/, '')}`;
 }
 
 export const SEOHead: React.FC<SEOHeadProps> = ({
@@ -63,7 +63,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
   const canonical = absoluteUrl(defaults.path || resolvedPath);
   const type = ogType ?? defaults.ogType ?? 'website';
   const robots = (noindex ?? defaults.noindex) ? 'noindex, nofollow' : 'index, follow';
-  const crumbs = breadcrumbs ?? defaults.breadcrumbs;
+  const crumbs = breadcrumbs ?? defaults.breadcrumbs ?? (resolvedPath !== '/' ? [{ name: 'Accueil', path: '/' }, { name: pageTitle, path: resolvedPath }] : undefined);
 
   const schemas: Record<string, unknown>[] = [];
   if (includeGlobalSchemas) {

@@ -15,6 +15,7 @@ RUN npm ci
 COPY packages/carbon-engine ./packages/carbon-engine
 COPY apps/web ./apps/web
 
+RUN npx playwright install --with-deps chromium
 RUN npm run build -w @newcarboscan/web
 
 FROM nginx:1.27-alpine AS runtime

@@ -1,0 +1,15 @@
+Mesures du 26 octobre 2026, avant déploiement.
+
+curl -I https://www.carboscan.io
+HTTP/2 200
+server: nginx/1.24.0 (Ubuntu)
+content-type: text/html
+content-length: 4679
+
+curl -sS -o /tmp/carboscan-live-404.html -w "%{http_code}" https://carboscan.io/page-qui-nexiste-pas
+200
+
+curl -sS https://carboscan.io/cbam
+HTML reçu : 4658 caractères ; aucun élément <h1>.
+
+API PageSpeed mobile /cbam : HTTP 429 ; aucun score exploitable.

@@ -1,3 +1,4 @@
+import { VerifierCallout } from "@/features/cbam-verifier/VerifierLink";
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { HomeHeader } from '@/components/HomeHeader';
@@ -122,6 +123,7 @@ export const SectorLanding: React.FC<SectorLandingProps> = ({ sectorKey, sectorS
         </section>
 
         <SolutionFaq faqs={faqList} path={path} />
+        {(sectorSlug === "industrie" || sectorSlug === "transport") && <VerifierCallout placement={sectorSlug === "industrie" ? "industry" : "transport"} />}
         <SolutionRelatedLinks currentPath={path} />
 
         <section className="py-20">

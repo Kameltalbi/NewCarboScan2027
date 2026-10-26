@@ -1,3 +1,4 @@
+import { CbamPromotions } from "@/features/cbam-verifier/CbamPromotions";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -66,6 +67,7 @@ const BilanCarboneServices = lazy(() => import("./pages/BilanCarboneServices"));
 const SuperAdmin = lazy(() => import("./pages/SuperAdmin"));
 
 // Nouveau routeur unifié
+const CbamVerifierPage = lazy(() => import("./features/cbam-verifier/CbamVerifierPage"));
 const AppRouter = lazy(() => import("./app/AppRouter").then(m => ({ default: m.AppRouter })));
 
 // Onboarding
@@ -128,6 +130,7 @@ function App() {
           <BrowserRouter>
             <SkipToContent />
             <AnalyticsRouteListener />
+            <CbamPromotions />
             <NotificationBanner />
             <Suspense fallback={<LoadingFallback />}>
             <Routes>
@@ -162,6 +165,7 @@ function App() {
               <Route path="/collect" element={<CollectLanding />} />
               <Route path="/engagement-fournisseurs" element={<EngagementFournisseurs />} />
               <Route path="/decarbotech" element={<DecarbotechLanding />} />
+              <Route path="/verificateur-cbam" element={<CbamVerifierPage />} />
               <Route path="/cbam" element={<CBAM />} />
               <Route path="/wattbim" element={<WattBimLanding />} />
 

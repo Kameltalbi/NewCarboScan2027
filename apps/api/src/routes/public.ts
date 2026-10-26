@@ -28,6 +28,9 @@ export async function registerPublicRoutes(app: FastifyInstance) {
       return reply.code(400).send({ error: parsed.error.flatten() });
     }
     const d = parsed.data;
+    if (d.requestType === "cbam_verifier") {
+      return reply.code(400).send({ error: "Use the CBAM verifier submission endpoint." });
+    }
     const { rows } = await pool.query(
       `INSERT INTO contact_requests
         (request_type, email, phone, company_name, full_name, message, payload, ip)

@@ -1,3 +1,5 @@
+import { verifierConfig } from "@cbam-verifier";
+import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -27,6 +29,7 @@ const initialStats: DashboardStats = {
 };
 
 const SuperAdminDashboard = () => {
+  const [exporting, setExporting] = useState(false);
   const [stats, setStats] = useState<DashboardStats>(initialStats);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
@@ -57,6 +60,18 @@ const SuperAdminDashboard = () => {
 
     fetchDashboardStats();
   }, [toast]);
+
+  const exportCbam = async () => {
+    setExporting(true);
+    try {
+      const blob = await api.downloadCbamVerifierCsv();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url; anchor.download = verifierConfig.csv.filename; anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch { toast({ title: verifierConfig.csv.error, variant: 'destructive' }); }
+    finally { setExporting(false); }
+  };
 
   if (isLoading) {
     return (
@@ -90,6 +105,7 @@ const SuperAdminDashboard = () => {
         </div>
       </section>
 
+      {userRole === 'superadmin' && <Button variant="outline" disabled={exporting} onClick={exportCbam}>{exporting ? verifierConfig.csv.downloading : verifierConfig.csv.button}</Button>}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card className="border-border/70 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

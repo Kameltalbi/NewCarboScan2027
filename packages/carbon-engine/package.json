@@ -10,6 +10,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./cbam-verifier": {
+      "types": "./dist/cbam-verifier/index.d.ts",
+      "import": "./dist/cbam-verifier/index.js",
+      "default": "./dist/cbam-verifier/index.js"
     }
   },
   "files": [

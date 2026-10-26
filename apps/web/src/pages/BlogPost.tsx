@@ -1,3 +1,5 @@
+import { VerifierCallout } from "@/features/cbam-verifier/VerifierLink";
+import { SEOHead } from "@/components/seo/SEOHead";
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
@@ -65,7 +67,7 @@ const BlogPost = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <MainHeader />
-        <main className="flex-grow flex items-center justify-center">
+        <main id="main-content" className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
             <p className="mt-2 text-muted-foreground">Chargement de l'article...</p>
@@ -80,7 +82,7 @@ const BlogPost = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <MainHeader />
-        <main className="flex-grow flex items-center justify-center">
+        <main id="main-content" className="flex-grow flex items-center justify-center">
           <div className="text-center space-y-4">
             <h1 className="text-2xl font-bold">Article introuvable</h1>
             <Button asChild>
@@ -93,14 +95,15 @@ const BlogPost = () => {
     );
   }
 
-  const safeHtml = DOMPurify.sanitize(post.content ?? "", {
+  const safeHtml = DOMPurify.sanitize((post.content ?? "").replace(/<(\/?)h1\b/gi, '<$1h2'), {
     USE_PROFILES: { html: true },
   });
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEOHead path={`/blog/${post.slug}`} title={post.meta_title || post.title} description={post.meta_description || post.excerpt || `${post.title} — Retrouvez le guide et les conseils de CarboScan.`.slice(0, 155)} ogType="article" />
       <MainHeader />
-      <main className="flex-grow">
+      <main id="main-content" className="flex-grow">
         <article className="container mx-auto py-12 px-4 md:px-6 max-w-4xl">
           <Button variant="ghost" asChild className="mb-6">
             <Link to="/blog">
@@ -150,6 +153,11 @@ const BlogPost = () => {
             className="prose prose-lg max-w-none [&_img]:max-w-full [&_img]:h-auto"
             dangerouslySetInnerHTML={{ __html: safeHtml }}
           />
+          {slug === 'guide-cbam-conformite-carbone-pme' && <VerifierCallout placement="blog" />}
+          {slug === 'guide-cbam-conformite-carbone-pme' && <nav aria-label="Ressources CBAM" className="mt-8 flex flex-wrap gap-6">
+            <Link className="underline text-primary" to="/cbam">Guide de conformité CBAM Tunisie et Maroc</Link>
+            <Link className="underline text-primary" to="/cbam-calculator">Estimer le coût carbone avec le calculateur CBAM</Link>
+          </nav>}
         </article>
       </main>
       <NewFooter />

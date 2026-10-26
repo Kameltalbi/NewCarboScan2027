@@ -3,12 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from "@/components/ui/accordion";
+
 
 const FAQContent = () => {
   const { t } = useTranslation();
@@ -19,12 +14,12 @@ const FAQContent = () => {
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold mb-10 text-center">{t("faq.title")}</h1>
           
-          <Accordion type="single" collapsible defaultValue="item-offering" className="mb-12">
-            <AccordionItem value="item-offering">
-              <AccordionTrigger className="text-lg font-medium">
+          <div className="mb-12 space-y-4">
+            <details className="border-b py-4" open>
+              <summary className="text-lg font-medium">
                 {t("faq.questions.offering.question")}
-              </AccordionTrigger>
-              <AccordionContent className="text-gray-600">
+              </summary>
+              <div className="text-gray-600">
                 <p className="mb-3">{t("faq.questions.offering.intro")}</p>
                 <ul className="list-disc pl-6 space-y-1 mb-3">
                   {(t("faq.questions.offering.items", { returnObjects: true }) as string[]).map((item, idx) => {
@@ -39,64 +34,64 @@ const FAQContent = () => {
                   })}
                 </ul>
                 <p>{t("faq.questions.offering.outro")}</p>
-              </AccordionContent>
-            </AccordionItem>
+              </div>
+            </details>
 
-            <AccordionItem value="item-1">
-              <AccordionTrigger className="text-lg font-medium">
+            <details className="border-b py-4">
+              <summary className="text-lg font-medium">
                 {t("faq.questions.carbonFootprint.question")}
-              </AccordionTrigger>
-              <AccordionContent className="text-gray-600">
+              </summary>
+              <div className="text-gray-600">
                 {t("faq.questions.carbonFootprint.answer")}
-              </AccordionContent>
-            </AccordionItem>
+              </div>
+            </details>
             
-            <AccordionItem value="item-2">
-              <AccordionTrigger className="text-lg font-medium">
+            <details className="border-b py-4">
+              <summary className="text-lg font-medium">
                 {t("faq.questions.howToUse.question")}
-              </AccordionTrigger>
-              <AccordionContent className="text-gray-600">
+              </summary>
+              <div className="text-gray-600">
                 {t("faq.questions.howToUse.answer")}
-              </AccordionContent>
-            </AccordionItem>
+              </div>
+            </details>
             
-            <AccordionItem value="item-3">
-              <AccordionTrigger className="text-lg font-medium">
+            <details className="border-b py-4">
+              <summary className="text-lg font-medium">
                 {t("faq.questions.pricing.question")}
-              </AccordionTrigger>
-              <AccordionContent className="text-gray-600">
+              </summary>
+              <div className="text-gray-600">
                 {t("faq.questions.pricing.answer")}
-              </AccordionContent>
-            </AccordionItem>
+              </div>
+            </details>
             
-            <AccordionItem value="item-4">
-              <AccordionTrigger className="text-lg font-medium">
+            <details className="border-b py-4">
+              <summary className="text-lg font-medium">
                 {t("faq.questions.security.question")}
-              </AccordionTrigger>
-              <AccordionContent className="text-gray-600">
+              </summary>
+              <div className="text-gray-600">
                 <p className="mb-3">
                   {t("faq.questions.security.answer1")}
                 </p>
                 <p>
                   {t("faq.questions.security.answer2")}
                 </p>
-              </AccordionContent>
-            </AccordionItem>
+              </div>
+            </details>
             
-            <AccordionItem value="item-5">
-              <AccordionTrigger className="text-lg font-medium">
+            <details className="border-b py-4">
+              <summary className="text-lg font-medium">
                 {t("faq.questions.sectors.question")}
-              </AccordionTrigger>
-              <AccordionContent className="text-gray-600">
+              </summary>
+              <div className="text-gray-600">
                 <p>{t("faq.questions.sectors.answer")}</p>
                 <ul className="list-disc pl-6 mt-2 space-y-1">
                   {(t("faq.questions.sectors.sectors", { returnObjects: true }) as string[]).map((sector: string, index: number) => (
                     <li key={index}>{sector}</li>
                   ))}
                 </ul>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+              </div>
+            </details>
+          </div>
 
           <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 text-center">
             <h3 className="text-xl font-semibold mb-3">{t("faq.moreQuestions.title")}</h3>

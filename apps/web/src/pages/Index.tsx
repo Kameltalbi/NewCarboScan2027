@@ -1,3 +1,4 @@
+import { VerifierHomeSection } from "@/features/cbam-verifier/VerifierLink";
 
 import React from "react";
 import { HomeHeader } from "@/components/HomeHeader";
@@ -21,6 +22,7 @@ const Index = () => {
       <main id="main-content" className="flex-1">
         <NewHeroSection />
         <StrategicPillarsSection />
+        <VerifierHomeSection />
         <NewReferencesSection />
         <AfricaPositioningSection />
         <LocalSupportSection />

@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,6 +50,7 @@ export const CBAMQuestionnaire: React.FC = () => {
       const calculateResults = async () => {
         const calculatedResults = await calculateCBAMEmissions(data);
         setResults(calculatedResults);
+        trackEvent('cbam_calculation_completed', { sector: data.sector });
         setCurrentStep('contact');
       };
       calculateResults();
@@ -162,9 +164,9 @@ export const CBAMQuestionnaire: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
               {t('cbamCalculator.title')}
-            </h1>
+            </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               {t('cbamCalculator.subtitle')}
             </p>

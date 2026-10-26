@@ -1,3 +1,4 @@
+import { verifierConfig } from "@cbam-verifier";
 export const SITE_URL = 'https://carboscan.io';
 export const SITE_NAME = 'CarboScan';
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/brand/carboscan-logo-light.png`;
@@ -15,11 +16,24 @@ export type PageSEO = {
 
 /** Unique SEO metadata for public marketing pages */
 export const PAGE_SEO: Record<string, PageSEO> = {
+  [verifierConfig.path]: { path: verifierConfig.path, title: verifierConfig.seo.title, description: verifierConfig.seo.description, breadcrumbs: [{ name: "Accueil", path: "/" }, { name: verifierConfig.intro.badge, path: verifierConfig.path }] },
+  "/ateliers-internes": { path: "/ateliers-internes", title: "Ateliers climat en entreprise en Tunisie | CarboScan", description: "Sensibilisez vos équipes aux enjeux carbone grâce aux ateliers internes CarboScan. Découvrez les formats et préparez votre programme en Tunisie." },
+  "/strategie-decarbonation": { path: "/strategie-decarbonation", title: "Stratégie de décarbonation en Tunisie | CarboScan", description: "Construisez votre stratégie de décarbonation : identifiez vos postes d’émissions, priorisez vos actions et suivez leur mise en œuvre avec CarboScan." },
+  "/plan-essentiel": { path: "/plan-essentiel", title: "Plan Essentiel : démarrer votre bilan carbone | CarboScan", description: "Découvrez le Plan Essentiel CarboScan pour structurer la collecte de vos données et démarrer le bilan carbone de votre entreprise." },
+  "/carbo-pro": { path: "/carbo-pro", title: "Carbo Pro : bilan carbone professionnel | CarboScan", description: "Découvrez Carbo Pro et ses fonctionnalités pour organiser vos données carbone, réaliser vos calculs et préparer votre reporting professionnel." },
+  "/carbo-omnibus": { path: "/carbo-omnibus", title: "Carbo Omnibus : reporting et données carbone | CarboScan", description: "Découvrez l’offre Carbo Omnibus pour structurer les données carbone de votre entreprise et préparer votre démarche de reporting." },
+  "/premium": { path: "/premium", title: "Offre Premium pour votre démarche carbone | CarboScan", description: "Explorez l’offre Premium CarboScan et échangez avec notre équipe pour adapter les outils et l’accompagnement à votre organisation." },
+  "/empreinte-produit-calculator": { path: "/empreinte-produit-calculator", title: "Calculateur d’empreinte carbone produit | CarboScan", description: "Estimez l’empreinte carbone de vos produits à partir de leurs matériaux et données d’activité. Découvrez le calculateur produit CarboScan." },
+  "/simulateur-economique": { path: "/simulateur-economique", title: "Simulateur économique de décarbonation | CarboScan", description: "Explorez les scénarios économiques de vos actions de décarbonation avec le simulateur CarboScan et préparez vos décisions d’investissement." },
+  "/carboscan-academy": { path: "/carboscan-academy", title: "CarboScan Academy : apprendre le bilan carbone", description: "Découvrez CarboScan Academy pour développer vos compétences en mesure des émissions, collecte de données et décarbonation des entreprises." },
+  "/autres-services": { path: "/autres-services", title: "Services carbone et accompagnement en Tunisie | CarboScan", description: "Découvrez les services complémentaires CarboScan pour accompagner vos équipes et vos projets de transition bas carbone en Tunisie." },
+  "/emission-factors": { path: "/emission-factors", title: "Bibliothèque de facteurs d’émission | CarboScan", description: "Consultez la bibliothèque de facteurs d’émission CarboScan pour documenter vos calculs carbone et retrouver les sources méthodologiques." },
+  "/calculateur-roi": { path: "/calculateur-roi", title: "Calculateur ROI de votre projet carbone | CarboScan", description: "Évaluez le retour sur investissement de votre démarche carbone avec le calculateur ROI CarboScan et comparez vos hypothèses économiques." },
   '/': {
     path: '/',
-    title: 'CarboScan — Plateforme Bilan Carbone & Décarbonation pour entreprises',
+    title: "CarboScan | Bilan carbone et CBAM en Tunisie",
     description:
-      'Mesurez, pilotez et réduisez vos émissions GES. Collecte de données, bilan carbone scopes 1-2-3, empreinte produit, ACV et rapports professionnels alignés GHG Protocol.',
+      "Mesurez vos émissions (scopes 1-2-3), préparez votre conformité CBAM et réduisez votre empreinte carbone. Plateforme tunisienne, Label Startup.",
     breadcrumbs: [{ name: 'Accueil', path: '/' }],
   },
   '/about': {
@@ -34,9 +48,9 @@ export const PAGE_SEO: Record<string, PageSEO> = {
   },
   '/team': {
     path: '/team',
-    title: 'Équipe CarboScan — Experts carbone & produit',
+    title: "Équipe CarboScan : Kamel Talbi, fondateur",
     description:
-      'Rencontrez l’équipe derrière CarboScan : experts bilan carbone, data et produit au service de la transition bas carbone des entreprises.',
+      "Découvrez Kamel Talbi, fondateur de CarboScan, et l’équipe qui accompagne les entreprises dans leur transition bas carbone.",
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
       { name: 'Équipe', path: '/team' },
@@ -94,9 +108,9 @@ export const PAGE_SEO: Record<string, PageSEO> = {
   },
   '/bilan-carbone': {
     path: '/bilan-carbone',
-    title: 'Bilan Carbone entreprise — Module CarboScan scopes 1, 2 & 3',
+    title: "Prestataire bilan carbone en Tunisie | CarboScan",
     description:
-      'Réalisez votre bilan carbone professionnel avec CarboScan : facteurs ADEME, scopes 1-2-3, traçabilité et rapports prêts pour consultants.',
+      "Réalisez votre bilan carbone scopes 1-2-3 avec un expert et une plateforme dédiée en Tunisie. Livrables alignés sur le GHG Protocol.",
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
       { name: 'Solutions', path: '/solutions' },
@@ -158,11 +172,16 @@ export const PAGE_SEO: Record<string, PageSEO> = {
       { name: 'Engagement fournisseurs', path: '/engagement-fournisseurs' },
     ],
   },
+  '/cbam-calculator': {
+    path: '/cbam-calculator',
+    title: 'Calculateur CBAM : coût carbone à l’export | CarboScan',
+    description: 'Estimez le coût CBAM de vos exportations vers l’Union européenne selon votre secteur et vos volumes. Accès avec un abonnement compatible.',
+  },
   '/cbam': {
     path: '/cbam',
-    title: 'CBAM — Reporting export UE & conformité | CarboScan',
+    title: "CBAM Tunisie et Maroc : guide de conformité des exportateurs",
     description:
-      'Préparez vos déclarations CBAM : émissions embarquées, codes CN, exports et rapports pour le mécanisme d’ajustement carbone aux frontières.',
+      "Exportateurs vers l’UE : qui est concerné par le CBAM, calendrier, données à fournir à vos clients européens. Estimez votre coût carbone.",
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
       { name: 'Solutions', path: '/solutions' },
@@ -278,9 +297,9 @@ export const PAGE_SEO: Record<string, PageSEO> = {
   },
   '/formation-bilan-carbone': {
     path: '/formation-bilan-carbone',
-    title: 'Formation Bilan Carbone — CarboScan Academy',
+    title: "Formation bilan carbone en Tunisie et au Maghreb | CarboScan",
     description:
-      'Formez vos équipes au bilan carbone et à l’usage de CarboScan avec nos programmes Academy.',
+      "Formez vos équipes au bilan carbone, au GHG Protocol et au CBAM. Formations en présentiel et à distance pour entreprises tunisiennes.",
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
       { name: 'Formation', path: '/formation-bilan-carbone' },
@@ -320,9 +339,9 @@ export const PAGE_SEO: Record<string, PageSEO> = {
   },
   '/bilan-carbone-industrie': {
     path: '/bilan-carbone-industrie',
-    title: 'Bilan Carbone Industrie | Réduire les émissions industrielles - CarboScan',
+    title: "Bilan carbone industrie et exportateurs | CarboScan",
     description:
-      'Réalisez votre bilan carbone industriel avec CarboScan. Mesurez les émissions Scope 1, 2, 3 de votre usine et identifiez les leviers de décarbonation.',
+      "Industries et exportateurs en Tunisie : mesurez vos émissions scopes 1-2-3, identifiez vos leviers de réduction et préparez vos données CBAM.",
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
       { name: 'Solutions', path: '/solutions' },
@@ -331,9 +350,9 @@ export const PAGE_SEO: Record<string, PageSEO> = {
   },
   '/bilan-carbone-transport': {
     path: '/bilan-carbone-transport',
-    title: 'Bilan Carbone Transport & Logistique | Mesurer et réduire - CarboScan',
+    title: "Bilan carbone transport et logistique | CarboScan",
     description:
-      'Calculez l’empreinte carbone de votre flotte et chaîne logistique. Facteurs par mode et collecte d’activité avec CarboScan.',
+      "Mesurez les émissions de votre flotte et de votre logistique en Tunisie : carburants, fret et sous-traitance. Pilotez votre bilan carbone avec CarboScan.",
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
       { name: 'Solutions', path: '/solutions' },
@@ -342,9 +361,9 @@ export const PAGE_SEO: Record<string, PageSEO> = {
   },
   '/bilan-carbone-btp': {
     path: '/bilan-carbone-btp',
-    title: 'Bilan Carbone BTP & Construction | Mesurer l’impact chantier - CarboScan',
+    title: "Bilan carbone BTP et chantiers | CarboScan",
     description:
-      'Évaluez l’empreinte carbone de vos chantiers et projets de construction. Matériaux, engins, énergie de site et reporting.',
+      "Entreprises du BTP en Tunisie : mesurez les émissions des matériaux, engins et chantiers. Structurez votre bilan carbone avec CarboScan.",
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
       { name: 'Solutions', path: '/solutions' },
@@ -386,9 +405,9 @@ export const PAGE_SEO: Record<string, PageSEO> = {
   },
   '/bilan-carbone-services': {
     path: '/bilan-carbone-services',
-    title: 'Bilan carbone services & tertiaire — bureaux et sièges | CarboScan',
+    title: "Bilan carbone pour entreprises de services | CarboScan",
     description:
-      'Bilan carbone pour cabinets, ESN, commerce et sièges tertiaires : énergie des bureaux, déplacements, achats de services et suivi multi-sites.',
+      "Entreprises de services en Tunisie : mesurez les émissions de vos bureaux, déplacements et achats. Préparez votre bilan carbone scopes 1-2-3.",
     breadcrumbs: [
       { name: 'Accueil', path: '/' },
       { name: 'Solutions', path: '/solutions' },
@@ -417,7 +436,7 @@ export function getPageSEO(pathname: string): PageSEO {
     };
   }
 
-  if (normalized.startsWith('/app')) {
+  if (/^\/(app|superadmin|admin|auth|checkout|payment|onboarding|preview)(\/|$)/.test(normalized)) {
     return {
       path: normalized,
       title: 'Application CarboScan',
@@ -442,7 +461,9 @@ export const ORGANIZATION_SCHEMA = {
   logo: DEFAULT_OG_IMAGE,
   description:
     'Plateforme SaaS de bilan carbone, collecte de données GES et décarbonation pour entreprises.',
-  sameAs: [],
+  founder: { '@type': 'Person', name: 'Kamel Talbi', sameAs: ['https://www.linkedin.com/in/kamel-talbi-kt-consulting/'] },
+  address: { '@type': 'PostalAddress', addressLocality: 'Tunis', addressCountry: 'TN' },
+  sameAs: ['https://www.linkedin.com/company/108125482/', 'https://www.facebook.com/p/CarboScan-61581484901115/'],
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'sales',

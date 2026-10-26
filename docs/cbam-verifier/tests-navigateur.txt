@@ -1,0 +1,3 @@
+Questionnaire, forms, keyboard/back navigation and abandonment verified.
+Four promotion click placements and non-overlapping slideout verified.
+Verified full desktop/mobile questionnaire, six required cases, form + real API validation (in memory), four promotion placements, dismissals, route exclusions, non-overlap and analytics.

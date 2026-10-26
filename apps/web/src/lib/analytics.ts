@@ -9,6 +9,18 @@ export const GA_MEASUREMENT_ID =
   '';
 
 export type AnalyticsEventName =
+  | 'cbam_verifier_promotion_click'
+  | 'cbam_verifier_started'
+  | 'cbam_verifier_question_validated'
+  | 'cbam_verifier_result_viewed'
+  | 'cbam_verifier_abandoned'
+  | 'cbam_verifier_lead_submitted'
+  | 'cbam_verifier_whatsapp_click'
+  | 'cbam_verifier_demo_click'
+  | 'cbam_calculator_click'
+  | 'cbam_expert_click'
+  | 'cbam_whatsapp_click'
+  | 'cbam_calculation_completed'
   | 'sign_up'
   | 'login'
   | 'create_project'

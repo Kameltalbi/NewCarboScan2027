@@ -5,12 +5,16 @@ import { SOLUTION_MODULES, SOLUTION_SECTORS } from "@/config/solutionPages";
 
 type Props = {
   currentPath?: string;
+  sectorTitle?: string;
+  sectorDescription?: string;
   showSectors?: boolean;
   showModules?: boolean;
 };
 
 export const SolutionRelatedLinks: React.FC<Props> = ({
   currentPath,
+  sectorTitle = "Solutions par secteur",
+  sectorDescription = "Pages marketing dédiées pour relier votre métier aux modules CarboScan",
   showSectors = true,
   showModules = true,
 }) => {
@@ -23,10 +27,10 @@ export const SolutionRelatedLinks: React.FC<Props> = ({
         {showSectors && (
           <>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-              Solutions par secteur
+              {sectorTitle}
             </h2>
             <p className="text-muted-foreground mb-8 max-w-2xl">
-              Pages marketing dédiées pour relier votre métier aux modules CarboScan.
+              {sectorDescription}
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-14">
               {sectors.map((sector) => (

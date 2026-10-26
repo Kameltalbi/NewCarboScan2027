@@ -186,7 +186,7 @@ export const HomeHeader: React.FC = () => {
   const closeOffer = () => setOfferOpen(false);
 
   return (
-    <header
+    <header data-public-header
       className="sticky top-0 z-50 w-full bg-white font-manrope"
       onMouseLeave={() => {
         scheduleClosePlatform();

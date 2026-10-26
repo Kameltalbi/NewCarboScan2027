@@ -1,277 +1,122 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { SolutionLandingShell } from "@/components/seo/SolutionLandingShell";
-import { Calculator, TrendingUp, AlertTriangle, Target, CheckCircle } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { VerifierLink } from "@/features/cbam-verifier/VerifierLink";
+import { verifierConfig } from "@cbam-verifier";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { SEOHead } from '@/components/seo/SEOHead';
+import { SolutionLandingShell } from '@/components/seo/SolutionLandingShell';
+import { SolutionRelatedLinks } from '@/components/seo/SolutionRelatedLinks';
+import { buildFaqSchema } from '@/config/seo';
+import { trackEvent } from '@/lib/analytics';
+import content from '@/content/cbam.json';
 
-const CBAM: React.FC = () => {
-  const { i18n } = useTranslation();
-  const isFrench = i18n.language === 'fr';
-
-  const sectorsData = [
-    { name: isFrench ? "Ciment" : "Cement", icon: "🏗️" },
-    { name: isFrench ? "Fer et acier" : "Iron & Steel", icon: "⚔️" },
-    { name: isFrench ? "Aluminium" : "Aluminum", icon: "🔧" },
-    { name: isFrench ? "Engrais" : "Fertilizers", icon: "🌱" },
-    { name: isFrench ? "Électricité" : "Electricity", icon: "⚡" },
-    { name: isFrench ? "Hydrogène" : "Hydrogen", icon: "💨" }
-  ];
-
-  const impactsData = [
-    {
-      title: isFrench ? "Risque de surcoûts" : "Risk of additional costs",
-      description: isFrench ? "Taxe carbone pouvant aller jusqu'à 100€/tonne CO₂" : "Carbon tax up to €100/ton CO₂",
-      icon: <TrendingUp className="h-6 w-6 text-red-600" />
-    },
-    {
-      title: isFrench ? "Obligation de transparence" : "Transparency requirement",
-      description: isFrench ? "Déclaration obligatoire des émissions carbone" : "Mandatory carbon emissions reporting",
-      icon: <AlertTriangle className="h-6 w-6 text-orange-600" />
-    },
-    {
-      title: isFrench ? "Valeurs par défaut pénalisantes" : "Penalizing default values",
-      description: isFrench ? "Sans données fiables, les valeurs les plus élevées s'appliquent" : "Without reliable data, highest values apply",
-      icon: <Target className="h-6 w-6 text-blue-600" />
-    }
-  ];
-
-  return (
-    <SolutionLandingShell path="/cbam">
-      <div className="bg-gradient-to-br from-slate-50 via-white to-green-50">
-      <div className="container mx-auto px-4 py-16">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <Badge className="mb-4 bg-blue-100 text-blue-800 px-4 py-2 text-sm font-medium">
-            {isFrench ? "Réglementation européenne 2026" : "European regulation 2026"}
-          </Badge>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-            {isFrench ? "MACF – Taxe Carbone aux Frontières" : "CBAM – Carbon Border Tax"}
-          </h1>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
-            {isFrench ? (
-              "Cette réglementation européenne entrera en vigueur en 2026 et concerne les importations à forte intensité carbone. Découvrez comment vous préparer dès maintenant."
-            ) : (
-              "This European regulation will come into effect in 2026 and concerns carbon-intensive imports. Discover how to prepare now."
-            )}
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/cbam-calculator">
-              <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg font-semibold shadow-lg">
-                🚀 {isFrench ? "Estimez vos coûts carbone avec notre calculateur" : "Estimate your carbon costs with our calculator"}
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button size="lg" variant="outline" className="px-8 py-4 text-lg font-semibold border-2">
-                {isFrench ? "Nous contacter" : "Contact us"}
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Objectives Section */}
-        <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              {isFrench ? "Objectifs du CBAM" : "CBAM Objectives"}
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              {isFrench ? (
-                "Le mécanisme d'ajustement carbone aux frontières vise à créer un niveau de jeu équitable mondial."
-              ) : (
-                "The carbon border adjustment mechanism aims to create a level playing field globally."
-              )}
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center hover:shadow-lg transition-shadow border-l-4 border-l-green-500">
-              <CardContent className="p-8">
-                <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="h-8 w-8 text-green-600" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">
-                  {isFrench ? "Réduire les émissions" : "Reduce emissions"}
-                </h3>
-                <p className="text-gray-600">
-                  {isFrench ? (
-                    "Inciter à la réduction globale des émissions de CO₂"
-                  ) : (
-                    "Encourage global CO₂ emissions reduction"
-                  )}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center hover:shadow-lg transition-shadow border-l-4 border-l-blue-500">
-              <CardContent className="p-8">
-                <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Target className="h-8 w-8 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">
-                  {isFrench ? "Éviter les fuites carbone" : "Avoid carbon leakage"}
-                </h3>
-                <p className="text-gray-600">
-                  {isFrench ? (
-                    "Empêcher le déplacement de la production vers des pays moins contraignants"
-                  ) : (
-                    "Prevent production relocation to less stringent countries"
-                  )}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center hover:shadow-lg transition-shadow border-l-4 border-l-purple-500">
-              <CardContent className="p-8">
-                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="h-8 w-8 text-purple-600" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">
-                  {isFrench ? "Protéger la compétitivité" : "Protect competitiveness"}
-                </h3>
-                <p className="text-gray-600">
-                  {isFrench ? (
-                    "Maintenir la compétitivité des entreprises européennes"
-                  ) : (
-                    "Maintain European companies' competitiveness"
-                  )}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Sectors Section */}
-        <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              {isFrench ? "Secteurs concernés" : "Affected sectors"}
-            </h2>
-            <p className="text-lg text-gray-600">
-              {isFrench ? (
-                "Ces secteurs seront les premiers impactés, d'autres suivront progressivement"
-              ) : (
-                "These sectors will be the first impacted, others will follow gradually"
-              )}
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {sectorsData.map((sector, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="text-4xl mb-3">{sector.icon}</div>
-                  <h3 className="font-semibold text-sm">{sector.name}</h3>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          <div className="text-center mt-8">
-            <Badge variant="outline" className="px-4 py-2">
-              {isFrench ? (
-                "D'autres secteurs seront ajoutés progressivement"
-              ) : (
-                "Other sectors will be added progressively"
-              )}
-            </Badge>
-          </div>
-        </section>
-
-        {/* Impacts Section */}
-        <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              {isFrench ? (
-                "Impacts pour les exportateurs tunisiens et africains"
-              ) : (
-                "Impacts for Tunisian and African exporters"
-              )}
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              {isFrench ? (
-                "Comprendre les enjeux pour mieux s'y préparer et transformer la contrainte en opportunité."
-              ) : (
-                "Understanding the challenges to better prepare and transform constraints into opportunities."
-              )}
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {impactsData.map((impact, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-8">
-                  <div className="flex items-center mb-4">
-                    {impact.icon}
-                    <h3 className="text-xl font-semibold ml-3">{impact.title}</h3>
-                  </div>
-                  <p className="text-gray-600">{impact.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Solution Section */}
-        <section className="mb-16">
-          <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-0">
-            <CardContent className="p-12 text-center">
-              <div className="bg-white rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Calculator className="h-10 w-10 text-green-600" />
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                {isFrench ? "Notre solution : Le calculateur carbone" : "Our solution: Carbon calculator"}
-              </h2>
-              <p className="text-lg text-gray-700 max-w-4xl mx-auto mb-8 leading-relaxed">
-                {isFrench ? (
-                  "Notre calculateur carbone vous permet d'estimer précisément les émissions par produit, d'évaluer les coûts potentiels du CBAM et d'identifier des pistes concrètes de réduction. Anticipez les exigences réglementaires et sécurisez vos exportations vers l'Europe."
-                ) : (
-                  "Our carbon calculator allows you to precisely estimate emissions per product, evaluate potential CBAM costs and identify concrete reduction opportunities. Anticipate regulatory requirements and secure your exports to Europe."
-                )}
-              </p>
-              
-              <Link to="/cbam-calculator">
-                <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg font-semibold shadow-lg">
-                  🚀 {isFrench ? "Estimez vos coûts carbone avec notre calculateur" : "Estimate your carbon costs with our calculator"}
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* CTA Section */}
-        <section className="text-center bg-white rounded-2xl p-12 shadow-lg">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            {isFrench ? "Agissez dès maintenant" : "Act now"}
-          </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
-            {isFrench ? (
-              "Le CBAM représente un défi majeur mais aussi une opportunité de modernisation. Les entreprises qui s'y préparent dès aujourd'hui prendront une longueur d'avance sur leurs concurrents et sécuriseront leurs exportations vers l'Europe. Ne laissez pas cette réglementation fragiliser votre activité : transformez-la en avantage concurrentiel."
-            ) : (
-              "CBAM represents a major challenge but also a modernization opportunity. Companies that prepare today will gain an advantage over their competitors and secure their exports to Europe. Don't let this regulation weaken your business: transform it into a competitive advantage."
-            )}
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/cbam-calculator">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
-                {isFrench ? "Calculateur carbone" : "Carbon calculator"}
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button size="lg" variant="outline" className="px-8 py-3">
-                {isFrench ? "Nous contacter" : "Contact us"}
-              </Button>
-            </Link>
-          </div>
-        </section>
-      </div>
-      </div>
-    </SolutionLandingShell>
-  );
+const blocks = content.blocks;
+const sectors = [
+  { name: 'Ciment', icon: '🏗️' }, { name: 'Fer et acier', icon: '⚔️' },
+  { name: 'Aluminium', icon: '🔧' }, { name: 'Engrais', icon: '🌱' },
+  { name: 'Hydrogène', icon: '💨' }, { name: 'Électricité', icon: '⚡' },
+];
+type CtaKind = 'calculator' | 'expert' | 'whatsapp';
+const destinations: Record<CtaKind, string> = {
+  calculator: '/cbam-calculator', expert: '/demo', whatsapp: 'https://wa.me/21655053033',
 };
+const events = {
+  calculator: 'cbam_calculator_click', expert: 'cbam_expert_click', whatsapp: 'cbam_whatsapp_click',
+} as const;
+function Cta({ kind, children, position }: { kind: CtaKind; children: React.ReactNode; position: string }) {
+  const click = () => trackEvent(events[kind], { position, page_path: '/cbam' });
+  return <Button asChild size="lg" variant={kind === 'calculator' ? 'default' : 'outline'} className="h-auto min-h-11 whitespace-normal text-center">
+    {kind === 'whatsapp'
+      ? <a href={destinations[kind]} onClick={click} target="_blank" rel="noopener noreferrer">{children}</a>
+      : <Link to={destinations[kind]} onClick={click}>{children}</Link>}
+  </Button>;
+}
+function Ctas({ position, final = false }: { position: string; final?: boolean }) {
+  return <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-4">
+    <VerifierLink placement="cbam" className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-center font-semibold text-primary-foreground">{verifierConfig.promotions.cbamButton}</VerifierLink>
+    <Cta kind="calculator" position={position}>Estimer mon coût CBAM</Cta>
+    <Cta kind="expert" position={position}>{final ? 'Réserver un échange avec un expert' : 'Parler à un expert'}</Cta>
+  </div>;
+}
+function Section({ title, children, id }: { title: React.ReactNode; children: React.ReactNode; id: string }) {
+  return <section aria-labelledby={id} className="py-8 md:py-12 border-b border-border">
+    <h2 id={id} className="text-2xl md:text-3xl font-bold text-foreground mb-6">{title}</h2>
+    <div className="space-y-5 text-base md:text-lg text-muted-foreground leading-relaxed">{children}</div>
+  </section>;
+}
+const paragraphs = (items: string[]) => items.filter(Boolean).map(text => <p key={text}>{text}</p>);
 
+const CBAM: React.FC = () => (
+  <SolutionLandingShell path="/cbam" showRelated={false}>
+    <SEOHead path="/cbam" title={content.seo.title} description={content.seo.description} jsonLd={buildFaqSchema(content.faqs)} />
+    <div className="bg-gradient-to-br from-slate-50 via-white to-green-50">
+      <div className="container mx-auto px-4 py-12 md:py-16 max-w-5xl break-words">
+        <section aria-labelledby="cbam-h1" className="pb-10 md:pb-16">
+          <h2 className="sr-only">En-tête</h2>
+          <Badge className="mb-5 bg-blue-100 text-blue-800 px-4 py-2 text-sm whitespace-normal">{content.seo.badge}</Badge>
+          <h1 id="cbam-h1" className="text-3xl md:text-5xl font-bold text-foreground leading-tight">{content.seo.h1}</h1>
+          <p className="mt-4 text-sm text-muted-foreground">Mis à jour le <time dateTime="2026-10-26">{content.seo.updated}</time></p>
+          <p className="mt-6 text-lg md:text-xl text-muted-foreground leading-relaxed">{blocks['1'].paragraphs.find(p => p.startsWith('Introduction : '))?.replace('Introduction : ', '')}</p>
+          <Ctas position="hero" />
+        </section>
+
+        <Section id="cbam-bref" title={blocks['2'].title}>{paragraphs(blocks['2'].paragraphs)}</Section>
+
+        <Section id="cbam-secteurs" title={<Link className="underline decoration-primary/40 underline-offset-4" to="/bilan-carbone-industrie">{blocks['3'].title}</Link>}>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 not-prose">
+            {sectors.map(sector => <div key={sector.name} className="rounded-lg border border-border bg-card p-4 text-center text-foreground"><span className="block text-3xl mb-2" aria-hidden="true">{sector.icon}</span><span className="font-semibold">{sector.name}</span></div>)}
+          </div>
+          {paragraphs(blocks['3'].paragraphs)}
+          <Cta kind="expert" position="sectors">Parler à un expert</Cta>
+        </Section>
+
+        <Section id="cbam-calendrier" title={blocks['4'].title}>
+          <div role="table" aria-label="Calendrier CBAM" className="rounded-lg border border-border overflow-hidden text-base">
+            <div role="row" className="hidden sm:grid sm:grid-cols-[11rem_1fr] bg-muted font-semibold text-foreground">
+              <div role="columnheader" className="p-4">Date</div><div role="columnheader" className="p-4">Ce qui se passe</div>
+            </div>
+            {[0, 1, 2, 3, 4].map(index => <div role="row" key={index} className="grid grid-cols-1 sm:grid-cols-[11rem_1fr] border-t border-border bg-card">
+              <div role="cell" className="p-4 pb-1 sm:pb-4 font-semibold text-foreground">{blocks['4'].paragraphs[2 + index * 2]}</div>
+              <div role="cell" className="p-4 pt-1 sm:pt-4">{blocks['4'].paragraphs[3 + index * 2]}</div>
+            </div>)}
+          </div>
+          <p>{blocks['4'].paragraphs[12]}</p>
+        </Section>
+
+        <Section id="cbam-donnees" title={blocks['5'].title}>
+          <p>{blocks['5'].paragraphs[0]}</p>
+          <ul className="list-disc pl-6 space-y-3">{blocks['5'].paragraphs.slice(1, 6).map(text => <li key={text}>{text}</li>)}</ul>
+          <p>{blocks['5'].paragraphs[6]}</p>
+        </Section>
+
+        <Section id="cbam-valeurs-defaut" title={blocks['6'].title}>{paragraphs(blocks['6'].paragraphs)}</Section>
+        <Section id="cbam-plan" title={blocks['7'].title}>
+          <ol className="list-decimal pl-6 space-y-3">{blocks['7'].paragraphs.map(text => <li key={text}>{text}</li>)}</ol>
+        </Section>
+        <Section id="cbam-accompagnement" title={blocks['8'].title}>
+          {paragraphs(blocks['8'].paragraphs.filter(p => !p.startsWith('Bouton :')))}
+          <Cta kind="calculator" position="support">Estimer mon coût CBAM</Cta>
+        </Section>
+        <Section id="cbam-pourquoi" title={blocks['9'].title}>{paragraphs(blocks['9'].paragraphs)}</Section>
+        <Section id="cbam-echange" title={blocks['10'].paragraphs[0].replace('Titre : ', '')}>
+          <p>{blocks['10'].paragraphs[1].replace('Texte : ', '')}</p>
+          <Ctas position="final" final />
+        </Section>
+        <Section id="cbam-faq" title="Questions fréquentes sur le CBAM">
+          <div className="space-y-7">
+            {content.faqs.map((faq, index) => <article key={faq.question} className="rounded-lg border border-border bg-card p-5 md:p-6">
+              <h3 className="text-lg md:text-xl font-semibold text-foreground mb-3">{index === 5 ? <Link className="underline underline-offset-4" to="/bilan-carbone">{faq.question}</Link> : faq.question}</h3>
+              <p className="whitespace-pre-line">{faq.answer}</p>
+            </article>)}
+          </div>
+          {paragraphs(content.faqNotes)}
+          <Cta kind="whatsapp" position="faq">Contacter CarboScan sur WhatsApp</Cta>
+          <p><Link className="text-primary underline underline-offset-4" to="/blog/guide-cbam-conformite-carbone-pme">Lire notre guide CBAM pour la conformité carbone des PME</Link></p>
+        </Section>
+      </div>
+    </div>
+    <SolutionRelatedLinks currentPath="/cbam" showModules={false} sectorTitle="Votre secteur, vos enjeux" sectorDescription="Découvrez comment CarboScan s’adapte aux spécificités de votre activité." />
+  </SolutionLandingShell>
+);
 export default CBAM;

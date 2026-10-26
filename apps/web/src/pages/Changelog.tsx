@@ -2,7 +2,7 @@ import React from 'react';
 import { MainHeader } from '@/components/MainHeader';
 import { NewFooter } from '@/components/NewFooter';
 import { Badge } from '@/components/ui/badge';
-import { Helmet } from 'react-helmet-async';
+import { SEOHead } from "@/components/seo/SEOHead";
 
 interface ChangelogEntry {
   version: string;
@@ -75,10 +75,7 @@ const typeLabels: Record<string, string> = {
 const Changelog: React.FC = () => {
   return (
     <>
-      <Helmet>
-        <title>Changelog - Nouveautés CarboScan</title>
-        <meta name="description" content="Découvrez les dernières mises à jour et nouvelles fonctionnalités de CarboScan, la plateforme de bilan carbone." />
-      </Helmet>
+      <SEOHead path="/changelog" />
 
       <MainHeader />
 

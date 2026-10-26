@@ -1,0 +1,76 @@
+Test avec résultats enrichis
+
+Connexion
+Votre page est-elle compatible avec les résultats enrichis ?
+URL
+CODE
+
+
+1
+<!DOCTYPE html><html lang="fr" data-rh="lang"><head>
+2
+    <meta charset="UTF-8">
+3
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+4
+    <meta name="theme-color" content="#073F35">
+5
+    <meta name="application-name" content="CarboScan">
+6
+    <meta name="mobile-web-app-capable" content="yes">
+7
+    <meta name="apple-mobile-web-app-capable" content="yes">
+8
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+9
+    <meta name="apple-mobile-web-app-title" content="CarboScan">
+10
+    <meta data-rh="true" name="robots" content="index, follow">
+11
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=11">
+12
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=11">
+13
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=11">
+14
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=11">
+15
+​
+16
+    <title>CBAM Tunisie et Maroc : guide de conformité des exportateurs</title>
+17
+    <meta data-rh="true" name="description" content="Exportateurs vers l’UE : qui est concerné par le CBAM, calendrier, données à fournir à vos clients européens. Estimez votre coût carbone.">
+18
+    
+19
+    <link rel="preload" as="image" href="/media/hero-wind-poster.jpg" type="image/jpeg" fetchpriority="high">
+20
+​
+21
+    <!-- Open Graph -->
+22
+    <meta data-rh="true" property="og:site_name" content="CarboScan">
+23
+    <meta data-rh="true" property="og:locale" content="fr_FR">
+24
+    <meta data-rh="true" property="og:type" content="website">
+25
+    
+
+Outil d'inspection Google pour smartphone
+
+Outil d'inspection Google pour ordinateur
+
+TESTER LE CODE
+Qu'est-ce que les résultats enrichis ?
+Les résultats enrichis offrent aux internautes une expérience plus conviviale que les liens hypertextes standards dans des services Google tels que la recherche. Ils peuvent comprendre des carrousels, des images ou d'autres éléments non textuels.
+En quoi consiste ce test ?
+Testez votre page en mode public pour voir quels résultats enrichis peuvent être générés par les données structurées qu'elle contient.
+EN SAVOIR PLUS
+
+Galerie de données structurées
+Documents de référence pour les données structurées compatibles avec Google
+LIRE LA DOCUMENTATION
+
+
+https://search.google.com/test/rich-results

@@ -1,0 +1,90 @@
+TAP version 13
+# Subtest: CBAM verifier decisions and annex I
+    # Subtest: steel, EU, importer above threshold, unprepared => concerned, zero
+    ok 1 - steel, EU, importer above threshold, unprepared => concerned, zero
+      ---
+      duration_ms: 0.526375
+      type: 'test'
+      ...
+    # Subtest: cement with unknown threshold => probably concerned
+    ok 2 - cement with unknown threshold => probably concerned
+      ---
+      duration_ms: 0.071875
+      type: 'test'
+      ...
+    # Subtest: electricity skips the threshold and remains concerned even with a stale no answer
+    ok 3 - electricity skips the threshold and remains concerned even with a stale no answer
+      ---
+      duration_ms: 0.120833
+      type: 'test'
+      ...
+    # Subtest: textile / other products => not directly concerned
+    ok 4 - textile / other products => not directly concerned
+      ---
+      duration_ms: 0.045041
+      type: 'test'
+      ...
+    # Subtest: 7318 suggests iron and steel; all ready and requested => score 100
+    ok 5 - 7318 suggests iron and steel; all ready and requested => score 100
+      ---
+      duration_ms: 0.541708
+      type: 'test'
+      ...
+    # Subtest: handles exclusions, partial codes and ex descriptions without certainty
+    ok 6 - handles exclusions, partial codes and ex descriptions without certainty
+      ---
+      duration_ms: 0.178708
+      type: 'test'
+      ...
+    # Subtest: covers unspecified planned/unknown cases conservatively, and gates the bonus
+    ok 7 - covers unspecified planned/unknown cases conservatively, and gates the bonus
+      ---
+      duration_ms: 0.072083
+      type: 'test'
+      ...
+    1..7
+ok 1 - CBAM verifier decisions and annex I
+  ---
+  duration_ms: 2.054375
+  type: 'suite'
+  ...
+# Subtest: CBAM lead API and delivery
+    # Subtest: saves only a final, consented request and recomputes results on the server
+    ok 1 - saves only a final, consented request and recomputes results on the server
+      ---
+      duration_ms: 557.767333
+      type: 'test'
+      ...
+    # Subtest: rejects missing consent, incomplete answers, invalid codes and forged results; discards spam
+    ok 2 - rejects missing consent, incomplete answers, invalid codes and forged results; discards spam
+      ---
+      duration_ms: 19.235
+      type: 'test'
+      ...
+    # Subtest: rate-limits form submissions
+    ok 3 - rate-limits form submissions
+      ---
+      duration_ms: 5.420083
+      type: 'test'
+      ...
+    # Subtest: escapes contact values in emails and CSV; Resend receives idempotent messages
+    ok 4 - escapes contact values in emails and CSV; Resend receives idempotent messages
+      ---
+      duration_ms: 8.3045
+      type: 'test'
+      ...
+    1..4
+ok 2 - CBAM lead API and delivery
+  ---
+  duration_ms: 591.073584
+  type: 'suite'
+  ...
+1..2
+# tests 11
+# suites 2
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1140.473375

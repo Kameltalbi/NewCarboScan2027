@@ -1,3 +1,5 @@
+import { VerifierLink } from "@/features/cbam-verifier/VerifierLink";
+import { verifierConfig } from "@cbam-verifier";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -65,7 +67,7 @@ export const NewHeroSection: React.FC = () => {
             {t("homepage.hero.subtitle")}
           </p>
 
-          <div className="mt-9">
+          <div className="mt-9 flex flex-col sm:flex-row flex-wrap gap-4">
             <button
               type="button"
               onClick={() => navigate("/contact")}
@@ -73,6 +75,7 @@ export const NewHeroSection: React.FC = () => {
             >
               {t("homepage.hero.ctaPrimary")}
             </button>
+            <VerifierLink placement="header" className="inline-flex min-h-[58px] items-center justify-center rounded-[4px] border border-[#075C43] px-6 py-3 text-center text-[15px] font-semibold text-[#075C43]">{verifierConfig.promotions.header}</VerifierLink>
           </div>
         </div>
 

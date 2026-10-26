@@ -1,0 +1,29 @@
+# EXAMPLE ONLY — merge into the actual carboscan.io TLS proxy configuration.
+# Do not replace ktoptima.com virtual hosts. Certificate paths must be confirmed.
+# Install this map in the nginx http context, once.
+map $uri $carboscan_canonical_path {
+    default $uri;
+    ~^/calculateur-carbone/?$ /empreinte-produit-calculator;
+    ~^/roi-carboscan/?$ /calculateur-roi;
+    ~^/sitemap/?$ /sitemap.xml;
+    ~^(.+)/$ $1;
+}
+server {
+    listen 80;
+    listen [::]:80;
+    server_name carboscan.io www.carboscan.io;
+    return 301 https://carboscan.io$carboscan_canonical_path$is_args$args;
+}
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name www.carboscan.io;
+    ssl_certificate /etc/letsencrypt/live/carboscan.io/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/carboscan.io/privkey.pem;
+    return 301 https://carboscan.io$carboscan_canonical_path$is_args$args;
+}
+# In the existing HTTPS carboscan.io virtual host, proxy to the confirmed web port:
+# proxy_set_header Host $host;
+# proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+# proxy_set_header X-Forwarded-Proto $scheme;
+# Keep its existing certificate, security and proxy timeout settings.

@@ -1,18 +1,12 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SEOHead } from '@/components/seo/SEOHead';
 import { CarboScanROIWizard } from '@/components/roi/CarboScanROIWizard';
 
 const CarboScanRoiPage: React.FC = () => {
   return (
     <>
-      <Helmet>
-        <title>Calculateur ROI CarboScan — Retour sur investissement plateforme</title>
-        <meta
-          name="description"
-          content="Estimez le ROI de CarboScan : efficacité reporting, croissance business, accès au capital et risques évités. Calculateur multi-devises."
-        />
-        <link rel="canonical" href="https://carboscan.io/calculateur-roi" />
-      </Helmet>
+      <SEOHead path="/calculateur-roi" />
+      <h1 className="text-3xl font-bold text-center pt-8">Calculateur ROI de votre projet carbone</h1>
       <CarboScanROIWizard />
     </>
   );

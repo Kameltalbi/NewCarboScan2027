@@ -1,0 +1,888 @@
+{
+  "version": "cbam-verifier-2026-10-26.1",
+  "locale": "fr",
+  "path": "/verificateur-cbam",
+  "seo": {
+    "title": "Vérificateur CBAM gratuit : votre entreprise est-elle concernée ?",
+    "description": "Répondez à 7 questions et découvrez en 2 minutes si vos exportations vers l’UE sont soumises au CBAM, et où vous en êtes dans votre préparation.",
+    "h1": "Votre entreprise est-elle concernée par le CBAM ?"
+  },
+  "intro": {
+    "badge": "Vérificateur CBAM",
+    "subtitle": "Gratuit, sans inscription, résultat immédiat.",
+    "text": "En 7 questions, identifiez si vos exportations vers l’Union européenne sont concernées et évaluez votre préparation. Pour l’hydrogène et l’électricité, seules 6 questions sont nécessaires.",
+    "howTitle": "Comment fonctionne le vérificateur ?",
+    "how": "Vous répondez à une question à la fois. Le verdict, le score et vos prochaines étapes s’affichent immédiatement, sans coordonnées. Vos réponses restent dans votre navigateur jusqu’à l’envoi volontaire du formulaire de rapport. Ce vérificateur ne calcule pas le coût CBAM.",
+    "start": "Commencer la vérification",
+    "noScript": "Activez JavaScript pour répondre au questionnaire. Les explications et la FAQ restent accessibles sans JavaScript."
+  },
+  "questions": [
+    {
+      "id": "exports",
+      "title": "Exportez-vous vers l’Union européenne ?",
+      "hint": "",
+      "options": [
+        {
+          "value": "yes",
+          "label": "Oui",
+          "points": 0
+        },
+        {
+          "value": "planned",
+          "label": "Pas encore, mais c’est prévu",
+          "points": 0
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "family",
+      "title": "Quel type de produit exportez-vous ?",
+      "hint": "",
+      "options": [
+        {
+          "value": "steel",
+          "label": "Fer et acier (y compris tubes, profilés, vis, boulons, structures)",
+          "points": 0
+        },
+        {
+          "value": "aluminium",
+          "label": "Aluminium (y compris profilés, tôles, feuilles, structures)",
+          "points": 0
+        },
+        {
+          "value": "cement",
+          "label": "Ciment et clinker",
+          "points": 0
+        },
+        {
+          "value": "fertilisers",
+          "label": "Engrais azotés, ammoniac, acide nitrique",
+          "points": 0
+        },
+        {
+          "value": "hydrogen",
+          "label": "Hydrogène",
+          "points": 0
+        },
+        {
+          "value": "electricity",
+          "label": "Électricité",
+          "points": 0
+        },
+        {
+          "value": "other",
+          "label": "Autre produit",
+          "points": 0
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "threshold",
+      "title": "Au total, vos clients européens importent-ils plus de 50 tonnes par an de ces produits (tous fournisseurs confondus) ?",
+      "hint": "Le seuil concerne votre client importateur, pas vous. Si vous vendez 30 t à un client qui en importe 5 000 au total, vos 30 t sont concernées. Il porte sur les produits CBAM des secteurs acier, aluminium, ciment et engrais, cumulés par importateur et par an ; il ne s’applique pas à l’hydrogène ni à l’électricité.",
+      "options": [
+        {
+          "value": "yes",
+          "label": "Oui",
+          "points": 0
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "points": 0
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "emissions",
+      "title": "Connaissez-vous les émissions de CO₂ par tonne de vos produits ?",
+      "hint": "Un bilan carbone ne remplace pas le calcul CBAM, qui porte sur chaque produit, dans l’usine qui le fabrique.",
+      "options": [
+        {
+          "value": "cbam",
+          "label": "Oui, calculées selon la méthode CBAM",
+          "points": 30
+        },
+        {
+          "value": "estimate",
+          "label": "J’ai une estimation ou un bilan carbone",
+          "points": 10
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "collection",
+      "title": "Collectez-vous les données de production de 2026 par produit (combustibles, électricité, matières premières, tonnages) ?",
+      "hint": "",
+      "options": [
+        {
+          "value": "yes",
+          "label": "Oui",
+          "points": 30
+        },
+        {
+          "value": "partial",
+          "label": "Partiellement",
+          "points": 15
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "verifier",
+      "title": "Avez-vous identifié un vérificateur indépendant accrédité dans l’UE ?",
+      "hint": "",
+      "options": [
+        {
+          "value": "yes",
+          "label": "Oui",
+          "points": 25
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "points": 0
+        },
+        {
+          "value": "unaware",
+          "label": "Je ne savais pas que c’était nécessaire",
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": "requested",
+      "title": "Vos clients européens vous ont-ils déjà demandé vos données d’émissions ?",
+      "hint": "",
+      "options": [
+        {
+          "value": "yes",
+          "label": "Oui",
+          "points": 0
+        },
+        {
+          "value": "no",
+          "label": "Non",
+          "points": 0
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas",
+          "points": 0
+        }
+      ]
+    }
+  ],
+  "visibility": {
+    "thresholdExemptFamilies": [
+      "hydrogen",
+      "electricity"
+    ]
+  },
+  "rules": [
+    {
+      "verdict": "not_direct",
+      "when": {
+        "any": [
+          {
+            "field": "exports",
+            "in": [
+              "no"
+            ]
+          },
+          {
+            "field": "effectiveFamily",
+            "in": [
+              "other"
+            ]
+          },
+          {
+            "all": [
+              {
+                "field": "threshold",
+                "in": [
+                  "no"
+                ]
+              },
+              {
+                "field": "family",
+                "in": [
+                  "steel",
+                  "aluminium",
+                  "cement",
+                  "fertilisers",
+                  "unknown"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "verdict": "concerned",
+      "when": {
+        "all": [
+          {
+            "field": "exports",
+            "in": [
+              "yes"
+            ]
+          },
+          {
+            "field": "effectiveFamily",
+            "in": [
+              "steel",
+              "aluminium",
+              "cement",
+              "fertilisers",
+              "hydrogen",
+              "electricity"
+            ]
+          },
+          {
+            "any": [
+              {
+                "field": "threshold",
+                "in": [
+                  "yes"
+                ]
+              },
+              {
+                "field": "family",
+                "in": [
+                  "hydrogen",
+                  "electricity"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "verdict": "probable",
+      "when": {
+        "any": [
+          {
+            "field": "exports",
+            "in": [
+              "planned"
+            ]
+          },
+          {
+            "field": "effectiveFamily",
+            "in": [
+              "unknown"
+            ]
+          },
+          {
+            "field": "threshold",
+            "in": [
+              "unknown"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "fallbackVerdict": "probable",
+  "score": {
+    "max": 100,
+    "bonus": {
+      "points": 15,
+      "when": {
+        "all": [
+          {
+            "field": "requested",
+            "in": [
+              "yes"
+            ]
+          },
+          {
+            "field": "emissions",
+            "in": [
+              "cbam"
+            ]
+          }
+        ]
+      }
+    },
+    "bands": [
+      {
+        "max": 39,
+        "id": "starting",
+        "label": "Préparation à démarrer"
+      },
+      {
+        "max": 74,
+        "id": "progress",
+        "label": "Préparation en cours"
+      },
+      {
+        "max": 100,
+        "id": "ready",
+        "label": "Bien préparé"
+      }
+    ]
+  },
+  "verdicts": {
+    "concerned": {
+      "label": "Concerné",
+      "description": "D’après vos réponses, vos exportations entrent dans les familles CBAM et le seuil applicable est dépassé, ou ne s’applique pas à votre produit.",
+      "tone": "red"
+    },
+    "probable": {
+      "label": "Probablement concerné",
+      "description": "Vos réponses appellent une vérification du périmètre, du code douanier ou du volume importé par vos clients européens.",
+      "tone": "orange"
+    },
+    "not_direct": {
+      "label": "Pas directement concerné",
+      "description": "D’après vos réponses, pas d’obligation directe aujourd’hui. Vos clients européens peuvent toutefois demander vos émissions pour leur reporting climat, et le champ du CBAM pourrait s’élargir.",
+      "tone": "green"
+    }
+  },
+  "nextSteps": [
+    {
+      "id": "threshold",
+      "when": {
+        "field": "threshold",
+        "in": [
+          "unknown"
+        ]
+      },
+      "text": "Demandez à vos clients européens leur volume total d’importations CBAM."
+    },
+    {
+      "id": "emissions",
+      "when": {
+        "field": "emissions",
+        "in": [
+          "estimate",
+          "no"
+        ]
+      },
+      "text": "Calculez les émissions de chaque produit selon la méthode CBAM : sans données réelles, vos clients appliqueront des valeurs par défaut majorées."
+    },
+    {
+      "id": "collection",
+      "when": {
+        "field": "collection",
+        "in": [
+          "partial",
+          "no"
+        ]
+      },
+      "text": "Commencez dès maintenant à collecter vos données de 2026 : elles serviront à la première déclaration, due le 30 septembre 2027."
+    },
+    {
+      "id": "verifier",
+      "when": {
+        "field": "verifier",
+        "in": [
+          "no",
+          "unaware"
+        ]
+      },
+      "text": "Réservez un vérificateur accrédité : ils sont encore peu nombreux."
+    }
+  ],
+  "defaultSteps": [
+    "Transmettez vos données vérifiées à vos clients européens et convenez du format attendu.",
+    "Actualisez votre suivi des données de production et conservez les justificatifs.",
+    "Faites le point avec un expert sur les prochaines échéances applicables à vos produits."
+  ],
+  "notDirectSteps": [
+    "Confirmez le code douanier et le périmètre de vos produits avec vos clients.",
+    "Préparez votre bilan carbone pour répondre aux demandes de reporting climat.",
+    "Suivez les évolutions du champ du CBAM et les volumes importés par vos clients."
+  ],
+  "urgency": {
+    "when": {
+      "all": [
+        {
+          "field": "requested",
+          "in": [
+            "yes"
+          ]
+        },
+        {
+          "field": "emissions",
+          "in": [
+            "estimate",
+            "no"
+          ]
+        }
+      ]
+    },
+    "text": "Vos clients attendent déjà vos données."
+  },
+  "disclaimer": "Ce résultat est une première orientation fondée sur vos réponses. Il ne constitue pas un avis réglementaire. Pour une analyse précise, contactez un expert CarboScan.",
+  "customs": {
+    "source": "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:02023R0956-20251020",
+    "consolidatedDate": "2025-10-20",
+    "checkedDate": "2026-10-26",
+    "entries": [
+      {
+        "family": "cement",
+        "code": "25070080",
+        "description": "ex 2507 00 80 — Autres argiles kaoliniques, à l’exception des argiles kaoliniques non calcinées",
+        "exclusions": [],
+        "conditional": true
+      },
+      {
+        "family": "cement",
+        "code": "25231000",
+        "description": "Clinkers de ciment",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "cement",
+        "code": "25232100",
+        "description": "Ciments Portland blancs",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "cement",
+        "code": "25232900",
+        "description": "Autres ciments Portland",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "cement",
+        "code": "25233000",
+        "description": "Ciments alumineux",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "cement",
+        "code": "25239000",
+        "description": "Autres ciments hydrauliques",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "electricity",
+        "code": "27160000",
+        "description": "Énergie électrique",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "fertilisers",
+        "code": "28080000",
+        "description": "Acide nitrique ; acides sulfonitriques",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "fertilisers",
+        "code": "2814",
+        "description": "Ammoniac anhydre ou en solution aqueuse",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "fertilisers",
+        "code": "28342100",
+        "description": "Nitrates de potassium",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "fertilisers",
+        "code": "3102",
+        "description": "Engrais minéraux ou chimiques azotés",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "fertilisers",
+        "code": "3105",
+        "description": "Engrais minéraux ou chimiques ; exclusion des engrais phosphore-potassium du code 3105 60 00",
+        "exclusions": [
+          "31056000"
+        ],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "72",
+        "description": "Fonte, fer et acier, sous réserve des exclusions de l’annexe I",
+        "exclusions": [
+          "72022",
+          "72023000",
+          "72025000",
+          "72027000",
+          "72028000",
+          "72029100",
+          "72029200",
+          "72029300",
+          "720299",
+          "72029910",
+          "72029930",
+          "72029980",
+          "7204"
+        ],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "26011200",
+        "description": "Minerais de fer et leurs concentrés agglomérés",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7301",
+        "description": "Palplanches ; profilés soudés",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7302",
+        "description": "Éléments de voies ferrées",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "730300",
+        "description": "Tubes et profilés creux en fonte",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7304",
+        "description": "Tubes et profilés creux sans soudure",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7305",
+        "description": "Autres tubes de section circulaire de grand diamètre",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7306",
+        "description": "Autres tubes et profilés creux",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7307",
+        "description": "Accessoires de tuyauterie",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7308",
+        "description": "Constructions et parties de constructions",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "730900",
+        "description": "Réservoirs de plus de 300 litres",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7310",
+        "description": "Réservoirs et récipients de 300 litres ou moins",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "731100",
+        "description": "Récipients pour gaz comprimés ou liquéfiés",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7318",
+        "description": "Vis, boulons et articles similaires",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "steel",
+        "code": "7326",
+        "description": "Autres ouvrages en fer ou en acier",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7601",
+        "description": "Aluminium sous forme brute",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7603",
+        "description": "Poudres et paillettes",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7604",
+        "description": "Barres et profilés",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7605",
+        "description": "Fils",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7606",
+        "description": "Tôles et bandes",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7607",
+        "description": "Feuilles et bandes minces",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7608",
+        "description": "Tubes et tuyaux",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "76090000",
+        "description": "Accessoires de tuyauterie",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7610",
+        "description": "Constructions et parties de constructions",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "76110000",
+        "description": "Réservoirs de plus de 300 litres",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7612",
+        "description": "Réservoirs et récipients de 300 litres ou moins",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "76130000",
+        "description": "Récipients pour gaz comprimés ou liquéfiés",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7614",
+        "description": "Torons et câbles non isolés",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "aluminium",
+        "code": "7616",
+        "description": "Autres ouvrages en aluminium",
+        "exclusions": [],
+        "conditional": false
+      },
+      {
+        "family": "hydrogen",
+        "code": "28041000",
+        "description": "Hydrogène",
+        "exclusions": [],
+        "conditional": false
+      }
+    ],
+    "label": "Code douanier (4 à 8 chiffres, facultatif)",
+    "hint": "Saisissez un code pour pré-sélectionner sa famille. Un code partiel ou une entrée « ex » peut nécessiter une précision. Le code exact et la description du produit restent déterminants.",
+    "statuses": {
+      "covered": "Ce code correspond à une entrée couverte de l’annexe I.",
+      "excluded": "Ce code correspond à une exclusion : la famille « Autre produit » est sélectionnée.",
+      "partial": "Code partiel : une famille est suggérée, mais le code complet est nécessaire pour confirmer le périmètre.",
+      "conditional": "Entrée « ex » : seules les argiles kaoliniques calcinées sont couvertes. Faites confirmer la description du produit par un expert.",
+      "unlisted": "Ce code ne correspond pas aux entrées couvertes configurées de l’annexe I. Vérifiez sa classification avec un expert.",
+      "invalid": "Saisissez 4 à 8 chiffres ; les espaces sont acceptés."
+    }
+  },
+  "ui": {
+    "next": "Continuer",
+    "back": "Retour",
+    "seeResult": "Voir mon résultat",
+    "restart": "Recommencer",
+    "question": "Question",
+    "of": "sur",
+    "progress": "Progression du questionnaire",
+    "select": "Choisissez une réponse pour continuer.",
+    "result": "Votre résultat",
+    "score": "Score de préparation",
+    "steps": "Vos 3 prochaines étapes",
+    "answers": "Vos réponses",
+    "notAsked": "Non applicable",
+    "footprint": "Préparer mon bilan carbone",
+    "demo": "Parler à un expert",
+    "whatsapp": "Échanger sur WhatsApp",
+    "understand": "Comprendre le CBAM",
+    "faqTitle": "Questions fréquentes",
+    "sourceLabel": "Consulter l’annexe I officielle (version consolidée du 20 octobre 2025)",
+    "whatsappMessage": "Bonjour CarboScan, j’ai utilisé le vérificateur CBAM. Mon verdict : {verdict}. Mon score de préparation : {score}/100. Je souhaite faire le point avec un expert."
+  },
+  "form": {
+    "title": "Recevez votre rapport détaillé par e-mail",
+    "intro": "Retrouvez votre verdict, votre score, vos réponses et vos prochaines étapes dans un e-mail récapitulatif.",
+    "fullName": "Prénom et nom",
+    "company": "Entreprise",
+    "email": "E-mail professionnel",
+    "country": "Pays",
+    "phone": "Téléphone ou WhatsApp (facultatif)",
+    "consent": "J’accepte que CarboScan utilise mes coordonnées et mes réponses pour m’envoyer mon rapport et me contacter à ce sujet.",
+    "privacy": "Politique de confidentialité",
+    "honeypot": "Ne pas remplir ce champ",
+    "submit": "Recevoir mon rapport",
+    "sending": "Enregistrement en cours…",
+    "success": "Votre demande a été enregistrée. Votre rapport est en cours d’envoi par e-mail.",
+    "error": "Votre demande n’a pas pu être enregistrée. Réessayez ou contactez notre équipe.",
+    "consentRequired": "Votre accord est nécessaire pour recevoir le rapport.",
+    "invalid": "Vérifiez les champs du formulaire.",
+    "privacyNote": "Ces informations servent à traiter votre demande de rapport. Aucune inscription à une newsletter n’est effectuée."
+  },
+  "email": {
+    "prospectSubject": "Votre résultat du vérificateur CBAM CarboScan",
+    "internalSubject": "Nouveau contact — vérificateur CBAM",
+    "hello": "Bonjour",
+    "report": "Voici votre rapport de préparation CBAM.",
+    "internalIntro": "Une nouvelle demande de rapport CBAM a été enregistrée.",
+    "date": "Date",
+    "verdict": "Verdict",
+    "score": "Score de préparation",
+    "nextSteps": "Prochaines étapes",
+    "answers": "Réponses",
+    "customsCode": "Code douanier",
+    "source": "Origine",
+    "consent": "Consentement au traitement de la demande",
+    "yes": "Oui",
+    "meeting": "Réserver un échange avec un expert",
+    "guide": "Comprendre le CBAM",
+    "thanks": "L’équipe CarboScan"
+  },
+  "faqs": [
+    {
+      "question": "Le vérificateur est-il vraiment gratuit ?",
+      "answer": "Oui, sans inscription. Seul le rapport détaillé par e-mail demande vos coordonnées."
+    },
+    {
+      "question": "Le seuil de 50 tonnes s’applique-t-il à moi ?",
+      "answer": "Il s’applique à votre client importateur, sur l’ensemble de ses importations annuelles."
+    },
+    {
+      "question": "Un bilan carbone suffit-il pour le CBAM ?",
+      "answer": "Non : le CBAM exige les émissions de chaque produit, par tonne, dans l’usine qui le fabrique."
+    },
+    {
+      "question": "Que faire si je suis concerné ?",
+      "answer": "Calculer les émissions de vos produits, collecter les données de 2026 et réserver un vérificateur accrédité. CarboScan vous accompagne à chaque étape."
+    }
+  ],
+  "promotions": {
+    "header": "Suis-je concerné par le CBAM ? →",
+    "banner": "CBAM : vos exportations vers l’UE sont-elles concernées ? Vérifiez en 2 minutes →",
+    "closeBanner": "Fermer le bandeau CBAM pendant 30 jours",
+    "sectionTitle": "Depuis janvier 2026, vos clients européens paient le carbone de vos produits",
+    "sectionText": "Acier, aluminium, ciment, engrais : si vous exportez vers l’UE, vos clients vont vous demander des données d’émissions vérifiées. Vérifiez en 2 minutes si vous êtes concerné et où vous en êtes.",
+    "button": "Lancer le vérificateur gratuit",
+    "slideTitle": "Êtes-vous concerné par le CBAM ?",
+    "slideText": "Vérifiez en 2 minutes.",
+    "closeSlide": "Fermer cet encart pendant 30 jours",
+    "cbamButton": "Vérifier si je suis concerné",
+    "sectorTitle": "Vous exportez vers l’Union européenne ?",
+    "sectorText": "Vérifiez si vos produits sont concernés par le CBAM et faites le point sur votre préparation.",
+    "retentionDays": 30
+  },
+  "csv": {
+    "headers": [
+      "Date",
+      "Nom",
+      "Entreprise",
+      "E-mail",
+      "Pays",
+      "Téléphone",
+      "Verdict",
+      "Score",
+      "Code douanier",
+      "Réponses",
+      "Prochaines étapes",
+      "Origine",
+      "Consentement",
+      "État e-mail"
+    ],
+    "button": "Exporter les contacts CBAM (CSV)",
+    "downloading": "Préparation de l’export…",
+    "error": "L’export des contacts CBAM a échoué.",
+    "filename": "contacts-verificateur-cbam.csv"
+  }
+}

@@ -1,3 +1,4 @@
+import { analytics } from "@/lib/analytics";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,7 @@ export const ContactContent: React.FC = () => {
         message: `[${subject || "contact"}] ${message}`,
         payload: { subject, firstName, lastName },
       });
+      analytics.contactFormSubmit("contact");
       toast({
         title: "Message envoyé",
         description: "Nous vous répondrons rapidement.",

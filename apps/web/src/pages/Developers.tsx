@@ -1,6 +1,6 @@
 // Developer portal — Swagger UI (CDN, aucune dépendance NPM)
 import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Code2, KeyRound, Webhook, ShieldCheck } from "lucide-react";
@@ -46,13 +46,7 @@ export default function Developers() {
 
   return (
     <>
-      <Helmet>
-        <title>API Développeurs — CarboScan</title>
-        <meta
-          name="description"
-          content="Documentation OpenAPI de l'API REST CarboScan : intégrez vos ERP (SAP, Odoo, Sage) et automatisez vos données carbone."
-        />
-      </Helmet>
+      <SEOHead path="/developers" />
       <MainHeader />
 
       <main className="min-h-screen bg-background">
