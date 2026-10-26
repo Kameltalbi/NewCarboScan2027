@@ -789,6 +789,7 @@
     "whatsapp": "Échanger sur WhatsApp",
     "understand": "Comprendre le CBAM",
     "faqTitle": "Questions fréquentes",
+    "home": "Accueil",
     "sourceLabel": "Consulter l’annexe I officielle (version consolidée du 20 octobre 2025)",
     "whatsappMessage": "Bonjour CarboScan, j’ai utilisé le vérificateur CBAM. Mon verdict : {verdict}. Mon score de préparation : {score}/100. Je souhaite faire le point avec un expert."
   },

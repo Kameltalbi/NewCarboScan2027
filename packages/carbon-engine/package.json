@@ -21,7 +21,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && mkdir -p dist/cbam-verifier && cp src/cbam-verifier/*.json dist/cbam-verifier/",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && tsx --test src/index.test.ts src/reference/*.test.ts"
   },

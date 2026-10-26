@@ -2,7 +2,7 @@ import { renderVerifierPdf } from '../services/cbamVerifier/pdf.js';
 import { randomUUID } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { evaluateVerifier, matchCustomsCode, validateVerifierAnswers, verifierConfig as c } from '@newcarboscan/carbon-engine/cbam-verifier';
+import { evaluateVerifier, getVerifierConfig, matchCustomsCode, validateVerifierAnswers, verifierConfig as c } from '@newcarboscan/carbon-engine/cbam-verifier';
 import { verifierRepository, verifierLeadsCsv, type VerifierRepository } from '../services/cbamVerifier/repository.js';
 import { drainVerifierEmails } from '../services/cbamVerifier/outbox.js';
 const shortText = (max: number) => z.string().trim().min(1).max(max).refine(value => [...value].every(ch => ch.charCodeAt(0) >= 32 && ch.charCodeAt(0) !== 127));
@@ -11,6 +11,7 @@ const schema = z.object({
   email: z.string().trim().email().max(320).transform(s => s.toLowerCase()), phone: z.string().trim().regex(/^[+\d(). -]{6,40}$/).refine(value => value.replace(/\D/g, '').length >= 6),
   consent: z.literal(true), website: z.string().max(200).optional().default(''), customsCode: z.string().trim().max(15).optional().default(''),
   answers: z.record(z.string(), z.string().max(50)),
+  locale: z.enum(['fr', 'en', 'de', 'es']).optional().default('fr'),
 }).strict();
 export async function registerCbamVerifierRoutes(app: FastifyInstance, options: { repository?: VerifierRepository; worker?: boolean; renderReport?: typeof renderVerifierPdf } = {}) {
   const repository = options.repository || verifierRepository;
@@ -31,15 +32,16 @@ export async function registerCbamVerifierRoutes(app: FastifyInstance, options: 
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) return reply.code(400).send({ error: c.form.invalid });
     const input = parsed.data;
-    const known = new Set(c.questions.map(q => q.id));
-    if (Object.keys(input.answers).some(key => !known.has(key)) || !validateVerifierAnswers(input.answers)) return reply.code(400).send({ error: c.form.invalid });
-    const match = input.customsCode ? matchCustomsCode(input.customsCode) : null;
-    if (match?.status === 'invalid' || (match?.family && input.answers.family !== match.family)) return reply.code(400).send({ error: c.form.invalid });
-    const result = evaluateVerifier(input.answers, input.customsCode);
+    const active = getVerifierConfig(input.locale);
+    const known = new Set(active.questions.map(q => q.id));
+    if (Object.keys(input.answers).some(key => !known.has(key)) || !validateVerifierAnswers(input.answers, input.locale)) return reply.code(400).send({ error: active.form.invalid });
+    const match = input.customsCode ? matchCustomsCode(input.customsCode, input.locale) : null;
+    if (match?.status === 'invalid' || (match?.family && input.answers.family !== match.family)) return reply.code(400).send({ error: active.form.invalid });
+    const result = evaluateVerifier(input.answers, input.customsCode, input.locale);
     const saved = await repository.save({ ...input, requestId: input.requestId || randomUUID() }, result, request.ip);
     if (options.worker !== false) void drain();
     const pdf = await (options.renderReport || renderVerifierPdf)({ ...input, requestId: saved.id }, result, saved.createdAt);
-    return reply.code(200).header('Content-Disposition', `attachment; filename="${c.form.filename}"`).type('application/pdf').send(pdf);
+    return reply.code(200).header('Content-Disposition', `attachment; filename="${active.form.filename}"`).type('application/pdf').send(pdf);
   });
   app.get('/v1/admin/cbam-verifier/leads.csv', { preHandler: [app.requireSuperAdmin] }, async (_request, reply) => {
     reply.header('Cache-Control', 'no-store').header('Content-Disposition', 'attachment; filename="contacts-verificateur-cbam.csv"').type('text/csv; charset=utf-8');

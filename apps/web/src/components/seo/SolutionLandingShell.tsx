@@ -9,15 +9,17 @@ type Props = {
   path: string;
   children: React.ReactNode;
   showRelated?: boolean;
+  breadcrumbs?: { name: string; path: string }[];
 };
 
 export const SolutionLandingShell: React.FC<Props> = ({
   path,
   children,
   showRelated = true,
+  breadcrumbs,
 }) => {
   const seo = getPageSEO(path);
-  const crumbs = seo.breadcrumbs ?? [];
+  const crumbs = breadcrumbs ?? seo.breadcrumbs ?? [];
 
   return (
     <div className="min-h-screen flex flex-col">

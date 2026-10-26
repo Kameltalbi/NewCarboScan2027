@@ -1,0 +1,1487 @@
+{
+  "Vérificateur CBAM gratuit : votre entreprise est-elle concernée ?": {
+    "en": "Free CBAM checker: is your company in scope?",
+    "de": "Kostenloser CBAM-Prüfer: Ist Ihr Unternehmen betroffen?",
+    "es": "Verificador CBAM gratuito: ¿su empresa está en el ámbito?"
+  },
+  "Répondez à 7 questions et découvrez en 2 minutes si vos exportations vers l’UE sont soumises au CBAM, et où vous en êtes dans votre préparation.": {
+    "en": "Answer 7 questions and find out in 2 minutes whether your exports to the EU are covered by the CBAM, and how far your preparation has gone.",
+    "de": "Beantworten Sie 7 Fragen und erfahren Sie in 2 Minuten, ob Ihre Ausfuhren in die EU dem CBAM unterliegen und wie weit Ihre Vorbereitung ist.",
+    "es": "Responda a 7 preguntas y descubra en 2 minutos si sus exportaciones a la UE están sujetas al CBAM y en qué punto está su preparación."
+  },
+  "Votre entreprise est-elle concernée par le CBAM ?": {
+    "en": "Is your company in scope for the CBAM?",
+    "de": "Ist Ihr Unternehmen vom CBAM betroffen?",
+    "es": "¿Su empresa está en el ámbito del CBAM?"
+  },
+  "Vérificateur CBAM": {
+    "en": "CBAM checker",
+    "de": "CBAM-Prüfer",
+    "es": "Verificador CBAM"
+  },
+  "Gratuit, sans inscription, résultat immédiat.": {
+    "en": "Free, no sign-up, immediate result.",
+    "de": "Kostenlos, ohne Registrierung, sofortiges Ergebnis.",
+    "es": "Gratuito, sin registro, resultado inmediato."
+  },
+  "En 7 questions, identifiez si vos exportations vers l’Union européenne sont concernées et évaluez votre préparation. Pour l’hydrogène et l’électricité, seules 6 questions sont nécessaires.": {
+    "en": "In 7 questions, see whether your exports to the European Union are in scope and assess your preparation. For hydrogen and electricity, only 6 questions are needed.",
+    "de": "Mit 7 Fragen stellen Sie fest, ob Ihre Ausfuhren in die Europäische Union betroffen sind, und bewerten Ihre Vorbereitung. Für Wasserstoff und Strom genügen 6 Fragen.",
+    "es": "En 7 preguntas, identifique si sus exportaciones a la Unión Europea están en el ámbito y evalúe su preparación. Para el hidrógeno y la electricidad bastan 6 preguntas."
+  },
+  "Comment fonctionne le vérificateur ?": {
+    "en": "How does the checker work?",
+    "de": "Wie funktioniert der Prüfer?",
+    "es": "¿Cómo funciona el verificador?"
+  },
+  "Vous répondez à une question à la fois. Le verdict, le score et vos prochaines étapes s’affichent immédiatement, sans coordonnées. Vos réponses restent dans votre navigateur jusqu’à l’envoi volontaire du formulaire de téléchargement du rapport. Ce vérificateur ne calcule pas le coût CBAM.": {
+    "en": "You answer one question at a time. The verdict, the score and your next steps appear immediately, without contact details. Your answers stay in your browser until you choose to send the report download form. This checker does not calculate the CBAM cost.",
+    "de": "Sie beantworten jeweils eine Frage. Urteil, Punktzahl und nächste Schritte erscheinen sofort, ohne Kontaktdaten. Ihre Antworten bleiben im Browser, bis Sie das Formular zum Herunterladen des Berichts freiwillig absenden. Dieser Prüfer berechnet nicht die CBAM-Kosten.",
+    "es": "Responde a una pregunta cada vez. El veredicto, la puntuación y los próximos pasos aparecen de inmediato, sin datos de contacto. Sus respuestas permanecen en el navegador hasta el envío voluntario del formulario de descarga del informe. Este verificador no calcula el coste CBAM."
+  },
+  "Commencer la vérification": {
+    "en": "Start the check",
+    "de": "Prüfung starten",
+    "es": "Empezar la verificación"
+  },
+  "Activez JavaScript pour répondre au questionnaire. Les explications et la FAQ restent accessibles sans JavaScript.": {
+    "en": "Enable JavaScript to answer the questionnaire. The explanations and the FAQ remain available without JavaScript.",
+    "de": "Aktivieren Sie JavaScript, um den Fragebogen zu beantworten. Erläuterungen und FAQ bleiben ohne JavaScript zugänglich.",
+    "es": "Active JavaScript para responder al cuestionario. Las explicaciones y las preguntas frecuentes siguen disponibles sin JavaScript."
+  },
+  "Exportez-vous vers l’Union européenne ?": {
+    "en": "Do you export to the European Union?",
+    "de": "Exportieren Sie in die Europäische Union?",
+    "es": "¿Exporta a la Unión Europea?"
+  },
+  "Oui": {
+    "en": "Yes",
+    "de": "Ja",
+    "es": "Sí"
+  },
+  "Pas encore, mais c’est prévu": {
+    "en": "Not yet, but it is planned",
+    "de": "Noch nicht, aber es ist geplant",
+    "es": "Todavía no, pero está previsto"
+  },
+  "Non": {
+    "en": "No",
+    "de": "Nein",
+    "es": "No"
+  },
+  "Quel type de produit exportez-vous ?": {
+    "en": "What type of product do you export?",
+    "de": "Welche Art von Produkt exportieren Sie?",
+    "es": "¿Qué tipo de producto exporta?"
+  },
+  "Fer et acier (y compris tubes, profilés, vis, boulons, structures)": {
+    "en": "Iron and steel (including tubes, sections, screws, bolts, structures)",
+    "de": "Eisen und Stahl (einschließlich Rohre, Profile, Schrauben, Bolzen, Konstruktionen)",
+    "es": "Hierro y acero (incluidos tubos, perfiles, tornillos, pernos y estructuras)"
+  },
+  "Aluminium (y compris profilés, tôles, feuilles, structures)": {
+    "en": "Aluminium (including sections, plates, foil, structures)",
+    "de": "Aluminium (einschließlich Profile, Bleche, Folien, Konstruktionen)",
+    "es": "Aluminio (incluidos perfiles, chapas, láminas y estructuras)"
+  },
+  "Ciment et clinker": {
+    "en": "Cement and clinker",
+    "de": "Zement und Klinker",
+    "es": "Cemento y clínker"
+  },
+  "Engrais azotés, ammoniac, acide nitrique": {
+    "en": "Nitrogen fertilisers, ammonia, nitric acid",
+    "de": "Stickstoffdünger, Ammoniak, Salpetersäure",
+    "es": "Fertilizantes nitrogenados, amoníaco, ácido nítrico"
+  },
+  "Hydrogène": {
+    "en": "Hydrogen",
+    "de": "Wasserstoff",
+    "es": "Hidrógeno"
+  },
+  "Électricité": {
+    "en": "Electricity",
+    "de": "Strom",
+    "es": "Electricidad"
+  },
+  "Autre produit": {
+    "en": "Other product",
+    "de": "Anderes Produkt",
+    "es": "Otro producto"
+  },
+  "Je ne sais pas": {
+    "en": "I do not know",
+    "de": "Ich weiß es nicht",
+    "es": "No lo sé"
+  },
+  "Au total, vos clients européens importent-ils plus de 50 tonnes par an de ces produits (tous fournisseurs confondus) ?": {
+    "en": "In total, do your European customers import more than 50 tonnes a year of these products (all suppliers combined)?",
+    "de": "Importieren Ihre europäischen Kunden insgesamt mehr als 50 Tonnen dieser Produkte pro Jahr (alle Lieferanten zusammengenommen)?",
+    "es": "En total, ¿sus clientes europeos importan más de 50 toneladas al año de estos productos (todos los proveedores juntos)?"
+  },
+  "Le seuil concerne votre client importateur, pas vous. Si vous vendez 30 t à un client qui en importe 5 000 au total, vos 30 t sont concernées. Il porte sur les produits CBAM des secteurs acier, aluminium, ciment et engrais, cumulés par importateur et par an ; il ne s’applique pas à l’hydrogène ni à l’électricité.": {
+    "en": "The threshold applies to your importing customer, not to you. If you sell 30 t to a customer who imports 5,000 t in total, your 30 t are in scope. It covers CBAM products in steel, aluminium, cement and fertilisers, added up per importer and per year; it does not apply to hydrogen or electricity.",
+    "de": "Die Schwelle gilt für Ihren importierenden Kunden, nicht für Sie. Wenn Sie 30 t an einen Kunden verkaufen, der insgesamt 5 000 t importiert, sind Ihre 30 t betroffen. Sie bezieht sich auf CBAM-Produkte der Sektoren Stahl, Aluminium, Zement und Düngemittel, je Importeur und Jahr summiert; sie gilt nicht für Wasserstoff und Strom.",
+    "es": "El umbral se aplica a su cliente importador, no a usted. Si vende 30 t a un cliente que importa 5 000 t en total, sus 30 t están en el ámbito. Cubre los productos CBAM de los sectores acero, aluminio, cemento y fertilizantes, acumulados por importador y por año; no se aplica al hidrógeno ni a la electricidad."
+  },
+  "Connaissez-vous les émissions de CO₂ par tonne de vos produits ?": {
+    "en": "Do you know the CO₂ emissions per tonne of your products?",
+    "de": "Kennen Sie die CO₂-Emissionen je Tonne Ihrer Produkte?",
+    "es": "¿Conoce las emisiones de CO₂ por tonelada de sus productos?"
+  },
+  "Un bilan carbone ne remplace pas le calcul CBAM, qui porte sur chaque produit, dans l’usine qui le fabrique.": {
+    "en": "A carbon footprint does not replace the CBAM calculation, which covers each product, in the plant that manufactures it.",
+    "de": "Eine CO2-Bilanz ersetzt nicht die CBAM-Berechnung, die jedes Produkt in dem Werk betrifft, das es herstellt.",
+    "es": "Una huella de carbono no sustituye el cálculo CBAM, que se refiere a cada producto, en la planta que lo fabrica."
+  },
+  "Oui, calculées selon la méthode CBAM": {
+    "en": "Yes, calculated using the CBAM method",
+    "de": "Ja, nach der CBAM-Methode berechnet",
+    "es": "Sí, calculadas según el método CBAM"
+  },
+  "J’ai une estimation ou un bilan carbone": {
+    "en": "I have an estimate or a carbon footprint",
+    "de": "Ich habe eine Schätzung oder eine CO2-Bilanz",
+    "es": "Tengo una estimación o una huella de carbono"
+  },
+  "Collectez-vous les données de production de 2026 par produit (combustibles, électricité, matières premières, tonnages) ?": {
+    "en": "Are you collecting 2026 production data by product (fuels, electricity, raw materials, tonnages)?",
+    "de": "Erfassen Sie die Produktionsdaten 2026 je Produkt (Brennstoffe, Strom, Rohstoffe, Tonnagen)?",
+    "es": "¿Recoge los datos de producción de 2026 por producto (combustibles, electricidad, materias primas, tonelajes)?"
+  },
+  "Partiellement": {
+    "en": "Partly",
+    "de": "Teilweise",
+    "es": "Parcialmente"
+  },
+  "Avez-vous identifié un vérificateur indépendant accrédité dans l’UE ?": {
+    "en": "Have you identified an independent verifier accredited in the EU?",
+    "de": "Haben Sie einen unabhängigen, in der EU akkreditierten Prüfer identifiziert?",
+    "es": "¿Ha identificado a un verificador independiente acreditado en la UE?"
+  },
+  "Je ne savais pas que c’était nécessaire": {
+    "en": "I did not know this was required",
+    "de": "Ich wusste nicht, dass das erforderlich ist",
+    "es": "No sabía que fuera necesario"
+  },
+  "Vos clients européens vous ont-ils déjà demandé vos données d’émissions ?": {
+    "en": "Have your European customers already asked you for your emissions data?",
+    "de": "Haben Ihre europäischen Kunden Sie bereits nach Ihren Emissionsdaten gefragt?",
+    "es": "¿Sus clientes europeos ya le han pedido sus datos de emisiones?"
+  },
+  "Préparation à démarrer": {
+    "en": "Preparation not started",
+    "de": "Vorbereitung noch nicht begonnen",
+    "es": "Preparación por empezar"
+  },
+  "Préparation en cours": {
+    "en": "Preparation under way",
+    "de": "Vorbereitung läuft",
+    "es": "Preparación en curso"
+  },
+  "Bien préparé": {
+    "en": "Well prepared",
+    "de": "Gut vorbereitet",
+    "es": "Bien preparado"
+  },
+  "Concerné": {
+    "en": "In scope",
+    "de": "Betroffen",
+    "es": "En el ámbito"
+  },
+  "D’après vos réponses, vos exportations entrent dans les familles CBAM et le seuil applicable est dépassé, ou ne s’applique pas à votre produit.": {
+    "en": "Based on your answers, your exports fall within the CBAM families and the applicable threshold is exceeded, or it does not apply to your product.",
+    "de": "Nach Ihren Antworten fallen Ihre Ausfuhren unter die CBAM-Produktfamilien und die geltende Schwelle ist überschritten, oder sie gilt nicht für Ihr Produkt.",
+    "es": "Según sus respuestas, sus exportaciones entran en las familias CBAM y se supera el umbral aplicable, o este no se aplica a su producto."
+  },
+  "Probablement concerné": {
+    "en": "Probably in scope",
+    "de": "Wahrscheinlich betroffen",
+    "es": "Probablemente en el ámbito"
+  },
+  "Vos réponses appellent une vérification du périmètre, du code douanier ou du volume importé par vos clients européens.": {
+    "en": "Your answers call for a check of the scope, the customs code or the volume imported by your European customers.",
+    "de": "Ihre Antworten erfordern eine Prüfung des Umfangs, des Zollcodes oder der von Ihren europäischen Kunden importierten Menge.",
+    "es": "Sus respuestas requieren comprobar el ámbito, el código aduanero o el volumen importado por sus clientes europeos."
+  },
+  "Pas directement concerné": {
+    "en": "Not directly in scope",
+    "de": "Nicht direkt betroffen",
+    "es": "No directamente en el ámbito"
+  },
+  "D’après vos réponses, pas d’obligation directe aujourd’hui. Vos clients européens peuvent toutefois demander vos émissions pour leur reporting climat, et le champ du CBAM pourrait s’élargir.": {
+    "en": "Based on your answers, there is no direct obligation today. Your European customers may still ask for your emissions for their climate reporting, and the CBAM scope could widen.",
+    "de": "Nach Ihren Antworten besteht heute keine unmittelbare Pflicht. Ihre europäischen Kunden können dennoch Ihre Emissionen für ihre Klimaberichterstattung anfordern, und der CBAM-Anwendungsbereich könnte sich erweitern.",
+    "es": "Según sus respuestas, hoy no hay una obligación directa. Sus clientes europeos pueden, no obstante, pedir sus emisiones para su información climática, y el ámbito del CBAM podría ampliarse."
+  },
+  "Demandez à vos clients européens leur volume total d’importations CBAM.": {
+    "en": "Ask your European customers for their total volume of CBAM imports.",
+    "de": "Fragen Sie Ihre europäischen Kunden nach ihrem gesamten CBAM-Importvolumen.",
+    "es": "Pida a sus clientes europeos su volumen total de importaciones CBAM."
+  },
+  "Calculez les émissions de chaque produit selon la méthode CBAM : sans données réelles, vos clients appliqueront des valeurs par défaut majorées.": {
+    "en": "Calculate the emissions of each product using the CBAM method: without actual data, your customers will apply marked-up default values.",
+    "de": "Berechnen Sie die Emissionen jedes Produkts nach der CBAM-Methode: ohne reale Daten wenden Ihre Kunden erhöhte Standardwerte an.",
+    "es": "Calcule las emisiones de cada producto según el método CBAM: sin datos reales, sus clientes aplicarán valores por defecto incrementados."
+  },
+  "Commencez dès maintenant à collecter vos données de 2026 : elles serviront à la première déclaration, due le 30 septembre 2027.": {
+    "en": "Start collecting your 2026 data now: it will be used for the first declaration, due on 30 September 2027.",
+    "de": "Beginnen Sie jetzt mit der Erfassung Ihrer Daten für 2026: Sie fließen in die erste Erklärung ein, die am 30. September 2027 fällig ist.",
+    "es": "Empiece ya a recoger sus datos de 2026: servirán para la primera declaración, que vence el 30 de septiembre de 2027."
+  },
+  "Réservez un vérificateur accrédité : ils sont encore peu nombreux.": {
+    "en": "Book an accredited verifier: there are still few of them.",
+    "de": "Reservieren Sie einen akkreditierten Prüfer: Es gibt noch wenige.",
+    "es": "Reserve un verificador acreditado: todavía hay pocos."
+  },
+  "Transmettez vos données vérifiées à vos clients européens et convenez du format attendu.": {
+    "en": "Send your verified data to your European customers and agree the expected format.",
+    "de": "Übermitteln Sie Ihre geprüften Daten an Ihre europäischen Kunden und vereinbaren Sie das erwartete Format.",
+    "es": "Transmita sus datos verificados a sus clientes europeos y acuerde el formato esperado."
+  },
+  "Actualisez votre suivi des données de production et conservez les justificatifs.": {
+    "en": "Update your production-data tracking and keep the supporting documents.",
+    "de": "Aktualisieren Sie die Nachverfolgung Ihrer Produktionsdaten und bewahren Sie die Belege auf.",
+    "es": "Actualice el seguimiento de sus datos de producción y conserve los justificantes."
+  },
+  "Faites le point avec un expert sur les prochaines échéances applicables à vos produits.": {
+    "en": "Review with an expert the next deadlines that apply to your products.",
+    "de": "Besprechen Sie mit einem Experten die nächsten Fristen, die für Ihre Produkte gelten.",
+    "es": "Revise con un experto los próximos plazos aplicables a sus productos."
+  },
+  "Confirmez le code douanier et le périmètre de vos produits avec vos clients.": {
+    "en": "Confirm the customs code and the scope of your products with your customers.",
+    "de": "Bestätigen Sie den Zollcode und den Umfang Ihrer Produkte mit Ihren Kunden.",
+    "es": "Confirme el código aduanero y el ámbito de sus productos con sus clientes."
+  },
+  "Préparez votre bilan carbone pour répondre aux demandes de reporting climat.": {
+    "en": "Prepare your carbon footprint to answer climate-reporting requests.",
+    "de": "Bereiten Sie Ihre CO2-Bilanz vor, um Anfragen zur Klimaberichterstattung zu beantworten.",
+    "es": "Prepare su huella de carbono para responder a las solicitudes de información climática."
+  },
+  "Suivez les évolutions du champ du CBAM et les volumes importés par vos clients.": {
+    "en": "Follow changes to the CBAM scope and the volumes imported by your customers.",
+    "de": "Verfolgen Sie die Entwicklung des CBAM-Anwendungsbereichs und die von Ihren Kunden importierten Mengen.",
+    "es": "Siga la evolución del ámbito del CBAM y los volúmenes importados por sus clientes."
+  },
+  "Vos clients attendent déjà vos données.": {
+    "en": "Your customers are already waiting for your data.",
+    "de": "Ihre Kunden warten bereits auf Ihre Daten.",
+    "es": "Sus clientes ya esperan sus datos."
+  },
+  "Ce résultat est une première orientation fondée sur vos réponses. Il ne constitue pas un avis réglementaire. Pour une analyse précise, contactez un expert CarboScan.": {
+    "en": "This result is a first indication based on your answers. It is not regulatory advice. For a precise analysis, contact a CarboScan expert.",
+    "de": "Dieses Ergebnis ist eine erste Orientierung auf Grundlage Ihrer Antworten. Es ist keine regulatorische Beratung. Für eine genaue Analyse wenden Sie sich an einen CarboScan-Experten.",
+    "es": "Este resultado es una primera orientación basada en sus respuestas. No constituye un dictamen reglamentario. Para un análisis preciso, contacte con un experto de CarboScan."
+  },
+  "ex 2507 00 80 — Autres argiles kaoliniques, à l’exception des argiles kaoliniques non calcinées": {
+    "en": "ex 2507 00 80 — Other kaolinitic clays, other than kaolinitic clays that are not calcined",
+    "de": "ex 2507 00 80 — Andere kaolinitische Tone, ausgenommen nicht kalzinierte kaolinitische Tone",
+    "es": "ex 2507 00 80 — Otras arcillas caoliníticas, excepto las arcillas caoliníticas no calcinadas"
+  },
+  "Clinkers de ciment": {
+    "en": "Cement clinkers",
+    "de": "Zementklinker",
+    "es": "Clínkeres de cemento"
+  },
+  "Ciments Portland blancs": {
+    "en": "White Portland cement",
+    "de": "Weißer Portlandzement",
+    "es": "Cementos Portland blancos"
+  },
+  "Autres ciments Portland": {
+    "en": "Other Portland cement",
+    "de": "Anderer Portlandzement",
+    "es": "Otros cementos Portland"
+  },
+  "Ciments alumineux": {
+    "en": "Aluminous cement",
+    "de": "Tonerdezement",
+    "es": "Cementos aluminosos"
+  },
+  "Autres ciments hydrauliques": {
+    "en": "Other hydraulic cements",
+    "de": "Andere hydraulische Zemente",
+    "es": "Otros cementos hidráulicos"
+  },
+  "Énergie électrique": {
+    "en": "Electrical energy",
+    "de": "Elektrische Energie",
+    "es": "Energía eléctrica"
+  },
+  "Acide nitrique ; acides sulfonitriques": {
+    "en": "Nitric acid; sulphonitric acids",
+    "de": "Salpetersäure; Nitriersäuren",
+    "es": "Ácido nítrico; ácidos sulfonítricos"
+  },
+  "Ammoniac anhydre ou en solution aqueuse": {
+    "en": "Ammonia, anhydrous or in aqueous solution",
+    "de": "Ammoniak, wasserfrei oder in wässriger Lösung",
+    "es": "Amoníaco anhidro o en disolución acuosa"
+  },
+  "Nitrates de potassium": {
+    "en": "Potassium nitrates",
+    "de": "Kaliumnitrate",
+    "es": "Nitratos de potasio"
+  },
+  "Engrais minéraux ou chimiques azotés": {
+    "en": "Mineral or chemical nitrogenous fertilisers",
+    "de": "Mineralische oder chemische Stickstoffdünger",
+    "es": "Abonos minerales o químicos nitrogenados"
+  },
+  "Engrais minéraux ou chimiques ; exclusion des engrais phosphore-potassium du code 3105 60 00": {
+    "en": "Mineral or chemical fertilisers; exclusion of phosphorus-potassium fertilisers under code 3105 60 00",
+    "de": "Mineralische oder chemische Düngemittel; Ausschluss der Phosphor-Kalium-Düngemittel des Codes 3105 60 00",
+    "es": "Abonos minerales o químicos; exclusión de los abonos de fósforo y potasio del código 3105 60 00"
+  },
+  "Fonte, fer et acier, sous réserve des exclusions de l’annexe I": {
+    "en": "Pig iron, iron and steel, subject to the exclusions in Annex I",
+    "de": "Roheisen, Eisen und Stahl, vorbehaltlich der Ausschlüsse des Anhangs I",
+    "es": "Fundición, hierro y acero, con las exclusiones del anexo I"
+  },
+  "Minerais de fer et leurs concentrés agglomérés": {
+    "en": "Iron ores and their agglomerated concentrates",
+    "de": "Eisenerze und ihre agglomerierten Konzentrate",
+    "es": "Minerales de hierro y sus concentrados aglomerados"
+  },
+  "Palplanches ; profilés soudés": {
+    "en": "Sheet piling; welded sections",
+    "de": "Spundwände; geschweißte Profile",
+    "es": "Tablestacas; perfiles soldados"
+  },
+  "Éléments de voies ferrées": {
+    "en": "Railway track construction material",
+    "de": "Oberbaumaterial für Schienenwege",
+    "es": "Elementos para vías férreas"
+  },
+  "Tubes et profilés creux en fonte": {
+    "en": "Tubes and hollow profiles of cast iron",
+    "de": "Rohre und Hohlprofile aus Gusseisen",
+    "es": "Tubos y perfiles huecos de fundición"
+  },
+  "Tubes et profilés creux sans soudure": {
+    "en": "Seamless tubes and hollow profiles",
+    "de": "Nahtlose Rohre und Hohlprofile",
+    "es": "Tubos y perfiles huecos sin soldadura"
+  },
+  "Autres tubes de section circulaire de grand diamètre": {
+    "en": "Other tubes of circular cross-section of large diameter",
+    "de": "Andere Rohre mit kreisförmigem Querschnitt und großem Durchmesser",
+    "es": "Otros tubos de sección circular de gran diámetro"
+  },
+  "Autres tubes et profilés creux": {
+    "en": "Other tubes and hollow profiles",
+    "de": "Andere Rohre und Hohlprofile",
+    "es": "Otros tubos y perfiles huecos"
+  },
+  "Accessoires de tuyauterie": {
+    "en": "Tube or pipe fittings",
+    "de": "Rohrverbindungsstücke",
+    "es": "Accesorios de tubería"
+  },
+  "Constructions et parties de constructions": {
+    "en": "Structures and parts of structures",
+    "de": "Konstruktionen und Konstruktionsteile",
+    "es": "Construcciones y partes de construcciones"
+  },
+  "Réservoirs de plus de 300 litres": {
+    "en": "Reservoirs of a capacity exceeding 300 litres",
+    "de": "Behälter mit einem Fassungsvermögen von mehr als 300 Litern",
+    "es": "Depósitos de más de 300 litros"
+  },
+  "Réservoirs et récipients de 300 litres ou moins": {
+    "en": "Reservoirs and containers of a capacity of 300 litres or less",
+    "de": "Behälter und Gefäße mit einem Fassungsvermögen von 300 Litern oder weniger",
+    "es": "Depósitos y recipientes de 300 litros o menos"
+  },
+  "Récipients pour gaz comprimés ou liquéfiés": {
+    "en": "Containers for compressed or liquefied gas",
+    "de": "Behälter für verdichtete oder verflüssigte Gase",
+    "es": "Recipientes para gases comprimidos o licuados"
+  },
+  "Vis, boulons et articles similaires": {
+    "en": "Screws, bolts and similar articles",
+    "de": "Schrauben, Bolzen und ähnliche Waren",
+    "es": "Tornillos, pernos y artículos similares"
+  },
+  "Autres ouvrages en fer ou en acier": {
+    "en": "Other articles of iron or steel",
+    "de": "Andere Waren aus Eisen oder Stahl",
+    "es": "Las demás manufacturas de hierro o acero"
+  },
+  "Aluminium sous forme brute": {
+    "en": "Unwrought aluminium",
+    "de": "Aluminium in Rohform",
+    "es": "Aluminio en bruto"
+  },
+  "Poudres et paillettes": {
+    "en": "Powders and flakes",
+    "de": "Pulver und Flitter",
+    "es": "Polvo y escamillas"
+  },
+  "Barres et profilés": {
+    "en": "Bars and profiles",
+    "de": "Stangen und Profile",
+    "es": "Barras y perfiles"
+  },
+  "Fils": {
+    "en": "Wire",
+    "de": "Draht",
+    "es": "Alambre"
+  },
+  "Tôles et bandes": {
+    "en": "Plates and strip",
+    "de": "Bleche und Bänder",
+    "es": "Chapas y bandas"
+  },
+  "Feuilles et bandes minces": {
+    "en": "Foil and thin strip",
+    "de": "Folien und dünne Bänder",
+    "es": "Hojas y bandas delgadas"
+  },
+  "Tubes et tuyaux": {
+    "en": "Tubes and pipes",
+    "de": "Rohre",
+    "es": "Tubos"
+  },
+  "Torons et câbles non isolés": {
+    "en": "Stranded wire and cables, not electrically insulated",
+    "de": "Litzen und Kabel, nicht elektrisch isoliert",
+    "es": "Cables trenzados y cables no aislados"
+  },
+  "Autres ouvrages en aluminium": {
+    "en": "Other articles of aluminium",
+    "de": "Andere Waren aus Aluminium",
+    "es": "Las demás manufacturas de aluminio"
+  },
+  "Code douanier (4 à 8 chiffres, facultatif)": {
+    "en": "Customs code (4 to 8 digits, optional)",
+    "de": "Zollcode (4 bis 8 Ziffern, freiwillig)",
+    "es": "Código aduanero (de 4 a 8 dígitos, opcional)"
+  },
+  "Saisissez un code pour pré-sélectionner sa famille. Un code partiel ou une entrée « ex » peut nécessiter une précision. Le code exact et la description du produit restent déterminants.": {
+    "en": "Enter a code to pre-select its family. A partial code or an “ex” entry may need clarification. The exact code and the product description remain decisive.",
+    "de": "Geben Sie einen Code ein, um die Produktfamilie vorauszuwählen. Ein Teilcode oder ein „ex“-Eintrag kann eine Präzisierung erfordern. Der genaue Code und die Warenbeschreibung bleiben maßgeblich.",
+    "es": "Introduzca un código para preseleccionar su familia. Un código parcial o una partida «ex» puede requerir una precisión. El código exacto y la descripción del producto siguen siendo determinantes."
+  },
+  "Ce code correspond à une entrée couverte de l’annexe I.": {
+    "en": "This code matches a covered entry in Annex I.",
+    "de": "Dieser Code entspricht einem erfassten Eintrag des Anhangs I.",
+    "es": "Este código corresponde a una partida cubierta del anexo I."
+  },
+  "Ce code correspond à une exclusion : la famille « Autre produit » est sélectionnée.": {
+    "en": "This code matches an exclusion: the “Other product” family is selected.",
+    "de": "Dieser Code entspricht einem Ausschluss: Die Familie „Anderes Produkt“ wird ausgewählt.",
+    "es": "Este código corresponde a una exclusión: se selecciona la familia «Otro producto»."
+  },
+  "Code partiel : une famille est suggérée, mais le code complet est nécessaire pour confirmer le périmètre.": {
+    "en": "Partial code: a family is suggested, but the full code is needed to confirm the scope.",
+    "de": "Teilcode: Eine Familie wird vorgeschlagen, aber der vollständige Code ist nötig, um den Umfang zu bestätigen.",
+    "es": "Código parcial: se sugiere una familia, pero el código completo es necesario para confirmar el ámbito."
+  },
+  "Entrée « ex » : seules les argiles kaoliniques calcinées sont couvertes. Faites confirmer la description du produit par un expert.": {
+    "en": "“Ex” entry: only calcined kaolinitic clays are covered. Have an expert confirm the product description.",
+    "de": "„Ex“-Eintrag: Nur kalzinierte kaolinitische Tone sind erfasst. Lassen Sie die Warenbeschreibung von einem Experten bestätigen.",
+    "es": "Partida «ex»: solo están cubiertas las arcillas caoliníticas calcinadas. Haga confirmar la descripción del producto por un experto."
+  },
+  "Ce code ne correspond pas aux entrées couvertes configurées de l’annexe I. Vérifiez sa classification avec un expert.": {
+    "en": "This code does not match the covered Annex I entries that are configured. Check its classification with an expert.",
+    "de": "Dieser Code entspricht nicht den konfigurierten erfassten Einträgen des Anhangs I. Prüfen Sie die Einreihung mit einem Experten.",
+    "es": "Este código no corresponde a las partidas cubiertas configuradas del anexo I. Compruebe su clasificación con un experto."
+  },
+  "Saisissez 4 à 8 chiffres ; les espaces sont acceptés.": {
+    "en": "Enter 4 to 8 digits; spaces are accepted.",
+    "de": "Geben Sie 4 bis 8 Ziffern ein; Leerzeichen sind zulässig.",
+    "es": "Introduzca de 4 a 8 dígitos; se aceptan espacios."
+  },
+  "Continuer": {
+    "en": "Continue",
+    "de": "Weiter",
+    "es": "Continuar"
+  },
+  "Retour": {
+    "en": "Back",
+    "de": "Zurück",
+    "es": "Volver"
+  },
+  "Voir mon résultat": {
+    "en": "See my result",
+    "de": "Mein Ergebnis anzeigen",
+    "es": "Ver mi resultado"
+  },
+  "Recommencer": {
+    "en": "Start again",
+    "de": "Neu beginnen",
+    "es": "Empezar de nuevo"
+  },
+  "Question": {
+    "en": "Question",
+    "de": "Frage",
+    "es": "Pregunta"
+  },
+  "sur": {
+    "en": "of",
+    "de": "von",
+    "es": "de"
+  },
+  "Progression du questionnaire": {
+    "en": "Questionnaire progress",
+    "de": "Fortschritt des Fragebogens",
+    "es": "Progreso del cuestionario"
+  },
+  "Choisissez une réponse pour continuer.": {
+    "en": "Choose an answer to continue.",
+    "de": "Wählen Sie eine Antwort, um fortzufahren.",
+    "es": "Elija una respuesta para continuar."
+  },
+  "Votre résultat": {
+    "en": "Your result",
+    "de": "Ihr Ergebnis",
+    "es": "Su resultado"
+  },
+  "Score de préparation": {
+    "en": "Preparation score",
+    "de": "Vorbereitungspunktzahl",
+    "es": "Puntuación de preparación"
+  },
+  "Vos 3 prochaines étapes": {
+    "en": "Your 3 next steps",
+    "de": "Ihre 3 nächsten Schritte",
+    "es": "Sus 3 próximos pasos"
+  },
+  "Vos réponses": {
+    "en": "Your answers",
+    "de": "Ihre Antworten",
+    "es": "Sus respuestas"
+  },
+  "Non applicable": {
+    "en": "Not applicable",
+    "de": "Nicht anwendbar",
+    "es": "No aplicable"
+  },
+  "Préparer mon bilan carbone": {
+    "en": "Prepare my carbon footprint",
+    "de": "Meine CO2-Bilanz vorbereiten",
+    "es": "Preparar mi huella de carbono"
+  },
+  "Parler à un expert": {
+    "en": "Talk to an expert",
+    "de": "Mit einem Experten sprechen",
+    "es": "Hablar con un experto"
+  },
+  "Échanger sur WhatsApp": {
+    "en": "Chat on WhatsApp",
+    "de": "Per WhatsApp schreiben",
+    "es": "Escribir por WhatsApp"
+  },
+  "Comprendre le CBAM": {
+    "en": "Understand the CBAM",
+    "de": "Den CBAM verstehen",
+    "es": "Entender el CBAM"
+  },
+  "Questions fréquentes": {
+    "en": "Frequently asked questions",
+    "de": "Häufige Fragen",
+    "es": "Preguntas frecuentes"
+  },
+  "Accueil": {
+    "en": "Home",
+    "de": "Startseite",
+    "es": "Inicio"
+  },
+  "Consulter l’annexe I officielle (version consolidée du 20 octobre 2025)": {
+    "en": "Consult the official Annex I (consolidated version of 20 October 2025)",
+    "de": "Den amtlichen Anhang I einsehen (konsolidierte Fassung vom 20. Oktober 2025)",
+    "es": "Consultar el anexo I oficial (versión consolidada del 20 de octubre de 2025)"
+  },
+  "Bonjour CarboScan, j’ai utilisé le vérificateur CBAM. Mon verdict : {verdict}. Mon score de préparation : {score}/100. Je souhaite faire le point avec un expert.": {
+    "en": "Hello CarboScan, I used the CBAM checker. My verdict: {verdict}. My preparation score: {score}/100. I would like to review this with an expert.",
+    "de": "Guten Tag CarboScan, ich habe den CBAM-Prüfer verwendet. Mein Urteil: {verdict}. Meine Vorbereitungspunktzahl: {score}/100. Ich möchte das mit einem Experten besprechen.",
+    "es": "Hola CarboScan, he usado el verificador CBAM. Mi veredicto: {verdict}. Mi puntuación de preparación: {score}/100. Quiero revisarlo con un experto."
+  },
+  "Téléchargez votre rapport détaillé": {
+    "en": "Download your detailed report",
+    "de": "Laden Sie Ihren ausführlichen Bericht herunter",
+    "es": "Descargue su informe detallado"
+  },
+  "Indiquez votre nom, votre entreprise, votre e-mail et votre téléphone pour télécharger votre rapport PDF : verdict, score, réponses et prochaines étapes.": {
+    "en": "Enter your name, company, email and phone number to download your PDF report: verdict, score, answers and next steps.",
+    "de": "Geben Sie Ihren Namen, Ihr Unternehmen, Ihre E-Mail-Adresse und Ihre Telefonnummer an, um Ihren PDF-Bericht herunterzuladen: Urteil, Punktzahl, Antworten und nächste Schritte.",
+    "es": "Indique su nombre, su empresa, su correo electrónico y su teléfono para descargar su informe PDF: veredicto, puntuación, respuestas y próximos pasos."
+  },
+  "Prénom et nom": {
+    "en": "First and last name",
+    "de": "Vor- und Nachname",
+    "es": "Nombre y apellidos"
+  },
+  "Entreprise": {
+    "en": "Company",
+    "de": "Unternehmen",
+    "es": "Empresa"
+  },
+  "E-mail professionnel": {
+    "en": "Work email",
+    "de": "Geschäftliche E-Mail",
+    "es": "Correo profesional"
+  },
+  "Pays (facultatif)": {
+    "en": "Country (optional)",
+    "de": "Land (freiwillig)",
+    "es": "País (opcional)"
+  },
+  "Téléphone ou WhatsApp": {
+    "en": "Phone or WhatsApp",
+    "de": "Telefon oder WhatsApp",
+    "es": "Teléfono o WhatsApp"
+  },
+  "J’accepte que CarboScan utilise mes coordonnées et mes réponses pour me remettre mon rapport et me contacter à ce sujet.": {
+    "en": "I agree that CarboScan may use my contact details and my answers to give me my report and contact me about it.",
+    "de": "Ich bin damit einverstanden, dass CarboScan meine Kontaktdaten und meine Antworten verwendet, um mir meinen Bericht zu übergeben und mich dazu zu kontaktieren.",
+    "es": "Acepto que CarboScan utilice mis datos de contacto y mis respuestas para entregarme mi informe y contactarme al respecto."
+  },
+  "Politique de confidentialité": {
+    "en": "Privacy policy",
+    "de": "Datenschutzerklärung",
+    "es": "Política de privacidad"
+  },
+  "Ne pas remplir ce champ": {
+    "en": "Do not fill in this field",
+    "de": "Dieses Feld nicht ausfüllen",
+    "es": "No rellene este campo"
+  },
+  "Télécharger mon rapport PDF": {
+    "en": "Download my PDF report",
+    "de": "Meinen PDF-Bericht herunterladen",
+    "es": "Descargar mi informe PDF"
+  },
+  "Préparation du rapport…": {
+    "en": "Preparing the report…",
+    "de": "Bericht wird vorbereitet…",
+    "es": "Preparando el informe…"
+  },
+  "Votre rapport est prêt. Le téléchargement va démarrer.": {
+    "en": "Your report is ready. The download will start.",
+    "de": "Ihr Bericht ist bereit. Der Download startet.",
+    "es": "Su informe está listo. La descarga va a empezar."
+  },
+  "Le rapport n’a pas pu être préparé. Réessayez ou contactez notre équipe.": {
+    "en": "The report could not be prepared. Try again or contact our team.",
+    "de": "Der Bericht konnte nicht erstellt werden. Versuchen Sie es erneut oder kontaktieren Sie unser Team.",
+    "es": "No se ha podido preparar el informe. Inténtelo de nuevo o contacte con nuestro equipo."
+  },
+  "Votre accord est nécessaire pour télécharger le rapport.": {
+    "en": "Your consent is required to download the report.",
+    "de": "Ihre Einwilligung ist erforderlich, um den Bericht herunterzuladen.",
+    "es": "Su consentimiento es necesario para descargar el informe."
+  },
+  "Vérifiez les champs du formulaire.": {
+    "en": "Check the form fields.",
+    "de": "Prüfen Sie die Formularfelder.",
+    "es": "Compruebe los campos del formulario."
+  },
+  "Ces informations servent à traiter votre demande de rapport et à vous recontacter à ce sujet. Aucun rapport n’est envoyé par e-mail et aucune inscription à une newsletter n’est effectuée.": {
+    "en": "This information is used to process your report request and contact you about it. No report is sent by email and no newsletter subscription is created.",
+    "de": "Diese Angaben dienen der Bearbeitung Ihrer Berichtsanfrage und der Kontaktaufnahme dazu. Es wird kein Bericht per E-Mail gesendet und kein Newsletter-Abonnement angelegt.",
+    "es": "Estos datos sirven para tramitar su solicitud de informe y volver a contactarle al respecto. No se envía ningún informe por correo electrónico ni se realiza ninguna suscripción a un boletín."
+  },
+  "Télécharger à nouveau le PDF": {
+    "en": "Download the PDF again",
+    "de": "PDF erneut herunterladen",
+    "es": "Descargar de nuevo el PDF"
+  },
+  "carboscan-rapport-cbam.pdf": {
+    "en": "carboscan-cbam-report.pdf",
+    "de": "carboscan-cbam-bericht.pdf",
+    "es": "carboscan-informe-cbam.pdf"
+  },
+  "Votre résultat du vérificateur CBAM CarboScan": {
+    "en": "Your CarboScan CBAM checker result",
+    "de": "Ihr Ergebnis des CarboScan-CBAM-Prüfers",
+    "es": "Su resultado del verificador CBAM de CarboScan"
+  },
+  "Nouveau contact — vérificateur CBAM": {
+    "en": "New contact — CBAM checker",
+    "de": "Neuer Kontakt — CBAM-Prüfer",
+    "es": "Nuevo contacto — verificador CBAM"
+  },
+  "Bonjour": {
+    "en": "Hello",
+    "de": "Guten Tag",
+    "es": "Hola"
+  },
+  "Voici votre rapport de préparation CBAM, à conserver et à partager avec votre équipe.": {
+    "en": "Here is your CBAM preparation report, to keep and share with your team.",
+    "de": "Hier ist Ihr CBAM-Vorbereitungsbericht, zum Aufbewahren und zum Teilen mit Ihrem Team.",
+    "es": "Aquí tiene su informe de preparación CBAM, para conservarlo y compartirlo con su equipo."
+  },
+  "Un nouveau rapport CBAM a été demandé en téléchargement.": {
+    "en": "A new CBAM report has been requested for download.",
+    "de": "Ein neuer CBAM-Bericht wurde zum Download angefordert.",
+    "es": "Se ha solicitado la descarga de un nuevo informe CBAM."
+  },
+  "Date": {
+    "en": "Date",
+    "de": "Datum",
+    "es": "Fecha"
+  },
+  "Prochaines étapes": {
+    "en": "Next steps",
+    "de": "Nächste Schritte",
+    "es": "Próximos pasos"
+  },
+  "Réponses": {
+    "en": "Answers",
+    "de": "Antworten",
+    "es": "Respuestas"
+  },
+  "Code douanier": {
+    "en": "Customs code",
+    "de": "Zollcode",
+    "es": "Código aduanero"
+  },
+  "Origine": {
+    "en": "Source",
+    "de": "Herkunft",
+    "es": "Origen"
+  },
+  "Consentement au traitement de la demande": {
+    "en": "Consent to process the request",
+    "de": "Einwilligung in die Bearbeitung der Anfrage",
+    "es": "Consentimiento para el tratamiento de la solicitud"
+  },
+  "Réserver un échange avec un expert": {
+    "en": "Book a conversation with an expert",
+    "de": "Ein Gespräch mit einem Experten vereinbaren",
+    "es": "Reservar una conversación con un experto"
+  },
+  "L’équipe CarboScan": {
+    "en": "The CarboScan team",
+    "de": "Das CarboScan-Team",
+    "es": "El equipo de CarboScan"
+  },
+  "Le vérificateur est-il vraiment gratuit ?": {
+    "en": "Is the checker really free?",
+    "de": "Ist der Prüfer wirklich kostenlos?",
+    "es": "¿El verificador es realmente gratuito?"
+  },
+  "Oui, sans inscription. Seul le téléchargement du rapport détaillé demande votre nom, votre entreprise, votre e-mail et votre téléphone.": {
+    "en": "Yes, with no sign-up. Only the detailed report download asks for your name, company, email and phone number.",
+    "de": "Ja, ohne Registrierung. Nur der Download des ausführlichen Berichts verlangt Ihren Namen, Ihr Unternehmen, Ihre E-Mail-Adresse und Ihre Telefonnummer.",
+    "es": "Sí, sin registro. Solo la descarga del informe detallado pide su nombre, su empresa, su correo electrónico y su teléfono."
+  },
+  "Le seuil de 50 tonnes s’applique-t-il à moi ?": {
+    "en": "Does the 50-tonne threshold apply to me?",
+    "de": "Gilt die Schwelle von 50 Tonnen für mich?",
+    "es": "¿El umbral de 50 toneladas se aplica a mí?"
+  },
+  "Il s’applique à votre client importateur, sur l’ensemble de ses importations annuelles.": {
+    "en": "It applies to your importing customer, across all of their annual imports.",
+    "de": "Sie gilt für Ihren importierenden Kunden, für die Gesamtheit seiner jährlichen Einfuhren.",
+    "es": "Se aplica a su cliente importador, sobre el conjunto de sus importaciones anuales."
+  },
+  "Un bilan carbone suffit-il pour le CBAM ?": {
+    "en": "Is a carbon footprint enough for the CBAM?",
+    "de": "Reicht eine CO2-Bilanz für den CBAM?",
+    "es": "¿Basta una huella de carbono para el CBAM?"
+  },
+  "Non : le CBAM exige les émissions de chaque produit, par tonne, dans l’usine qui le fabrique.": {
+    "en": "No: the CBAM requires the emissions of each product, per tonne, in the plant that manufactures it.",
+    "de": "Nein: Der CBAM verlangt die Emissionen jedes Produkts, je Tonne, in dem Werk, das es herstellt.",
+    "es": "No: el CBAM exige las emisiones de cada producto, por tonelada, en la planta que lo fabrica."
+  },
+  "Que faire si je suis concerné ?": {
+    "en": "What should I do if I am in scope?",
+    "de": "Was tun, wenn ich betroffen bin?",
+    "es": "¿Qué hacer si estoy en el ámbito?"
+  },
+  "Calculer les émissions de vos produits, collecter les données de 2026 et réserver un vérificateur accrédité. CarboScan vous accompagne à chaque étape.": {
+    "en": "Calculate your products’ emissions, collect the 2026 data and book an accredited verifier. CarboScan supports you at each step.",
+    "de": "Berechnen Sie die Emissionen Ihrer Produkte, erfassen Sie die Daten für 2026 und reservieren Sie einen akkreditierten Prüfer. CarboScan begleitet Sie bei jedem Schritt.",
+    "es": "Calcule las emisiones de sus productos, recoja los datos de 2026 y reserve un verificador acreditado. CarboScan le acompaña en cada paso."
+  },
+  "Suis-je concerné par le CBAM ? →": {
+    "en": "Am I in scope for the CBAM? →",
+    "de": "Bin ich vom CBAM betroffen? →",
+    "es": "¿Estoy en el ámbito del CBAM? →"
+  },
+  "CBAM : vos exportations vers l’UE sont-elles concernées ? Vérifiez en 2 minutes →": {
+    "en": "CBAM: are your exports to the EU in scope? Check in 2 minutes →",
+    "de": "CBAM: Sind Ihre Ausfuhren in die EU betroffen? In 2 Minuten prüfen →",
+    "es": "CBAM: ¿sus exportaciones a la UE están en el ámbito? Compruébelo en 2 minutos →"
+  },
+  "Fermer le bandeau CBAM pendant 30 jours": {
+    "en": "Hide the CBAM banner for 30 days",
+    "de": "CBAM-Banner für 30 Tage schließen",
+    "es": "Cerrar el banner CBAM durante 30 días"
+  },
+  "Depuis janvier 2026, vos clients européens paient le carbone de vos produits": {
+    "en": "Since January 2026, your European customers pay for the carbon in your products",
+    "de": "Seit Januar 2026 zahlen Ihre europäischen Kunden für den Kohlenstoff Ihrer Produkte",
+    "es": "Desde enero de 2026, sus clientes europeos pagan el carbono de sus productos"
+  },
+  "Acier, aluminium, ciment, engrais : si vous exportez vers l’UE, vos clients vont vous demander des données d’émissions vérifiées. Vérifiez en 2 minutes si vous êtes concerné et où vous en êtes.": {
+    "en": "Steel, aluminium, cement, fertilisers: if you export to the EU, your customers will ask you for verified emissions data. Check in 2 minutes whether you are in scope and how far you have got.",
+    "de": "Stahl, Aluminium, Zement, Düngemittel: Wenn Sie in die EU exportieren, werden Ihre Kunden geprüfte Emissionsdaten von Ihnen verlangen. Prüfen Sie in 2 Minuten, ob Sie betroffen sind und wie weit Sie sind.",
+    "es": "Acero, aluminio, cemento, fertilizantes: si exporta a la UE, sus clientes le pedirán datos de emisiones verificados. Compruebe en 2 minutos si está en el ámbito y en qué punto se encuentra."
+  },
+  "Lancer le vérificateur gratuit": {
+    "en": "Start the free checker",
+    "de": "Kostenlosen Prüfer starten",
+    "es": "Iniciar el verificador gratuito"
+  },
+  "Êtes-vous concerné par le CBAM ?": {
+    "en": "Are you in scope for the CBAM?",
+    "de": "Sind Sie vom CBAM betroffen?",
+    "es": "¿Está usted en el ámbito del CBAM?"
+  },
+  "Vérifiez en 2 minutes.": {
+    "en": "Check in 2 minutes.",
+    "de": "In 2 Minuten prüfen.",
+    "es": "Compruébelo en 2 minutos."
+  },
+  "Fermer cet encart pendant 30 jours": {
+    "en": "Hide this panel for 30 days",
+    "de": "Diesen Hinweis für 30 Tage schließen",
+    "es": "Cerrar este recuadro durante 30 días"
+  },
+  "Vérifier si je suis concerné": {
+    "en": "Check whether I am in scope",
+    "de": "Prüfen, ob ich betroffen bin",
+    "es": "Comprobar si estoy en el ámbito"
+  },
+  "Vous exportez vers l’Union européenne ?": {
+    "en": "Do you export to the European Union?",
+    "de": "Exportieren Sie in die Europäische Union?",
+    "es": "¿Exporta a la Unión Europea?"
+  },
+  "Vérifiez si vos produits sont concernés par le CBAM et faites le point sur votre préparation.": {
+    "en": "Check whether your products are in scope for the CBAM and review your preparation.",
+    "de": "Prüfen Sie, ob Ihre Produkte vom CBAM betroffen sind, und machen Sie den Stand Ihrer Vorbereitung.",
+    "es": "Compruebe si sus productos están en el ámbito del CBAM y revise su preparación."
+  },
+  "Nom": {
+    "en": "Name",
+    "de": "Name",
+    "es": "Nombre"
+  },
+  "E-mail": {
+    "en": "Email",
+    "de": "E-Mail",
+    "es": "Correo electrónico"
+  },
+  "Pays": {
+    "en": "Country",
+    "de": "Land",
+    "es": "País"
+  },
+  "Téléphone": {
+    "en": "Phone",
+    "de": "Telefon",
+    "es": "Teléfono"
+  },
+  "Verdict": {
+    "en": "Verdict",
+    "de": "Urteil",
+    "es": "Veredicto"
+  },
+  "Score": {
+    "en": "Score",
+    "de": "Punktzahl",
+    "es": "Puntuación"
+  },
+  "Consentement": {
+    "en": "Consent",
+    "de": "Einwilligung",
+    "es": "Consentimiento"
+  },
+  "État e-mail": {
+    "en": "Email status",
+    "de": "E-Mail-Status",
+    "es": "Estado del correo"
+  },
+  "Exporter les contacts CBAM (CSV)": {
+    "en": "Export CBAM contacts (CSV)",
+    "de": "CBAM-Kontakte exportieren (CSV)",
+    "es": "Exportar los contactos CBAM (CSV)"
+  },
+  "Préparation de l’export…": {
+    "en": "Preparing the export…",
+    "de": "Export wird vorbereitet…",
+    "es": "Preparando la exportación…"
+  },
+  "L’export des contacts CBAM a échoué.": {
+    "en": "The CBAM contact export failed.",
+    "de": "Der Export der CBAM-Kontakte ist fehlgeschlagen.",
+    "es": "La exportación de los contactos CBAM ha fallado."
+  },
+  "contacts-verificateur-cbam.csv": {
+    "en": "cbam-checker-contacts.csv",
+    "de": "cbam-pruefer-kontakte.csv",
+    "es": "contactos-verificador-cbam.csv"
+  },
+  "CBAM Tunisie et Maroc : guide de conformité des exportateurs": {
+    "en": "CBAM Tunisia and Morocco: exporters’ compliance guide",
+    "de": "CBAM Tunesien und Marokko: Leitfaden zur Compliance für Exporteure",
+    "es": "CBAM Túnez y Marruecos: guía de conformidad para exportadores"
+  },
+  "Exportateurs vers l’UE : qui est concerné par le CBAM, calendrier, données à fournir à vos clients européens. Estimez votre coût carbone.": {
+    "en": "Exporters to the EU: who is in scope for the CBAM, the timetable, and the data to give your European customers. Estimate your carbon cost.",
+    "de": "Exporteure in die EU: Wer vom CBAM betroffen ist, Zeitplan und Daten, die Sie Ihren europäischen Kunden liefern. Schätzen Sie Ihre Kohlenstoffkosten.",
+    "es": "Exportadores a la UE: quién está en el ámbito del CBAM, calendario y datos que debe facilitar a sus clientes europeos. Estime su coste de carbono."
+  },
+  "CBAM : ce que les exportateurs tunisiens doivent préparer dès maintenant": {
+    "en": "CBAM: what Tunisian exporters need to prepare now",
+    "de": "CBAM: Was tunesische Exporteure jetzt vorbereiten müssen",
+    "es": "CBAM: lo que los exportadores tunecinos deben preparar desde ahora"
+  },
+  "En vigueur depuis le 1er janvier 2026": {
+    "en": "In force since 1 January 2026",
+    "de": "In Kraft seit dem 1. Januar 2026",
+    "es": "En vigor desde el 1 de enero de 2026"
+  },
+  "26 octobre 2026": {
+    "en": "26 October 2026",
+    "de": "26. Oktober 2026",
+    "es": "26 de octubre de 2026"
+  },
+  "En-tête": {
+    "en": "Header",
+    "de": "Kopfbereich",
+    "es": "Encabezado"
+  },
+  "Badge : En vigueur depuis le 1er janvier 2026": {
+    "en": "Badge : In force since 1 January 2026",
+    "de": "Badge : In Kraft seit dem 1. Januar 2026",
+    "es": "Badge : En vigor desde el 1 de enero de 2026"
+  },
+  "H1 : CBAM : ce que les exportateurs tunisiens doivent préparer dès maintenant": {
+    "en": "H1 : CBAM: what Tunisian exporters need to prepare now",
+    "de": "H1 : CBAM: Was tunesische Exporteure jetzt vorbereiten müssen",
+    "es": "H1 : CBAM: lo que los exportadores tunecinos deben preparar desde ahora"
+  },
+  "Introduction : Depuis le 1er janvier 2026, le mécanisme d’ajustement carbone aux frontières de l’Union européenne (CBAM, ou MACF) fait payer aux importateurs européens le carbone contenu dans certains produits. Pour vous, exportateur, cela change une chose essentielle : vos clients européens vont exiger des données d’émissions fiables sur ce que vous leur vendez. Ceux qui pourront les fournir garderont leurs marchés.": {
+    "en": "Introduction : Since 1 January 2026, the European Union’s Carbon Border Adjustment Mechanism (CBAM) makes European importers pay for the carbon embedded in certain products. For you, as an exporter, one essential thing changes: your European customers will require reliable emissions data on what you sell them. Those who can provide it will keep their markets.",
+    "de": "Introduction : Seit dem 1. Januar 2026 lässt der CO2-Grenzausgleichsmechanismus der Europäischen Union (CBAM) die europäischen Importeure für den in bestimmten Waren enthaltenen Kohlenstoff zahlen. Für Sie als Exporteur ändert sich etwas Wesentliches: Ihre europäischen Kunden werden verlässliche Emissionsdaten zu dem verlangen, was Sie ihnen verkaufen. Wer sie liefern kann, behält seine Märkte.",
+    "es": "Introduction : Desde el 1 de enero de 2026, el mecanismo de ajuste en frontera por carbono de la Unión Europea (CBAM) hace pagar a los importadores europeos el carbono contenido en determinados productos. Para usted, como exportador, cambia una cosa esencial: sus clientes europeos exigirán datos de emisiones fiables sobre lo que les vende. Quienes puedan facilitarlos conservarán sus mercados."
+  },
+  "Boutons : Estimer mon coût CBAM · Parler à un expert": {
+    "en": "Buttons : Estimate my CBAM cost · Talk to an expert",
+    "de": "Buttons : Meine CBAM-Kosten schätzen · Mit einem Experten sprechen",
+    "es": "Buttons : Estimar mi coste CBAM · Hablar con un experto"
+  },
+  "Le CBAM en bref": {
+    "en": "The CBAM in brief",
+    "de": "Der CBAM in Kürze",
+    "es": "El CBAM en breve"
+  },
+  "Le CBAM applique aux produits importés le même prix du carbone que celui payé par les industriels européens. L’importateur déclare chaque année les émissions contenues dans les marchandises achetées hors de l’UE, puis achète des certificats CBAM pour les couvrir. Le coût dépend donc directement des émissions de votre production : plus vos données sont précises et vos émissions basses, plus vous êtes compétitif face aux autres fournisseurs.": {
+    "en": "The CBAM applies to imported products the same carbon price as the one paid by European manufacturers. Each year the importer declares the emissions embedded in goods bought outside the EU, then buys CBAM certificates to cover them. The cost therefore depends directly on the emissions of your production: the more precise your data and the lower your emissions, the more competitive you are against other suppliers.",
+    "de": "Der CBAM wendet auf eingeführte Waren denselben CO2-Preis an, den europäische Industrieunternehmen zahlen. Der Importeur meldet jedes Jahr die Emissionen der außerhalb der EU gekauften Waren und kauft anschließend CBAM-Zertifikate, um sie abzudecken. Die Kosten hängen daher unmittelbar von den Emissionen Ihrer Produktion ab: Je genauer Ihre Daten und je niedriger Ihre Emissionen, desto wettbewerbsfähiger sind Sie gegenüber anderen Lieferanten.",
+    "es": "El CBAM aplica a los productos importados el mismo precio del carbono que pagan los industriales europeos. El importador declara cada año las emisiones contenidas en las mercancías compradas fuera de la UE y después compra certificados CBAM para cubrirlas. El coste depende por tanto directamente de las emisiones de su producción: cuanto más precisos sean sus datos y más bajas sus emisiones, más competitivo será frente a otros proveedores."
+  },
+  "Êtes-vous concerné ?": {
+    "en": "Are you in scope?",
+    "de": "Sind Sie betroffen?",
+    "es": "¿Está en el ámbito?"
+  },
+  "Directement, si vous exportez vers l’UE des produits de ces six secteurs : ciment, fer et acier, aluminium, engrais, hydrogène, électricité. Cela inclut de nombreux produits transformés, comme les vis, boulons, tubes ou profilés en acier et en aluminium.": {
+    "en": "Directly, if you export products from these six sectors to the EU: cement, iron and steel, aluminium, fertilisers, hydrogen, electricity. This includes many processed products, such as screws, bolts, tubes or sections of steel and aluminium.",
+    "de": "Direkt, wenn Sie Waren dieser sechs Sektoren in die EU exportieren: Zement, Eisen und Stahl, Aluminium, Düngemittel, Wasserstoff, Strom. Das umfasst viele verarbeitete Waren, etwa Schrauben, Bolzen, Rohre oder Profile aus Stahl und Aluminium.",
+    "es": "Directamente, si exporta a la UE productos de estos seis sectores: cemento, hierro y acero, aluminio, fertilizantes, hidrógeno, electricidad. Esto incluye numerosos productos transformados, como tornillos, pernos, tubos o perfiles de acero y aluminio."
+  },
+  "Indirectement, si vous fournissez des matières ou des composants à des entreprises de ces filières : vos clients auront besoin de vos données pour calculer les leurs.": {
+    "en": "Indirectly, if you supply materials or components to companies in these sectors: your customers will need your data to calculate their own.",
+    "de": "Indirekt, wenn Sie Materialien oder Bauteile an Unternehmen dieser Branchen liefern: Ihre Kunden brauchen Ihre Daten, um ihre eigenen zu berechnen.",
+    "es": "Indirectamente, si suministra materias o componentes a empresas de estas cadenas: sus clientes necesitarán sus datos para calcular los suyos."
+  },
+  "Par ricochet, si vous exportez dans d’autres secteurs (textile, composants automobiles, agroalimentaire) : vos donneurs d’ordre européens demandent de plus en plus vos émissions pour leur propre reporting climat. Le CBAM n’est que la première étape.": {
+    "en": "By extension, if you export in other sectors (textiles, automotive components, food): your European customers increasingly ask for your emissions for their own climate reporting. The CBAM is only the first step.",
+    "de": "Mittelbar, wenn Sie in anderen Sektoren exportieren (Textil, Automobilkomponenten, Lebensmittel): Ihre europäischen Auftraggeber verlangen zunehmend Ihre Emissionen für ihre eigene Klimaberichterstattung. Der CBAM ist nur der erste Schritt.",
+    "es": "De rebote, si exporta en otros sectores (textil, componentes de automoción, agroalimentario): sus clientes europeos piden cada vez más sus emisiones para su propia información climática. El CBAM es solo el primer paso."
+  },
+  "Attention au seuil de 50 tonnes : il concerne votre client importateur, pas vous. Il se calcule sur tout ce qu’il importe en un an, tous fournisseurs confondus. Si vous vendez 30 tonnes à un client qui en importe 5 000, vos 30 tonnes sont concernées.": {
+    "en": "Watch the 50-tonne threshold: it applies to your importing customer, not to you. It is calculated on everything they import in a year, all suppliers combined. If you sell 30 tonnes to a customer who imports 5,000, your 30 tonnes are in scope.",
+    "de": "Achtung bei der Schwelle von 50 Tonnen: Sie betrifft Ihren importierenden Kunden, nicht Sie. Sie wird auf alles berechnet, was er in einem Jahr importiert, alle Lieferanten zusammengenommen. Wenn Sie 30 Tonnen an einen Kunden verkaufen, der 5 000 importiert, sind Ihre 30 Tonnen betroffen.",
+    "es": "Atención al umbral de 50 toneladas: se aplica a su cliente importador, no a usted. Se calcula sobre todo lo que importa en un año, todos los proveedores juntos. Si vende 30 toneladas a un cliente que importa 5 000, sus 30 toneladas están en el ámbito."
+  },
+  "Vous ne savez pas si vos produits sont concernés ? Le code douanier de chaque produit permet de le vérifier.": {
+    "en": "Not sure whether your products are in scope? Each product’s customs code makes it possible to check.",
+    "de": "Sie wissen nicht, ob Ihre Produkte betroffen sind? Der Zollcode jedes Produkts ermöglicht die Prüfung.",
+    "es": "¿No sabe si sus productos están en el ámbito? El código aduanero de cada producto permite comprobarlo."
+  },
+  "Le calendrier": {
+    "en": "The timetable",
+    "de": "Der Zeitplan",
+    "es": "El calendario"
+  },
+  "Ce qui se passe": {
+    "en": "What happens",
+    "de": "Was geschieht",
+    "es": "Qué ocurre"
+  },
+  "2023 – 2025": {
+    "en": "2023 – 2025",
+    "de": "2023 – 2025",
+    "es": "2023 – 2025"
+  },
+  "Phase transitoire : déclaration des émissions, sans paiement": {
+    "en": "Transitional phase: emissions reporting, with no payment",
+    "de": "Übergangsphase: Meldung der Emissionen, ohne Zahlung",
+    "es": "Fase transitoria: declaración de las emisiones, sin pago"
+  },
+  "1er janvier 2026": {
+    "en": "1 January 2026",
+    "de": "1. Januar 2026",
+    "es": "1 de enero de 2026"
+  },
+  "Phase définitive : chaque importation génère un coût carbone": {
+    "en": "Definitive phase: each import generates a carbon cost",
+    "de": "Endgültige Phase: Jede Einfuhr erzeugt Kohlenstoffkosten",
+    "es": "Fase definitiva: cada importación genera un coste de carbono"
+  },
+  "Février 2027": {
+    "en": "February 2027",
+    "de": "Februar 2027",
+    "es": "Febrero de 2027"
+  },
+  "Début de la vente des certificats CBAM": {
+    "en": "Start of CBAM certificate sales",
+    "de": "Beginn des Verkaufs der CBAM-Zertifikate",
+    "es": "Inicio de la venta de los certificados CBAM"
+  },
+  "30 septembre 2027": {
+    "en": "30 September 2027",
+    "de": "30. September 2027",
+    "es": "30 de septiembre de 2027"
+  },
+  "Première déclaration annuelle et remise des certificats, pour les importations de 2026": {
+    "en": "First annual declaration and surrender of certificates, for 2026 imports",
+    "de": "Erste jährliche Erklärung und Abgabe der Zertifikate, für die Einfuhren von 2026",
+    "es": "Primera declaración anual y entrega de los certificados, para las importaciones de 2026"
+  },
+  "2026 – 2034": {
+    "en": "2026 – 2034",
+    "de": "2026 – 2034",
+    "es": "2026 – 2034"
+  },
+  "Montée progressive : la part du carbone à payer augmente chaque année jusqu’à 100 %": {
+    "en": "Gradual ramp-up: the share of carbon to be paid rises each year up to 100%",
+    "de": "Schrittweiser Anstieg: Der zu zahlende Kohlenstoffanteil steigt jedes Jahr bis auf 100 %",
+    "es": "Subida progresiva: la parte del carbono que hay que pagar aumenta cada año hasta el 100 %"
+  },
+  "Les données de vos expéditions de 2026 serviront à la première déclaration. Les émissions de cette année comptent déjà.": {
+    "en": "The data from your 2026 shipments will be used for the first declaration. This year’s emissions already count.",
+    "de": "Die Daten Ihrer Lieferungen von 2026 fließen in die erste Erklärung ein. Die Emissionen dieses Jahres zählen bereits.",
+    "es": "Los datos de sus expediciones de 2026 servirán para la primera declaración. Las emisiones de este año ya cuentan."
+  },
+  "Ce que vos clients européens vont vous demander": {
+    "en": "What your European customers will ask you for",
+    "de": "Was Ihre europäischen Kunden von Ihnen verlangen werden",
+    "es": "Lo que sus clientes europeos le van a pedir"
+  },
+  "Pour remplir leur déclaration, vos clients ont besoin de données que vous seul détenez :": {
+    "en": "To complete their declaration, your customers need data that only you hold:",
+    "de": "Für ihre Erklärung brauchen Ihre Kunden Daten, die nur Sie haben:",
+    "es": "Para cumplimentar su declaración, sus clientes necesitan datos que solo usted posee:"
+  },
+  "les émissions directes de votre usine, par produit (combustibles, procédés comme la cuisson du calcaire) ;": {
+    "en": "the direct emissions of your plant, by product (fuels, processes such as limestone calcination);",
+    "de": "die direkten Emissionen Ihres Werks, je Produkt (Brennstoffe, Verfahren wie das Brennen von Kalkstein);",
+    "es": "las emisiones directas de su planta, por producto (combustibles, procesos como la cocción de la caliza);"
+  },
+  "les émissions liées à l’électricité consommée, pour le ciment et les engrais ;": {
+    "en": "the emissions linked to the electricity consumed, for cement and fertilisers;",
+    "de": "die Emissionen des verbrauchten Stroms, für Zement und Düngemittel;",
+    "es": "las emisiones ligadas a la electricidad consumida, para el cemento y los fertilizantes;"
+  },
+  "les émissions contenues dans vos matières intermédiaires (clinker, fonte…) ;": {
+    "en": "the emissions embedded in your intermediate materials (clinker, pig iron…);",
+    "de": "die in Ihren Vorprodukten enthaltenen Emissionen (Klinker, Roheisen …);",
+    "es": "las emisiones contenidas en sus materias intermedias (clínker, arrabio…);"
+  },
+  "la vérification de ces chiffres par un vérificateur indépendant accrédité en Europe, avec visite de votre usine : sans elle, vos chiffres réels ne comptent pas ;": {
+    "en": "verification of these figures by an independent verifier accredited in Europe, with a visit to your plant: without it, your actual figures do not count;",
+    "de": "die Prüfung dieser Zahlen durch einen unabhängigen, in Europa akkreditierten Prüfer, mit Besuch Ihres Werks: Ohne sie zählen Ihre realen Zahlen nicht;",
+    "es": "la verificación de estas cifras por un verificador independiente acreditado en Europa, con visita a su planta: sin ella, sus cifras reales no cuentan;"
+  },
+  "le prix du carbone éventuellement payé dans votre pays.": {
+    "en": "any carbon price paid in your country.",
+    "de": "den gegebenenfalls in Ihrem Land gezahlten CO2-Preis.",
+    "es": "el precio del carbono pagado, en su caso, en su país."
+  },
+  "La Tunisie n’ayant pas de taxe carbone, aucune déduction n’est possible : le coût total est supporté au moment de l’importation, et votre client le prendra en compte dans ses négociations.": {
+    "en": "As Tunisia has no carbon tax, no deduction is possible: the full cost is borne at the time of import, and your customer will take it into account in negotiations.",
+    "de": "Da Tunesien keine CO2-Steuer hat, ist kein Abzug möglich: Die gesamten Kosten entstehen bei der Einfuhr, und Ihr Kunde wird sie in den Verhandlungen berücksichtigen.",
+    "es": "Como Túnez no tiene impuesto sobre el carbono, no es posible ninguna deducción: el coste total se soporta en el momento de la importación, y su cliente lo tendrá en cuenta en las negociaciones."
+  },
+  "Le vrai risque : les valeurs par défaut": {
+    "en": "The real risk: default values",
+    "de": "Das eigentliche Risiko: die Standardwerte",
+    "es": "El riesgo real: los valores por defecto"
+  },
+  "Si vous ne fournissez pas de données réelles, votre client doit utiliser des valeurs par défaut fixées par l’Union européenne. Elles sont volontairement prudentes, donc souvent plus élevées que vos émissions réelles, et majorées progressivement pour inciter à fournir des données vérifiées.": {
+    "en": "If you do not provide actual data, your customer must use default values set by the European Union. They are deliberately conservative, so often higher than your actual emissions, and they are marked up over time to encourage verified data.",
+    "de": "Wenn Sie keine realen Daten liefern, muss Ihr Kunde von der Europäischen Union festgelegte Standardwerte verwenden. Sie sind bewusst vorsichtig, also oft höher als Ihre realen Emissionen, und werden schrittweise erhöht, um die Lieferung geprüfter Daten anzureizen.",
+    "es": "Si no facilita datos reales, su cliente debe utilizar valores por defecto fijados por la Unión Europea. Son deliberadamente prudentes, por lo que a menudo son más altos que sus emisiones reales, y se incrementan de forma progresiva para incentivar el suministro de datos verificados."
+  },
+  "Exemple : une cimenterie qui vend 100 000 tonnes par an en Europe et émet 0,70 t de CO2 par tonne. Avec ses chiffres réels vérifiés, le coût CBAM de son client est d’environ 1,8 million d’euros en 2026. Avec la valeur par défaut, il grimpe à environ 9 millions d’euros. Face à un concurrent capable de prouver ses émissions, elle devient le fournisseur le plus cher.": {
+    "en": "Example: a cement plant that sells 100,000 tonnes a year in Europe and emits 0.70 t of CO2 per tonne. With its verified actual figures, its customer’s CBAM cost is about €1.8 million in 2026. With the default value, it rises to about €9 million. Against a competitor able to prove its emissions, it becomes the most expensive supplier.",
+    "de": "Beispiel: Ein Zementwerk, das 100 000 Tonnen pro Jahr nach Europa verkauft und 0,70 t CO2 je Tonne emittiert. Mit seinen geprüften realen Zahlen betragen die CBAM-Kosten seines Kunden 2026 etwa 1,8 Millionen Euro. Mit dem Standardwert steigen sie auf etwa 9 Millionen Euro. Gegenüber einem Wettbewerber, der seine Emissionen nachweisen kann, wird es der teuerste Lieferant.",
+    "es": "Ejemplo: una cementera que vende 100 000 toneladas al año en Europa y emite 0,70 t de CO2 por tonelada. Con sus cifras reales verificadas, el coste CBAM de su cliente es de unos 1,8 millones de euros en 2026. Con el valor por defecto, sube a unos 9 millones de euros. Frente a un competidor capaz de demostrar sus emisiones, se convierte en el proveedor más caro."
+  },
+  "Votre plan d’action en 5 étapes": {
+    "en": "Your 5-step action plan",
+    "de": "Ihr Aktionsplan in 5 Schritten",
+    "es": "Su plan de acción en 5 pasos"
+  },
+  "Lister les produits vendus en Europe et vérifier leurs codes douaniers.": {
+    "en": "List the products sold in Europe and check their customs codes.",
+    "de": "Listen Sie die in Europa verkauften Produkte auf und prüfen Sie ihre Zollcodes.",
+    "es": "Liste los productos vendidos en Europa y compruebe sus códigos aduaneros."
+  },
+  "Identifier les clients européens qui dépassent 50 tonnes par an.": {
+    "en": "Identify the European customers who exceed 50 tonnes a year.",
+    "de": "Ermitteln Sie die europäischen Kunden, die 50 Tonnen pro Jahr überschreiten.",
+    "es": "Identifique a los clientes europeos que superan las 50 toneladas al año."
+  },
+  "Collecter les données de 2026 : production, combustibles, électricité, matières premières.": {
+    "en": "Collect the 2026 data: production, fuels, electricity, raw materials.",
+    "de": "Erfassen Sie die Daten für 2026: Produktion, Brennstoffe, Strom, Rohstoffe.",
+    "es": "Recoja los datos de 2026: producción, combustibles, electricidad, materias primas."
+  },
+  "Calculer les émissions de chaque produit selon la méthode CBAM.": {
+    "en": "Calculate the emissions of each product using the CBAM method.",
+    "de": "Berechnen Sie die Emissionen jedes Produkts nach der CBAM-Methode.",
+    "es": "Calcule las emisiones de cada producto según el método CBAM."
+  },
+  "Faire vérifier les chiffres par un vérificateur accrédité, à réserver tôt, puis les transmettre à vos clients via le registre CBAM.": {
+    "en": "Have the figures verified by an accredited verifier, to be booked early, then send them to your customers through the CBAM registry.",
+    "de": "Lassen Sie die Zahlen von einem akkreditierten Prüfer prüfen, den Sie früh reservieren sollten, und übermitteln Sie sie Ihren Kunden über das CBAM-Register.",
+    "es": "Haga verificar las cifras por un verificador acreditado, que conviene reservar pronto, y transmítalas a sus clientes a través del registro CBAM."
+  },
+  "Comment CarboScan vous accompagne": {
+    "en": "How CarboScan supports you",
+    "de": "Wie CarboScan Sie begleitet",
+    "es": "Cómo le acompaña CarboScan"
+  },
+  "Estimer votre exposition en quelques minutes avec notre calculateur CBAM : coût potentiel selon votre secteur et vos volumes.": {
+    "en": "Estimate your exposure in a few minutes with our CBAM calculator: potential cost by sector and volumes.",
+    "de": "Schätzen Sie Ihre Betroffenheit in wenigen Minuten mit unserem CBAM-Rechner: mögliche Kosten nach Sektor und Mengen.",
+    "es": "Estime su exposición en unos minutos con nuestra calculadora CBAM: coste potencial según su sector y sus volúmenes."
+  },
+  "Calculer les émissions de chaque produit sur notre plateforme, selon le GHG Protocol et les règles CBAM, avec une collecte de données guidée.": {
+    "en": "Calculate the emissions of each product on our platform, according to the GHG Protocol and the CBAM rules, with guided data collection.",
+    "de": "Berechnen Sie die Emissionen jedes Produkts auf unserer Plattform, nach dem GHG Protocol und den CBAM-Regeln, mit geführter Datenerfassung.",
+    "es": "Calcule las emisiones de cada producto en nuestra plataforma, según el GHG Protocol y las reglas CBAM, con una recogida de datos guiada."
+  },
+  "Fournir à vos clients européens des rapports prêts à l’emploi, et préparer la vérification.": {
+    "en": "Give your European customers ready-to-use reports, and prepare verification.",
+    "de": "Liefern Sie Ihren europäischen Kunden einsatzbereite Berichte und bereiten Sie die Prüfung vor.",
+    "es": "Facilite a sus clientes europeos informes listos para usar y prepare la verificación."
+  },
+  "Réduire vos émissions grâce à un plan d’action chiffré, priorisé selon le coût et l’impact.": {
+    "en": "Reduce your emissions with a quantified action plan, prioritised by cost and impact.",
+    "de": "Senken Sie Ihre Emissionen mit einem bezifferten Aktionsplan, priorisiert nach Kosten und Wirkung.",
+    "es": "Reduzca sus emisiones con un plan de acción cuantificado, priorizado según el coste y el impacto."
+  },
+  "Bouton : Estimer mon coût CBAM": {
+    "en": "Button : Estimate my CBAM cost",
+    "de": "Button : Meine CBAM-Kosten schätzen",
+    "es": "Button : Estimar mi coste CBAM"
+  },
+  "Pourquoi CarboScan": {
+    "en": "Why CarboScan",
+    "de": "Warum CarboScan",
+    "es": "Por qué CarboScan"
+  },
+  "Une plateforme tunisienne, conçue pour les réalités des industriels du Maghreb : données disponibles, sources d’énergie, contraintes de terrain.": {
+    "en": "A Tunisian platform, designed for the realities of Maghreb manufacturers: available data, energy sources, on-the-ground constraints.",
+    "de": "Eine tunesische Plattform, ausgelegt auf die Realität der Industrie im Maghreb: verfügbare Daten, Energiequellen, Bedingungen vor Ort.",
+    "es": "Una plataforma tunecina, concebida para la realidad de los industriales del Magreb: datos disponibles, fuentes de energía, limitaciones sobre el terreno."
+  },
+  "Une expertise reconnue : accompagnement par Kamel Talbi, expert Bilan Carbone formé par l’Association pour la transition Bas Carbone (ABC).": {
+    "en": "Recognised expertise: support from Kamel Talbi, a Bilan Carbone expert trained by the Association pour la transition Bas Carbone (ABC).",
+    "de": "Anerkannte Expertise: Begleitung durch Kamel Talbi, Bilan-Carbone-Experte, ausgebildet von der Association pour la transition Bas Carbone (ABC).",
+    "es": "Una experiencia reconocida: acompañamiento de Kamel Talbi, experto en Bilan Carbone formado por la Association pour la transition Bas Carbone (ABC)."
+  },
+  "Label Startup obtenu en septembre 2026.": {
+    "en": "Startup label obtained in September 2026.",
+    "de": "Startup-Label erhalten im September 2026.",
+    "es": "Sello Startup obtenido en septiembre de 2026."
+  },
+  "Une méthode alignée sur le GHG Protocol et les règles de calcul CBAM.": {
+    "en": "A method aligned with the GHG Protocol and the CBAM calculation rules.",
+    "de": "Eine Methode, die am GHG Protocol und an den CBAM-Berechnungsregeln ausgerichtet ist.",
+    "es": "Un método alineado con el GHG Protocol y las reglas de cálculo del CBAM."
+  },
+  "Appel à l’action final": {
+    "en": "Final call to action",
+    "de": "Abschließender Handlungsimpuls",
+    "es": "Llamada final a la acción"
+  },
+  "Titre : Les données de 2026 comptent déjà": {
+    "en": "Title : 2026 data already counts",
+    "de": "Titel : Die Daten von 2026 zählen bereits",
+    "es": "Título : Los datos de 2026 ya cuentan"
+  },
+  "Texte : Vos clients européens prépareront leur première déclaration en 2027 à partir de vos expéditions de cette année. Les exportateurs qui leur fournissent dès maintenant des données fiables deviennent des fournisseurs prioritaires. Faites le point sur votre situation en 30 minutes, sans engagement.": {
+    "en": "Text : Your European customers will prepare their first declaration in 2027 from this year’s shipments. Exporters who give them reliable data now become priority suppliers. Review your situation in 30 minutes, with no commitment.",
+    "de": "Text : Ihre europäischen Kunden werden 2027 ihre erste Erklärung auf Grundlage Ihrer Lieferungen dieses Jahres vorbereiten. Exporteure, die ihnen schon jetzt verlässliche Daten liefern, werden bevorzugte Lieferanten. Machen Sie in 30 Minuten, unverbindlich, den Stand Ihrer Situation.",
+    "es": "Text : Sus clientes europeos prepararán su primera declaración en 2027 a partir de sus expediciones de este año. Los exportadores que les faciliten ya datos fiables se convierten en proveedores prioritarios. Revise su situación en 30 minutos, sin compromiso."
+  },
+  "Boutons : Estimer mon coût CBAM · Réserver un échange avec un expert": {
+    "en": "Buttons : Estimate my CBAM cost · Book a conversation with an expert",
+    "de": "Buttons : Meine CBAM-Kosten schätzen · Ein Gespräch mit einem Experten vereinbaren",
+    "es": "Buttons : Estimar mi coste CBAM · Reservar una conversación con un experto"
+  },
+  "Solutions par secteur (bloc existant, texte d’introduction à remplacer)": {
+    "en": "Solutions by sector (existing block, introduction text to replace)",
+    "de": "Lösungen nach Sektor (bestehender Block, Einleitungstext zu ersetzen)",
+    "es": "Soluciones por sector (bloque existente, texto de introducción por sustituir)"
+  },
+  "Titre : Votre secteur, vos enjeux": {
+    "en": "Title : Your sector, your issues",
+    "de": "Titel : Ihr Sektor, Ihre Themen",
+    "es": "Título : Su sector, sus retos"
+  },
+  "Texte : Découvrez comment CarboScan s’adapte aux spécificités de votre activité.": {
+    "en": "Text : See how CarboScan adapts to the specifics of your activity.",
+    "de": "Text : Entdecken Sie, wie CarboScan sich an die Besonderheiten Ihrer Tätigkeit anpasst.",
+    "es": "Text : Descubra cómo CarboScan se adapta a las particularidades de su actividad."
+  },
+  "(Remplace la phrase actuelle « Pages marketing dédiées pour relier votre métier aux modules CarboScan ».)": {
+    "en": "(Replaces the current sentence “Dedicated marketing pages to connect your business to the CarboScan modules”.)",
+    "de": "(Ersetzt den aktuellen Satz „Spezielle Marketingseiten, um Ihr Geschäft mit den CarboScan-Modulen zu verbinden“.)",
+    "es": "(Sustituye la frase actual «Páginas de marketing específicas para vincular su actividad a los módulos de CarboScan».)"
+  },
+  "C’est quoi, le CBAM (ou MACF) ?": {
+    "en": "What is the CBAM?",
+    "de": "Was ist der CBAM?",
+    "es": "¿Qué es el CBAM?"
+  },
+  "Les usines européennes paient pour le CO2 qu’elles émettent. Pour que la concurrence soit équitable, l’Europe fait maintenant payer le même prix aux produits qui y entrent. Chaque tonne de ciment vendue en Europe a désormais un prix carbone.": {
+    "en": "European plants pay for the CO2 they emit. So that competition stays fair, Europe now charges the same price on products that enter. Every tonne of cement sold in Europe now has a carbon price.",
+    "de": "Europäische Werke zahlen für das CO2, das sie ausstoßen. Damit der Wettbewerb fair bleibt, lässt Europa jetzt die Waren, die hineinkommen, denselben Preis zahlen. Jede in Europa verkaufte Tonne Zement hat nun einen CO2-Preis.",
+    "es": "Las plantas europeas pagan por el CO2 que emiten. Para que la competencia sea equitativa, Europa hace pagar ahora el mismo precio a los productos que entran. Cada tonelada de cemento vendida en Europa tiene ya un precio del carbono."
+  },
+  "Quels produits sont concernés ?": {
+    "en": "Which products are in scope?",
+    "de": "Welche Produkte sind betroffen?",
+    "es": "¿Qué productos están en el ámbito?"
+  },
+  "Les produits en acier, aluminium, ciment et engrais, ainsi que l’hydrogène et l’électricité. Notre cimenterie est donc concernée.": {
+    "en": "Products of steel, aluminium, cement and fertilisers, as well as hydrogen and electricity. Our cement plant is therefore in scope.",
+    "de": "Waren aus Stahl, Aluminium, Zement und Düngemitteln sowie Wasserstoff und Strom. Unser Zementwerk ist daher betroffen.",
+    "es": "Los productos de acero, aluminio, cemento y fertilizantes, así como el hidrógeno y la electricidad. Nuestra cementera está, por tanto, en el ámbito."
+  },
+  "Je vends moins de 50 tonnes par an en Europe. Suis-je exempté ?": {
+    "en": "I sell less than 50 tonnes a year in Europe. Am I exempt?",
+    "de": "Ich verkaufe weniger als 50 Tonnen pro Jahr nach Europa. Bin ich ausgenommen?",
+    "es": "Vendo menos de 50 toneladas al año en Europa. ¿Estoy exento?"
+  },
+  "Pas forcément : c’est le piège le plus fréquent. Le seuil de 50 tonnes concerne l’importateur, pas l’exportateur. Il se calcule sur tout ce que votre client importe en un an, tous fournisseurs et tous produits confondus (acier, aluminium, ciment, engrais), hors hydrogène et électricité. Si vous vendez 30 tonnes à un client qui en importe 5 000, vos 30 tonnes sont concernées. Et ce ne sont pas « 50 tonnes gratuites » : au-delà du seuil, toutes les tonnes de l’année comptent.": {
+    "en": "Not necessarily: this is the most common trap. The 50-tonne threshold applies to the importer, not the exporter. It is calculated on everything your customer imports in a year, all suppliers and all products combined (steel, aluminium, cement, fertilisers), excluding hydrogen and electricity. If you sell 30 tonnes to a customer who imports 5,000, your 30 tonnes are in scope. And they are not “50 free tonnes”: above the threshold, every tonne of the year counts.",
+    "de": "Nicht unbedingt: Das ist die häufigste Falle. Die Schwelle von 50 Tonnen betrifft den Importeur, nicht den Exporteur. Sie wird auf alles berechnet, was Ihr Kunde in einem Jahr importiert, alle Lieferanten und alle Produkte zusammen (Stahl, Aluminium, Zement, Düngemittel), ohne Wasserstoff und Strom. Wenn Sie 30 Tonnen an einen Kunden verkaufen, der 5 000 importiert, sind Ihre 30 Tonnen betroffen. Und es sind keine „50 kostenlosen Tonnen“: Oberhalb der Schwelle zählen alle Tonnen des Jahres.",
+    "es": "No necesariamente: es la trampa más frecuente. El umbral de 50 toneladas se aplica al importador, no al exportador. Se calcula sobre todo lo que su cliente importa en un año, todos los proveedores y todos los productos juntos (acero, aluminio, cemento, fertilizantes), excepto hidrógeno y electricidad. Si vende 30 toneladas a un cliente que importa 5 000, sus 30 toneladas están en el ámbito. Y no son «50 toneladas gratuitas»: por encima del umbral, cuentan todas las toneladas del año."
+  },
+  "Qui paie ?": {
+    "en": "Who pays?",
+    "de": "Wer zahlt?",
+    "es": "¿Quién paga?"
+  },
+  "Sur le papier, l’importateur européen. Dans la réalité, il demandera une baisse de prix, ou ira chez un concurrent moins émetteur.": {
+    "en": "On paper, the European importer. In practice, they will ask for a price cut, or go to a lower-emitting competitor.",
+    "de": "Auf dem Papier der europäische Importeur. In der Praxis wird er einen Preisnachlass verlangen oder zu einem weniger emittierenden Wettbewerber gehen.",
+    "es": "Sobre el papel, el importador europeo. En la práctica, pedirá una bajada de precio o irá a un competidor que emita menos."
+  },
+  "Quelles émissions sont concernées, et comment les calcule-t-on ?": {
+    "en": "Which emissions are in scope, and how are they calculated?",
+    "de": "Welche Emissionen sind betroffen, und wie werden sie berechnet?",
+    "es": "¿Qué emisiones están en el ámbito y cómo se calculan?"
+  },
+  "Uniquement les émissions liées à la fabrication du produit, dans l’usine qui le fabrique : les émissions intrinsèques. Elles sont de trois sortes : les émissions directes : combustible brûlé dans le four, CO2 libéré par la cuisson du calcaire ; les émissions indirectes, liées à l’électricité : elles comptent pour le ciment et les engrais, pas pour l’acier, l’aluminium et l’hydrogène ; les matières intermédiaires, comme le clinker dans le ciment ou la fonte dans l’acier. On additionne ces émissions sur l’année à partir des données réelles de l’usine (tonnes de combustible, kWh, production), puis on divise par la quantité produite. Pour notre cimenterie : environ 0,65 t de CO2 pour le four et le calcaire, plus 0,05 t pour l’électricité, soit 0,70 t de CO2 par tonne de ciment, ou 70 000 t de CO2 pour 100 000 t exportées.": {
+    "en": "Only the emissions linked to making the product, in the plant that manufactures it: the embedded emissions. There are three kinds: direct emissions: fuel burned in the kiln, CO2 released by limestone calcination; indirect emissions, linked to electricity: they count for cement and fertilisers, not for steel, aluminium and hydrogen; intermediate materials, such as clinker in cement or pig iron in steel. These emissions are added up over the year from the plant’s actual data (tonnes of fuel, kWh, production), then divided by the quantity produced. For our cement plant: about 0.65 t of CO2 for the kiln and the limestone, plus 0.05 t for electricity, that is 0.70 t of CO2 per tonne of cement, or 70,000 t of CO2 for 100,000 t exported.",
+    "de": "Nur die Emissionen der Herstellung des Produkts, in dem Werk, das es herstellt: die eingebetteten Emissionen. Es gibt drei Arten: direkte Emissionen: im Ofen verbrannter Brennstoff, CO2 aus dem Brennen von Kalkstein; indirekte Emissionen, verbunden mit Strom: Sie zählen für Zement und Düngemittel, nicht für Stahl, Aluminium und Wasserstoff; Vorprodukte, etwa Klinker im Zement oder Roheisen im Stahl. Diese Emissionen werden über das Jahr aus den realen Werksdaten addiert (Tonnen Brennstoff, kWh, Produktion) und dann durch die erzeugte Menge geteilt. Für unser Zementwerk: etwa 0,65 t CO2 für Ofen und Kalkstein, plus 0,05 t für Strom, also 0,70 t CO2 je Tonne Zement, oder 70 000 t CO2 für 100 000 t Ausfuhr.",
+    "es": "Solo las emisiones ligadas a la fabricación del producto, en la planta que lo fabrica: las emisiones intrínsecas. Son de tres tipos: las emisiones directas: combustible quemado en el horno, CO2 liberado por la cocción de la caliza; las emisiones indirectas, ligadas a la electricidad: cuentan para el cemento y los fertilizantes, no para el acero, el aluminio y el hidrógeno; las materias intermedias, como el clínker en el cemento o el arrabio en el acero. Se suman estas emisiones a lo largo del año a partir de los datos reales de la planta (toneladas de combustible, kWh, producción) y luego se dividen por la cantidad producida. Para nuestra cementera: unas 0,65 t de CO2 del horno y la caliza, más 0,05 t de la electricidad, es decir 0,70 t de CO2 por tonelada de cemento, o 70 000 t de CO2 para 100 000 t exportadas."
+  },
+  "Est-ce que c’est un bilan carbone ?": {
+    "en": "Is this a carbon footprint?",
+    "de": "Ist das eine CO2-Bilanz?",
+    "es": "¿Es una huella de carbono?"
+  },
+  "Non, et la confusion est fréquente. Un bilan carbone mesure toutes les émissions d’une entreprise sur un an : usines, bureaux, camions, achats, déplacements, déchets. Le CBAM demande beaucoup moins large, mais beaucoup plus précis : les émissions d’un produit, par tonne, dans l’usine qui le fabrique. Un bilan carbone est utile, mais il ne remplace pas le calcul CBAM.": {
+    "en": "No, and the confusion is common. A carbon footprint measures all of a company’s emissions over a year: plants, offices, trucks, purchases, travel, waste. The CBAM asks for something much narrower, but much more precise: the emissions of one product, per tonne, in the plant that manufactures it. A carbon footprint is useful, but it does not replace the CBAM calculation.",
+    "de": "Nein, und die Verwechslung ist häufig. Eine CO2-Bilanz misst alle Emissionen eines Unternehmens über ein Jahr: Werke, Büros, Lkw, Einkäufe, Reisen, Abfälle. Der CBAM verlangt etwas viel Engeres, aber viel Genaueres: die Emissionen eines Produkts, je Tonne, in dem Werk, das es herstellt. Eine CO2-Bilanz ist nützlich, ersetzt aber nicht die CBAM-Berechnung.",
+    "es": "No, y la confusión es frecuente. Una huella de carbono mide todas las emisiones de una empresa a lo largo de un año: plantas, oficinas, camiones, compras, desplazamientos, residuos. El CBAM pide algo mucho menos amplio, pero mucho más preciso: las emisiones de un producto, por tonelada, en la planta que lo fabrica. Una huella de carbono es útil, pero no sustituye el cálculo CBAM."
+  },
+  "Combien ça coûte ?": {
+    "en": "How much does it cost?",
+    "de": "Was kostet es?",
+    "es": "¿Cuánto cuesta?"
+  },
+  "L’Europe offre encore des quotas gratuits à ses usines, calculés sur une référence : les émissions des usines européennes les plus performantes. En 2026, 97,5 % de cette référence reste gratuite, et l’importateur bénéficie de la même déduction. Il paie tout ce qui dépasse. Notre cimenterie émet 0,70 t par tonne ; la part gratuite est d’environ 0,48 t. Son client paie donc sur environ 0,22 t, soit environ 18 € par tonne avec un prix du carbone autour de 82 € . Pour 100 000 tonnes : environ 1,8 million d’euros dès 2026. En 2034, quand la part gratuite aura disparu : environ 5,7 millions d’euros par an.": {
+    "en": "Europe still gives its plants free allowances, calculated on a benchmark: the emissions of the best-performing European plants. In 2026, 97.5% of that benchmark stays free, and the importer gets the same deduction. They pay everything above it. Our cement plant emits 0.70 t per tonne; the free share is about 0.48 t. Its customer therefore pays on about 0.22 t, that is about €18 per tonne with a carbon price around €82. For 100,000 tonnes: about €1.8 million from 2026. In 2034, when the free share has disappeared: about €5.7 million a year.",
+    "de": "Europa gewährt seinen Werken noch kostenlose Zuteilungen, berechnet auf eine Referenz: die Emissionen der leistungsstärksten europäischen Werke. 2026 bleiben 97,5 % dieser Referenz kostenlos, und der Importeur erhält denselben Abzug. Er zahlt alles, was darüber liegt. Unser Zementwerk emittiert 0,70 t je Tonne; der kostenlose Anteil beträgt etwa 0,48 t. Sein Kunde zahlt also auf etwa 0,22 t, das sind etwa 18 € je Tonne bei einem CO2-Preis um 82 €. Für 100 000 Tonnen: etwa 1,8 Millionen Euro ab 2026. 2034, wenn der kostenlose Anteil entfallen ist: etwa 5,7 Millionen Euro pro Jahr.",
+    "es": "Europa sigue ofreciendo cuotas gratuitas a sus plantas, calculadas sobre una referencia: las emisiones de las plantas europeas más eficientes. En 2026, el 97,5 % de esa referencia sigue siendo gratuito, y el importador se beneficia de la misma deducción. Paga todo lo que la supera. Nuestra cementera emite 0,70 t por tonelada; la parte gratuita es de unas 0,48 t. Su cliente paga, por tanto, sobre unas 0,22 t, es decir unos 18 € por tonelada con un precio del carbono en torno a 82 €. Para 100 000 toneladas: unos 1,8 millones de euros desde 2026. En 2034, cuando la parte gratuita haya desaparecido: unos 5,7 millones de euros al año."
+  },
+  "Et si la cimenterie ne donne pas ses chiffres ?": {
+    "en": "What if the cement plant does not provide its figures?",
+    "de": "Und wenn das Zementwerk seine Zahlen nicht liefert?",
+    "es": "¿Y si la cementera no facilita sus cifras?"
+  },
+  "Le client utilise une valeur par défaut fixée par l’Europe, souvent plus élevée que la réalité, et majorée : +10 % en 2026, jusqu’à +30 % à partir de 2028. Pour le ciment, elle peut atteindre 1,58 t de CO2 par tonne en 2026 , au lieu de 0,70. La facture passe alors d’environ 1,8 à 9 millions d’euros dès 2026 : plus de 7 millions d’euros perdus en un an, simplement faute d’avoir fourni ses vrais chiffres.": {
+    "en": "The customer uses a default value set by Europe, often higher than reality, and marked up: +10% in 2026, up to +30% from 2028. For cement, it can reach 1.58 t of CO2 per tonne in 2026, instead of 0.70. The bill then goes from about €1.8 million to €9 million from 2026: more than €7 million lost in one year, simply for not having provided the real figures.",
+    "de": "Der Kunde verwendet einen von Europa festgelegten Standardwert, oft höher als die Realität, und erhöht: +10 % im Jahr 2026, bis zu +30 % ab 2028. Für Zement kann er 2026 1,58 t CO2 je Tonne erreichen, statt 0,70. Die Rechnung steigt dann ab 2026 von etwa 1,8 auf 9 Millionen Euro: mehr als 7 Millionen Euro in einem Jahr verloren, nur weil die echten Zahlen nicht geliefert wurden.",
+    "es": "El cliente utiliza un valor por defecto fijado por Europa, a menudo más alto que la realidad, e incrementado: +10 % en 2026, hasta +30 % a partir de 2028. Para el cemento, puede alcanzar 1,58 t de CO2 por tonelada en 2026, en lugar de 0,70. La factura pasa entonces de unos 1,8 a 9 millones de euros desde 2026: más de 7 millones de euros perdidos en un año, simplemente por no haber facilitado las cifras reales."
+  },
+  "Qui vérifie les chiffres ?": {
+    "en": "Who verifies the figures?",
+    "de": "Wer prüft die Zahlen?",
+    "es": "¿Quién verifica las cifras?"
+  },
+  "Des chiffres réels ne comptent que s’ils sont vérifiés par un vérificateur indépendant, accrédité par un organisme d’accréditation européen. Il peut être basé en Europe ou ailleurs, mais son accréditation doit venir d’Europe. C’est l’exportateur qui le choisit et le paie, et il doit être indépendant : le consultant qui a fait les calculs ne peut pas les vérifier. Les chiffres vérifiés sont ensuite partagés avec les clients européens via le registre officiel du CBAM.": {
+    "en": "Actual figures count only if they are verified by an independent verifier, accredited by a European accreditation body. The verifier may be based in Europe or elsewhere, but the accreditation must come from Europe. The exporter chooses and pays them, and they must be independent: the consultant who did the calculations cannot verify them. The verified figures are then shared with European customers through the official CBAM registry.",
+    "de": "Reale Zahlen zählen nur, wenn sie von einem unabhängigen Prüfer geprüft werden, der von einer europäischen Akkreditierungsstelle akkreditiert ist. Er kann in Europa oder anderswo ansässig sein, aber seine Akkreditierung muss aus Europa kommen. Der Exporteur wählt ihn aus und bezahlt ihn, und er muss unabhängig sein: Der Berater, der die Berechnungen gemacht hat, darf sie nicht prüfen. Die geprüften Zahlen werden anschließend über das amtliche CBAM-Register mit den europäischen Kunden geteilt.",
+    "es": "Las cifras reales solo cuentan si las verifica un verificador independiente, acreditado por un organismo de acreditación europeo. Puede estar establecido en Europa o en otro lugar, pero su acreditación debe proceder de Europa. Es el exportador quien lo elige y lo paga, y debe ser independiente: el consultor que hizo los cálculos no puede verificarlos. Las cifras verificadas se comparten después con los clientes europeos a través del registro oficial del CBAM."
+  },
+  "Où se passe la vérification ?": {
+    "en": "Where does verification take place?",
+    "de": "Wo findet die Prüfung statt?",
+    "es": "¿Dónde se hace la verificación?"
+  },
+  "Dans l’usine qui fabrique le produit. Le vérificateur visite le site, observe la production, contrôle les compteurs et leur étalonnage, examine factures et registres, et interroge les équipes. Pour les données de 2026, la visite sur place est obligatoire dans chaque usine. Ensuite, si rien n’a changé, elle peut parfois se faire à distance, mais une visite physique reste obligatoire au moins tous les deux ans. Les vérificateurs accrédités sont encore peu nombreux : mieux vaut réserver tôt.": {
+    "en": "In the plant that manufactures the product. The verifier visits the site, observes production, checks the meters and their calibration, examines invoices and records, and questions the teams. For 2026 data, an on-site visit is mandatory in each plant. Afterwards, if nothing has changed, it can sometimes be done remotely, but a physical visit remains mandatory at least every two years. Accredited verifiers are still few: it is better to book early.",
+    "de": "In dem Werk, das das Produkt herstellt. Der Prüfer besucht den Standort, beobachtet die Produktion, kontrolliert die Zähler und ihre Kalibrierung, prüft Rechnungen und Register und befragt die Teams. Für die Daten von 2026 ist der Besuch vor Ort in jedem Werk verpflichtend. Danach kann er, wenn sich nichts geändert hat, manchmal aus der Ferne erfolgen, aber ein physischer Besuch bleibt mindestens alle zwei Jahre verpflichtend. Akkreditierte Prüfer sind noch selten: Besser früh reservieren.",
+    "es": "En la planta que fabrica el producto. El verificador visita el sitio, observa la producción, controla los contadores y su calibración, examina facturas y registros e interroga a los equipos. Para los datos de 2026, la visita in situ es obligatoria en cada planta. Después, si nada ha cambiado, a veces puede hacerse a distancia, pero una visita física sigue siendo obligatoria al menos cada dos años. Los verificadores acreditados son todavía pocos: conviene reservar pronto."
+  },
+  "C’est pour quand ?": {
+    "en": "When is it due?",
+    "de": "Bis wann?",
+    "es": "¿Para cuándo es?"
+  },
+  "La déclaration et la restitution des certificats pour l’année 2026 auront lieu au plus tard le 30 septembre 2027. Les chiffres de 2026, c’est donc maintenant qu’il faut les collecter, pas en 2027.": {
+    "en": "The declaration and the surrender of certificates for 2026 will take place by 30 September 2027 at the latest. The 2026 figures therefore need to be collected now, not in 2027.",
+    "de": "Die Erklärung und die Abgabe der Zertifikate für das Jahr 2026 erfolgen spätestens am 30. September 2027. Die Zahlen für 2026 müssen daher jetzt erfasst werden, nicht 2027.",
+    "es": "La declaración y la entrega de los certificados del año 2026 tendrán lugar a más tardar el 30 de septiembre de 2027. Las cifras de 2026 hay que recogerlas ahora, no en 2027."
+  },
+  "Que doit faire un exportateur dès maintenant ?": {
+    "en": "What should an exporter do right now?",
+    "de": "Was muss ein Exporteur jetzt tun?",
+    "es": "¿Qué debe hacer un exportador desde ahora?"
+  },
+  "Cinq actions : lister les produits vendus en Europe et vérifier leurs codes douaniers ; identifier les clients européens qui dépassent 50 tonnes par an ; collecter les données de 2026 (production, combustibles, électricité, matières premières) ; calculer les émissions de chaque produit ; réserver un vérificateur accrédité, puis transmettre les chiffres vérifiés à ses clients.": {
+    "en": "Five actions: list the products sold in Europe and check their customs codes; identify the European customers who exceed 50 tonnes a year; collect the 2026 data (production, fuels, electricity, raw materials); calculate the emissions of each product; book an accredited verifier, then send the verified figures to the customers.",
+    "de": "Fünf Maßnahmen: die in Europa verkauften Produkte auflisten und ihre Zollcodes prüfen; die europäischen Kunden ermitteln, die 50 Tonnen pro Jahr überschreiten; die Daten für 2026 erfassen (Produktion, Brennstoffe, Strom, Rohstoffe); die Emissionen jedes Produkts berechnen; einen akkreditierten Prüfer reservieren und dann die geprüften Zahlen an die Kunden übermitteln.",
+    "es": "Cinco acciones: listar los productos vendidos en Europa y comprobar sus códigos aduaneros; identificar a los clientes europeos que superan las 50 toneladas al año; recoger los datos de 2026 (producción, combustibles, electricidad, materias primas); calcular las emisiones de cada producto; reservar un verificador acreditado y transmitir después las cifras verificadas a sus clientes."
+  },
+  "Mis à jour le": {
+    "en": "Updated on",
+    "de": "Aktualisiert am",
+    "es": "Actualizado el"
+  },
+  "Calendrier CBAM": {
+    "en": "CBAM timetable",
+    "de": "CBAM-Zeitplan",
+    "es": "Calendario CBAM"
+  },
+  "Estimer mon coût CBAM": {
+    "en": "Estimate my CBAM cost",
+    "de": "Meine CBAM-Kosten schätzen",
+    "es": "Estimar mi coste CBAM"
+  },
+  "Contacter CarboScan sur WhatsApp": {
+    "en": "Contact CarboScan on WhatsApp",
+    "de": "CarboScan über WhatsApp kontaktieren",
+    "es": "Contactar con CarboScan por WhatsApp"
+  },
+  "Lire notre guide CBAM pour la conformité carbone des PME": {
+    "en": "Read our CBAM guide for SME carbon compliance",
+    "de": "Unseren CBAM-Leitfaden zur CO2-Compliance von KMU lesen",
+    "es": "Leer nuestra guía CBAM para la conformidad de carbono de las pymes"
+  },
+  "Questions fréquentes sur le CBAM": {
+    "en": "Frequently asked questions about the CBAM",
+    "de": "Häufige Fragen zum CBAM",
+    "es": "Preguntas frecuentes sobre el CBAM"
+  },
+  "Ciment": {
+    "en": "Cement",
+    "de": "Zement",
+    "es": "Cemento"
+  },
+  "Fer et acier": {
+    "en": "Iron and steel",
+    "de": "Eisen und Stahl",
+    "es": "Hierro y acero"
+  },
+  "Aluminium": {
+    "en": "Aluminium",
+    "de": "Aluminium",
+    "es": "Aluminio"
+  },
+  "Engrais": {
+    "en": "Fertilisers",
+    "de": "Düngemittel",
+    "es": "Fertilizantes"
+  },
+  "Bilan carbone et CBAM": {
+    "en": "Carbon footprint and CBAM",
+    "de": "CO2-Bilanz und CBAM",
+    "es": "Huella de carbono y CBAM"
+  },
+  "Bilan carbone en Tunisie": {
+    "en": "Carbon footprint in Tunisia",
+    "de": "CO2-Bilanz in Tunesien",
+    "es": "Huella de carbono en Túnez"
+  },
+  "Guide CBAM Tunisie et Maroc": {
+    "en": "CBAM guide for Tunisia and Morocco",
+    "de": "CBAM-Leitfaden Tunesien und Marokko",
+    "es": "Guía CBAM Túnez y Marruecos"
+  },
+  "Calculateur CBAM": {
+    "en": "CBAM calculator",
+    "de": "CBAM-Rechner",
+    "es": "Calculadora CBAM"
+  },
+  "Bilan carbone industrie": {
+    "en": "Industrial carbon footprint",
+    "de": "CO2-Bilanz Industrie",
+    "es": "Huella de carbono industria"
+  },
+  "Bilan carbone transport": {
+    "en": "Transport carbon footprint",
+    "de": "CO2-Bilanz Transport",
+    "es": "Huella de carbono transporte"
+  },
+  "Bilan carbone BTP": {
+    "en": "Construction carbon footprint",
+    "de": "CO2-Bilanz Bau",
+    "es": "Huella de carbono construcción"
+  },
+  "Bilan carbone services": {
+    "en": "Services carbon footprint",
+    "de": "CO2-Bilanz Dienstleistungen",
+    "es": "Huella de carbono servicios"
+  },
+  "Demander une démo": {
+    "en": "Request a demo",
+    "de": "Eine Demo anfragen",
+    "es": "Pedir una demo"
+  },
+  "Équipe et fondateur": {
+    "en": "Team and founder",
+    "de": "Team und Gründer",
+    "es": "Equipo y fundador"
+  },
+  "À retenir : donner ses vrais chiffres n’est pas seulement une obligation, c’est un argument commercial. La cimenterie qui prouve qu’elle émet moins devient le fournisseur le moins cher pour ses clients européens.": {
+    "en": "To remember: giving your real figures is not only an obligation, it is a commercial argument. The cement plant that proves it emits less becomes the cheapest supplier for its European customers.",
+    "de": "Merke: Die echten Zahlen zu liefern ist nicht nur eine Pflicht, es ist ein kommerzielles Argument. Das Zementwerk, das nachweist, dass es weniger emittiert, wird für seine europäischen Kunden der günstigste Lieferant.",
+    "es": "Para recordar: dar las cifras reales no es solo una obligación, es un argumento comercial. La cementera que demuestra que emite menos se convierte en el proveedor más barato para sus clientes europeos."
+  },
+  "Vous êtes exportateur et ne savez pas par où commencer ? Contactez CarboScan sur WhatsApp : +216 55 053 033.": {
+    "en": "You export and do not know where to start? Contact CarboScan on WhatsApp: +216 55 053 033.",
+    "de": "Sie exportieren und wissen nicht, wo Sie anfangen sollen? Kontaktieren Sie CarboScan über WhatsApp: +216 55 053 033.",
+    "es": "¿Es exportador y no sabe por dónde empezar? Contacte con CarboScan por WhatsApp: +216 55 053 033."
+  }
+}

@@ -166,6 +166,32 @@
       "answer": "Cinq actions : lister les produits vendus en Europe et vérifier leurs codes douaniers ; identifier les clients européens qui dépassent 50 tonnes par an ; collecter les données de 2026 (production, combustibles, électricité, matières premières) ; calculer les émissions de chaque produit ; réserver un vérificateur accrédité, puis transmettre les chiffres vérifiés à ses clients."
     }
   ],
+  "ui": {
+    "updated": "Mis à jour le",
+    "headerLabel": "En-tête",
+    "calendarLabel": "Calendrier CBAM",
+    "estimate": "Estimer mon coût CBAM",
+    "expert": "Parler à un expert",
+    "expertFinal": "Réserver un échange avec un expert",
+    "whatsapp": "Contacter CarboScan sur WhatsApp",
+    "guideLink": "Lire notre guide CBAM pour la conformité carbone des PME",
+    "faqTitle": "Questions fréquentes sur le CBAM",
+    "sectors": ["Ciment", "Fer et acier", "Aluminium", "Engrais", "Hydrogène", "Électricité"]
+  },
+  "footer": {
+    "title": "Bilan carbone et CBAM",
+    "links": [
+      { "name": "Bilan carbone en Tunisie", "href": "/bilan-carbone" },
+      { "name": "Guide CBAM Tunisie et Maroc", "href": "/cbam" },
+      { "name": "Calculateur CBAM", "href": "/cbam-calculator" },
+      { "name": "Bilan carbone industrie", "href": "/bilan-carbone-industrie" },
+      { "name": "Bilan carbone transport", "href": "/bilan-carbone-transport" },
+      { "name": "Bilan carbone BTP", "href": "/bilan-carbone-btp" },
+      { "name": "Bilan carbone services", "href": "/bilan-carbone-services" },
+      { "name": "Demander une démo", "href": "/demo" },
+      { "name": "Équipe et fondateur", "href": "/team" }
+    ]
+  },
   "faqNotes": [
     "À retenir : donner ses vrais chiffres n’est pas seulement une obligation, c’est un argument commercial. La cimenterie qui prouve qu’elle émet moins devient le fournisseur le moins cher pour ses clients européens.",
     "Vous êtes exportateur et ne savez pas par où commencer ? Contactez CarboScan sur WhatsApp : +216 55 053 033."

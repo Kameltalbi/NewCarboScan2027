@@ -1,12 +1,13 @@
-import { verifierConfig as c, labelledVerifierAnswers, type VerifierAnswers, type VerifierResult } from '@newcarboscan/carbon-engine/cbam-verifier';
+import { getVerifierConfig, labelledVerifierAnswers, type VerifierAnswers, type VerifierResult } from '@newcarboscan/carbon-engine/cbam-verifier';
 export type VerifierLead = {
   requestId: string; fullName: string; companyName: string; email: string; country: string;
-  phone: string; consent: true; answers: VerifierAnswers; customsCode: string;
+  phone: string; consent: true; answers: VerifierAnswers; customsCode: string; locale?: string;
 };
 export type EmailMessage = { subject: string; html: string; text: string; reply_to?: string };
 const escape = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]!);
 export function buildVerifierDocuments(lead: VerifierLead, result: VerifierResult, date: string): { report: EmailMessage; internal: EmailMessage } {
-  const rows = labelledVerifierAnswers(lead.answers);
+  const c = getVerifierConfig(lead.locale);
+  const rows = labelledVerifierAnswers(lead.answers, c.locale);
   const verdict = c.verdicts[result.verdict].label;
   const summaryText = `${c.email.verdict} : ${verdict}\n${c.email.score} : ${result.score}/100 — ${result.bandLabel}\n${c.email.date} : ${date}`;
   const summaryHtml = `<p><strong>${escape(c.email.verdict)} : ${escape(verdict)}</strong></p><p>${escape(c.email.score)} : ${result.score}/100 — ${escape(result.bandLabel)}</p><p>${escape(c.email.date)} : ${escape(date)}</p>`;
@@ -14,7 +15,7 @@ export function buildVerifierDocuments(lead: VerifierLead, result: VerifierResul
   const stepsHtml = `<h2>${escape(c.email.nextSteps)}</h2><ol>${result.steps.map(step => `<li>${escape(step)}</li>`).join('')}</ol>`;
   const answersText = rows.map(row => `${row.question}\n${row.answer}`).join('\n\n');
   const footerHtml = `<p>${escape(c.disclaimer)}</p><p><a href="https://carboscan.io/cbam">${escape(c.email.guide)}</a></p><p><a href="https://carboscan.io/demo">${escape(c.email.meeting)}</a></p><p>${escape(c.email.thanks)}</p>`;
-  const wrap = (html: string) => `<!doctype html><html lang="fr"><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;color:#173e35;line-height:1.6"><main style="max-width:680px;margin:auto;padding:24px">${html}</main></body></html>`;
+  const wrap = (html: string) => `<!doctype html><html lang="${c.locale}"><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;color:#173e35;line-height:1.6"><main style="max-width:680px;margin:auto;padding:24px">${html}</main></body></html>`;
   const report = {
     subject: c.email.prospectSubject,
     html: wrap(`<h1>${escape(c.intro.badge)}</h1><p>${escape(c.email.hello)} ${escape(lead.fullName)},</p><p>${escape(c.email.report)}</p>${summaryHtml}<p>${escape(c.verdicts[result.verdict].description)}</p>${answersHtml}${stepsHtml}${result.urgent ? `<p><strong>${escape(c.urgency.text)}</strong></p>` : ''}${footerHtml}`),

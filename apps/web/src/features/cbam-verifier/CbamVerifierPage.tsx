@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { verifierConfig as c, evaluateVerifier, matchCustomsCode, visibleVerifierQuestions, labelledVerifierAnswers, type VerifierAnswers } from '@cbam-verifier';
+import { useVerifierConfig } from './useVerifierConfig';
+import { evaluateVerifier, matchCustomsCode, visibleVerifierQuestions, labelledVerifierAnswers, type VerifierAnswers } from '@cbam-verifier';
 import { SolutionLandingShell } from '@/components/seo/SolutionLandingShell';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { buildFaqSchema } from '@/config/seo';
@@ -11,6 +12,8 @@ import { api } from '@/integrations/api/client';
 import { trackEvent } from '@/lib/analytics';
 
 const CbamVerifierPage = () => {
+  const c = useVerifierConfig();
+  const locale = c.locale;
   const [stage, setStage] = useState<'intro' | 'questions' | 'result'>('intro');
   const [answers, setAnswers] = useState<VerifierAnswers>({});
   const [questionId, setQuestionId] = useState(c.questions[0].id);
@@ -23,11 +26,11 @@ const CbamVerifierPage = () => {
   const requestId = useRef('');
   const focusRef = useRef<HTMLHeadingElement>(null);
   const flow = useRef({ started: false, complete: false, lastQuestion: '', abandoned: false });
-  const questions = visibleVerifierQuestions(answers);
+  const questions = visibleVerifierQuestions(answers, locale);
   const index = Math.max(0, questions.findIndex(q => q.id === questionId));
   const question = questions[index];
-  const result = evaluateVerifier(answers, code);
-  const codeMatch = code.trim() ? matchCustomsCode(code) : null;
+  const result = evaluateVerifier(answers, code, locale);
+  const codeMatch = code.trim() ? matchCustomsCode(code, locale) : null;
   const selected = answers[question.id];
 
   useEffect(() => {
@@ -59,7 +62,7 @@ const CbamVerifierPage = () => {
   };
   const changeCode = (value: string) => {
     setCode(value); setError('');
-    const match = matchCustomsCode(value);
+    const match = matchCustomsCode(value, locale);
     if (match.family) choose('family', match.family);
   };
   const next = (event: React.FormEvent) => {
@@ -88,7 +91,7 @@ const CbamVerifierPage = () => {
         requestId: requestId.current,
         fullName: String(data.get('fullName') || ''), companyName: String(data.get('companyName') || ''),
         email: String(data.get('email') || ''), country: String(data.get('country') || ''), phone: String(data.get('phone') || ''),
-        consent: true, website: String(data.get('website') || ''), answers, customsCode: code.trim(),
+        consent: true, website: String(data.get('website') || ''), answers, customsCode: code.trim(), locale,
       });
       const url = URL.createObjectURL(report); setReportUrl(url);
       const anchor = document.createElement('a'); anchor.href = url; anchor.download = c.form.filename; anchor.click();
@@ -99,14 +102,14 @@ const CbamVerifierPage = () => {
   const tone = result.verdict === 'concerned' ? 'border-red-200 bg-red-50 text-red-800' : result.verdict === 'probable' ? 'border-orange-200 bg-orange-50 text-orange-800' : 'border-green-200 bg-green-50 text-green-800';
   const whatsappText = c.ui.whatsappMessage.replace('{verdict}', c.verdicts[result.verdict].label).replace('{score}', String(result.score));
 
-  return <SolutionLandingShell path={c.path} showRelated={false}>
-    <SEOHead path={c.path} title={c.seo.title} description={c.seo.description} jsonLd={[
-      { '@context': 'https://schema.org', '@type': 'WebApplication', name: c.seo.h1, url: `https://carboscan.io${c.path}`, applicationCategory: 'BusinessApplication', operatingSystem: 'Web', inLanguage: 'fr', offers: { '@type': 'Offer', price: 0, priceCurrency: 'EUR' } },
+  return <SolutionLandingShell path={c.path} showRelated={false} breadcrumbs={[{ name: c.ui.home, path: '/' }, { name: c.intro.badge, path: c.path }]}>
+    <SEOHead path={c.path} title={c.seo.title} description={c.seo.description} breadcrumbs={[{ name: c.ui.home, path: '/' }, { name: c.intro.badge, path: c.path }]} jsonLd={[
+      { '@context': 'https://schema.org', '@type': 'WebApplication', name: c.seo.h1, url: `https://carboscan.io${c.path}`, applicationCategory: 'BusinessApplication', operatingSystem: 'Web', inLanguage: locale, offers: { '@type': 'Offer', price: 0, priceCurrency: 'EUR' } },
       buildFaqSchema(c.faqs),
     ]} />
     <div className="container mx-auto max-w-4xl px-4 py-10 md:py-16">
       <header className="mb-10"><span className="text-sm font-semibold text-primary">{c.intro.badge}</span>
-        <h1 className="mt-3 text-3xl md:text-5xl font-bold text-foreground leading-tight">{c.seo.h1.split(' ').slice(0, -2).join(' ')} <span className="whitespace-nowrap">{c.seo.h1.split(' ').slice(-2).join(' ')}</span></h1>
+        <h1 className="mt-3 text-3xl md:text-5xl font-bold text-foreground leading-tight">{c.seo.h1}</h1>
         <p className="mt-5 text-lg font-semibold text-primary">{c.intro.subtitle}</p><p className="mt-4 text-muted-foreground leading-relaxed">{c.intro.text}</p>
       </header>
       <section className="rounded-xl border border-border bg-card p-5 md:p-8 scroll-mt-28" aria-label={c.intro.badge}>
@@ -137,7 +140,7 @@ const CbamVerifierPage = () => {
           {result.verdict === 'not_direct' && <Link className="mt-5 inline-block underline text-primary" to="/bilan-carbone">{c.ui.footprint}</Link>}
           <p className="mt-6 rounded bg-muted p-4 text-sm text-muted-foreground">{c.disclaimer}</p>
           <div className="mt-6 flex flex-wrap gap-3"><Button asChild><Link to="/demo" onClick={() => trackEvent('cbam_verifier_demo_click', { verdict: result.verdict, score_band: result.band })}>{c.ui.demo}</Link></Button><Button variant="outline" asChild><a href={`https://wa.me/21655053033?text=${encodeURIComponent(whatsappText)}`} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('cbam_verifier_whatsapp_click', { verdict: result.verdict, score_band: result.band })}>{c.ui.whatsapp}</a></Button><Button variant="link" asChild><Link to="/cbam">{c.ui.understand}</Link></Button></div>
-          <details className="mt-7"><summary className="cursor-pointer font-semibold">{c.ui.answers}</summary><dl className="mt-4 space-y-4">{labelledVerifierAnswers(answers).map(item => <div key={item.question}><dt className="font-medium">{item.question}</dt><dd className="mt-1 text-muted-foreground">{item.answer}</dd></div>)}</dl></details>
+          <details className="mt-7"><summary className="cursor-pointer font-semibold">{c.ui.answers}</summary><dl className="mt-4 space-y-4">{labelledVerifierAnswers(answers, locale).map(item => <div key={item.question}><dt className="font-medium">{item.question}</dt><dd className="mt-1 text-muted-foreground">{item.answer}</dd></div>)}</dl></details>
           <div className="mt-9 border-t border-border pt-7"><h3 className="text-xl font-bold">{c.form.title}</h3><p className="mt-3 text-muted-foreground">{c.form.intro}</p>
             {submitted ? <div className="mt-5 rounded bg-green-50 p-4 text-green-800"><p role="status">{c.form.success}</p><a className="mt-3 inline-block underline font-semibold" href={reportUrl} download={c.form.filename}>{c.form.downloadAgain}</a></div> : <form onSubmit={submit} className="mt-5 space-y-4" aria-label={c.form.title}>
               <div className="grid sm:grid-cols-2 gap-4">{[['fullName', c.form.fullName], ['companyName', c.form.company], ['email', c.form.email], ['country', c.form.country], ['phone', c.form.phone]].map(([name, label]) => <div key={name} className="space-y-2"><Label htmlFor={`lead-${name}`}>{label}</Label><Input id={`lead-${name}`} name={name} type={name === 'email' ? 'email' : name === 'phone' ? 'tel' : 'text'} required={name !== 'country'} maxLength={name === 'email' ? 320 : name === 'phone' ? 40 : 200} autoComplete={name === 'fullName' ? 'name' : name === 'companyName' ? 'organization' : name === 'country' ? 'country-name' : name === 'phone' ? 'tel' : 'email'} /></div>)}</div>

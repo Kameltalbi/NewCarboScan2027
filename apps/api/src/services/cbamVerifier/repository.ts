@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { rawPool, pool } from '../../db.js';
-import { verifierConfig as c, type VerifierResult } from '@newcarboscan/carbon-engine/cbam-verifier';
+import { getVerifierConfig, verifierConfig as c, type VerifierResult } from '@newcarboscan/carbon-engine/cbam-verifier';
 import { buildVerifierDocuments, type VerifierLead } from './emails.js';
 export type StoredLead = { id: string; createdAt: string };
 export type ExportRow = { created_at: string; full_name: string; company_name: string; email: string; phone: string; payload: Record<string, unknown>; delivery: string };
@@ -12,7 +12,8 @@ export const verifierRepository: VerifierRepository = {
   async save(lead, result, ip) {
     const date = new Date().toISOString();
     const submissionHash = createHash('sha256').update(JSON.stringify(lead)).digest('hex');
-    const payload = { answers: lead.answers, customsCode: lead.customsCode, country: lead.country, result, consent: true, consentText: c.form.consent, consentAt: date, source: c.path, configurationVersion: c.version, reportDelivery: "download", submissionHash };
+    const copy = getVerifierConfig(lead.locale);
+    const payload = { answers: lead.answers, customsCode: lead.customsCode, country: lead.country, locale: copy.locale, result, consent: true, consentText: copy.form.consent, consentAt: date, source: copy.path, configurationVersion: copy.version, reportDelivery: "download", submissionHash };
     const emails = buildVerifierDocuments(lead, result, date);
     const client = await rawPool.connect();
     try {

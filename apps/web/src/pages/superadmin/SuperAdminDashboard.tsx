@@ -1,4 +1,4 @@
-import { verifierConfig } from "@cbam-verifier";
+import { useVerifierConfig } from "@/features/cbam-verifier/useVerifierConfig";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +29,7 @@ const initialStats: DashboardStats = {
 };
 
 const SuperAdminDashboard = () => {
+  const verifierConfig = useVerifierConfig();
   const [exporting, setExporting] = useState(false);
   const [stats, setStats] = useState<DashboardStats>(initialStats);
   const [isLoading, setIsLoading] = useState(true);

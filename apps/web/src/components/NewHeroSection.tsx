@@ -1,5 +1,5 @@
 import { VerifierLink } from "@/features/cbam-verifier/VerifierLink";
-import { verifierConfig } from "@cbam-verifier";
+import { useVerifierConfig } from "@/features/cbam-verifier/useVerifierConfig";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -24,6 +24,7 @@ const HeroVideo = () => (
 export const NewHeroSection: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const verifierConfig = useVerifierConfig();
 
   return (
     <section id="home" className="relative w-full overflow-hidden bg-[#FAFBF8]">

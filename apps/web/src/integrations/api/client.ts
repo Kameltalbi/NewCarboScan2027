@@ -490,7 +490,7 @@ export const api = {
     return response.blob();
   },
 
-  submitCbamVerifierLead: async (payload: { requestId?: string; fullName: string; companyName: string; email: string; country?: string; phone: string; consent: boolean; website?: string; answers: Record<string, string | undefined>; customsCode?: string }): Promise<Blob> => {
+  submitCbamVerifierLead: async (payload: { requestId?: string; fullName: string; companyName: string; email: string; country?: string; phone: string; consent: boolean; website?: string; answers: Record<string, string | undefined>; customsCode?: string; locale?: string }): Promise<Blob> => {
     const response = await fetch(`${API_URL}/v1/public/cbam-verifier/leads`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(payload) });
     if (!response.ok || !response.headers.get("content-type")?.includes("application/pdf")) throw new Error("CBAM report unavailable");
     return response.blob();
