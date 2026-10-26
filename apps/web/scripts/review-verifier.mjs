@@ -6,7 +6,7 @@ import Fastify from 'fastify';
 import { JSDOM } from 'jsdom';
 import { verifierConfig as c, evaluateVerifier, labelledVerifierAnswers } from '../../../packages/carbon-engine/dist/cbam-verifier/index.js';
 import { registerCbamVerifierRoutes } from '../../api/dist/routes/cbamVerifier.js';
-import { buildVerifierEmails } from '../../api/dist/services/cbamVerifier/emails.js';
+import { buildVerifierDocuments } from '../../api/dist/services/cbamVerifier/emails.js';
 const upstream = process.env.SEO_PREVIEW_URL || 'http://127.0.0.1:4187';
 const origin = 'https://carboscan-review.test';
 const out = new URL('../../../docs/cbam-verifier/', import.meta.url);
@@ -18,8 +18,8 @@ await registerCbamVerifierRoutes(server, { worker: false, repository: {
   async save(lead, result) {
     const row = { id: lead.requestId, created_at: new Date().toISOString(), full_name: lead.fullName, company_name: lead.companyName, email: lead.email, phone: lead.phone, payload: { country: lead.country, answers: lead.answers, customsCode: lead.customsCode, result, source: c.path, consentAt: new Date().toISOString() }, delivery: 'preview-only' };
     records.push(row);
-    const emails = buildVerifierEmails(lead, result, row.created_at);
-    await writeFile(new URL('exemple-email-prospect.html', out), emails.prospect.html);
+    const emails = buildVerifierDocuments(lead, result, row.created_at);
+    await writeFile(new URL('exemple-rapport.html', out), emails.report.html);
     await writeFile(new URL('exemple-notification-interne.html', out), emails.internal.html);
     return { id: row.id, createdAt: row.created_at };
   }, async list() { return records; },
@@ -41,7 +41,7 @@ assert.equal(schemas.find(s => s['@type'] === 'FAQPage').mainEntity.length, 4);
 assert.equal(schemas.find(s => s['@type'] === 'WebApplication').offers.price, 0);
 await writeFile(new URL('extrait-html.html', out), doc.querySelector('h1').outerHTML + '\n' + doc.querySelector('section[aria-labelledby="verifier-faq"]').outerHTML + '\n');
 const browser = await chromium.launch({ args: ['--no-sandbox'] });
-const report = { rawHtml: true, faqCount: 4, questionnaire: [], promotions: {}, finalForm: {}, analytics: {}, productionDeployed: false, emailDelivery: 'Transport simulated; example emails only', database: 'In-memory repository; migration not applied' };
+const report = { rawHtml: true, faqCount: 4, questionnaire: [], promotions: {}, finalForm: {}, analytics: {}, productionDeployed: false, emailDelivery: 'Internal notification simulated; no prospect email', reportDelivery: 'Actual PDF download after contact form', database: 'In-memory repository; migration not applied' };
 async function context(viewport) {
   const ctx = await browser.newContext({ viewport, serviceWorkers: 'block' });
   await ctx.addInitScript(() => {
@@ -57,7 +57,7 @@ async function context(viewport) {
     }
     if (url.pathname.startsWith('/v1/') || url.pathname.startsWith('/auth/')) {
       const response = await server.inject({ method: request.method(), url: url.pathname + url.search, payload: request.postData() || undefined, headers: { 'content-type': 'application/json' } });
-      return route.fulfill({ status: response.statusCode, contentType: response.headers['content-type'] || 'application/json', body: response.body });
+      return route.fulfill({ status: response.statusCode, contentType: response.headers['content-type'] || 'application/json', body: response.rawPayload });
     }
     const response = await fetch(upstream + url.pathname + url.search);
     return route.fulfill({ status: response.status, contentType: response.headers.get('content-type') || 'text/plain', body: Buffer.from(await response.arrayBuffer()) });
@@ -117,8 +117,13 @@ try {
     await flow(page, basic, { capture: name, keyboard: name === 'ordinateur' });
     assert.equal(records.length, before, 'No answer/contact may be saved before the final form');
     const consent = page.getByRole('checkbox'); assert.equal(await consent.isChecked(), false);
-    for (const [field, value] of [['Prénom et nom', 'Sana Exemple'], ['Entreprise', 'Export Démonstration'], ['E-mail professionnel', 'sana@example.invalid'], ['Pays', 'Tunisie']]) await page.getByLabel(field, { exact: true }).fill(value);
-    await consent.check(); await page.getByRole('button', { name: c.form.submit, exact: true }).click();
+    for (const [field, value] of [['Prénom et nom', 'Sana Exemple'], ['Entreprise', 'Export Démonstration'], ['E-mail professionnel', 'sana@example.invalid'], [c.form.country, 'Tunisie'], [c.form.phone, '+21655053033']]) await page.getByLabel(field, { exact: true }).fill(value);
+    await consent.check();
+    const downloading = page.waitForEvent('download');
+    await page.getByRole('button', { name: c.form.submit, exact: true }).click();
+    const download = await downloading;
+    await download.saveAs(new URL(`rapport-exemple-${name}.pdf`, out).pathname);
+    assert.ok((await readFile(new URL(`rapport-exemple-${name}.pdf`, out))).subarray(0, 5).equals(Buffer.from('%PDF-')));
     await page.getByRole('status').filter({ hasText: c.form.success }).waitFor();
     assert.equal(records.length, before + 1);
     await screenshot(page, name + '-09-rapport-demande', true);
@@ -127,7 +132,7 @@ try {
     assert.ok(events.some(e => e.name === 'cbam_verifier_lead_submitted'));
     report.analytics[name] = events.filter(e => e.name.startsWith('cbam_verifier')).map(e => e.name);
     const dimensions = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));
-    assert.ok(dimensions.scroll <= dimensions.width); report.finalForm[name] = { consentInitiallyUnchecked: true, submitted: true, noPreFormPersistence: true, noHorizontalOverflow: true };
+    assert.ok(dimensions.scroll <= dimensions.width); report.finalForm[name] = { consentInitiallyUnchecked: true, submitted: true, pdfDownloaded: true, noPreFormPersistence: true, noHorizontalOverflow: true };
     await ctx.close();
   }
   const ctx = await context({ width: 1440, height: 1000 }); const page = await ctx.newPage();
@@ -199,7 +204,7 @@ try {
   await phone.goto(origin + '/', { waitUntil: 'networkidle' }); await screenshot(phone, 'mise-en-avant-accueil-mobile');
   await mobile.close();
   const csv = await server.inject({ url: '/v1/admin/cbam-verifier/leads.csv', headers: { 'x-review-admin': 'yes' } }); assert.equal(csv.statusCode, 200);
-  await writeFile(new URL('exemple-contacts.csv', out), csv.body);
+  await writeFile(new URL('exemple-contacts.csv', out), csv.body.replace(/\r\n/g, '\n'));
   await writeFile(new URL('verification.json', out), JSON.stringify(report, null, 2) + '\n');
   console.log('Verified full desktop/mobile questionnaire, six required cases, form + real API validation (in memory), four promotion placements, dismissals, route exclusions, non-overlap and analytics.');
   }

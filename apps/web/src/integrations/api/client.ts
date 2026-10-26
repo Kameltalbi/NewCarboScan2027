@@ -490,8 +490,11 @@ export const api = {
     return response.blob();
   },
 
-  submitCbamVerifierLead: (payload: { requestId?: string; fullName: string; companyName: string; email: string; country: string; phone?: string; consent: boolean; website?: string; answers: Record<string, string | undefined>; customsCode?: string }) =>
-    request<{ ok: boolean; id: string; delivery: string }>("/v1/public/cbam-verifier/leads", { method: "POST", body: JSON.stringify(payload) }, { auth: false }),
+  submitCbamVerifierLead: async (payload: { requestId?: string; fullName: string; companyName: string; email: string; country?: string; phone: string; consent: boolean; website?: string; answers: Record<string, string | undefined>; customsCode?: string }): Promise<Blob> => {
+    const response = await fetch(`${API_URL}/v1/public/cbam-verifier/leads`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(payload) });
+    if (!response.ok || !response.headers.get("content-type")?.includes("application/pdf")) throw new Error("CBAM report unavailable");
+    return response.blob();
+  },
 
   listBlog: (lang = "fr") =>
     request<{ items: Array<Record<string, unknown>> }>(

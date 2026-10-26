@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { rawPool, pool } from '../../db.js';
 import { verifierConfig as c, type VerifierResult } from '@newcarboscan/carbon-engine/cbam-verifier';
-import { buildVerifierEmails, type VerifierLead } from './emails.js';
+import { buildVerifierDocuments, type VerifierLead } from './emails.js';
 export type StoredLead = { id: string; createdAt: string };
 export type ExportRow = { created_at: string; full_name: string; company_name: string; email: string; phone: string; payload: Record<string, unknown>; delivery: string };
 export type VerifierRepository = {
@@ -12,8 +12,8 @@ export const verifierRepository: VerifierRepository = {
   async save(lead, result, ip) {
     const date = new Date().toISOString();
     const submissionHash = createHash('sha256').update(JSON.stringify(lead)).digest('hex');
-    const payload = { answers: lead.answers, customsCode: lead.customsCode, country: lead.country, result, consent: true, consentText: c.form.consent, consentAt: date, source: c.path, configurationVersion: c.version, submissionHash };
-    const emails = buildVerifierEmails(lead, result, date);
+    const payload = { answers: lead.answers, customsCode: lead.customsCode, country: lead.country, result, consent: true, consentText: c.form.consent, consentAt: date, source: c.path, configurationVersion: c.version, reportDelivery: "download", submissionHash };
+    const emails = buildVerifierDocuments(lead, result, date);
     const client = await rawPool.connect();
     try {
       await client.query('BEGIN');
@@ -26,10 +26,7 @@ export const verifierRepository: VerifierRepository = {
         await client.query('COMMIT');
         return { id: existing.rows[0].id, createdAt: new Date(existing.rows[0].created_at).toISOString() };
       }
-      for (const kind of ['prospect', 'internal'] as const) {
-        const recipient = kind === 'prospect' ? lead.email : process.env.CBAM_NOTIFICATION_EMAIL || 'contact@carboscan.io';
-        await client.query(`INSERT INTO cbam_verifier_emails (lead_id, kind, recipient, message) VALUES ($1,$2,$3,$4)`, [lead.requestId, kind, recipient, JSON.stringify(emails[kind])]);
-      }
+      await client.query(`INSERT INTO cbam_verifier_emails (lead_id, kind, recipient, message) VALUES ($1,'internal',$2,$3)`, [lead.requestId, process.env.CBAM_NOTIFICATION_EMAIL || 'contact@carboscan.io', JSON.stringify(emails.internal)]);
       await client.query('COMMIT');
       return { id: inserted.rows[0].id, createdAt: new Date(inserted.rows[0].created_at).toISOString() };
     } catch (error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); }

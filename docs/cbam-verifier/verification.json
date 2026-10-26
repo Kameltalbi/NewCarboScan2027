@@ -80,12 +80,14 @@
     "ordinateur": {
       "consentInitiallyUnchecked": true,
       "submitted": true,
+      "pdfDownloaded": true,
       "noPreFormPersistence": true,
       "noHorizontalOverflow": true
     },
     "mobile": {
       "consentInitiallyUnchecked": true,
       "submitted": true,
+      "pdfDownloaded": true,
       "noPreFormPersistence": true,
       "noHorizontalOverflow": true
     }
@@ -122,6 +124,7 @@
     "abandonmentQuestion": "family"
   },
   "productionDeployed": false,
-  "emailDelivery": "Transport simulated; example emails only",
+  "emailDelivery": "Internal notification simulated; no prospect email",
+  "reportDelivery": "Actual PDF download after contact form",
   "database": "In-memory repository; migration not applied"
 }

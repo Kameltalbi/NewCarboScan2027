@@ -1,3 +1,4 @@
+import { renderVerifierPdf } from '../services/cbamVerifier/pdf.js';
 import { randomUUID } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
@@ -6,12 +7,12 @@ import { verifierRepository, verifierLeadsCsv, type VerifierRepository } from '.
 import { drainVerifierEmails } from '../services/cbamVerifier/outbox.js';
 const shortText = (max: number) => z.string().trim().min(1).max(max).refine(value => [...value].every(ch => ch.charCodeAt(0) >= 32 && ch.charCodeAt(0) !== 127));
 const schema = z.object({
-  requestId: z.string().uuid().optional(), fullName: shortText(200), companyName: shortText(200), country: shortText(200),
-  email: z.string().trim().email().max(320).transform(s => s.toLowerCase()), phone: z.string().trim().max(40).optional(),
+  requestId: z.string().uuid().optional(), fullName: shortText(200), companyName: shortText(200), country: z.string().trim().max(200).optional().default(''),
+  email: z.string().trim().email().max(320).transform(s => s.toLowerCase()), phone: z.string().trim().regex(/^[+\d(). -]{6,40}$/).refine(value => value.replace(/\D/g, '').length >= 6),
   consent: z.literal(true), website: z.string().max(200).optional().default(''), customsCode: z.string().trim().max(15).optional().default(''),
   answers: z.record(z.string(), z.string().max(50)),
 }).strict();
-export async function registerCbamVerifierRoutes(app: FastifyInstance, options: { repository?: VerifierRepository; worker?: boolean } = {}) {
+export async function registerCbamVerifierRoutes(app: FastifyInstance, options: { repository?: VerifierRepository; worker?: boolean; renderReport?: typeof renderVerifierPdf } = {}) {
   const repository = options.repository || verifierRepository;
   let busy = false;
   const drain = async () => {
@@ -37,7 +38,8 @@ export async function registerCbamVerifierRoutes(app: FastifyInstance, options: 
     const result = evaluateVerifier(input.answers, input.customsCode);
     const saved = await repository.save({ ...input, requestId: input.requestId || randomUUID() }, result, request.ip);
     if (options.worker !== false) void drain();
-    return reply.code(202).send({ ok: true, id: saved.id, createdAt: saved.createdAt, delivery: 'queued', result });
+    const pdf = await (options.renderReport || renderVerifierPdf)({ ...input, requestId: saved.id }, result, saved.createdAt);
+    return reply.code(200).header('Content-Disposition', `attachment; filename="${c.form.filename}"`).type('application/pdf').send(pdf);
   });
   app.get('/v1/admin/cbam-verifier/leads.csv', { preHandler: [app.requireSuperAdmin] }, async (_request, reply) => {
     reply.header('Cache-Control', 'no-store').header('Content-Disposition', 'attachment; filename="contacts-verificateur-cbam.csv"').type('text/csv; charset=utf-8');

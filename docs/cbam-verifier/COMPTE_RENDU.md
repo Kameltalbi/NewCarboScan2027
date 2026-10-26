@@ -1,3 +1,17 @@
+# Mise à jour validée : rapport en téléchargement
+
+Décision utilisateur du 26 octobre 2026 : le rapport est remis en **PDF à télécharger**, après saisie obligatoire du nom, de l’entreprise, de l’e-mail et du téléphone. Le pays reste facultatif. Aucun rapport n’est envoyé par e-mail au prospect.
+
+Le bouton devient « Télécharger mon rapport PDF ». Le PDF est généré par le moteur WeasyPrint déjà présent côté API et renvoyé directement au navigateur après enregistrement du contact. Un lien permet de le télécharger à nouveau dans la même session, sans nouvelle soumission. Le résultat d’orientation reste gratuit et visible sans coordonnées.
+
+La migration 054 et le transport Resend ne prévoient plus que la notification **interne** à contact@carboscan.io. L’absence de clé Resend ne bloque donc pas le téléchargement ; elle met seulement les notifications internes en attente.
+
+Captures actualisées dans [CAPTURES.md](CAPTURES.md). Exemples réels générés en test : [PDF ordinateur](rapport-exemple-ordinateur.pdf), [PDF mobile](rapport-exemple-mobile.pdf), [contenu HTML du rapport](exemple-rapport.html). Les coordonnées sont fictives. Le parcours navigateur a vérifié le téléchargement de vrais PDF et le formulaire obligatoire ; le dépôt de contacts reste en mémoire pendant ces tests. Les tests API vérifient aussi le refus d’un envoi Resend de type prospect.
+
+Cette mise à jour remplace les indications d’envoi au prospect dans le compte rendu historique ci-dessous.
+
+---
+
 # Vérificateur CBAM et mise en avant — 26 octobre 2026
 
 Implémenté dans le projet, sans publication en production et sans modifier les droits du calculateur CBAM complet existant.

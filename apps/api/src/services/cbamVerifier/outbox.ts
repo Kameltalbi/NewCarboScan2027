@@ -1,6 +1,7 @@
 import { rawPool } from '../../db.js';
 import type { EmailMessage } from './emails.js';
 export async function sendResendEmail(input: { id: string; lead_id: string; kind: string; recipient: string; message: EmailMessage }, fetcher: typeof fetch = fetch) {
+  if (input.kind !== 'internal') throw new Error('resend_internal_only');
   const key = process.env.RESEND_API_KEY;
   if (!key) throw new Error('resend_not_configured');
   const response = await fetcher('https://api.resend.com/emails', {
@@ -19,7 +20,7 @@ export async function drainVerifierEmails() {
   await rawPool.query(`UPDATE cbam_verifier_emails SET status='failed', locked_at=NULL, last_error='delivery_lease_expired' WHERE status='sending' AND attempts >= 6 AND locked_at < now() - interval '5 minutes'`);
   for (let n = 0; n < 10; n += 1) {
     const { rows } = await rawPool.query(`UPDATE cbam_verifier_emails e SET status='sending', locked_at=now(), attempts=e.attempts+1
-      WHERE e.id = (SELECT id FROM cbam_verifier_emails WHERE attempts < 6 AND
+      WHERE e.id = (SELECT id FROM cbam_verifier_emails WHERE kind='internal' AND attempts < 6 AND
       ((status='pending' AND next_attempt_at <= now()) OR (status='sending' AND locked_at < now() - interval '5 minutes'))
       ORDER BY next_attempt_at FOR UPDATE SKIP LOCKED LIMIT 1) RETURNING e.*`);
     const job = rows[0]; if (!job) break;

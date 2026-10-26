@@ -17,6 +17,8 @@ const CbamVerifierPage = () => {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
+  const [reportUrl, setReportUrl] = useState('');
+  useEffect(() => () => { if (reportUrl) URL.revokeObjectURL(reportUrl); }, [reportUrl]);
   const [submitted, setSubmitted] = useState(false);
   const requestId = useRef('');
   const focusRef = useRef<HTMLHeadingElement>(null);
@@ -82,12 +84,14 @@ const CbamVerifierPage = () => {
     if (!requestId.current) requestId.current = crypto.randomUUID();
     setSending(true);
     try {
-      await api.submitCbamVerifierLead({
+      const report = await api.submitCbamVerifierLead({
         requestId: requestId.current,
         fullName: String(data.get('fullName') || ''), companyName: String(data.get('companyName') || ''),
         email: String(data.get('email') || ''), country: String(data.get('country') || ''), phone: String(data.get('phone') || ''),
         consent: true, website: String(data.get('website') || ''), answers, customsCode: code.trim(),
       });
+      const url = URL.createObjectURL(report); setReportUrl(url);
+      const anchor = document.createElement('a'); anchor.href = url; anchor.download = c.form.filename; anchor.click();
       setSubmitted(true);
       trackEvent('cbam_verifier_lead_submitted', { verdict: result.verdict, score_band: result.band });
     } catch { setError(c.form.error); } finally { setSending(false); }
@@ -135,8 +139,8 @@ const CbamVerifierPage = () => {
           <div className="mt-6 flex flex-wrap gap-3"><Button asChild><Link to="/demo" onClick={() => trackEvent('cbam_verifier_demo_click', { verdict: result.verdict, score_band: result.band })}>{c.ui.demo}</Link></Button><Button variant="outline" asChild><a href={`https://wa.me/21655053033?text=${encodeURIComponent(whatsappText)}`} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('cbam_verifier_whatsapp_click', { verdict: result.verdict, score_band: result.band })}>{c.ui.whatsapp}</a></Button><Button variant="link" asChild><Link to="/cbam">{c.ui.understand}</Link></Button></div>
           <details className="mt-7"><summary className="cursor-pointer font-semibold">{c.ui.answers}</summary><dl className="mt-4 space-y-4">{labelledVerifierAnswers(answers).map(item => <div key={item.question}><dt className="font-medium">{item.question}</dt><dd className="mt-1 text-muted-foreground">{item.answer}</dd></div>)}</dl></details>
           <div className="mt-9 border-t border-border pt-7"><h3 className="text-xl font-bold">{c.form.title}</h3><p className="mt-3 text-muted-foreground">{c.form.intro}</p>
-            {submitted ? <p role="status" className="mt-5 rounded bg-green-50 p-4 text-green-800">{c.form.success}</p> : <form onSubmit={submit} className="mt-5 space-y-4" aria-label={c.form.title}>
-              <div className="grid sm:grid-cols-2 gap-4">{[['fullName', c.form.fullName], ['companyName', c.form.company], ['email', c.form.email], ['country', c.form.country], ['phone', c.form.phone]].map(([name, label]) => <div key={name} className="space-y-2"><Label htmlFor={`lead-${name}`}>{label}</Label><Input id={`lead-${name}`} name={name} type={name === 'email' ? 'email' : name === 'phone' ? 'tel' : 'text'} required={name !== 'phone'} maxLength={name === 'email' ? 320 : name === 'phone' ? 40 : 200} autoComplete={name === 'fullName' ? 'name' : name === 'companyName' ? 'organization' : name === 'country' ? 'country-name' : name === 'phone' ? 'tel' : 'email'} /></div>)}</div>
+            {submitted ? <div className="mt-5 rounded bg-green-50 p-4 text-green-800"><p role="status">{c.form.success}</p><a className="mt-3 inline-block underline font-semibold" href={reportUrl} download={c.form.filename}>{c.form.downloadAgain}</a></div> : <form onSubmit={submit} className="mt-5 space-y-4" aria-label={c.form.title}>
+              <div className="grid sm:grid-cols-2 gap-4">{[['fullName', c.form.fullName], ['companyName', c.form.company], ['email', c.form.email], ['country', c.form.country], ['phone', c.form.phone]].map(([name, label]) => <div key={name} className="space-y-2"><Label htmlFor={`lead-${name}`}>{label}</Label><Input id={`lead-${name}`} name={name} type={name === 'email' ? 'email' : name === 'phone' ? 'tel' : 'text'} required={name !== 'country'} maxLength={name === 'email' ? 320 : name === 'phone' ? 40 : 200} autoComplete={name === 'fullName' ? 'name' : name === 'companyName' ? 'organization' : name === 'country' ? 'country-name' : name === 'phone' ? 'tel' : 'email'} /></div>)}</div>
               <div className="hidden" aria-hidden="true"><label htmlFor="lead-website">{c.form.honeypot}</label><input id="lead-website" name="website" tabIndex={-1} autoComplete="off" /></div>
               <label className="flex items-start gap-3 text-sm"><input name="consent" type="checkbox" required className="mt-1 accent-primary" /><span>{c.form.consent} <Link className="text-primary underline" to="/privacy-policy">{c.form.privacy}</Link></span></label>
               <p className="text-sm text-muted-foreground">{c.form.privacyNote}</p>
@@ -144,7 +148,7 @@ const CbamVerifierPage = () => {
               <Button type="submit" disabled={sending}>{sending ? c.form.sending : c.form.submit}</Button>
             </form>}
           </div>
-          <Button variant="link" className="mt-6" onClick={() => { setAnswers({}); setCode(''); setSubmitted(false); requestId.current = ''; setError(''); start(); }}>{c.ui.restart}</Button>
+          <Button variant="link" className="mt-6" onClick={() => { setAnswers({}); setCode(''); setSubmitted(false); setReportUrl(''); requestId.current = ''; setError(''); start(); }}>{c.ui.restart}</Button>
         </div>}
       </section>
       <section className="mt-12" aria-labelledby="verifier-faq"><h2 id="verifier-faq" className="text-2xl font-bold">{c.ui.faqTitle}</h2><div className="mt-6 space-y-6">{c.faqs.map(faq => <article key={faq.question}><h3 className="text-lg font-semibold">{faq.question}</h3><p className="mt-2 leading-relaxed text-muted-foreground">{faq.answer}</p></article>)}</div></section>

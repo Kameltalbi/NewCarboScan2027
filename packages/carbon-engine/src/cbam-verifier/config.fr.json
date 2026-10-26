@@ -1,5 +1,5 @@
 {
-  "version": "cbam-verifier-2026-10-26.1",
+  "version": "cbam-verifier-2026-10-26.2",
   "locale": "fr",
   "path": "/verificateur-cbam",
   "seo": {
@@ -12,7 +12,7 @@
     "subtitle": "Gratuit, sans inscription, résultat immédiat.",
     "text": "En 7 questions, identifiez si vos exportations vers l’Union européenne sont concernées et évaluez votre préparation. Pour l’hydrogène et l’électricité, seules 6 questions sont nécessaires.",
     "howTitle": "Comment fonctionne le vérificateur ?",
-    "how": "Vous répondez à une question à la fois. Le verdict, le score et vos prochaines étapes s’affichent immédiatement, sans coordonnées. Vos réponses restent dans votre navigateur jusqu’à l’envoi volontaire du formulaire de rapport. Ce vérificateur ne calcule pas le coût CBAM.",
+    "how": "Vous répondez à une question à la fois. Le verdict, le score et vos prochaines étapes s’affichent immédiatement, sans coordonnées. Vos réponses restent dans votre navigateur jusqu’à l’envoi volontaire du formulaire de téléchargement du rapport. Ce vérificateur ne calcule pas le coût CBAM.",
     "start": "Commencer la vérification",
     "noScript": "Activez JavaScript pour répondre au questionnaire. Les explications et la FAQ restent accessibles sans JavaScript."
   },
@@ -793,30 +793,32 @@
     "whatsappMessage": "Bonjour CarboScan, j’ai utilisé le vérificateur CBAM. Mon verdict : {verdict}. Mon score de préparation : {score}/100. Je souhaite faire le point avec un expert."
   },
   "form": {
-    "title": "Recevez votre rapport détaillé par e-mail",
-    "intro": "Retrouvez votre verdict, votre score, vos réponses et vos prochaines étapes dans un e-mail récapitulatif.",
+    "title": "Téléchargez votre rapport détaillé",
+    "intro": "Indiquez votre nom, votre entreprise, votre e-mail et votre téléphone pour télécharger votre rapport PDF : verdict, score, réponses et prochaines étapes.",
     "fullName": "Prénom et nom",
     "company": "Entreprise",
     "email": "E-mail professionnel",
-    "country": "Pays",
-    "phone": "Téléphone ou WhatsApp (facultatif)",
-    "consent": "J’accepte que CarboScan utilise mes coordonnées et mes réponses pour m’envoyer mon rapport et me contacter à ce sujet.",
+    "country": "Pays (facultatif)",
+    "phone": "Téléphone ou WhatsApp",
+    "consent": "J’accepte que CarboScan utilise mes coordonnées et mes réponses pour me remettre mon rapport et me contacter à ce sujet.",
     "privacy": "Politique de confidentialité",
     "honeypot": "Ne pas remplir ce champ",
-    "submit": "Recevoir mon rapport",
-    "sending": "Enregistrement en cours…",
-    "success": "Votre demande a été enregistrée. Votre rapport est en cours d’envoi par e-mail.",
-    "error": "Votre demande n’a pas pu être enregistrée. Réessayez ou contactez notre équipe.",
-    "consentRequired": "Votre accord est nécessaire pour recevoir le rapport.",
+    "submit": "Télécharger mon rapport PDF",
+    "sending": "Préparation du rapport…",
+    "success": "Votre rapport est prêt. Le téléchargement va démarrer.",
+    "error": "Le rapport n’a pas pu être préparé. Réessayez ou contactez notre équipe.",
+    "consentRequired": "Votre accord est nécessaire pour télécharger le rapport.",
     "invalid": "Vérifiez les champs du formulaire.",
-    "privacyNote": "Ces informations servent à traiter votre demande de rapport. Aucune inscription à une newsletter n’est effectuée."
+    "privacyNote": "Ces informations servent à traiter votre demande de rapport et à vous recontacter à ce sujet. Aucun rapport n’est envoyé par e-mail et aucune inscription à une newsletter n’est effectuée.",
+    "downloadAgain": "Télécharger à nouveau le PDF",
+    "filename": "carboscan-rapport-cbam.pdf"
   },
   "email": {
     "prospectSubject": "Votre résultat du vérificateur CBAM CarboScan",
     "internalSubject": "Nouveau contact — vérificateur CBAM",
     "hello": "Bonjour",
-    "report": "Voici votre rapport de préparation CBAM.",
-    "internalIntro": "Une nouvelle demande de rapport CBAM a été enregistrée.",
+    "report": "Voici votre rapport de préparation CBAM, à conserver et à partager avec votre équipe.",
+    "internalIntro": "Un nouveau rapport CBAM a été demandé en téléchargement.",
     "date": "Date",
     "verdict": "Verdict",
     "score": "Score de préparation",
@@ -833,7 +835,7 @@
   "faqs": [
     {
       "question": "Le vérificateur est-il vraiment gratuit ?",
-      "answer": "Oui, sans inscription. Seul le rapport détaillé par e-mail demande vos coordonnées."
+      "answer": "Oui, sans inscription. Seul le téléchargement du rapport détaillé demande votre nom, votre entreprise, votre e-mail et votre téléphone."
     },
     {
       "question": "Le seuil de 50 tonnes s’applique-t-il à moi ?",

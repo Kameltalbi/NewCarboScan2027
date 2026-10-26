@@ -13,8 +13,10 @@ Captures de prévisualisation, avec réponses et coordonnées fictives. Elles ne
 | Q6 — Vérificateur | [Voir](ordinateur-06-verifier.png) | [Voir](mobile-06-verifier.png) |
 | Q7 — Demandes clients | [Voir](ordinateur-07-requested.png) | [Voir](mobile-07-requested.png) |
 | Résultat et formulaire | [Voir](ordinateur-08-resultat.png) | [Voir](mobile-08-resultat.png) |
-| Demande enregistrée en test | [Voir](ordinateur-09-rapport-demande.png) | [Voir](mobile-09-rapport-demande.png) |
+| PDF téléchargé en test | [Voir](ordinateur-09-rapport-demande.png) | [Voir](mobile-09-rapport-demande.png) |
 
 Mise en avant : [accueil ordinateur](mise-en-avant-accueil-ordinateur.png), [accueil mobile](mise-en-avant-accueil-mobile.png), [encart sur CBAM](mise-en-avant-encart-ordinateur.png).
 
 L’encart est volontairement absent sur mobile et le bandeau sur la page du vérificateur. Les captures du parcours sont complètes ; le menu est repositionné en haut de la capture pour éviter un effet de duplication lié au comportement sticky.
+
+Rapports PDF générés pendant les tests : [ordinateur](rapport-exemple-ordinateur.pdf) et [mobile](rapport-exemple-mobile.pdf). Aucun envoi au prospect.
