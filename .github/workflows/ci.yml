@@ -24,6 +24,8 @@ jobs:
         run: npm test
       - name: npm audit (high+, production)
         run: npm audit --omit=dev --audit-level=high
+      - name: Nginx routing regression checks
+        run: node scripts/test-nginx-seo.mjs
       - name: Install Chromium for public-page prerendering
         run: npx playwright install --with-deps chromium
       - name: Build
