@@ -9,6 +9,7 @@ import {
   Clock3,
   CreditCard,
   Database,
+  ExternalLink,
   Users,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -106,7 +107,19 @@ const SuperAdminDashboard = () => {
         </div>
       </section>
 
-      {userRole === 'superadmin' && <Button variant="outline" disabled={exporting} onClick={exportCbam}>{exporting ? verifierConfig.csv.downloading : verifierConfig.csv.button}</Button>}
+      {userRole === 'superadmin' && (
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="outline" disabled={exporting} onClick={exportCbam}>
+            {exporting ? verifierConfig.csv.downloading : verifierConfig.csv.button}
+          </Button>
+          <Button variant="outline" asChild>
+            <a href={verifierConfig.customs.source} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="mr-2 h-4 w-4" />
+              {verifierConfig.ui.sourceLabel}
+            </a>
+          </Button>
+        </div>
+      )}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card className="border-border/70 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
