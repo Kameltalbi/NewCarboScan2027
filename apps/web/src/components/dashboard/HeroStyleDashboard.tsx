@@ -45,6 +45,7 @@ import {
 } from '@/lib/dashboard/institutionFootprint';
 import { assessCounterpartyRaw } from '@/lib/pcaf/methodology';
 import { rollupSites } from '@/lib/perimeter/siteRollup';
+import { pastBilanYears } from '@/lib/dashboard/pastBilans';
 
 import {
   DashboardAggregator,
@@ -86,12 +87,42 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
   const [loading, setLoading] = useState(true);
   const [showDataQualityPanel, setShowDataQualityPanel] = useState(false);
   const [financedTotal, setFinancedTotal] = useState<number | null>(null);
+  const [pastBilanPanel, setPastBilanPanel] = useState<'hidden' | 'empty' | 'list'>('hidden');
   const financialInstitution = Boolean(organization?.financed_emissions_enabled);
 
   const setActiveYear = (year: number) => {
     setHeaderYear(year);
     window.dispatchEvent(new CustomEvent('dashboardYearChange', { detail: year }));
   };
+
+  const earlierBilans = useMemo(
+    () => pastBilanYears(yearlyTotals, activeYear),
+    [yearlyTotals, activeYear],
+  );
+
+  const yearOptions = useMemo(() => {
+    const extra = yearlyTotals.filter((row) => row.value > 0).map((row) => row.year);
+    const merged = [...new Set([...allowedYears, ...extra])];
+    if (merged.length === 0) return allowedYears;
+    return merged.sort((a, b) => a - b);
+  }, [allowedYears, yearlyTotals]);
+
+  const openPastBilans = () => {
+    if (earlierBilans.length === 0) {
+      setPastBilanPanel('empty');
+      return;
+    }
+    if (earlierBilans.length === 1) {
+      setSelectedSiteId(null);
+      setActiveYear(earlierBilans[0].year);
+      return;
+    }
+    setPastBilanPanel('list');
+  };
+
+  useEffect(() => {
+    setPastBilanPanel('hidden');
+  }, [activeYear, organizationId]);
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -125,7 +156,12 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
 
   useEffect(() => {
     const load = async () => {
-      if (!user || !organizationId || organizationLoading) return;
+      if (organizationLoading) return;
+      if (!user || !organizationId) {
+        setData(null);
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
         const cur = await DashboardAggregator.aggregate(
@@ -135,34 +171,30 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           { siteId: selectedSiteId },
         );
         setData(cur);
-        // Bilans annuels = vue organisation (pas de série historique par site)
-        if (selectedSiteId) {
-          setYearlyTotals([]);
-        } else {
-          try {
-            const { items } = await api.listBilans();
-            const byYear = new Map<number, number>();
-            for (const row of items || []) {
-              const qYear = Number((row as { questionnaire_data?: { year?: unknown } }).questionnaire_data?.year);
-              const rawRef = Number((row as { raw_legacy?: { reference_year?: unknown } }).raw_legacy?.reference_year);
-              const colYear = Number(row.year);
-              const year =
-                (Number.isInteger(qYear) && qYear >= 2000 && qYear)
-                || (Number.isInteger(rawRef) && rawRef >= 2000 && rawRef)
-                || (Number.isInteger(colYear) && colYear >= 2000 && colYear)
-                || (row.date_bilan ? new Date(String(row.date_bilan)).getFullYear() : null);
-              if (year == null || !Number.isInteger(year)) continue;
-              const tonnes = Number(row.total_emission ?? row.total_kgco2e ?? 0) || 0;
-              byYear.set(year, Math.max(byYear.get(year) ?? 0, tonnes));
-            }
-            setYearlyTotals(
-              [...byYear.entries()]
-                .sort((a, b) => a[0] - b[0])
-                .map(([year, value]) => ({ year, value })),
-            );
-          } catch {
-            setYearlyTotals([]);
+        // Bilans annuels = vue organisation, y compris pour retrouver les exercices passés.
+        try {
+          const { items } = await api.listBilans();
+          const byYear = new Map<number, number>();
+          for (const row of items || []) {
+            const qYear = Number((row as { questionnaire_data?: { year?: unknown } }).questionnaire_data?.year);
+            const rawRef = Number((row as { raw_legacy?: { reference_year?: unknown } }).raw_legacy?.reference_year);
+            const colYear = Number(row.year);
+            const year =
+              (Number.isInteger(qYear) && qYear >= 2000 && qYear)
+              || (Number.isInteger(rawRef) && rawRef >= 2000 && rawRef)
+              || (Number.isInteger(colYear) && colYear >= 2000 && colYear)
+              || (row.date_bilan ? new Date(String(row.date_bilan)).getFullYear() : null);
+            if (year == null || !Number.isInteger(year)) continue;
+            const tonnes = Number(row.total_emission ?? row.total_kgco2e ?? 0) || 0;
+            byYear.set(year, Math.max(byYear.get(year) ?? 0, tonnes));
           }
+          setYearlyTotals(
+            [...byYear.entries()]
+              .sort((a, b) => a[0] - b[0])
+              .map(([year, value]) => ({ year, value })),
+          );
+        } catch {
+          setYearlyTotals([]);
         }
       } catch {
         setData(null);
@@ -209,7 +241,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
     <DashboardContextBar
       organizationName={organization?.name || 'Organisation'}
       activeYear={activeYear}
-      availableYears={allowedYears}
+      availableYears={yearOptions}
       onYearChange={setActiveYear}
       sites={sites.map((s) => ({ id: s.id, name: s.name }))}
       selectedSiteId={selectedSiteId}
@@ -455,10 +487,23 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
     [selectedSiteId, siteSources, topCategories],
   );
 
-  if (loading || organizationLoading) {
+  if (organizationLoading || (organizationId && loading)) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!organizationId) {
+    return (
+      <div className="flex min-h-[55vh] items-center justify-center px-4 py-10">
+        <div className="w-full max-w-lg rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
+          <h2 className="text-2xl font-bold tracking-tight">Aucune organisation</h2>
+          <p className="mx-auto mt-3 text-sm leading-6 text-muted-foreground">
+            Ce compte n'est rattaché à aucune organisation, le tableau de bord carbone ne peut pas s'afficher.
+          </p>
+        </div>
       </div>
     );
   }
@@ -497,10 +542,36 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               )}
-              <Button variant="outline" onClick={() => navigate('/app/bilan-carbone')}>
+              <Button variant="outline" onClick={openPastBilans}>
                 Ouvrir Bilan Carbone
               </Button>
             </div>
+            {pastBilanPanel === 'empty' && (
+              <p className="mt-4 text-sm text-muted-foreground" role="status">
+                Pas de bilan disponible pour les années passées.
+              </p>
+            )}
+            {pastBilanPanel === 'list' && (
+              <div className="mx-auto mt-6 max-w-md space-y-2 text-left">
+                <p className="text-sm font-medium text-foreground">Bilans des années passées</p>
+                {earlierBilans.map((row) => (
+                  <button
+                    key={row.year}
+                    type="button"
+                    className="flex w-full items-center justify-between rounded-lg border border-border px-4 py-3 text-sm hover:bg-muted"
+                    onClick={() => {
+                      setSelectedSiteId(null);
+                      setActiveYear(row.year);
+                    }}
+                  >
+                    <span className="font-medium">{row.year}</span>
+                    <span className="tabular-nums text-muted-foreground">
+                      {fmt(row.value)} tCO₂e
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

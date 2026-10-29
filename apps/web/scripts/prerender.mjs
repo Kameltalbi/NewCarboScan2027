@@ -47,7 +47,11 @@ try {
   for (const route of [...routes, '/seo-not-found']) {
     const page = await context.newPage();
     await page.goto(origin + route, { waitUntil: 'networkidle' });
-    await page.waitForFunction(() => document.querySelector('#root')?.textContent.length > 100 || document.querySelector('h1')?.textContent === '404');
+    // The public shell already has enough text to pass a length check before a lazy page paints its title.
+    await page.waitForFunction(() => {
+      const heading = document.querySelector('h1')?.textContent?.trim() ?? '';
+      return heading.length > 0;
+    });
     await page.evaluate(async () => { await document.fonts.ready; });
     const checks = await page.evaluate(() => ({
       title: document.title,
