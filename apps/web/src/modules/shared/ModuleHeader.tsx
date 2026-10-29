@@ -348,7 +348,7 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = React.memo(({ user, cur
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate('/app/bilan-carbone/settings')}>
+            <DropdownMenuItem onClick={() => navigate('/app/parametres')}>
               Paramètres
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate('/contact')}>

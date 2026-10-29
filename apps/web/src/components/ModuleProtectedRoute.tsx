@@ -26,7 +26,9 @@ export const ModuleProtectedRoute: React.FC<ModuleProtectedRouteProps> = ({ chil
   const isEmissionFactorsRoute = location.pathname.startsWith('/app/emission-factors');
   const isDiagnosticsRoute = location.pathname.startsWith('/app/diagnostics');
   const isMethodRoute = location.pathname.startsWith('/app/methode');
-  if (isDashboardRoute || isEmissionFactorsRoute || isDiagnosticsRoute || isMethodRoute) {
+  // Organisation, utilisateurs, compte : accessibles sans module acheté.
+  const isSettingsRoute = location.pathname.startsWith('/app/parametres');
+  if (isDashboardRoute || isEmissionFactorsRoute || isDiagnosticsRoute || isMethodRoute || isSettingsRoute) {
     if (authLoading) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-background">
