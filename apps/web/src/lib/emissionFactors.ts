@@ -20,7 +20,7 @@ export const emissionFactors = Object.freeze({
 
   // Scope 2 - Émissions indirectes énergie
   electricite: Object.freeze({
-    tunisie: 0.523, // kg CO2e/kWh
+    tunisie: 0.53, // kg CO2e/kWh — année du mix et source officielle non renseignées
     vapeur: 0.250, // kg CO2e/kg
     froid: 0.200, // kg CO2e/kWh
     chaleur: 0.200, // kg CO2e/kWh

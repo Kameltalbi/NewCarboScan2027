@@ -578,9 +578,20 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
     );
   }
 
+  const electricityGap = (data?.bilanCarbone.missingFactors || []).filter((row) =>
+    ['electricite', 'electricity', 'electricity_grid'].includes((row.subcategory || '').split(':').pop() || '')
+    && (row.unit || '').toLowerCase() === 'kwh',
+  );
+  const electricityGapKwh = electricityGap.reduce((sum, row) => sum + (Number(row.quantity) || 0), 0);
+
   return (
     <div className="space-y-6">
       {contextBar}
+      {electricityGap.length > 0 && (
+        <p className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {electricityGap.length} lignes / {new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(electricityGapKwh)} kWh sans facteur — non comptés dans le total
+        </p>
+      )}
 
       {/* KPI ROW */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-5">

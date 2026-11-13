@@ -12,7 +12,7 @@ export const FREE_BILAN_FACTOR_PACK = {
     fleet_essence: { id: "free-fleet-essence", value: 2.31, unit: "kgCO2e/L", scope: 1 as const },
     fleet_diesel: { id: "free-fleet-diesel", value: 2.68, unit: "kgCO2e/L", scope: 1 as const },
     refrigerant_kg: { id: "free-refrig", value: 1345, unit: "kgCO2e/kg", scope: 1 as const },
-    electricity_kwh: { id: "free-elec-tn", value: 0.523, unit: "kgCO2e/kWh", scope: 2 as const },
+    electricity_kwh: { id: "free-elec-tn", value: 0.53, unit: "kgCO2e/kWh", scope: 2 as const },
     heat_kwh: { id: "free-heat", value: 0.2, unit: "kgCO2e/kWh", scope: 2 as const },
     purchases_dt: { id: "free-purchases", value: 0.5, unit: "kgCO2e/TND", scope: 3 as const },
     raw_materials_t: { id: "free-raw", value: 1.2, unit: "kgCO2e/t", scope: 3 as const },

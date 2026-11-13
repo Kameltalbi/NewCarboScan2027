@@ -40,7 +40,7 @@ const FE_VAL = {
   [FE.essence]: { v: 2.31, u: "L", name: "Essence flotte" },
   [FE.diesel]: { v: 2.68, u: "L", name: "Diesel flotte" },
   [FE.refrigerant]: { v: 1345, u: "kg", name: "Fluide frigorigène" },
-  [FE.elec]: { v: 0.523, u: "kWh", name: "Électricité TN" },
+  [FE.elec]: { v: 0.53, u: "kWh", name: "Électricité TN" },
   [FE.heat]: { v: 0.2, u: "kWh", name: "Chaleur / vapeur" },
   [FE.purchases]: { v: 0.5, u: "TND", name: "Achats monétaires" },
 };

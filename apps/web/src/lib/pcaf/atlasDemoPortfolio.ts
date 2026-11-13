@@ -186,9 +186,9 @@ export const ATLAS_COUNTERPARTIES: AtlasCounterparty[] = [
           unit: "kWh",
           processEmissionsTco2e: 2_000,
           factor: {
-            tco2ePerUnit: 0.000523,
+            tco2ePerUnit: 0.00053,
             perUnit: "kWh",
-            source: "Core Pack électricité TN 0,523 kgCO₂e/kWh, exprimé en tCO₂e",
+            source: "Core Pack électricité TN 0,53 kgCO₂e/kWh, exprimé en tCO₂e",
             year: 2025,
             geography: "TN",
           },

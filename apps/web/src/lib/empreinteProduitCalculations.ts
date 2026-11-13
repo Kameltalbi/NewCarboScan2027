@@ -352,7 +352,7 @@ export function calculateEmpreinteProduit(data: SurveyData): EmissionsResult {
   if (heatingSource === 'électricité' || heatingSource === 'climatisation réversible' || data.electricityConsumption) {
     const electricityConsumption = getNumericValue(data.electricityConsumption, 'electricity');
     if (electricityConsumption > 0) {
-      const electricityEmissions = electricityConsumption * 0.523;
+      const electricityEmissions = electricityConsumption * emissionFactors.electricite.tunisie;
       categories.push({ name: "Consommation électricité", value: electricityEmissions, scope: 2 });
       scope2Total += electricityEmissions;
     }
@@ -362,7 +362,7 @@ export function calculateEmpreinteProduit(data: SurveyData): EmissionsResult {
   if (officeSpace > 0 && data.heatingSource && data.heatingSource !== 'aucun') {
     let heatingEmissions = 0;
     switch (data.heatingSource.toLowerCase()) {
-      case 'électricité': heatingEmissions = officeSpace * 80 * 0.523; break;
+      case 'électricité': heatingEmissions = officeSpace * 80 * emissionFactors.electricite.tunisie; break;
       case 'gaz': heatingEmissions = officeSpace * 120 * 0.234; break;
       case 'fioul': heatingEmissions = officeSpace * 15 * 2.52; break;
       case 'bois': heatingEmissions = officeSpace * 100 * 0.015; break;

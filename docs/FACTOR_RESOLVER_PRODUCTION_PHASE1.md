@@ -48,7 +48,7 @@
 - ADEME/UK UUID `/v1/calculate` : refused (y compris après enable calc temporaire ADEME)
 - Flag OFF → 403, pas de ledger
 - Flag ON + resolver DB disabled → FACTOR_NOT_RESOLVED, pas de ledger
-- E2E TN electricity (enable resolver **temporaire** puis restore) : 1000 kWh × 0.523 = 523 ; provenance complète
+- E2E TN electricity (enable resolver **temporaire** puis restore) : 1000 kWh × 0.53 = 530 ; provenance complète
 - Subsets formalisés : Core 8 / ADEME 2570 / UK 1260
 - Registry 10024, visible 10024, ADEME/UK disabled/disabled, `/v1/factors`=8
 

@@ -13,7 +13,7 @@ import { isUnvalidatedMonetaryDefault, UNVALIDATED_MONETARY_LABEL } from '../act
 import { ActivityDataFilters } from '../activity-data/types';
 import { resultFromFrozenBilan } from './frozenBilan';
 import { api } from "@/integrations/api/client";
-import { parseAdemeFactor } from '@/lib/factors/ademeFactor';
+import { resolveRecordedFactor } from '@/lib/factors/factorSelection';
 import { logger } from '@/utils/logger';
 
 // Cache des facteurs d'émission pour éviter les requêtes répétées
@@ -208,17 +208,17 @@ export class BilanCarboneCalculator {
         let emissionFactorUnit = '';
         let emissionFactorSource: EmissionLineDetail['emissionFactorSource'] = 'Non trouvé';
         
-        // Si un facteur d'émission est directement lié, utiliser le calcul RPC
+        // Le calcul distant renvoie 0 tant que le service n'est pas branché.
+        // Un zéro dans ce cas n'est pas une émission réelle : on lit le facteur enregistré sur la ligne.
         if (activity.emission_factor_id) {
           emissions = await ActivityDataService.calculateEmissions(activity.id);
-          // Pour les FE liés, on ne peut pas récupérer les détails sans autre requête
-          // Marquer comme "ADEME/Base" car c'est un lien direct vers la base
+        }
+        if (activity.emission_factor_id && emissions > 0) {
           emissionFactor = emissions / (parseFloat(String(activity.quantity)) || 1);
           emissionFactorUnit = 'kgCO₂e/' + (activity.unit || 'unité');
-          emissionFactorSource = 'ADEME/Base';
+          emissionFactorSource = 'Facteur lié';
           hasFactor = true;
         } else {
-          // Sinon, utiliser la hiérarchie des facteurs d'émission
           const result = await this.calculateWithFactorHierarchyAndCheck(activity, organizationId);
           emissions = result.emissions;
           hasFactor = result.hasFactor;
@@ -984,6 +984,31 @@ export class BilanCarboneCalculator {
     const categoryPrefix = subcategoryParts.length > 1 ? subcategoryParts[0] : '';
     const subcategory = subcategoryParts.length > 1 ? subcategoryParts[1] : subcategoryParts[0];
 
+    const recorded = resolveRecordedFactor({
+      subcategory,
+      quantity: activity.quantity,
+      unit: activity.unit,
+      notes: activity.notes,
+    });
+    if (recorded.kind === 'calculated') {
+      return {
+        emissions: recorded.kg,
+        hasFactor: true,
+        emissionFactor: recorded.value,
+        emissionFactorUnit: recorded.unit,
+        emissionFactorSource: recorded.sourceName || 'Facteur enregistré',
+      };
+    }
+    if (recorded.kind === 'incomplete') {
+      return {
+        emissions: 0,
+        hasFactor: false,
+        emissionFactor: 0,
+        emissionFactorUnit: '',
+        emissionFactorSource: recorded.reason,
+      };
+    }
+
     // Conversion d'unité pour les huiles usagées : le FE est en kgCO2e/kg
     // Si l'utilisateur saisit en litres, convertir en kg (1L huile = 0.9 kg)
     if (subcategory === 'cat5_used_oils' && (unit === 'l' || unit === 'litres' || unit === 'litre')) {
@@ -1024,17 +1049,6 @@ export class BilanCarboneCalculator {
       (unit === 'm3' || unit === 'm³')
     ) {
       quantity = quantity * 1000;
-    }
-
-    const ademeFactor = subcategory === 'cat7_transport_mode' ? null : parseAdemeFactor(activity.notes);
-    if (ademeFactor) {
-      return {
-        emissions: quantity * ademeFactor.value,
-        hasFactor: true,
-        emissionFactor: ademeFactor.value,
-        emissionFactorUnit: ademeFactor.unit || ('kgCO₂e/' + (unit || 'unité')),
-        emissionFactorSource: 'ADEME',
-      };
     }
 
     // Domicile–travail (Mode de transport enquête) : FE stocké dans notes (FE_kg_km: X) ou défaut
@@ -1248,10 +1262,7 @@ export class BilanCarboneCalculator {
       gaz_naturel: 2.04,
       fossil_gas: 2.04,
       natural_gas: 2.04,
-      // Électricité (kgCO2e/kWh)
-      electricite: 0.56, // Facteur réseau Tunisie (STEG/ADEME)
-      electricity: 0.56,
-      electricity_grid: 0.56, // Réseau électrique Tunisie
+      // L'électricité tunisienne n'a pas de défaut : 0,53 kgCO2e/kWh seulement après confirmation.
       electricity_renewable: 0.02, // Électricité renouvelable
       // Biomasse (kgCO2e/kg)
       biomass_wood: 0.040, // Bois biomasse
@@ -1344,17 +1355,6 @@ export class BilanCarboneCalculator {
      cat1_maintenance_services: 0.20, // Services de maintenance (kgCO2e/TND)
      cat1_chemicals: 2.5, // Produits chimiques (kgCO2e/kg)
      cat1_food_beverages: 0.50, // Alimentation et boissons (kgCO2e/TND)
-     cat1_meat_red: 27, // Viande rouge, kgCO2e/kg, ordre de grandeur Agribalyse
-     cat1_meat_white: 6.5, // Volaille et porc, kgCO2e/kg
-     cat1_fish_seafood: 5, // Poisson, kgCO2e/kg
-     cat1_dairy_eggs: 5, // Lait, fromage, œufs, kgCO2e/kg
-     cat1_fruit_vegetables: 0.8, // Fruits et légumes, kgCO2e/kg
-     cat1_grocery_staples: 1.5, // Épicerie sèche, kgCO2e/kg
-     cat1_oils_fats: 3.5, // Huiles, kgCO2e/kg
-     cat1_bakery: 1.1, // Pain, kgCO2e/kg
-     cat1_soft_drinks: 0.5, // Boissons non alcoolisées, kgCO2e/L
-     cat1_alcoholic_drinks: 1.2, // Boissons alcoolisées, kgCO2e/L
-     cat1_coffee_tea: 12, // Café, thé, cacao, kgCO2e/kg
      cat1_paper: 1.0, // Papier imprimé (kgCO2e/kg)
      cat1_other: 0.30, // Autres achats (kgCO2e/TND)
      // ===== BIENS D'ÉQUIPEMENT COMPLÉMENTAIRES - Scope 3 Cat 2 =====

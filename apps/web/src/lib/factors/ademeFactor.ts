@@ -8,7 +8,7 @@ export const FACTOR_SOURCES = [
   { key: 'ipcc_efdb', label: 'IPCC' },
 ] as const;
 
-/** Première base selon le pays, puis les autres dans l'ordre de repli. */
+/** Ancien ordre fixe. La saisie ne l'utilise plus : voir factorSelection.ts. */
 export function factorSourceOrder(country?: string | null) {
   const value = (country || '').trim().toLowerCase();
   const first =
@@ -27,8 +27,8 @@ export function factorSourceOrder(country?: string | null) {
 
 /** Mots ADEME pour une sous-catégorie dont le libellé n'existe pas tel quel dans la base. */
 const ADEME_QUERIES: Record<string, string> = {
-  cat1_meat_red: 'boeuf',
-  cat1_meat_white: 'volaille',
+  cat1_meat_red: 'viande rouge',
+  cat1_meat_white: 'viande blanche',
   cat1_fish_seafood: 'poisson',
   cat1_dairy_eggs: 'lait',
   cat1_fruit_vegetables: 'légume',
@@ -58,7 +58,67 @@ export type AdemeFactorRef = {
   name: string;
   value: number;
   unit: string;
+  sourceKey?: string | null;
+  sourceName?: string | null;
+  datasetVersion?: string | null;
+  countryCode?: string | null;
+  region?: string | null;
+  factorYear?: number | null;
+  stableFactorId?: string | null;
+  replacementReason?: string | null;
 };
+
+export type StoredFactor = {
+  id: string;
+  name: string;
+  value: number;
+  unit: string;
+  sourceKey: string | null;
+  sourceName: string | null;
+  datasetVersion: string | null;
+  countryCode: string | null;
+  region: string | null;
+  factorYear: number | null;
+  stableFactorId: string | null;
+  replacementReason: string | null;
+};
+
+export function selectionToFactor(factor: {
+  id: string;
+  factor_name: string;
+  emission_factor: number;
+  unit: string;
+  sourceKey?: string | null;
+  sourceName?: string | null;
+  datasetVersion?: string | null;
+  countryCode?: string | null;
+  region?: string | null;
+  factorYear?: number | null;
+  stableFactorId?: string | null;
+  reason?: string | null;
+} | null | undefined): AdemeFactorRef | null {
+  if (!factor) return null;
+  return {
+    id: factor.id,
+    name: factor.factor_name,
+    value: factor.emission_factor,
+    unit: factor.unit,
+    sourceKey: factor.sourceKey ?? null,
+    sourceName: factor.sourceName ?? null,
+    datasetVersion: factor.datasetVersion ?? null,
+    countryCode: factor.countryCode ?? null,
+    region: factor.region ?? null,
+    factorYear: factor.factorYear ?? null,
+    stableFactorId: factor.stableFactorId ?? null,
+    replacementReason: factor.reason ?? null,
+  };
+}
+
+export function emissionFactorSourceLabel(factor: AdemeFactorRef | null): string | undefined {
+  if (!factor) return undefined;
+  const source = factor.sourceName || 'Facteur enregistré';
+  return `${source} — ${factor.name}`;
+}
 
 export function ademeSearchQuery(subcategory?: string | null): string {
   if (!subcategory) return '';
@@ -70,11 +130,67 @@ export function ademeSearchQuery(subcategory?: string | null): string {
 }
 
 export function ademeFactorNote(factor: AdemeFactorRef | null, extra?: string | null): string | undefined {
-  const rest = (extra || '').replace(/^FE_ADEME:.*(?:\r?\n|$)/, '').trim();
+  const rest = (extra || '').replace(/^FE_ADEME:.*(?:\r?\n|$)/, '').replace(/^FE_SNAPSHOT:.*(?:\r?\n|$)/, '').trim();
   if (!factor || !Number.isFinite(factor.value)) return rest || undefined;
-  const name = factor.name.replace(/\|/g, '/').replace(/\s+/g, ' ').trim();
-  const line = `FE_ADEME: ${factor.value}|${factor.unit}|${factor.id}|${name}`;
+  const snapshot = {
+    id: factor.id,
+    name: factor.name,
+    value: factor.value,
+    unit: factor.unit,
+    sourceKey: factor.sourceKey ?? null,
+    sourceName: factor.sourceName ?? null,
+    datasetVersion: factor.datasetVersion ?? null,
+    countryCode: factor.countryCode ?? null,
+    region: factor.region ?? null,
+    factorYear: factor.factorYear ?? null,
+    stableFactorId: factor.stableFactorId ?? null,
+    replacementReason: factor.replacementReason ?? null,
+  };
+  const line = `FE_SNAPSHOT:${JSON.stringify(snapshot)}`;
   return rest ? `${line}\n${rest}` : line;
+}
+
+export function parseStoredFactor(notes: string | null | undefined): StoredFactor | null {
+  const snap = (notes || '').match(/^FE_SNAPSHOT:(\{.*\})$/m);
+  if (snap) {
+    try {
+      const raw = JSON.parse(snap[1]) as Partial<StoredFactor>;
+      const value = Number(raw.value);
+      if (!raw.id || !Number.isFinite(value)) return null;
+      return {
+        id: String(raw.id),
+        name: String(raw.name || ''),
+        value,
+        unit: String(raw.unit || ''),
+        sourceKey: raw.sourceKey ?? null,
+        sourceName: raw.sourceName ?? null,
+        datasetVersion: raw.datasetVersion ?? null,
+        countryCode: raw.countryCode ?? null,
+        region: raw.region ?? null,
+        factorYear: raw.factorYear ?? null,
+        stableFactorId: raw.stableFactorId ?? null,
+        replacementReason: raw.replacementReason ?? null,
+      };
+    } catch {
+      return null;
+    }
+  }
+  const legacy = parseAdemeFactor(notes);
+  if (!legacy) return null;
+  return {
+    id: legacy.id,
+    name: legacy.name,
+    value: legacy.value,
+    unit: legacy.unit,
+    sourceKey: 'ademe',
+    sourceName: 'ADEME',
+    datasetVersion: null,
+    countryCode: null,
+    region: null,
+    factorYear: null,
+    stableFactorId: null,
+    replacementReason: null,
+  };
 }
 
 export function parseAdemeFactor(notes: string | null | undefined): AdemeFactorRef | null {

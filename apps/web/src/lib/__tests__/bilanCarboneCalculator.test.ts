@@ -47,8 +47,9 @@ describe('BilanCarboneCalculator.getDefaultFactor — cohérence', () => {
     }
   });
 
-  it('électricité > 0', () => {
-    expect(Calculator.getDefaultFactor('electricite', '')).toBeGreaterThan(0);
+  it('électricité tunisienne sans facteur confirmé n’a pas de défaut', () => {
+    expect(Calculator.getDefaultFactor('electricite', '')).toBe(0);
+    expect(Calculator.getDefaultFactor('electricity_grid', '')).toBe(0);
   });
 
   it('train émet moins que avion court-courrier', () => {

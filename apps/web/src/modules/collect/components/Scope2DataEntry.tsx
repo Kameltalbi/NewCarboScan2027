@@ -23,7 +23,7 @@ import { Save, Loader2, Zap, Flame, Snowflake, MapPin, Info } from 'lucide-react
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { EmissionFactorSelector } from '@/components/scope3/EmissionFactorSelector';
-import { ademeFactorNote, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
+import { ademeFactorNote, emissionFactorSourceLabel, selectionToFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
 import { SourceUncertaintyFields } from './SourceUncertaintyFields';
 import { parseOptionalUncertainty, type SourceType } from '@/lib/activity-data/uncertaintySummary';
 
@@ -141,7 +141,7 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
         period_end: formData.period_end,
         data_quality: formData.data_quality as any,
         notes: ademeFactorNote(selectedAdemeFactor, formData.description),
-        emission_factor_source: selectedAdemeFactor ? `ADEME — ${selectedAdemeFactor.name}` : undefined,
+        emission_factor_source: emissionFactorSourceLabel(selectedAdemeFactor),
         site_id: selectedSite === 'all' ? null : selectedSite,
         scope_hint: 2,
         data_method: 'physical',
@@ -320,13 +320,10 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
                   <EmissionFactorSelector
                     subcategorySlug={selectedSubcategory}
                     unit={formData.unit}
+                    siteCountry={sites.find((site) => site.id === selectedSite)?.country || ''}
+                    reportingYear={Number(String(formData.period_start).slice(0, 4)) || undefined}
                     onChange={(slug, factor) => {
-                      setSelectedAdemeFactor(slug && factor ? {
-                        id: factor.id,
-                        name: factor.factor_name,
-                        value: factor.emission_factor,
-                        unit: factor.unit,
-                      } : null);
+                      setSelectedAdemeFactor(selectionToFactor(slug ? factor : null));
                     }}
                   />
 

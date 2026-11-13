@@ -23,7 +23,7 @@ Raw results: `docs/_core_tn_validation_raw.json`
 
 | stable_factor_id | Activité (name) | Valeur | Unité | Source | Geography | Resolver (après restore) |
 |---|---|---:|---|---|---|---|
-| electricity_kwh | Électricité location-based TN | 0.523 | kgCO2e/kWh | internal | TN | disabled |
+| electricity_kwh | Électricité location-based TN | 0.53 | kgCO2e/kWh | internal | TN | disabled |
 | heat_kwh | Chaleur / vapeur | 0.200 | kgCO2e/kWh | internal | TN | disabled |
 | gas_m3 | Gaz naturel | 2.056 | kgCO2e/m3 | internal | TN | disabled |
 | fuel_liters | Fioul / carburant | 2.680 | kgCO2e/L | internal | TN | disabled |
@@ -62,8 +62,8 @@ Note retrieval: l’activité anglaise `heat steam district heating` → `NO_CAN
 - `selectedStableId`: `electricity_kwh`
 - `sourceKey`: `internal`
 - `originalQuantity` / `normalizedQuantity`: `1000` / `1000` (kWh)
-- `factorValue` utilisé (DB): `0.523`
-- `resultKgCo2e`: `523`
+- `factorValue` utilisé (DB): `0.53`
+- `resultKgCo2e`: `530`
 - run + ledger créés puis **supprimés** en fin de protocole
 
 Les 8 facteurs ont aussi passé un E2E resolve-and-calculate individuel — **8/8 math OK**.
@@ -76,7 +76,7 @@ Formule: `emissions = normalizedQuantity × authoritative_factor_value`
 
 Tolérance: `abs ≤ 1e-9` **ou** `rel ≤ 1e-9`.
 
-Exemple électricité: `1000 × 0.523 = 523` — **exact**.
+Exemple électricité: `1000 × 0.53 = 530` — **exact**.
 
 Safe conversion: `0.002 t × 1000 = 2 kg`; `2 × 1345 = 2690` — **exact**.
 
@@ -100,7 +100,7 @@ Champs vérifiés sur la ligne ledger E2E électricité:
 | normalizedQuantity / Unit | `1000` / `kWh` |
 | unit_conversion | `{type:exact, multiplier:1, from:kWh, to:kWh}` |
 | reasons / warnings | présents dans provenance |
-| factor_value / result_kgco2e | `0.523` / `523` |
+| factor_value / result_kgco2e | `0.53` / `530` |
 | factorResolvedFromDb | `true` |
 | clientOverride | `false` |
 

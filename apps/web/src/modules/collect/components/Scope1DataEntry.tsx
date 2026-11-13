@@ -30,7 +30,7 @@ import { parseOptionalUncertainty, type SourceType } from '@/lib/activity-data/u
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { EmissionFactorSelector } from '@/components/scope3/EmissionFactorSelector';
-import { ademeFactorNote, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
+import { ademeFactorNote, emissionFactorSourceLabel, selectionToFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
 
 // Catégories Scope 1 - v2 (enrichies avec coke et autres combustibles industriels)
 const SCOPE1_CATEGORIES = [
@@ -182,7 +182,7 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
         period_end: formData.period_end,
         data_quality: formData.data_quality as any,
         notes: ademeFactorNote(selectedAdemeFactor, formData.description),
-        emission_factor_source: selectedAdemeFactor ? `ADEME — ${selectedAdemeFactor.name}` : undefined,
+        emission_factor_source: emissionFactorSourceLabel(selectedAdemeFactor),
         site_id: selectedSite === 'all' ? null : selectedSite,
         scope_hint: 1,
         data_method: 'physical',
@@ -369,13 +369,10 @@ export const Scope1DataEntry: React.FC<Scope1DataEntryProps> = ({ onSuccess }) =
                   <EmissionFactorSelector
                     subcategorySlug={selectedSubcategory}
                     unit={formData.unit}
+                    siteCountry={sites.find((site) => site.id === selectedSite)?.country || ''}
+                    reportingYear={Number(String(formData.period_start).slice(0, 4)) || undefined}
                     onChange={(slug, factor) => {
-                      setSelectedAdemeFactor(slug && factor ? {
-                        id: factor.id,
-                        name: factor.factor_name,
-                        value: factor.emission_factor,
-                        unit: factor.unit,
-                      } : null);
+                      setSelectedAdemeFactor(selectionToFactor(slug ? factor : null));
                     }}
                   />
 

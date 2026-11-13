@@ -186,6 +186,7 @@ export async function registerCollectRoutes(app: FastifyInstance) {
            data_method = CASE WHEN $14::boolean THEN $15::text ELSE data_method END,
            source_type = CASE WHEN $16::boolean THEN $17::text ELSE source_type END,
            uncertainty_pct = CASE WHEN $18::boolean THEN $19::numeric ELSE uncertainty_pct END,
+           emission_factor_source = CASE WHEN $20::boolean THEN $21::text ELSE emission_factor_source END,
            updated_at = now()
          WHERE id = $1 AND organization_id = $2
          RETURNING *`,
@@ -209,6 +210,8 @@ export async function registerCollectRoutes(app: FastifyInstance) {
           d.source_type ?? null,
           d.uncertainty_pct !== undefined,
           d.uncertainty_pct ?? null,
+          d.emission_factor_source !== undefined,
+          d.emission_factor_source ?? null,
         ],
       );
       if (!rows[0]) {

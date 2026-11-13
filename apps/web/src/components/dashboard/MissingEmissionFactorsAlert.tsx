@@ -33,7 +33,7 @@ export const MissingEmissionFactorsAlert: React.FC<MissingEmissionFactorsAlertPr
       </AlertTitle>
       <AlertDescription className="mt-2">
         <p className="text-amber-700 dark:text-amber-300 text-sm mb-3">
-          Les données suivantes ne seront pas comptabilisées dans votre bilan carbone car aucun facteur d'émission n'a été trouvé :
+          Ces lignes sont incomplètes. Elles ne sont pas comptées comme zéro émission, et elles n’entrent pas dans le total tant qu’un facteur n’est pas confirmé :
         </p>
         
         <div className="space-y-2 mb-4">

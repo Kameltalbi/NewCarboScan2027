@@ -24,7 +24,7 @@ describe('Facteurs d\'émission — cohérence', () => {
   });
 
   it('les facteurs électricité existent et sont positifs', () => {
-    expect(emissionFactors.electricite.tunisie).toBeGreaterThan(0);
+    expect(emissionFactors.electricite.tunisie).toBe(0.53);
     expect(emissionFactors.electricite.vapeur).toBeGreaterThan(0);
   });
 

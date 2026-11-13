@@ -32,7 +32,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { EmissionFactorSelector } from '@/components/scope3/EmissionFactorSelector';
-import { ademeFactorNote, parseAdemeFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
+import { ademeFactorNote, emissionFactorSourceLabel, parseStoredFactor, selectionToFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
 import { invalidateEmissionFactorCache } from '@/lib/calculators/BilanCarboneCalculator';
 
 function formatActivityQuantity(value: number | string | null | undefined): string {
@@ -204,10 +204,16 @@ export const ActivityDataList: React.FC = () => {
         if (year != null && snapshotsByYear[year]) continue;
         const displayed = emissionsMap.get(activity.id);
         if (!displayed) continue;
+        const stored = parseStoredFactor(activity.notes);
         currentByActivityId[activity.id] = {
-          factorValue: displayed.fe,
-          factorUnit: displayed.feUnit,
-          factorSource: displayed.feSource,
+          factorId: stored?.stableFactorId || stored?.id,
+          factorName: stored?.name,
+          factorValue: stored?.value ?? displayed.fe,
+          factorUnit: stored?.unit || displayed.feUnit,
+          factorSource: stored?.sourceName || displayed.feSource,
+          factorVersion: stored?.datasetVersion,
+          factorYear: stored?.factorYear,
+          factorGeography: stored?.countryCode || stored?.region,
           resultKgCo2e: displayed.emissions,
         };
       }
@@ -251,7 +257,7 @@ export const ActivityDataList: React.FC = () => {
     }
     let cancelled = false;
     setLoadingFE(true);
-    const stored = parseAdemeFactor(editingActivity.notes);
+    const stored = parseStoredFactor(editingActivity.notes);
     if (!cancelled) {
       if (stored) {
         setCurrentFE({
@@ -277,7 +283,7 @@ export const ActivityDataList: React.FC = () => {
 
   const saveFE = async () => {
     if (!editingActivity?.id || !pickedAdemeFactor) {
-      toast({ title: 'Choisissez un facteur ADEME', description: 'Recherchez bœuf, agneau, électricité ou gazole dans la base.', variant: 'destructive' });
+      toast({ title: 'Confirmez un facteur', description: 'Le facteur n’est enregistré qu’après confirmation.', variant: 'destructive' });
       return;
     }
     setSavingFE(true);
@@ -285,7 +291,7 @@ export const ActivityDataList: React.FC = () => {
       const notes = ademeFactorNote(pickedAdemeFactor, editFormData.notes);
       await ActivityDataService.update(editingActivity.id, {
         notes,
-        emission_factor_source: `ADEME — ${pickedAdemeFactor.name}`,
+        emission_factor_source: emissionFactorSourceLabel(pickedAdemeFactor),
       });
       setEditFormData({ ...editFormData, notes: notes || '' });
       setCurrentFE({
@@ -1035,26 +1041,23 @@ export const ActivityDataList: React.FC = () => {
           <DialogHeader>
             <DialogTitle>{currentFE ? 'Modifier le facteur d\'émission' : 'Définir le facteur d\'émission'}</DialogTitle>
             <DialogDescription>
-              Pour « {getReadableSubcategoryLabel(subcategoryKey || '') || subcategoryKey} ». Choisissez une ligne de la Base Carbone ADEME.
+              Pour « {getReadableSubcategoryLabel(subcategoryKey || '') || subcategoryKey} ». Confirmez un facteur adapté à l’activité. Le remplacement d’une saisie déjà calculée est explicite.
             </DialogDescription>
           </DialogHeader>
           <EmissionFactorSelector
             subcategorySlug={subcategoryKey}
             unit={editFormData.unit}
+            siteCountry={sites.find((site) => site.id === editFormData.site_id)?.country || ''}
+            reportingYear={Number(String(editFormData.period_start || '').slice(0, 4)) || undefined}
             onChange={(slug, factor) => {
-              setPickedAdemeFactor(slug && factor ? {
-                id: factor.id,
-                name: factor.factor_name,
-                value: factor.emission_factor,
-                unit: factor.unit,
-              } : null);
+              setPickedAdemeFactor(selectionToFactor(slug ? factor : null));
             }}
           />
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowFEDialog(false)} disabled={savingFE}>Annuler</Button>
             <Button onClick={saveFE} disabled={savingFE || !pickedAdemeFactor}>
               {savingFE && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-              Enregistrer le facteur ADEME
+              Enregistrer le facteur
             </Button>
           </DialogFooter>
         </DialogContent>

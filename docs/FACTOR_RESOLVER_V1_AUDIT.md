@@ -433,7 +433,7 @@ Table dédiée `factor_resolution_events` : **optionnelle** (shadow mode / analy
 
 | # | Input | Candidats attendus | Résultat attendu |
 |---|-------|--------------------|------------------|
-| T1 | TN electricity kWh | Core `electricity_kwh` 0.523 | RESOLVED internal |
+| T1 | TN electricity kWh | Core `electricity_kwh` 0.53 | RESOLVED internal |
 | T2 | FR electricity kWh mix | ADEME mixes (années) | AMBIGUOUS ou RESOLVED+year ; **pas** UK |
 | T3 | GB electricity kWh | UK direct 0.13096 (+ wtt/td séparés) | RESOLVED direct si boundary=direct ; sinon REQUIRES_CONTEXT |
 | T4 | FR natural gas kWh | ADEME gaz kWh | RESOLVED/AMBIGUOUS ADEME ; pas UK |
@@ -577,7 +577,7 @@ Migrations **recommandées avant enable ADEME/UK large** : backfill partiel sema
 
 | Geo | Candidats | Différences |
 |-----|-----------|-------------|
-| TN | Core `electricity_kwh` = 0.523 kgCO2e/kWh | Unique TN calculable aujourd’hui |
+| TN | Core `electricity_kwh` = 0.53 kgCO2e/kWh | Unique TN calculable aujourd’hui |
 | FR | ADEME ~257 kWh “électricité*” (mixes 2008–…, usages) ; country souvent NULL | Année / usage / méthode ; **lifecycle NULL** |
 | GB | UK `Electricity: UK` direct 0.13096 ; + WTT gen/T&D ; + TD | Boundaries séparées — **ne pas sommer** |
 

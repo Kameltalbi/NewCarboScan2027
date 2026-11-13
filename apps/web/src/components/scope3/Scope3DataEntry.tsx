@@ -38,7 +38,7 @@ import { useOrganizationSubcategories } from '@/hooks/useOrganizationSubcategori
 import { useOrganizationSites } from '@/hooks/useOrganizationSites';
 import { CustomSubcategoryDialog } from './CustomSubcategoryDialog';
 import { EmissionFactorSelector } from './EmissionFactorSelector';
-import { ademeFactorNote, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
+import { ademeFactorNote, emissionFactorSourceLabel, selectionToFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
 
 /** Option "Mode de transport (enquête)" – champs spécifiques domicile–travail */
 const COMMUTING_SITES = [
@@ -249,7 +249,7 @@ export const Scope3DataEntry: React.FC<Scope3DataEntryProps> = ({ onSuccess }) =
         period_end: formData.period_end,
         data_quality: formData.data_quality as any,
         notes,
-        emission_factor_source: selectedAdemeFactor ? `ADEME — ${selectedAdemeFactor.name}` : undefined,
+        emission_factor_source: emissionFactorSourceLabel(selectedAdemeFactor),
         scope_hint: 3,
       });
 
@@ -643,18 +643,15 @@ export const Scope3DataEntry: React.FC<Scope3DataEntryProps> = ({ onSuccess }) =
                         <span className="text-xs font-bold text-amber-600">3</span>
                       </div>
                       <h3 className="font-semibold text-slate-700">Facteur d'émission</h3>
-                      <Badge variant="outline" className="text-[10px] ml-auto">Optionnel</Badge>
+                      <Badge variant="outline" className="text-[10px] ml-auto">À confirmer</Badge>
                     </div>
                     <EmissionFactorSelector
                       value={selectedEmissionFactorSlug || undefined}
+                      siteCountry={orgSites.find((site) => site.id === selectedScope3SiteId)?.country || ''}
+                      reportingYear={Number(String(formData.period_start).slice(0, 4)) || undefined}
                       onChange={(slug, factor) => {
                         setSelectedEmissionFactorSlug(slug);
-                        setSelectedAdemeFactor(factor ? {
-                          id: factor.id,
-                          name: factor.factor_name,
-                          value: factor.emission_factor,
-                          unit: factor.unit,
-                        } : null);
+                        setSelectedAdemeFactor(selectionToFactor(factor));
                         if (slug) {
                           setManualEmissionFactor(null);
                         }
