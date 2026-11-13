@@ -111,7 +111,7 @@ export const useCollectSites = (companyId?: string) => {
         site_type: input.site_type,
         is_active: input.is_active,
         is_consolidated: input.is_consolidated,
-        company_id: input.company_id,
+        company_id: input.company_id || null,
         employees_count: input.employees_count,
         surface_m2: input.surface_m2,
         contact_name: input.contact_name,
