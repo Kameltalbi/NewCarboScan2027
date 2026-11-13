@@ -12,7 +12,7 @@ import { ActivityDataCollector } from './components/ActivityDataCollector';
 const CollectSourcesPage = React.lazy(() => import('@/pages/collect/CollectSourcesPage'));
 const CollectConsolidationPage = React.lazy(() => import('@/pages/collect/CollectConsolidationPage'));
 const CollectPeriodicPage = React.lazy(() => import('@/pages/collect/CollectPeriodicPage'));
-const CollectTemplatesPage = React.lazy(() => import('@/pages/collect/CollectTemplatesPage'));
+const ExcelImportTab = React.lazy(() => import('./components/ExcelImportTab').then(m => ({ default: m.ExcelImportTab })));
 const CollectionChecklistPage = React.lazy(() => import('./pages/CollectionChecklistPage').then(m => ({ default: m.CollectionChecklistPage })));
 const Scope3ConfigPage = React.lazy(() => import('@/pages/collect/Scope3ConfigPage'));
 const ActivityDataListPage = React.lazy(() => import('./components/ActivityDataList').then(m => ({ default: m.ActivityDataList })));
@@ -63,7 +63,7 @@ const CollectApp: React.FC = () => {
         } />
         <Route path="importer" element={
           <Suspense fallback={<LoadingFallback />}>
-            <CollectTemplatesPage />
+            <ExcelImportTab />
           </Suspense>
         } />
         <Route path="controle" element={

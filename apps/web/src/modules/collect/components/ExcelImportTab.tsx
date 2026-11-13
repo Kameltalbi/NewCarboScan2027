@@ -1,23 +1,37 @@
 // Composant pour l'import Excel/CSV
 // Convertit les données importées en activity_data
 
-import React, { useState, useCallback } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useOrganizationId } from '@/hooks/useOrganizationId';
+import { useOrganizationSites } from '@/hooks/useOrganizationSites';
+import { useOrganizationYears } from '@/hooks/useOrganizationYears';
 import { ActivityDataService } from '@/lib/activity-data/ActivityDataService';
 import { ActivityDataInput, ActivityType, ActivityCategory, DataQuality } from '@/lib/activity-data/types';
 import { ExcelImportService, ExcelImportResult } from '@/lib/ai/excelImportService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, FileSpreadsheet, CheckCircle2, XCircle, AlertCircle, Download, FileText } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Upload, FileSpreadsheet, AlertCircle, Download, MapPin, Calendar } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { validateSpreadsheetFile } from '@/lib/spreadsheetValidate';
 
+type ImportRow = ExcelImportResult['responses'][number];
+
+function rowYear(row: ImportRow): number | null {
+  const raw = row.period_start || row.period_end;
+  if (!raw) return null;
+  const year = Number(String(raw).slice(0, 4));
+  return Number.isInteger(year) ? year : null;
+}
+
 export const ExcelImportTab: React.FC = () => {
   const { organizationId } = useOrganizationId();
+  const { sites } = useOrganizationSites(organizationId || undefined);
+  const { allowedYears } = useOrganizationYears(organizationId);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDragging, setIsDragging] = useState(false);
@@ -25,8 +39,31 @@ export const ExcelImportTab: React.FC = () => {
   const [isImporting, setIsImporting] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [previewData, setPreviewData] = useState<ExcelImportResult | null>(null);
+  const [selectedSiteId, setSelectedSiteId] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
 
   const [selectedTemplate, setSelectedTemplate] = useState<string>('general');
+
+  const years = useMemo(() => {
+    const source = allowedYears.length > 0
+      ? allowedYears
+      : Array.from({ length: new Date().getFullYear() - 2021 }, (_, index) => new Date().getFullYear() - index);
+    return [...source].sort((a, b) => b - a);
+  }, [allowedYears]);
+
+  const selectionReady = Boolean(selectedSiteId && selectedYear);
+  const selectedSiteName = sites.find((site) => site.id === selectedSiteId)?.name;
+  const yearNumber = Number(selectedYear);
+
+  const rowsForYear = useMemo(() => {
+    if (!previewData || !selectedYear) return [];
+    return previewData.responses.filter((row) => {
+      const year = rowYear(row);
+      return year === null || year === yearNumber;
+    });
+  }, [previewData, selectedYear, yearNumber]);
+
+  const skippedOtherYear = (previewData?.responses.length ?? 0) - rowsForYear.length;
 
   const handleDownloadTemplate = async (templateType?: string) => {
     try {
@@ -51,6 +88,15 @@ export const ExcelImportTab: React.FC = () => {
   };
 
   const handleFile = async (file: File) => {
+    if (!selectedSiteId || !selectedYear) {
+      toast({
+        title: 'Choix manquant',
+        description: 'Choisissez le site et l’année avant le fichier.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const guard = await validateSpreadsheetFile(file);
     if (!guard.ok) {
       toast({
@@ -93,7 +139,7 @@ export const ExcelImportTab: React.FC = () => {
     }
   };
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
 
@@ -101,17 +147,17 @@ export const ExcelImportTab: React.FC = () => {
     if (file) {
       handleFile(file);
     }
-  }, []);
+  };
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
-  }, []);
+  };
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
+  const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-  }, []);
+  };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -121,34 +167,22 @@ export const ExcelImportTab: React.FC = () => {
   };
 
   const convertToActivityData = async () => {
-    if (!previewData || !organizationId) return;
+    if (!previewData || !organizationId || !selectedSiteId || !selectedYear) return;
 
     setIsImporting(true);
     try {
       const activityDataInputs: ActivityDataInput[] = [];
-      const currentYear = new Date().getFullYear();
-      const defaultPeriodStart = `${currentYear}-01-01`;
-      const defaultPeriodEnd = `${currentYear}-12-31`;
+      const defaultPeriodStart = `${selectedYear}-01-01`;
+      const defaultPeriodEnd = `${selectedYear}-12-31`;
 
-      // Convertir les réponses en activity_data avec mapping amélioré
-      for (const response of previewData.responses) {
-        // Mapper question_key vers activity_type et category
+      for (const response of rowsForYear) {
         const mapping = mapQuestionKeyToActivityData(response.question_key);
-        
-        // Utiliser les périodes extraites du fichier si disponibles
-        let periodStart = defaultPeriodStart;
-        let periodEnd = defaultPeriodEnd;
-        
-        // Les périodes peuvent être dans response.period_start/period_end si détectées
-        if ((response as any).period_start) {
-          periodStart = (response as any).period_start;
-        }
-        if ((response as any).period_end) {
-          periodEnd = (response as any).period_end;
-        }
-        
+        const periodStart = response.period_start || defaultPeriodStart;
+        const periodEnd = response.period_end || defaultPeriodEnd;
+
         activityDataInputs.push({
           organization_id: organizationId,
+          site_id: selectedSiteId,
           activity_type: mapping.activityType,
           category: mapping.category,
           subcategory: mapping.subcategory,
@@ -156,10 +190,10 @@ export const ExcelImportTab: React.FC = () => {
           unit: response.unit || mapping.defaultUnit || 'unit',
           period_start: periodStart,
           period_end: periodEnd,
-          data_quality: 'real' as DataQuality, // Import Excel = données réelles
+          data_quality: 'real' as DataQuality,
           confidence_score: Math.round(response.confidence * 100),
           scope_hint: mapping.scopeHint,
-          notes: `Importé depuis ${fileName} - Ligne ${response.source_row || 'N/A'}`,
+          notes: `Importé depuis ${fileName} - Ligne ${response.source_row || 'N/A'} - ${selectedSiteName || 'site'} ${selectedYear}`,
         });
       }
 
@@ -168,7 +202,7 @@ export const ExcelImportTab: React.FC = () => {
         
         toast({
           title: 'Import réussi',
-          description: `${activityDataInputs.length} données importées avec succès dans la base centrale.`,
+          description: `${activityDataInputs.length} données importées pour ${selectedSiteName || 'le site'} · ${selectedYear}.`,
         });
         
         // Invalider le cache dashboard
@@ -179,6 +213,12 @@ export const ExcelImportTab: React.FC = () => {
         // Réinitialiser
         setPreviewData(null);
         setFileName(null);
+      } else {
+        toast({
+          title: 'Aucune ligne pour cette année',
+          description: `Le fichier ne contient pas de données pour ${selectedYear}.`,
+          variant: 'destructive',
+        });
       }
     } catch (error: any) {
       toast({
@@ -199,7 +239,7 @@ export const ExcelImportTab: React.FC = () => {
             <div>
               <CardTitle>Importer des données</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                Importez vos données depuis un fichier Excel ou CSV
+                Choisissez le site et l’année, puis le fichier. Seules les lignes de cette année sont importées, rattachées à ce site.
               </p>
             </div>
             <div className="flex gap-2">
@@ -225,9 +265,55 @@ export const ExcelImportTab: React.FC = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                Site
+              </Label>
+              <Select value={selectedSiteId || undefined} onValueChange={setSelectedSiteId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir un site" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sites.map((site) => (
+                    <SelectItem key={site.id} value={site.id}>
+                      {site.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {sites.length === 0 && (
+                <p className="text-xs text-amber-600">
+                  Aucun site. Ajoutez-le dans Paramètres, Organisation, Sites.
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Année
+              </Label>
+              <Select value={selectedYear || undefined} onValueChange={setSelectedYear}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir une année" />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map((year) => (
+                    <SelectItem key={year} value={String(year)}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+              !selectionReady ? 'pointer-events-none opacity-50' : ''
+            } ${
               isDragging ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'
             }`}
             onDragEnter={handleDragOver}
@@ -248,12 +334,14 @@ export const ExcelImportTab: React.FC = () => {
                   accept=".xlsx,.xls,.csv"
                   className="hidden"
                   onChange={handleFileInput}
-                  disabled={isParsing}
+                  disabled={isParsing || !selectionReady}
                 />
               </label>
             </Button>
             <p className="text-xs text-muted-foreground mt-4">
-              Formats acceptés : .xlsx, .xls, .csv
+              {selectionReady
+                ? `Fichier pour ${selectedSiteName} · ${selectedYear}. Formats : .xlsx, .xls, .csv`
+                : 'Choisissez le site et l’année pour débloquer le fichier.'}
             </p>
           </div>
 
@@ -277,7 +365,8 @@ export const ExcelImportTab: React.FC = () => {
           <CardHeader>
             <CardTitle>Prévisualisation</CardTitle>
             <p className="text-sm text-muted-foreground">
-              {previewData.imported_count} données détectées
+              {rowsForYear.length} donnée{rowsForYear.length > 1 ? 's' : ''} pour {selectedSiteName || 'le site'} · {selectedYear}
+              {skippedOtherYear > 0 && ` • ${skippedOtherYear} ignorée${skippedOtherYear > 1 ? 's' : ''} (autre année)`}
               {previewData.errors.length > 0 && ` • ${previewData.errors.length} erreur(s)`}
             </p>
           </CardHeader>
@@ -301,7 +390,7 @@ export const ExcelImportTab: React.FC = () => {
               </Alert>
             )}
 
-            {previewData.responses.length > 0 && (
+            {rowsForYear.length > 0 && (
               <div>
                 <p className="text-sm font-medium mb-2">Données à importer :</p>
                 <div className="border rounded-lg max-h-64 overflow-auto">
@@ -311,20 +400,24 @@ export const ExcelImportTab: React.FC = () => {
                         <TableHead>Question</TableHead>
                         <TableHead>Valeur</TableHead>
                         <TableHead>Unité</TableHead>
+                        <TableHead>Période</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {previewData.responses.slice(0, 10).map((response, index) => (
+                      {rowsForYear.slice(0, 10).map((response, index) => (
                         <TableRow key={index}>
                           <TableCell className="text-sm">{response.question_key}</TableCell>
                           <TableCell className="text-sm">{response.value}</TableCell>
                           <TableCell className="text-sm">{response.unit || '-'}</TableCell>
+                          <TableCell className="text-sm">
+                            {response.period_start ? String(response.period_start).slice(0, 4) : selectedYear}
+                          </TableCell>
                         </TableRow>
                       ))}
-                      {previewData.responses.length > 10 && (
+                      {rowsForYear.length > 10 && (
                         <TableRow>
-                          <TableCell colSpan={3} className="text-center text-sm text-muted-foreground">
-                            ... et {previewData.responses.length - 10} autre(s) donnée(s)
+                          <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
+                            ... et {rowsForYear.length - 10} autre(s) donnée(s)
                           </TableCell>
                         </TableRow>
                       )}
@@ -346,9 +439,11 @@ export const ExcelImportTab: React.FC = () => {
               </Button>
               <Button
                 onClick={convertToActivityData}
-                disabled={isImporting || previewData.responses.length === 0}
+                disabled={isImporting || !selectionReady || rowsForYear.length === 0}
               >
-                {isImporting ? 'Import en cours...' : `Importer ${previewData.responses.length} données`}
+                {isImporting
+                  ? 'Import en cours...'
+                  : `Importer ${rowsForYear.length} données · ${selectedSiteName || 'site'} ${selectedYear}`}
               </Button>
             </div>
           </CardContent>

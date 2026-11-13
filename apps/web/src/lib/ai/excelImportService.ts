@@ -10,6 +10,8 @@ export interface ExcelImportResult {
     unit?: string;
     confidence: number;
     source_row?: number;
+    period_start?: string;
+    period_end?: string;
   }>;
   errors: Array<{
     row: number;
