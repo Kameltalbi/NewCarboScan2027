@@ -53,7 +53,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { api, supabase } from "@/integrations/api/client";
+import { api } from "@/integrations/api/client";
 import { SiteOperationField } from "@/components/collect/sites/SiteOperationField";
 import {
   CONSOLIDATION_METHODS,
@@ -64,7 +64,7 @@ import {
   type OperationChoice,
 } from "@/lib/perimeter/consolidation";
 import { useAuth } from '@/hooks/useAuth';
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCollectSites, type CollectSite, type CreateSiteInput } from '@/hooks/useCollectSites';
 import { getPresetCodeForSector, applyPresetForOrganization } from '@/lib/scope3/sector-preset-service';
 
@@ -214,49 +214,7 @@ export const ParametresOrganisationPro: React.FC = () => {
     operation_status: 'unspecified' as OperationChoice,
   });
 
-  // Récupérer la company de l'utilisateur
-  const { data: company } = useQuery({
-    queryKey: ['user-company-for-org-pro', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      
-      const { data: existingCompany } = await supabase
-        .from('companies')
-        .select('id, nom_entreprise')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      if (existingCompany) return existingCompany;
-      
-      const { data: org } = await supabase
-        .from('organizations')
-        .select('id, name')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      
-      if (org) {
-        const { data: newCompany, error } = await supabase
-          .from('companies')
-          .insert({
-            user_id: user.id,
-            nom_entreprise: org.name,
-          })
-          .select('id, nom_entreprise')
-          .single();
-        
-        if (error) {
-          console.error('Error creating company:', error);
-          return null;
-        }
-        return newCompany;
-      }
-      
-      return null;
-    },
-    enabled: !!user?.id,
-  });
-
-  const { sites, isLoading: sitesLoading, createSite, updateSite, deleteSite } = useCollectSites(company?.id);
+  const { sites, isLoading: sitesLoading, createSite, updateSite, deleteSite } = useCollectSites();
 
   // Statistiques auto-calculées depuis les sites
   const totalEmployees = sites.reduce((acc, s) => acc + (s.employees_count || 0), 0);
@@ -496,10 +454,13 @@ export const ParametresOrganisationPro: React.FC = () => {
 
   const handleSubmitSite = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!company?.id) return;
+    if (!siteFormData.name.trim()) {
+      toast.error("Indiquez le nom du site.");
+      return;
+    }
 
     const siteData: CreateSiteInput = {
-      company_id: company.id,
+      company_id: "",
       name: siteFormData.name,
       code: siteFormData.code || undefined,
       city: siteFormData.city || undefined,
@@ -514,15 +475,18 @@ export const ParametresOrganisationPro: React.FC = () => {
       is_consolidated: true,
     };
 
-    if (editingSite) {
-      await updateSite.mutateAsync({ id: editingSite.id, ...siteData });
-      toast.success('Site mis à jour');
-    } else {
-      await createSite.mutateAsync(siteData);
-      toast.success('Site créé');
+    try {
+      if (editingSite) {
+        await updateSite.mutateAsync({ id: editingSite.id, ...siteData });
+        toast.success('Site mis à jour');
+      } else {
+        await createSite.mutateAsync(siteData);
+        toast.success('Site créé');
+      }
+      resetSiteForm();
+    } catch {
+      // Le hook affiche déjà l'erreur.
     }
-
-    resetSiteForm();
   };
 
   const getSiteTypeInfo = (type?: string) => {
@@ -982,12 +946,12 @@ export const ParametresOrganisationPro: React.FC = () => {
       {/* SECTION 3 : RÉPARTITION DES ÉMISSIONS */}
       <SiteAllocationSettings 
         organizationId={orgId} 
-        companyId={company?.id} 
+        companyId={undefined} 
       />
 
       {/* Dialog formulaire site */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="top-8 max-h-[calc(100vh-4rem)] translate-y-0 overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <MapPin className="h-5 w-5" />
