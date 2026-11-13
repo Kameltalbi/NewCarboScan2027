@@ -31,8 +31,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { supabase } from "@/integrations/api/client";
-import { useAuth } from '@/hooks/useAuth';
+import { EmissionFactorSelector } from '@/components/scope3/EmissionFactorSelector';
+import { ademeFactorNote, parseAdemeFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
 import { invalidateEmissionFactorCache } from '@/lib/calculators/BilanCarboneCalculator';
 
 function formatActivityQuantity(value: number | string | null | undefined): string {
@@ -45,15 +45,6 @@ function numericQuantity(value: number | string | null | undefined): number {
   const quantity = typeof value === 'number' ? value : Number(value);
   return Number.isFinite(quantity) ? quantity : 0;
 }
-
-const FE_UNITS = [
-  { value: 'kgCO2e/t', label: 'kgCO2e/t' },
-  { value: 'kgCO2e/kg', label: 'kgCO2e/kg' },
-  { value: 'kgCO2e/€', label: 'kgCO2e/€' },
-  { value: 'kgCO2e/unité', label: 'kgCO2e/unité' },
-  { value: 'tCO2e/unité', label: 'tCO2e/unité' },
-  { value: 'kgCO2e/L', label: 'kgCO2e/L' },
-];
 
 export const ActivityDataList: React.FC = () => {
   const { organizationId } = useOrganizationId();
@@ -70,10 +61,9 @@ export const ActivityDataList: React.FC = () => {
   const [editFormData, setEditFormData] = useState<Partial<ActivityDataInput>>({});
 
   // Facteur d'émission (définir/modifier depuis le dialogue "Modifier la donnée")
-  const { user } = useAuth();
+  const [pickedAdemeFactor, setPickedAdemeFactor] = useState<AdemeFactorRef | null>(null);
   const [showFEDialog, setShowFEDialog] = useState(false);
   const [currentFE, setCurrentFE] = useState<{ id: string; factor_name: string; emission_value: number; unit: string } | null>(null);
-  const [feFormData, setFeFormData] = useState({ factor_name: '', emission_value: '', unit: 'kgCO2e/unité' });
   const [savingFE, setSavingFE] = useState(false);
   const [loadingFE, setLoadingFE] = useState(false);
 
@@ -254,129 +244,62 @@ export const ActivityDataList: React.FC = () => {
 
   // Charger le FE existant pour la sous-catégorie (Scope 3)
   const subcategoryKey = editFormData.subcategory?.trim();
-  const isScope3 = editFormData.category === 'scope3_upstream' || editFormData.category === 'scope3_downstream';
   useEffect(() => {
-    if (!organizationId || !editingActivity || !isScope3 || !subcategoryKey) {
+    if (!organizationId || !editingActivity || !subcategoryKey) {
       setCurrentFE(null);
       return;
     }
     let cancelled = false;
     setLoadingFE(true);
-    (async () => {
-      try {
-        let data: any[] | null = null;
-        let error: any = null;
-        const { data: d1, error: e1 } = await supabase
-          .from('organization_emission_factors')
-          .select('id, custom_source, custom_value, custom_unit')
-          .eq('organization_id', organizationId)
-          .eq('subcategory_key', subcategoryKey);
-        if (cancelled) return;
-        if (!e1 && d1?.length) {
-          data = d1;
-        } else if (subcategoryKey.includes(':')) {
-          const shortKey = subcategoryKey.split(':').slice(-1)[0];
-          const { data: d2, error: e2 } = await supabase
-            .from('organization_emission_factors')
-            .select('id, custom_source, custom_value, custom_unit')
-            .eq('organization_id', organizationId)
-            .eq('subcategory_key', shortKey);
-          if (!cancelled && !e2) data = d2;
-          error = e2;
-        } else {
-          error = e1;
-        }
-        if (cancelled) return;
-        if (error && !data) {
-          setCurrentFE(null);
-          return;
-        }
-        const row = Array.isArray(data) && data.length ? data[0] : null;
-        if (row) {
-          setCurrentFE({
-            id: row.id,
-            factor_name: row.custom_source || 'Facteur personnalisé',
-            emission_value: row.custom_value,
-            unit: row.custom_unit || 'kgCO2e/unité',
-          });
-          setFeFormData({
-            factor_name: row.custom_source || '',
-            emission_value: String(row.custom_value),
-            unit: row.custom_unit || 'kgCO2e/unité',
-          });
-        } else {
-          setCurrentFE(null);
-          setFeFormData({ factor_name: getReadableSubcategoryLabel(subcategoryKey) || '', emission_value: '', unit: 'kgCO2e/unité' });
-        }
-      } finally {
-        if (!cancelled) setLoadingFE(false);
+    const stored = parseAdemeFactor(editingActivity.notes);
+    if (!cancelled) {
+      if (stored) {
+        setCurrentFE({
+          id: stored.id,
+          factor_name: stored.name,
+          emission_value: stored.value,
+          unit: stored.unit,
+        });
+        setPickedAdemeFactor(stored);
+      } else {
+        setCurrentFE(null);
+        setPickedAdemeFactor(null);
       }
-    })();
+      setLoadingFE(false);
+    }
     return () => { cancelled = true; };
-  }, [organizationId, editingActivity?.id, isScope3, subcategoryKey]);
+  }, [organizationId, editingActivity, subcategoryKey]);
 
   // Ouvrir le dialogue FE (définir / modifier)
   const openFEDialog = () => {
-    if (currentFE) {
-      setFeFormData({
-        factor_name: currentFE.factor_name,
-        emission_value: String(currentFE.emission_value),
-        unit: currentFE.unit,
-      });
-    } else {
-      setFeFormData({
-        factor_name: getReadableSubcategoryLabel(subcategoryKey || '') || '',
-        emission_value: '',
-        unit: 'kgCO2e/unité',
-      });
-    }
     setShowFEDialog(true);
   };
 
   const saveFE = async () => {
-    if (!organizationId || !user?.id || !subcategoryKey) return;
-    const value = parseFloat(feFormData.emission_value.replace(',', '.'));
-    if (isNaN(value) || value < 0) {
-      toast({ title: 'Valeur invalide', description: 'Saisissez une valeur numérique positive.', variant: 'destructive' });
+    if (!editingActivity?.id || !pickedAdemeFactor) {
+      toast({ title: 'Choisissez un facteur ADEME', description: 'Recherchez bœuf, agneau, électricité ou gazole dans la base.', variant: 'destructive' });
       return;
     }
-    const factorName = (feFormData.factor_name || getReadableSubcategoryLabel(subcategoryKey) || 'Facteur personnalisé').trim();
     setSavingFE(true);
     try {
-      const notes = `scope:3|category:${editFormData.category === 'scope3_upstream' ? 'scope3_upstream' : 'scope3_downstream'}|from_edit_dialog:1`;
-      if (currentFE) {
-        const { error } = await supabase
-          .from('organization_emission_factors')
-          .update({
-            custom_value: value,
-            custom_unit: feFormData.unit,
-            custom_source: factorName,
-            notes,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', currentFE.id);
-        if (error) throw error;
-        toast({ title: 'Facteur d\'émission mis à jour', description: 'Le dashboard sera recalculé.' });
-      } else {
-        const { error } = await supabase
-          .from('organization_emission_factors')
-          .insert({
-            organization_id: organizationId,
-            base_factor_id: null,
-            custom_value: value,
-            custom_unit: feFormData.unit,
-            custom_source: factorName,
-            notes,
-            subcategory_key: subcategoryKey,
-            created_by: user.id,
-          });
-        if (error) throw error;
-        toast({ title: 'Facteur d\'émission créé', description: 'Il sera utilisé pour le calcul des émissions de cette sous-catégorie.' });
-      }
+      const notes = ademeFactorNote(pickedAdemeFactor, editFormData.notes);
+      await ActivityDataService.update(editingActivity.id, {
+        notes,
+        emission_factor_source: `ADEME — ${pickedAdemeFactor.name}`,
+      });
+      setEditFormData({ ...editFormData, notes: notes || '' });
+      setCurrentFE({
+        id: pickedAdemeFactor.id,
+        factor_name: pickedAdemeFactor.name,
+        emission_value: pickedAdemeFactor.value,
+        unit: pickedAdemeFactor.unit,
+      });
       invalidateEmissionFactorCache();
+      queryClient.invalidateQueries({ queryKey: ['activity-data'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard-data'] });
       window.dispatchEvent(new CustomEvent('emissionFactorsUpdated'));
-      setCurrentFE(currentFE ? { ...currentFE, factor_name: factorName, emission_value: value, unit: feFormData.unit } : { id: '', factor_name: factorName, emission_value: value, unit: feFormData.unit });
+      window.dispatchEvent(new Event('activityDataUpdated'));
+      toast({ title: 'Facteur ADEME enregistré', description: `${pickedAdemeFactor.name} (${pickedAdemeFactor.value} ${pickedAdemeFactor.unit})` });
       setShowFEDialog(false);
     } catch (e: any) {
       toast({ title: 'Erreur', description: e?.message || 'Impossible d\'enregistrer le facteur.', variant: 'destructive' });
@@ -1057,7 +980,7 @@ export const ActivityDataList: React.FC = () => {
               </div>
             </div>
 
-            {isScope3 && subcategoryKey && (
+            {subcategoryKey && (
               <>
                 <div className="rounded-md border bg-muted/40 p-3 text-sm">
                   <span className="text-muted-foreground">Sous-catégorie : </span>
@@ -1108,56 +1031,30 @@ export const ActivityDataList: React.FC = () => {
 
       {/* Dialog Définir / Modifier le facteur d'émission */}
       <Dialog open={showFEDialog} onOpenChange={setShowFEDialog}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[560px]">
           <DialogHeader>
             <DialogTitle>{currentFE ? 'Modifier le facteur d\'émission' : 'Définir le facteur d\'émission'}</DialogTitle>
             <DialogDescription>
-              Pour la sous-catégorie « {getReadableSubcategoryLabel(subcategoryKey || '') || subcategoryKey} ». Ce facteur sera utilisé pour calculer les émissions de cette donnée.
+              Pour « {getReadableSubcategoryLabel(subcategoryKey || '') || subcategoryKey} ». Choisissez une ligne de la Base Carbone ADEME.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-2">
-            <div className="grid gap-2">
-              <Label>Nom du facteur</Label>
-              <Input
-                value={feFormData.factor_name}
-                onChange={(e) => setFeFormData({ ...feFormData, factor_name: e.target.value })}
-                placeholder="Ex: Pneus neufs"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="grid gap-2">
-                <Label>Valeur (kgCO2e / unité)</Label>
-                <Input
-                  type="text"
-                  inputMode="decimal"
-                  value={feFormData.emission_value}
-                  onChange={(e) => setFeFormData({ ...feFormData, emission_value: e.target.value })}
-                  placeholder="Ex: 2.5"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label>Unité</Label>
-                <Select
-                  value={feFormData.unit}
-                  onValueChange={(u) => setFeFormData({ ...feFormData, unit: u })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {FE_UNITS.map((u) => (
-                      <SelectItem key={u.value} value={u.value}>{u.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+          <EmissionFactorSelector
+            subcategorySlug={subcategoryKey}
+            unit={editFormData.unit}
+            onChange={(slug, factor) => {
+              setPickedAdemeFactor(slug && factor ? {
+                id: factor.id,
+                name: factor.factor_name,
+                value: factor.emission_factor,
+                unit: factor.unit,
+              } : null);
+            }}
+          />
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowFEDialog(false)} disabled={savingFE}>Annuler</Button>
-            <Button onClick={saveFE} disabled={savingFE || !feFormData.emission_value.trim()}>
+            <Button onClick={saveFE} disabled={savingFE || !pickedAdemeFactor}>
               {savingFE && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-              {currentFE ? 'Enregistrer' : 'Créer le facteur'}
+              Enregistrer le facteur ADEME
             </Button>
           </DialogFooter>
         </DialogContent>

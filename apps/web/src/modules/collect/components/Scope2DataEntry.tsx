@@ -22,6 +22,8 @@ import { Badge } from '@/components/ui/badge';
 import { Save, Loader2, Zap, Flame, Snowflake, MapPin, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { EmissionFactorSelector } from '@/components/scope3/EmissionFactorSelector';
+import { ademeFactorNote, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
 import { SourceUncertaintyFields } from './SourceUncertaintyFields';
 import { parseOptionalUncertainty, type SourceType } from '@/lib/activity-data/uncertaintySummary';
 
@@ -74,6 +76,7 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('');
   const [selectedSite, setSelectedSite] = useState<string>('all');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedAdemeFactor, setSelectedAdemeFactor] = useState<AdemeFactorRef | null>(null);
 
   const [formData, setFormData] = useState({
     quantity: '',
@@ -137,7 +140,8 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
         period_start: formData.period_start,
         period_end: formData.period_end,
         data_quality: formData.data_quality as any,
-        notes: formData.description || undefined,
+        notes: ademeFactorNote(selectedAdemeFactor, formData.description),
+        emission_factor_source: selectedAdemeFactor ? `ADEME — ${selectedAdemeFactor.name}` : undefined,
         site_id: selectedSite === 'all' ? null : selectedSite,
         scope_hint: 2,
         data_method: 'physical',
@@ -162,6 +166,7 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
         uncertainty: '',
       });
       setSelectedSubcategory('');
+      setSelectedAdemeFactor(null);
 
       // Rafraîchir les données et le dashboard
       queryClient.invalidateQueries({ queryKey: ['activity-data'] });
@@ -311,6 +316,19 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
                       </Select>
                     </div>
                   </div>
+
+                  <EmissionFactorSelector
+                    subcategorySlug={selectedSubcategory}
+                    unit={formData.unit}
+                    onChange={(slug, factor) => {
+                      setSelectedAdemeFactor(slug && factor ? {
+                        id: factor.id,
+                        name: factor.factor_name,
+                        value: factor.emission_factor,
+                        unit: factor.unit,
+                      } : null);
+                    }}
+                  />
 
                   {/* Site - Recommandé */}
                   <div className="space-y-2">

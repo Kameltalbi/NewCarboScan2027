@@ -13,6 +13,7 @@ import { isUnvalidatedMonetaryDefault, UNVALIDATED_MONETARY_LABEL } from '../act
 import { ActivityDataFilters } from '../activity-data/types';
 import { resultFromFrozenBilan } from './frozenBilan';
 import { api } from "@/integrations/api/client";
+import { parseAdemeFactor } from '@/lib/factors/ademeFactor';
 import { logger } from '@/utils/logger';
 
 // Cache des facteurs d'émission pour éviter les requêtes répétées
@@ -1023,6 +1024,17 @@ export class BilanCarboneCalculator {
       (unit === 'm3' || unit === 'm³')
     ) {
       quantity = quantity * 1000;
+    }
+
+    const ademeFactor = subcategory === 'cat7_transport_mode' ? null : parseAdemeFactor(activity.notes);
+    if (ademeFactor) {
+      return {
+        emissions: quantity * ademeFactor.value,
+        hasFactor: true,
+        emissionFactor: ademeFactor.value,
+        emissionFactorUnit: ademeFactor.unit || ('kgCO₂e/' + (unit || 'unité')),
+        emissionFactorSource: 'ADEME',
+      };
     }
 
     // Domicile–travail (Mode de transport enquête) : FE stocké dans notes (FE_kg_km: X) ou défaut

@@ -38,6 +38,7 @@ import { useOrganizationSubcategories } from '@/hooks/useOrganizationSubcategori
 import { useOrganizationSites } from '@/hooks/useOrganizationSites';
 import { CustomSubcategoryDialog } from './CustomSubcategoryDialog';
 import { EmissionFactorSelector } from './EmissionFactorSelector';
+import { ademeFactorNote, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
 
 /** Option "Mode de transport (enquête)" – champs spécifiques domicile–travail */
 const COMMUTING_SITES = [
@@ -115,6 +116,7 @@ export const Scope3DataEntry: React.FC<Scope3DataEntryProps> = ({ onSuccess }) =
   
   // Facteur d'émission sélectionné (optionnel) - on stocke le slug
   const [selectedEmissionFactorSlug, setSelectedEmissionFactorSlug] = useState<string | null>(null);
+  const [selectedAdemeFactor, setSelectedAdemeFactor] = useState<AdemeFactorRef | null>(null);
   const [manualEmissionFactor, setManualEmissionFactor] = useState<number | null>(null);
 
   // Site (organisation) – sélecteur global Scope 3 quand l'org a plusieurs sites
@@ -181,6 +183,7 @@ export const Scope3DataEntry: React.FC<Scope3DataEntryProps> = ({ onSuccess }) =
     if (mode) {
       setManualEmissionFactor(mode.feKgKm);
       setSelectedEmissionFactorSlug(null);
+      setSelectedAdemeFactor(null);
     }
   }, [isCommutingSurvey, commutingMode]);
 
@@ -223,7 +226,7 @@ export const Scope3DataEntry: React.FC<Scope3DataEntryProps> = ({ onSuccess }) =
       const category = GHG_SCOPE3_CATEGORIES.find(c => c.id === selectedCategory);
       const scope3Type = category?.scope3Type === 'upstream' ? 'scope3_upstream' : 'scope3_downstream';
 
-      let notes: string | undefined = formData.description || undefined;
+      let notes: string | undefined = ademeFactorNote(selectedAdemeFactor, formData.description);
       if (selectedSubcategory === 'cat7_transport_mode') {
         const siteLabel = COMMUTING_SITES.find(s => s.value === commutingSite)?.label ?? commutingSite;
         const modeLabel = COMMUTING_MODES.find(m => m.value === commutingMode)?.label ?? commutingMode;
@@ -246,6 +249,7 @@ export const Scope3DataEntry: React.FC<Scope3DataEntryProps> = ({ onSuccess }) =
         period_end: formData.period_end,
         data_quality: formData.data_quality as any,
         notes,
+        emission_factor_source: selectedAdemeFactor ? `ADEME — ${selectedAdemeFactor.name}` : undefined,
         scope_hint: 3,
       });
 
@@ -265,6 +269,7 @@ export const Scope3DataEntry: React.FC<Scope3DataEntryProps> = ({ onSuccess }) =
       });
       setSelectedSubcategory('');
       setSelectedEmissionFactorSlug(null);
+      setSelectedAdemeFactor(null);
       setManualEmissionFactor(null);
       setSelectedScope3SiteId('');
       setCommutingSite('');
@@ -642,8 +647,14 @@ export const Scope3DataEntry: React.FC<Scope3DataEntryProps> = ({ onSuccess }) =
                     </div>
                     <EmissionFactorSelector
                       value={selectedEmissionFactorSlug || undefined}
-                      onChange={(slug, _factor) => {
+                      onChange={(slug, factor) => {
                         setSelectedEmissionFactorSlug(slug);
+                        setSelectedAdemeFactor(factor ? {
+                          id: factor.id,
+                          name: factor.factor_name,
+                          value: factor.emission_factor,
+                          unit: factor.unit,
+                        } : null);
                         if (slug) {
                           setManualEmissionFactor(null);
                         }
@@ -762,6 +773,7 @@ export const Scope3DataEntry: React.FC<Scope3DataEntryProps> = ({ onSuccess }) =
                         setSelectedCategory(null);
                         setSelectedSubcategory('');
                         setSelectedEmissionFactorSlug(null);
+                        setSelectedAdemeFactor(null);
                         setManualEmissionFactor(null);
                         setSelectedScope3SiteId('');
                         setCommutingSite('');

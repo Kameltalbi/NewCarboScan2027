@@ -8,11 +8,9 @@
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import Fuse from 'fuse.js';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Popover,
   PopoverContent,
@@ -25,16 +23,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from '@/components/ui/command';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import { 
   ChevronDown, 
-  ChevronRight, 
   Check, 
   X, 
   Leaf,
@@ -46,6 +37,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { api } from "@/integrations/api/client";
+import { ademeSearchQuery, factorSourceOrder } from '@/lib/factors/ademeFactor';
+import { useOrganizationData } from '@/hooks/useOrganizationData';
 import { cn } from '@/lib/utils';
 import { MonetaryFactorPresets, isMonetaryUnit } from './MonetaryFactorPresets';
 import { FlightFactorPresets, isFlightContext, type FlightFactorPreset } from './FlightFactorPresets';
@@ -72,11 +65,13 @@ const SUBCATEGORIES_WITH_FALLBACK = new Set([
 
 // Type simplifié pour les FE retournés par la RPC
 interface BaseEmissionFactor {
+  id: string;
   slug: string;
   factor_name: string;
   emission_factor: number;
   unit: string;
   subcategory: string;
+  sourceLabel: string;
 }
 
 interface EmissionFactorSelectorProps {
@@ -91,13 +86,7 @@ interface EmissionFactorSelectorProps {
   placeholder?: string;
 }
 
-interface CategoryGroup {
-  name: string;
-  factors: BaseEmissionFactor[];
-}
-
 export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
-  value,
   onChange,
   onManualFactorChange,
   manualFactorValue,
@@ -111,147 +100,80 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
   const [flightPresetId, setFlightPresetId] = useState<string | null>(null);
   const monetary = isMonetaryUnit(unit);
   const flight = isFlightContext(subcategorySlug, unit, suggestedCategory);
+  const { organization } = useOrganizationData();
+  const country = organization?.country ?? null;
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [allFactors, setAllFactors] = useState<BaseEmissionFactor[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const suggestedQuery = ademeSearchQuery(subcategorySlug);
   const [selectedFactor, setSelectedFactor] = useState<BaseEmissionFactor | null>(null);
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualFactor, setManualFactor] = useState<string>('');
+  const [sourceNotice, setSourceNotice] = useState<string | null>(null);
 
-  // Charger tous les facteurs d'émission au montage via RPC (contourne RLS)
   useEffect(() => {
-    const loadFactors = async () => {
+    const q = (searchQuery.trim() || suggestedQuery).trim();
+    if (!q) {
+      setAllFactors([]);
+      setSourceNotice(null);
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      setLoading(true);
+      const skipped: string[] = [];
+      const sources = factorSourceOrder(country);
       try {
-        setLoading(true);
-        
-        const { items } = await api.listFactors();
-        
-        const factorsList: BaseEmissionFactor[] = (items || []).map((f) => ({
-          slug: String(f.category ?? f.name ?? '')
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '_'),
-          factor_name: String(f.name ?? ''),
-          emission_factor: Number(f.value ?? 0),
-          unit: [f.unit_numerator, f.unit_denominator].filter(Boolean).join('/') || 'kgCO₂e',
-          subcategory: String(f.category ?? ''),
-        }));
-        
-        setAllFactors(factorsList);
-        
-        // Si une valeur est déjà sélectionnée, la récupérer
-        if (value) {
-          const factor = factorsList.find(f => f.slug === value);
-          if (factor) {
-            setSelectedFactor(factor);
+        for (const source of sources) {
+          const { items } = await api.searchEmissionFactors({
+            q,
+            source: source.key,
+            status: 'approved',
+            limit: 20,
+          });
+          if (cancelled) return;
+          if (items?.length) {
+            setAllFactors(items.map((f) => ({
+              id: f.id,
+              slug: f.id,
+              factor_name: f.name,
+              emission_factor: Number(f.value ?? 0),
+              unit: [f.unitNumerator, f.unitDenominator].filter(Boolean).join('/') || 'kgCO₂e',
+              subcategory: f.sourceCategory || source.label,
+              sourceLabel: source.label,
+            })));
+            setSourceNotice(
+              skipped.length
+                ? `Aucun facteur dans ${skipped.join(', ')}. Résultats proposés depuis ${source.label}.`
+                : `Facteurs trouvés dans ${source.label}.`,
+            );
+            return;
           }
+          skipped.push(source.label);
+        }
+        if (!cancelled) {
+          setAllFactors([]);
+          setSourceNotice(`Aucun facteur dans ${skipped.join(', ')}.`);
         }
       } catch (error) {
-        console.error('Error loading emission factors:', error);
-        setAllFactors([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadFactors();
-  }, [value]);
-
-  // Configurer Fuse.js pour la recherche fuzzy
-  const fuse = useMemo(() => {
-    return new Fuse(allFactors, {
-      keys: [
-        { name: 'factor_name', weight: 0.6 },
-        { name: 'subcategory', weight: 0.3 },
-        { name: 'slug', weight: 0.1 },
-      ],
-      threshold: 0.4, // Tolérance pour le fuzzy matching
-      includeScore: true,
-      minMatchCharLength: 2,
-    });
-  }, [allFactors]);
-
-  // Résultats de recherche
-  const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return [];
-    }
-    return fuse.search(searchQuery).slice(0, 20).map(result => result.item);
-  }, [fuse, searchQuery]);
-
-  // Grouper les facteurs par subcategory pour l'arbre
-  const categorizedFactors = useMemo(() => {
-    const groups: Record<string, CategoryGroup> = {};
-    
-    allFactors.forEach(factor => {
-      // Extraire la catégorie depuis subcategory (ex: "cat1_purchased_goods" -> "Achats")
-      const subcatParts = (factor.subcategory || '').split(':');
-      const mainCategory = subcatParts[0] || 'Autres';
-      
-      // Mapper les préfixes cat1, cat2, etc. vers des noms lisibles
-      const categoryNames: Record<string, string> = {
-        'cat1': 'Cat 1 - Achats',
-        'cat2': 'Cat 2 - Équipements',
-        'cat3': 'Cat 3 - Énergie',
-        'cat4': 'Cat 4 - Transport amont',
-        'cat5': 'Cat 5 - Déchets',
-        'cat6': 'Cat 6 - Voyages',
-        'cat7': 'Cat 7 - Domicile-travail',
-        'cat8': 'Cat 8 - Actifs loués amont',
-        'cat9': 'Cat 9 - Transport aval',
-        'cat10': 'Cat 10 - Transformation',
-        'cat11': 'Cat 11 - Utilisation produits',
-        'cat12': 'Cat 12 - Fin de vie',
-        'cat13': 'Cat 13 - Actifs loués aval',
-        'cat14': 'Cat 14 - Franchises',
-        'cat15': 'Cat 15 - Investissements',
-        'energy': 'Énergie',
-        'transport': 'Transport',
-        'waste': 'Déchets',
-        'fuel': 'Carburants',
-        'electricity': 'Électricité',
-      };
-      
-      // Trouver le nom de catégorie
-      let categoryName = 'Autres';
-      for (const [prefix, name] of Object.entries(categoryNames)) {
-        if (mainCategory.toLowerCase().includes(prefix.toLowerCase())) {
-          categoryName = name;
-          break;
+        console.error('Error searching emission factor bases:', error);
+        if (!cancelled) {
+          setAllFactors([]);
+          setSourceNotice('La recherche dans les bases de facteurs a échoué.');
         }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      
-      if (!groups[categoryName]) {
-        groups[categoryName] = { name: categoryName, factors: [] };
-      }
-      groups[categoryName].factors.push(factor);
-    });
+    }, 300);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [searchQuery, suggestedQuery, country]);
 
-    // Trier les catégories, avec la catégorie suggérée en premier
-    const sortedCategories = Object.values(groups).sort((a, b) => {
-      if (suggestedCategory) {
-        if (a.name.toLowerCase().includes(suggestedCategory.toLowerCase())) return -1;
-        if (b.name.toLowerCase().includes(suggestedCategory.toLowerCase())) return 1;
-      }
-      return a.name.localeCompare(b.name);
-    });
-
-    return sortedCategories;
-  }, [allFactors, suggestedCategory]);
-
-  // Basculer l'expansion d'une catégorie
-  const toggleCategory = useCallback((categoryName: string) => {
-    setExpandedCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(categoryName)) {
-        next.delete(categoryName);
-      } else {
-        next.add(categoryName);
-      }
-      return next;
-    });
-  }, []);
+  const searchResults = allFactors;
 
   // Sélectionner un facteur
   const handleSelect = useCallback((factor: BaseEmissionFactor) => {
@@ -283,19 +205,9 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
 
   // Vérifier si un FE existe pour cette sous-catégorie (en base ou fallback)
   const hasAvailableFE = useMemo(() => {
-    if (!subcategorySlug) return true; // Si pas de sous-cat, on assume OK
-    
-    // Vérifier si un FE existe en base pour cette sous-cat
-    const hasInDatabase = allFactors.some(f => 
-      f.subcategory?.toLowerCase().includes(subcategorySlug.toLowerCase()) ||
-      f.slug?.toLowerCase().includes(subcategorySlug.toLowerCase())
-    );
-    
-    // Vérifier si un fallback existe
-    const hasFallback = SUBCATEGORIES_WITH_FALLBACK.has(subcategorySlug);
-    
-    return hasInDatabase || hasFallback;
-  }, [subcategorySlug, allFactors]);
+    if (!subcategorySlug) return true;
+    return loading || allFactors.length > 0 || Boolean(suggestedQuery) || SUBCATEGORIES_WITH_FALLBACK.has(subcategorySlug);
+  }, [subcategorySlug, allFactors.length, loading, suggestedQuery]);
 
   // Gérer la saisie manuelle
   const handleManualFactorChange = useCallback((value: string) => {
@@ -315,15 +227,6 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
       setShowManualInput(true);
     }
   }, [manualFactorValue]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" />
-        Chargement des facteurs d'émission...
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-2">
@@ -410,116 +313,47 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
             />
 
             <CommandList>
-              {/* Résultats de recherche */}
-              {searchQuery.trim() && (
-                <>
-                  {searchResults.length === 0 ? (
-                    <CommandEmpty>
-                      <div className="py-6 text-center">
-                        <p className="text-sm text-muted-foreground">
-                          Aucun facteur trouvé pour "{searchQuery}"
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Essayez avec d'autres mots-clés
-                        </p>
-                      </div>
-                    </CommandEmpty>
-                  ) : (
-                    <CommandGroup heading={`Résultats (${searchResults.length})`}>
-                      {searchResults.map(factor => (
-                        <CommandItem
-                          key={factor.slug}
-                          value={factor.slug}
-                          onSelect={() => handleSelect(factor)}
-                          className="flex items-center justify-between"
-                        >
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {factor.factor_name}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {factor.subcategory}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="text-xs">
-                              {factor.emission_factor} {formatUnit(factor.unit || 'kgCO₂e')}
-                            </Badge>
-                            {selectedFactor?.slug === factor.slug && (
-                              <Check className="h-4 w-4 text-primary" />
-                            )}
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  )}
-                  <CommandSeparator />
-                </>
-              )}
-
-              {/* Navigation par arbre (quand pas de recherche) */}
-              {!searchQuery.trim() && (
-                <ScrollArea className="h-[300px]">
-                  <div className="p-2">
-                    <p className="text-xs text-muted-foreground mb-2 px-2">
-                      Parcourez par catégorie ou utilisez la recherche
+              {loading ? (
+                <div className="flex items-center gap-2 px-3 py-6 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Recherche dans les bases de facteurs…
+                </div>
+              ) : searchResults.length === 0 ? (
+                <CommandEmpty>
+                  <div className="py-6 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      {sourceNotice || `Aucun facteur pour « ${searchQuery.trim() || suggestedQuery || '…'} »`}
                     </p>
-                    {categorizedFactors.map(group => (
-                      <Collapsible
-                        key={group.name}
-                        open={expandedCategories.has(group.name)}
-                        onOpenChange={() => toggleCategory(group.name)}
-                      >
-                        <CollapsibleTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className="w-full justify-between px-2 py-1.5 h-auto font-normal hover:bg-muted"
-                          >
-                            <span className="flex items-center gap-2">
-                              {expandedCategories.has(group.name) ? (
-                                <ChevronDown className="h-4 w-4" />
-                              ) : (
-                                <ChevronRight className="h-4 w-4" />
-                              )}
-                              <span className="font-medium">{group.name}</span>
-                            </span>
-                            <Badge variant="outline" className="text-xs">
-                              {group.factors.length}
-                            </Badge>
-                          </Button>
-                        </CollapsibleTrigger>
-
-                        <CollapsibleContent>
-                          <div className="ml-6 border-l pl-2 space-y-0.5">
-                            {group.factors.slice(0, 50).map(factor => (
-                              <Button
-                                key={factor.slug}
-                                variant="ghost"
-                                className={cn(
-                                  'w-full justify-between px-2 py-1 h-auto font-normal text-left hover:bg-muted',
-                                  selectedFactor?.slug === factor.slug && 'bg-primary/10'
-                                )}
-                                onClick={() => handleSelect(factor)}
-                              >
-                                <span className="text-sm truncate max-w-[250px]">
-                                  {factor.factor_name}
-                                </span>
-                                <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
-                                  {factor.emission_factor} {formatUnit(factor.unit || 'kgCO₂e')}
-                                </span>
-                              </Button>
-                            ))}
-                            {group.factors.length > 50 && (
-                              <p className="text-xs text-muted-foreground px-2 py-1">
-                                +{group.factors.length - 50} autres (utilisez la recherche)
-                              </p>
-                            )}
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
-                    ))}
                   </div>
-                </ScrollArea>
+                </CommandEmpty>
+              ) : (
+                <CommandGroup heading={`${searchResults[0]?.sourceLabel || 'Facteurs'} (${searchResults.length})`}>
+                  {searchResults.map(factor => (
+                    <CommandItem
+                      key={factor.id}
+                      value={factor.id}
+                      onSelect={() => handleSelect(factor)}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-medium">
+                          {factor.factor_name}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {factor.sourceLabel} · {factor.subcategory}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="text-xs">
+                          {factor.emission_factor} {formatUnit(factor.unit || 'kgCO₂e')}
+                        </Badge>
+                        {selectedFactor?.id === factor.id && (
+                          <Check className="h-4 w-4 text-primary" />
+                        )}
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
               )}
             </CommandList>
           </Command>
@@ -528,17 +362,24 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
           <div className="border-t p-2 bg-muted/30">
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <Info className="h-3 w-3" />
-              Si non sélectionné, le facteur par défaut sera utilisé
+              Les bases sont consultées l'une après l'autre. Sans choix, un ordre de grandeur est utilisé.
             </p>
           </div>
         </PopoverContent>
-      </Popover>
+        </Popover>
+
+      {sourceNotice && (
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertDescription className="text-xs">{sourceNotice}</AlertDescription>
+        </Alert>
+      )}
 
       {/* Affichage du facteur sélectionné */}
       {selectedFactor && (
         <div className="text-xs text-muted-foreground bg-muted/30 rounded-md p-2 flex items-center justify-between">
           <span>
-            Slug : {selectedFactor.slug}
+            ADEME : {selectedFactor.factor_name}
           </span>
           <Badge variant="outline" className="text-[10px]">
             {selectedFactor.emission_factor} {formatUnit(selectedFactor.unit || 'kgCO₂e')}
