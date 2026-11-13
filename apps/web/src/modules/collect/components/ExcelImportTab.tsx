@@ -371,6 +371,25 @@ export const ExcelImportTab: React.FC = () => {
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
+            {previewData.warnings.length > 0 && (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>{previewData.warnings.length} ligne(s) ignorée(s) :</strong>
+                  <ul className="list-disc list-inside mt-2">
+                    {previewData.warnings.slice(0, 6).map((warning, index) => (
+                      <li key={index} className="text-sm">
+                        Ligne {warning.row} : {warning.message}
+                      </li>
+                    ))}
+                    {previewData.warnings.length > 6 && (
+                      <li className="text-sm">... et {previewData.warnings.length - 6} autre(s)</li>
+                    )}
+                  </ul>
+                </AlertDescription>
+              </Alert>
+            )}
+
             {previewData.errors.length > 0 && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />

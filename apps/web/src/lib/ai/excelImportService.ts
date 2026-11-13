@@ -248,18 +248,31 @@ export class ExcelImportService {
         }
       });
 
+      // Modèle en lignes : Désignation | Unité | Quantité.
+      // Le type est le libellé de la ligne, pas la colonne « Quantité ».
+      const labelCol = normalizedHeaders.findIndex((header) =>
+        ['designation', 'libelle', 'poste', 'indicateur', 'intitule'].includes(header),
+      );
+      const quantityCol = normalizedHeaders.findIndex((header) =>
+        header === 'quantite' || header === 'quantity' || header === 'valeur',
+      );
+      const unitCol = normalizedHeaders.findIndex((header) => header === 'unite' || header === 'unit');
+      const verticalTemplate = labelCol >= 0 && quantityCol >= 0;
+
       // Mapper les colonnes aux questions
       const columnMapping: Record<number, string> = {};
-      normalizedHeaders.forEach((header, index) => {
-        // Ignorer les colonnes de période (gérées séparément)
-        if (index === periodStartCol || index === periodEndCol) {
-          return;
-        }
-        const questionKey = this.findQuestionKey(header);
-        if (questionKey) {
-          columnMapping[index] = questionKey;
-        }
-      });
+      if (!verticalTemplate) {
+        normalizedHeaders.forEach((header, index) => {
+          // Ignorer les colonnes de période (gérées séparément)
+          if (index === periodStartCol || index === periodEndCol) {
+            return;
+          }
+          const questionKey = this.findQuestionKey(header);
+          if (questionKey) {
+            columnMapping[index] = questionKey;
+          }
+        });
+      }
 
       // Parser les données
       const responses: ExcelImportResult['responses'] = [];
@@ -283,6 +296,38 @@ export class ExcelImportService {
         }
         if (periodEndCol !== null && row[periodEndCol]) {
           rowPeriodEnd = this.parseDate(String(row[periodEndCol]));
+        }
+
+        if (verticalTemplate) {
+          const label = String(row[labelCol] ?? '').trim();
+          const rawQuantity = row[quantityCol];
+          if (!label || rawQuantity === undefined || rawQuantity === null || String(rawQuantity).trim() === '') {
+            continue;
+          }
+          const parsedValue = this.parseValue(rawQuantity, label);
+          if (typeof parsedValue !== 'number' || parsedValue === 0) {
+            continue;
+          }
+          const fileUnit = unitCol >= 0 ? String(row[unitCol] ?? '').trim() : '';
+          if (this.isMonetaryUnit(fileUnit)) {
+            warnings.push({ row: rowIndex + 1, message: `« ${label} » ignoré : montant en ${fileUnit}` });
+            continue;
+          }
+          const questionKey = this.findQuestionKey(label);
+          if (!questionKey || questionKey === 'quantite_generique' || this.isNonActivityKey(questionKey)) {
+            warnings.push({ row: rowIndex + 1, message: `« ${label} » ignoré : ce n'est pas une consommation` });
+            continue;
+          }
+          responses.push({
+            question_key: questionKey,
+            value: parsedValue,
+            unit: this.normalizeUnit(fileUnit) || this.getUnitForQuestion(questionKey),
+            confidence: 0.9,
+            source_row: rowIndex + 1,
+            period_start: rowPeriodStart || undefined,
+            period_end: rowPeriodEnd || undefined,
+          });
+          continue;
         }
 
         // Parser chaque colonne mappée
@@ -355,6 +400,27 @@ export class ExcelImportService {
   /**
    * Trouver la question correspondant à un nom de colonne
    */
+  private static isMonetaryUnit(unit: string): boolean {
+    const normalized = unit.trim().toLowerCase().replace('€', 'eur');
+    return ['tnd', 'dt', 'dinar', 'eur', 'euro', 'euros', 'usd', 'dollar'].includes(normalized);
+  }
+
+  private static isNonActivityKey(questionKey: string): boolean {
+    return ['nb_collaborateurs', 'total_surface', 'nb_vehicules'].includes(questionKey);
+  }
+
+  private static normalizeUnit(unit: string): string {
+    const normalized = unit.trim().toLowerCase().replace('³', '3').replace(/\s/g, '');
+    if (!normalized) return '';
+    if (normalized === 'kwh') return 'kWh';
+    if (normalized === 'm3') return 'm³';
+    if (normalized === 'l' || normalized === 'litre' || normalized === 'litres') return 'L';
+    if (normalized === 't' || normalized === 'tonne' || normalized === 'tonnes') return 'tonnes';
+    if (normalized === 'kg') return 'kg';
+    if (normalized === 'km' || normalized === 'km/an') return 'km';
+    return unit.trim();
+  }
+
   private static findQuestionKey(columnName: string): string | null {
     const normalized = this.normalizeColumnName(columnName);
     
