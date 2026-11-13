@@ -374,4 +374,90 @@ export async function registerCollectRoutes(app: FastifyInstance) {
       return { ok: true };
     },
   );
+
+  const scope3ActivationInput = z.object({
+    category_id: z.string().min(3).max(80),
+    is_active: z.boolean(),
+    activation_reason: z.string().max(500).optional().nullable(),
+    deactivation_reason: z.string().max(500).optional().nullable(),
+    data_quality: z.enum(["measured", "estimated", "not_available"]).optional().nullable(),
+  });
+
+  app.get(
+    "/v1/collect/scope3-activations",
+    { preHandler: [app.requireOrgMember] },
+    async (request) => {
+      const { rows } = await pool.query(
+        `SELECT id, organization_id, category_key, is_active, raw_legacy, created_at
+         FROM scope3_category_activations
+         WHERE organization_id = $1
+         ORDER BY category_key`,
+        [request.user!.organizationId],
+      );
+      return {
+        items: rows.map((row) => {
+          const raw = (row.raw_legacy ?? {}) as Record<string, unknown>;
+          return {
+            id: row.id,
+            organization_id: row.organization_id,
+            category_id: row.category_key,
+            is_active: row.is_active,
+            activation_reason: raw.activation_reason ?? null,
+            deactivation_reason: raw.deactivation_reason ?? null,
+            data_quality: raw.data_quality ?? null,
+            updated_at: row.created_at,
+          };
+        }),
+      };
+    },
+  );
+
+  app.put(
+    "/v1/collect/scope3-activations",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const body = request.body as { items?: unknown } | unknown;
+      const rawItems = Array.isArray(body)
+        ? body
+        : body && typeof body === "object" && Array.isArray((body as { items?: unknown }).items)
+          ? (body as { items: unknown[] }).items
+          : [body];
+      const parsed = z.array(scope3ActivationInput).min(1).max(15).safeParse(rawItems);
+      if (!parsed.success) {
+        return reply.code(400).send({ error: "Invalid scope 3 activation" });
+      }
+      const orgId = request.user!.organizationId!;
+      const saved = [];
+      for (const item of parsed.data) {
+        const legacy: Record<string, string> = {};
+        if (item.activation_reason) legacy.activation_reason = item.activation_reason;
+        if (item.deactivation_reason) legacy.deactivation_reason = item.deactivation_reason;
+        if (item.data_quality) legacy.data_quality = item.data_quality;
+        const { rows } = await pool.query(
+          `INSERT INTO scope3_category_activations
+             (organization_id, category_key, is_active, raw_legacy)
+           VALUES ($1, $2, $3, $4::jsonb)
+           ON CONFLICT (organization_id, category_key)
+           DO UPDATE SET
+             is_active = EXCLUDED.is_active,
+             raw_legacy = COALESCE(scope3_category_activations.raw_legacy, '{}'::jsonb) || EXCLUDED.raw_legacy
+           RETURNING id, organization_id, category_key, is_active, raw_legacy, created_at`,
+          [orgId, item.category_id, item.is_active, JSON.stringify(legacy)],
+        );
+        const row = rows[0];
+        const raw = (row.raw_legacy ?? {}) as Record<string, unknown>;
+        saved.push({
+          id: row.id,
+          organization_id: row.organization_id,
+          category_id: row.category_key,
+          is_active: row.is_active,
+          activation_reason: raw.activation_reason ?? null,
+          deactivation_reason: raw.deactivation_reason ?? null,
+          data_quality: raw.data_quality ?? null,
+          updated_at: row.created_at,
+        });
+      }
+      return { items: saved };
+    },
+  );
 }

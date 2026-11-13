@@ -1231,6 +1231,23 @@ export const api = {
       body: JSON.stringify(payload),
     }),
 
+  listScope3Activations: () =>
+    request<{ items: Array<Record<string, unknown>> }>("/v1/collect/scope3-activations"),
+
+  saveScope3Activations: (
+    items: Array<{
+      category_id: string;
+      is_active: boolean;
+      activation_reason?: string | null;
+      deactivation_reason?: string | null;
+      data_quality?: string | null;
+    }>,
+  ) =>
+    request<{ items: Array<Record<string, unknown>> }>("/v1/collect/scope3-activations", {
+      method: "PUT",
+      body: JSON.stringify({ items }),
+    }),
+
   listActivityData: (filters: Record<string, string | undefined> = {}) => {
     const q = new URLSearchParams();
     if (filters.siteId) q.set("siteId", filters.siteId);
