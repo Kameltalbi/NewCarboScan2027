@@ -35,6 +35,17 @@ import { supabase } from "@/integrations/api/client";
 import { useAuth } from '@/hooks/useAuth';
 import { invalidateEmissionFactorCache } from '@/lib/calculators/BilanCarboneCalculator';
 
+function formatActivityQuantity(value: number | string | null | undefined): string {
+  const quantity = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(quantity)) return '—';
+  return quantity.toLocaleString('fr-FR', { maximumFractionDigits: 6 });
+}
+
+function numericQuantity(value: number | string | null | undefined): number {
+  const quantity = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(quantity) ? quantity : 0;
+}
+
 const FE_UNITS = [
   { value: 'kgCO2e/t', label: 'kgCO2e/t' },
   { value: 'kgCO2e/kg', label: 'kgCO2e/kg' },
@@ -381,7 +392,7 @@ export const ActivityDataList: React.FC = () => {
       activity_type: activity.activity_type,
       category: activity.category,
       subcategory: activity.subcategory || undefined,
-      quantity: activity.quantity,
+      quantity: numericQuantity(activity.quantity),
       unit: activity.unit,
       period_start: activity.period_start,
       period_end: activity.period_end,
@@ -750,7 +761,7 @@ export const ActivityDataList: React.FC = () => {
                       </TableCell>
                       <TableCell>{activity.category}</TableCell>
                       <TableCell>
-                        {activity.quantity.toLocaleString('fr-FR')} {activity.unit}
+                        {formatActivityQuantity(activity.quantity)} {activity.unit}
                       </TableCell>
                       <TableCell>
                         {(() => {
