@@ -1004,6 +1004,27 @@ export class BilanCarboneCalculator {
       logger.debug(`🔄 Conversion déchets non triés: ${activity.quantity}t → ${quantity}kg`);
     }
 
+    const foodMassKeys = new Set([
+      'cat1_meat_red',
+      'cat1_meat_white',
+      'cat1_fish_seafood',
+      'cat1_dairy_eggs',
+      'cat1_fruit_vegetables',
+      'cat1_grocery_staples',
+      'cat1_oils_fats',
+      'cat1_bakery',
+      'cat1_coffee_tea',
+    ]);
+    if (foodMassKeys.has(subcategory) && (unit === 't' || unit === 'tonnes' || unit === 'tonne')) {
+      quantity = quantity * 1000;
+    }
+    if (
+      (subcategory === 'cat1_soft_drinks' || subcategory === 'cat1_alcoholic_drinks') &&
+      (unit === 'm3' || unit === 'm³')
+    ) {
+      quantity = quantity * 1000;
+    }
+
     // Domicile–travail (Mode de transport enquête) : FE stocké dans notes (FE_kg_km: X) ou défaut
     if (subcategory === 'cat7_transport_mode') {
       const notes = (activity.notes || '').toString();
@@ -1128,12 +1149,19 @@ export class BilanCarboneCalculator {
     if (defaultFactor > 0) {
       logger.debug(`✅ Facteur par défaut: ${subcategory} → ${defaultFactor}`);
       const monetaryRatio = isUnvalidatedMonetaryDefault(subcategory);
+      const foodPhysical = subcategory.startsWith('cat1_meat_')
+        || subcategory.startsWith('cat1_fish_')
+        || ['cat1_dairy_eggs', 'cat1_fruit_vegetables', 'cat1_grocery_staples', 'cat1_oils_fats', 'cat1_bakery', 'cat1_soft_drinks', 'cat1_alcoholic_drinks', 'cat1_coffee_tea'].includes(subcategory);
       return { 
         emissions: quantity * defaultFactor, 
         hasFactor: true, 
         emissionFactor: defaultFactor, 
         emissionFactorUnit: 'kgCO₂e/' + (unit || 'unité'), 
-        emissionFactorSource: monetaryRatio ? UNVALIDATED_MONETARY_LABEL : 'ADEME/Taxonomie' as const 
+        emissionFactorSource: monetaryRatio
+          ? UNVALIDATED_MONETARY_LABEL
+          : foodPhysical
+            ? 'Ordre de grandeur Agribalyse'
+            : 'ADEME/Taxonomie' as const 
       };
     }
 
@@ -1304,6 +1332,17 @@ export class BilanCarboneCalculator {
      cat1_maintenance_services: 0.20, // Services de maintenance (kgCO2e/TND)
      cat1_chemicals: 2.5, // Produits chimiques (kgCO2e/kg)
      cat1_food_beverages: 0.50, // Alimentation et boissons (kgCO2e/TND)
+     cat1_meat_red: 27, // Viande rouge, kgCO2e/kg, ordre de grandeur Agribalyse
+     cat1_meat_white: 6.5, // Volaille et porc, kgCO2e/kg
+     cat1_fish_seafood: 5, // Poisson, kgCO2e/kg
+     cat1_dairy_eggs: 5, // Lait, fromage, œufs, kgCO2e/kg
+     cat1_fruit_vegetables: 0.8, // Fruits et légumes, kgCO2e/kg
+     cat1_grocery_staples: 1.5, // Épicerie sèche, kgCO2e/kg
+     cat1_oils_fats: 3.5, // Huiles, kgCO2e/kg
+     cat1_bakery: 1.1, // Pain, kgCO2e/kg
+     cat1_soft_drinks: 0.5, // Boissons non alcoolisées, kgCO2e/L
+     cat1_alcoholic_drinks: 1.2, // Boissons alcoolisées, kgCO2e/L
+     cat1_coffee_tea: 12, // Café, thé, cacao, kgCO2e/kg
      cat1_paper: 1.0, // Papier imprimé (kgCO2e/kg)
      cat1_other: 0.30, // Autres achats (kgCO2e/TND)
      // ===== BIENS D'ÉQUIPEMENT COMPLÉMENTAIRES - Scope 3 Cat 2 =====

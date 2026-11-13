@@ -22,6 +22,17 @@ export interface Scope3Subcategory {
  * CATÉGORIE 1 : BIENS ET SERVICES ACHETÉS
  */
 export const CAT1_PURCHASED_GOODS: Scope3Subcategory[] = [
+  { value: 'cat1_meat_red', label: 'Viande rouge (bœuf, agneau)', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['t'], inputType: 'mass', description: 'Restauration' },
+  { value: 'cat1_meat_white', label: 'Viande blanche (volaille, porc)', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['t'], inputType: 'mass', description: 'Restauration' },
+  { value: 'cat1_fish_seafood', label: 'Poisson et fruits de mer', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['t'], inputType: 'mass', description: 'Restauration' },
+  { value: 'cat1_dairy_eggs', label: 'Produits laitiers et œufs', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['t', 'L'], inputType: 'mass', description: 'Restauration' },
+  { value: 'cat1_fruit_vegetables', label: 'Fruits et légumes', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['t'], inputType: 'mass', description: 'Restauration' },
+  { value: 'cat1_grocery_staples', label: 'Épicerie, féculents et conserves', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['t'], inputType: 'mass', description: 'Restauration' },
+  { value: 'cat1_oils_fats', label: 'Huiles et matières grasses', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['L', 't'], inputType: 'mass', description: 'Restauration' },
+  { value: 'cat1_bakery', label: 'Pain et pâtisserie', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['t'], inputType: 'mass', description: 'Restauration' },
+  { value: 'cat1_soft_drinks', label: 'Boissons non alcoolisées', categoryId: 'cat1_purchased_goods', defaultUnit: 'L', alternativeUnits: ['m³'], inputType: 'volume', description: 'Restauration' },
+  { value: 'cat1_alcoholic_drinks', label: 'Boissons alcoolisées', categoryId: 'cat1_purchased_goods', defaultUnit: 'L', alternativeUnits: ['m³'], inputType: 'volume', description: 'Restauration' },
+  { value: 'cat1_coffee_tea', label: 'Café, thé et cacao', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['t'], inputType: 'mass', description: 'Restauration' },
   { value: 'cat1_office_supplies', label: 'Fournitures de bureau', categoryId: 'cat1_purchased_goods', defaultUnit: 'TND', alternativeUnits: ['€', 'USD'], inputType: 'monetary' },
   { value: 'cat1_raw_materials', label: 'Matières premières', categoryId: 'cat1_purchased_goods', defaultUnit: 'kg', alternativeUnits: ['t', 'TND'], inputType: 'mass' },
   { value: 'cat1_imported_spare_parts', label: 'Pièces détachées Importées', categoryId: 'cat1_purchased_goods', defaultUnit: 't', alternativeUnits: ['kg', 'TND'], inputType: 'mass', description: 'Pièces de rechange et composants importés' },
