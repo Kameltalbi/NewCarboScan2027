@@ -34,6 +34,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { EmissionFactorSelector } from '@/components/scope3/EmissionFactorSelector';
 import { ademeFactorNote, emissionFactorSourceLabel, parseStoredFactor, selectionToFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
 import { invalidateEmissionFactorCache } from '@/lib/calculators/BilanCarboneCalculator';
+import { formatEmissionAmount } from '@/lib/collect/linePreview';
 
 function formatActivityQuantity(value: number | string | null | undefined): string {
   const quantity = typeof value === 'number' ? value : Number(value);
@@ -119,6 +120,30 @@ export const ActivityDataList: React.FC = () => {
     period_start: null,
     period_end: null,
   });
+  const [lineStatus, setLineStatus] = useState<'all' | 'counted' | 'incomplete'>(() => {
+    const value = new URLSearchParams(window.location.search).get('statut');
+    if (value === 'a-completer') return 'incomplete';
+    if (value === 'compte') return 'counted';
+    return 'all';
+  });
+
+  useEffect(() => {
+    const onYear = (event: Event) => {
+      const year = Number((event as CustomEvent).detail);
+      if (!Number.isInteger(year)) return;
+      setFilters((current) => ({
+        ...current,
+        period_start: `${year}-01-01`,
+        period_end: `${year}-12-31`,
+      }));
+    };
+    window.addEventListener('collectYearChange', onYear);
+    window.addEventListener('dashboardYearChange', onYear);
+    return () => {
+      window.removeEventListener('collectYearChange', onYear);
+      window.removeEventListener('dashboardYearChange', onYear);
+    };
+  }, []);
 
   // Charger les données
   const loadActivities = async () => {
@@ -229,11 +254,18 @@ export const ActivityDataList: React.FC = () => {
   }, [filters, activities.length]);
 
   // Calcul de la pagination
-  const totalPages = Math.ceil(activities.length / ITEMS_PER_PAGE);
+  const visibleActivities = useMemo(() => {
+    if (lineStatus === 'all') return activities;
+    return activities.filter((activity) => {
+      const incomplete = (activity.notes || '').includes('A_COMPLETER:');
+      return lineStatus === 'incomplete' ? incomplete : !incomplete;
+    });
+  }, [activities, lineStatus]);
+  const totalPages = Math.ceil(visibleActivities.length / ITEMS_PER_PAGE);
   const paginatedActivities = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return activities.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [activities, currentPage]);
+    return visibleActivities.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [visibleActivities, currentPage]);
 
   // Réinitialiser les filtres
   const resetFilters = () => {
@@ -442,7 +474,7 @@ export const ActivityDataList: React.FC = () => {
         <div>
           <h3 className="text-lg font-semibold">Données collectées</h3>
           <p className="text-sm text-muted-foreground">
-            {activities.length} donnée{activities.length > 1 ? 's' : ''} trouvée{activities.length > 1 ? 's' : ''}
+            {visibleActivities.length} donnée{visibleActivities.length > 1 ? 's' : ''} affichée{visibleActivities.length > 1 ? 's' : ''}
           </p>
         </div>
         <div className="flex gap-2">
@@ -470,6 +502,16 @@ export const ActivityDataList: React.FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+          <Select value={lineStatus} onValueChange={(value) => setLineStatus(value as 'all' | 'counted' | 'incomplete')}>
+            <SelectTrigger className="h-9 w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les lignes</SelectItem>
+              <SelectItem value="counted">Comptées</SelectItem>
+              <SelectItem value="incomplete">À compléter</SelectItem>
+            </SelectContent>
+          </Select>
           <Button
             variant="outline"
             size="sm"
@@ -695,7 +737,7 @@ export const ActivityDataList: React.FC = () => {
                       <TableCell>
                         {(() => {
                           const em = emissionsMap.get(activity.id);
-                          if (!em) return <span className="text-muted-foreground text-xs">—</span>;
+                          if (!em || (em.fe === 0 && em.emissions === 0)) return <span className="text-muted-foreground text-xs">—</span>;
                           return (
                             <div>
                               <span className="text-sm">{em.fe.toLocaleString('fr-FR', { maximumFractionDigits: 4 })}</span>
@@ -707,14 +749,12 @@ export const ActivityDataList: React.FC = () => {
                       <TableCell>
                         {(() => {
                           const em = emissionsMap.get(activity.id);
-                          if (!em) return <span className="text-muted-foreground text-xs">—</span>;
-                          const tco2 = em.emissions / 1000;
+                          if (!em || (em.fe === 0 && em.emissions === 0)) {
+                            return <span className="text-muted-foreground text-xs">Émissions non calculées</span>;
+                          }
                           return (
                             <span className="font-semibold">
-                              {tco2 < 1 
-                                ? tco2.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                                : tco2.toLocaleString('fr-FR', { maximumFractionDigits: 0 })
-                              } <span className="text-xs font-normal text-muted-foreground">tCO₂e</span>
+                              {formatEmissionAmount(em.emissions)}
                             </span>
                           );
                         })()}
@@ -761,7 +801,7 @@ export const ActivityDataList: React.FC = () => {
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
                 <p className="text-sm text-muted-foreground">
-                  Affichage {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, activities.length)} sur {activities.length} données
+                  Affichage {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, visibleActivities.length)} sur {visibleActivities.length} données
                 </p>
                 <div className="flex items-center gap-2">
                   <Button
@@ -1041,7 +1081,7 @@ export const ActivityDataList: React.FC = () => {
           <DialogHeader>
             <DialogTitle>{currentFE ? 'Modifier le facteur d\'émission' : 'Définir le facteur d\'émission'}</DialogTitle>
             <DialogDescription>
-              Pour « {getReadableSubcategoryLabel(subcategoryKey || '') || subcategoryKey} ». Confirmez un facteur adapté à l’activité. Le remplacement d’une saisie déjà calculée est explicite.
+              Pour « {getReadableSubcategoryLabel(subcategoryKey || '') || subcategoryKey} ». L’électricité tunisienne est à 0,53 kgCO2e/kWh. Pour un autre pays, la base ADEME est utilisée, ou saisissez votre facteur.
             </DialogDescription>
           </DialogHeader>
           <EmissionFactorSelector

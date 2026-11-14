@@ -34,9 +34,12 @@ function factor(partial: Partial<CatalogFactor> & Pick<CatalogFactor, 'name' | '
 describe('sélection selon l’activité', () => {
   it('électricité tunisienne : pack interne du site, pas le pays du siège', () => {
     const plan = searchRequests({ subcategory: 'electricity_grid', siteCountry: 'TN' });
-    expect(plan.requests).toEqual([{ q: 'électricité', source: 'internal', role: 'match' }]);
+    expect(plan.requests).toEqual([]);
     const hq = searchRequests({ subcategory: 'electricity_grid', siteCountry: 'FR' });
-    expect(hq.requests[0].source).toBe('ademe');
+    expect(hq.requests).toEqual([{ q: 'électricité', source: 'ademe', role: 'match' }]);
+    expect(hq.gap).toMatch(/ADEME/);
+    const other = searchRequests({ subcategory: 'electricity_grid', siteCountry: 'DE' });
+    expect(other.requests[0].source).toBe('ademe');
     const missingCountry = searchRequests({ subcategory: 'electricity_grid', siteCountry: '' });
     expect(missingCountry.requests).toEqual([]);
     expect(missingCountry.gap).toMatch(/siège/);
@@ -107,8 +110,24 @@ describe('sélection selon l’activité', () => {
       notes: legacy,
     });
     expect(line).toMatchObject({ kind: 'calculated', value: 0.56, kg: 23208 * 0.56 });
-    const withoutFactor = resolveRecordedFactor({ subcategory: 'electricity_grid', quantity: 23208, unit: 'kWh', notes: '' });
-    expect(withoutFactor).toEqual({ kind: 'incomplete', reason: 'Facteur non confirmé' });
+    const withoutCountry = resolveRecordedFactor({ subcategory: 'electricity_grid', quantity: 23208, unit: 'kWh', notes: '' });
+    expect(withoutCountry).toEqual({ kind: 'incomplete', reason: 'Pays du site manquant' });
+    const tunisia = resolveRecordedFactor({
+      subcategory: 'electricity_grid',
+      quantity: 23208,
+      unit: 'kWh',
+      notes: '',
+      siteCountry: 'Tunisie',
+    });
+    expect(tunisia).toMatchObject({ kind: 'calculated', value: 0.53, kg: 23208 * 0.53 });
+    const france = resolveRecordedFactor({
+      subcategory: 'electricity_grid',
+      quantity: 1000,
+      unit: 'kWh',
+      notes: '',
+      siteCountry: 'France',
+    });
+    expect(france).toEqual({ kind: 'incomplete', reason: 'Base ADEME à retenir, ou saisir le facteur' });
   });
 
   it('détail, total et export utilisent le facteur enregistré', () => {
@@ -158,13 +177,30 @@ describe('sélection selon l’activité', () => {
       unit: 'kWh',
       siteCountry: '',
       organizationCountry: 'Tunisie',
-    })).toEqual({ correct: true, previousValue: 0.56 });
+    })).toEqual({ correct: true, previousValue: 0.56, countryBasis: 'organisation' });
+    expect(tunisiaElectricityCorrection({
+      subcategory: 'electricity_grid',
+      unit: 'kWh',
+      siteCountry: 'Tunisie',
+      siteCountryCode: '',
+      organizationCountry: 'Tunisie',
+    })).toMatchObject({ correct: true, countryBasis: 'organisation' });
     expect(tunisiaElectricityCorrection({
       subcategory: 'electricity_grid',
       unit: 'kWh',
       siteCountry: 'TN',
       catalogValue: 0.523,
-    }).correct).toBe(true);
+    })).toMatchObject({ correct: true, countryBasis: 'site', previousValue: 0.523 });
+    expect(tunisiaElectricityCorrection({
+      subcategory: 'electricity',
+      unit: 'MWh',
+      siteCountry: 'TN',
+    }).correct).toBe(false);
+    expect(tunisiaElectricityCorrection({
+      subcategory: 'electricity',
+      unit: 'GWh',
+      siteCountry: 'TN',
+    }).correct).toBe(false);
     expect(tunisiaElectricityCorrection({
       subcategory: 'electricity_grid',
       unit: 'kWh',
@@ -203,8 +239,13 @@ describe('sélection selon l’activité', () => {
     const down = readFileSync(resolve(process.cwd(), '../../db/migrations/down/055_tn_electricity_053.sql'), 'utf8');
     expect(up).toContain('0.53');
     expect(up).toContain('correction facteur erroné');
+    expect(up).toContain("pays déduit de l''organisation");
+    expect(up).toContain('Facteur électricité corrigé depuis la validation');
+    expect(up).toContain("lower(a.unit) = 'kwh'");
+    expect(up).not.toMatch(/UPDATE bilans_carbone/);
     expect(up).not.toMatch(/fuel_diesel|2\.68/);
     expect(down).toContain('factor_correction_previous_notes');
     expect(down).toContain('previous_value');
+    expect(down).toContain('DROP TABLE IF EXISTS bilan_electricity_notices');
   });
 });

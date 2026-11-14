@@ -2,6 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { pool } from "../db.js";
 import { orgIdParamSchema } from "../schemas/index.js";
+import { sanitizeCollectCategoryIds } from "../services/collectCategories.js";
 
 const activityInput = z.object({
   category: z.string().max(120).optional().nullable(),
@@ -60,6 +61,37 @@ function pickActivity(input: Record<string, unknown>, orgId: string, userId: str
 }
 
 export async function registerCollectRoutes(app: FastifyInstance) {
+  app.get(
+    "/v1/collect/categories",
+    { preHandler: [app.requireOrgMember] },
+    async (request) => {
+      const { rows } = await pool.query(
+        `SELECT collect_category_ids FROM organizations WHERE id = $1`,
+        [request.user!.organizationId],
+      );
+      return { ids: sanitizeCollectCategoryIds(rows[0]?.collect_category_ids ?? []) };
+    },
+  );
+
+  app.put(
+    "/v1/collect/categories",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const parsed = z.object({ ids: z.array(z.string()).max(40) }).safeParse(request.body ?? {});
+      if (!parsed.success) {
+        return reply.code(400).send({ error: "Liste de catégories invalide" });
+      }
+      const ids = sanitizeCollectCategoryIds(parsed.data.ids);
+      await pool.query(
+        `UPDATE organizations
+         SET collect_category_ids = $2::text[], updated_at = now()
+         WHERE id = $1`,
+        [request.user!.organizationId, ids],
+      );
+      return { ids };
+    },
+  );
+
   app.get(
     "/v1/collect/activity-data",
     { preHandler: [app.requireOrgMember] },

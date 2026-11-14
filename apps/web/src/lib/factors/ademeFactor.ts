@@ -83,6 +83,23 @@ export type StoredFactor = {
   replacementReason: string | null;
 };
 
+export function tunisiaGridFactor(): AdemeFactorRef {
+  return {
+    id: 'tn-grid-electricity',
+    name: 'Électricité location-based TN',
+    value: 0.53,
+    unit: 'kgCO2e/kWh',
+    sourceKey: 'internal',
+    sourceName: 'Newcarboscan Core Pack TN',
+    datasetVersion: 'core-tn-2027.1',
+    countryCode: 'TN',
+    region: null,
+    factorYear: null,
+    stableFactorId: 'electricity_kwh',
+    replacementReason: null,
+  };
+}
+
 export function selectionToFactor(factor: {
   id: string;
   factor_name: string;

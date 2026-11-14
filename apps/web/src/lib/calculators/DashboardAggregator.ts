@@ -21,6 +21,8 @@ export interface DashboardAggregatedData {
     /** Détails ligne par ligne pour la traçabilité (quantité × FE = émissions) */
     detailedBreakdown: EmissionLineDetail[];
     missingFactors: MissingEmissionFactor[];
+    frozen?: boolean;
+    frozenAt?: string | null;
   };
   products: Array<{
     productId: string;
@@ -191,6 +193,8 @@ export class DashboardAggregator {
         scope3: bilanCarbone.scope3,
         breakdown: bilanCarbone.breakdown,
         detailedBreakdown: bilanCarbone.detailedBreakdown || [],
+        frozen: bilanCarbone.frozen,
+        frozenAt: bilanCarbone.frozenAt ?? null,
       },
       products,
       dataQuality: {

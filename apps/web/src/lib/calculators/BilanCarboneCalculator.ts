@@ -161,6 +161,15 @@ export class BilanCarboneCalculator {
     }
     
     const activities = await ActivityDataService.list(filters);
+    const siteCountryById = new Map<string, string>();
+    try {
+      const listed = await api.listSites();
+      for (const site of listed.items || []) {
+        if (site.id) siteCountryById.set(String(site.id), String(site.country || ''));
+      }
+    } catch (error) {
+      logger.debug('Pays des sites indisponible pour le calcul électricité', error);
+    }
 
     // Si activity_data est vide et pas de filtre site, essayer le fallback legacy
     if (activities.length === 0 && !siteId) {
@@ -219,7 +228,11 @@ export class BilanCarboneCalculator {
           emissionFactorSource = 'Facteur lié';
           hasFactor = true;
         } else {
-          const result = await this.calculateWithFactorHierarchyAndCheck(activity, organizationId);
+          const result = await this.calculateWithFactorHierarchyAndCheck(
+            activity,
+            organizationId,
+            activity.site_id ? siteCountryById.get(String(activity.site_id)) || '' : '',
+          );
           emissions = result.emissions;
           hasFactor = result.hasFactor;
           emissionFactor = result.emissionFactor;
@@ -947,7 +960,8 @@ export class BilanCarboneCalculator {
    */
   private static async calculateWithFactorHierarchyAndCheck(
     activity: any,
-    organizationId: string
+    organizationId: string,
+    siteCountry?: string | null,
   ): Promise<{ 
     emissions: number; 
     hasFactor: boolean;
@@ -989,6 +1003,7 @@ export class BilanCarboneCalculator {
       quantity: activity.quantity,
       unit: activity.unit,
       notes: activity.notes,
+      siteCountry,
     });
     if (recorded.kind === 'calculated') {
       return {
@@ -1262,7 +1277,7 @@ export class BilanCarboneCalculator {
       gaz_naturel: 2.04,
       fossil_gas: 2.04,
       natural_gas: 2.04,
-      // L'électricité tunisienne n'a pas de défaut : 0,53 kgCO2e/kWh seulement après confirmation.
+      // L'électricité tunisienne est appliquée plus haut, à 0,53 kgCO2e/kWh, selon le pays du site.
       electricity_renewable: 0.02, // Électricité renouvelable
       // Biomasse (kgCO2e/kg)
       biomass_wood: 0.040, // Bois biomasse

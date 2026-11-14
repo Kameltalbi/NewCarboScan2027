@@ -23,3 +23,14 @@ WHERE c.factor_id = f.id
 DELETE FROM factor_value_corrections
 WHERE reason = 'correction facteur erroné'
   AND new_value = 0.53;
+
+DELETE FROM bilan_electricity_notices
+WHERE marker = 'Facteur électricité corrigé depuis la validation'
+  AND factor_correct = 0.53;
+
+DROP TABLE IF EXISTS bilan_electricity_notices;
+
+ALTER TABLE activity_data DROP COLUMN IF EXISTS factor_correction_country_basis;
+ALTER TABLE bilans_carbone DROP COLUMN IF EXISTS supersedes_bilan_id;
+ALTER TABLE emission_factors DROP COLUMN IF EXISTS official_source;
+ALTER TABLE emission_factors DROP COLUMN IF EXISTS official_year;

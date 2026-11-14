@@ -23,7 +23,9 @@ import { api, type FactorCatalogSearchItem } from "@/integrations/api/client";
 import { FACTOR_SOURCES } from '@/lib/factors/ademeFactor';
 import {
   classifyFactor,
+  isTunisiaCountry,
   searchRequests,
+  UNCONFIRMED_ELECTRICITY_KEYS,
   type CatalogFactor,
   type ClassifiedFactor,
 } from '@/lib/factors/factorSelection';
@@ -158,6 +160,7 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
   const [pendingFactor, setPendingFactor] = useState<BaseEmissionFactor | null>(null);
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualFactor, setManualFactor] = useState<string>('');
+  const [manualSource, setManualSource] = useState('');
   const [sourceNotice, setSourceNotice] = useState<string | null>(null);
   const [widen, setWiden] = useState(false);
   const [countryInput, setCountryInput] = useState(siteCountry || '');
@@ -241,11 +244,17 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
     setPendingFactor(factor);
   }, []);
 
+  const electricityKey = (subcategorySlug || '').split(':').pop() || '';
+  const tunisiaElectricity = UNCONFIRMED_ELECTRICITY_KEYS.has(electricityKey) && isTunisiaCountry(siteCountry);
+  const otherCountryElectricity = UNCONFIRMED_ELECTRICITY_KEYS.has(electricityKey) && Boolean((siteCountry || '').trim()) && !tunisiaElectricity;
+  const siteCountryMissing = UNCONFIRMED_ELECTRICITY_KEYS.has(electricityKey) && !(siteCountry || '').trim();
+
   const confirmFactor = useCallback(() => {
+    if (siteCountryMissing) return;
     if (!pendingFactor || pendingFactor.role === 'incompatible' || pendingFactor.role === 'upstream') return;
     setSelectedFactor(pendingFactor);
     onChange(pendingFactor.slug, pendingFactor);
-  }, [onChange, pendingFactor]);
+  }, [onChange, pendingFactor, siteCountryMissing]);
 
   // Effacer la sélection
   const handleClear = useCallback((e: React.MouseEvent) => {
@@ -266,15 +275,34 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
   }, [subcategorySlug, visibleFactors.length, loading]);
 
   // Gérer la saisie manuelle
-  const handleManualFactorChange = useCallback((value: string) => {
+  const handleManualFactorChange = useCallback((value: string, source = manualSource) => {
     setManualFactor(value);
     const numValue = parseFloat(value);
-    if (!isNaN(numValue) && numValue > 0 && onManualFactorChange) {
-      onManualFactorChange(numValue);
-    } else if (onManualFactorChange) {
-      onManualFactorChange(null);
+    if (!isNaN(numValue) && numValue > 0) {
+      onManualFactorChange?.(numValue);
+      onChange(`manual-${numValue}`, {
+        id: `manual-${numValue}`,
+        slug: `manual-${numValue}`,
+        factor_name: 'Facteur saisi',
+        emission_factor: numValue,
+        unit: unit ? `kgCO2e/${unit}` : 'kgCO2e/unité',
+        subcategory: subcategorySlug || '',
+        sourceLabel: source.trim() || 'Facteur saisi',
+        sourceKey: 'manual',
+        sourceName: source.trim() || null,
+        datasetVersion: null,
+        countryCode: null,
+        region: null,
+        factorYear: null,
+        stableFactorId: null,
+        unitDenominator: unit || '',
+        role: 'match',
+        reason: null,
+      });
+      return;
     }
-  }, [onManualFactorChange]);
+    onManualFactorChange?.(null);
+  }, [manualSource, onChange, onManualFactorChange, subcategorySlug, unit]);
 
   // Synchroniser la valeur manuelle externe
   useEffect(() => {
@@ -283,6 +311,23 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
       setShowManualInput(true);
     }
   }, [manualFactorValue]);
+
+  if (tunisiaElectricity && !showManualInput) {
+    return (
+      <div className="space-y-2">
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertDescription className="text-xs">
+            Électricité Tunisie : 0,53 kg CO₂e/kWh, proposé comme facteur provisoire. La source officielle, l’année et le périmètre ne sont pas documentés.
+          </AlertDescription>
+        </Alert>
+        <Button type="button" variant="outline" size="sm" onClick={() => setShowManualInput(true)}>
+          <Pencil className="mr-1 h-3 w-3" />
+          Saisir un autre facteur
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
@@ -317,7 +362,7 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
       <div className="flex items-center justify-between">
         <Label className="text-sm font-medium flex items-center gap-2">
           <Leaf className="h-4 w-4 text-green-600" />
-          Facteur d'émission
+          Facteur
           <Badge variant="outline" className="text-[10px] font-normal">
             À confirmer
           </Badge>
@@ -416,10 +461,19 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
         </Button>
       )}
 
+      {siteCountryMissing && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription className="text-xs">
+            Le pays du site est obligatoire. Sans pays, la ligne d'électricité reste incomplète. Le pays de l'organisation n'est pas utilisé.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {pendingFactor && pendingFactor.role !== 'upstream' && (
-        <Button type="button" size="sm" disabled={disabled} onClick={confirmFactor}>
+        <Button type="button" size="sm" disabled={disabled || siteCountryMissing} onClick={confirmFactor}>
           <Check className="mr-1 h-3 w-3" />
-          Confirmer ce facteur
+          {otherCountryElectricity ? 'Utiliser ce facteur ADEME' : 'Confirmer ce facteur'}
         </Button>
       )}
 
@@ -458,7 +512,7 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
               onClick={() => setShowManualInput(true)}
             >
               <Pencil className="h-3 w-3 mr-1" />
-              Saisir un FE manuellement
+              Saisir un facteur
             </Button>
           </AlertDescription>
         </Alert>
@@ -470,7 +524,7 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
           <div className="flex items-center justify-between">
             <Label className="text-xs font-medium flex items-center gap-1">
               <Pencil className="h-3 w-3" />
-              Facteur d'émission manuel
+              Facteur saisi
             </Label>
             {showManualInput && hasAvailableFE && (
               <Button
@@ -499,12 +553,18 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
               className="h-8 text-sm"
             />
             <span className="text-xs text-muted-foreground whitespace-nowrap">
-              kgCO₂e / unité
+              kgCO₂e / {unit || "unité"}
             </span>
           </div>
-          <p className="text-[10px] text-muted-foreground">
-            Consultez la Base Carbone ADEME pour trouver le bon facteur.
-          </p>
+          <Input
+            placeholder="Source du facteur"
+            value={manualSource}
+            onChange={(event) => {
+              setManualSource(event.target.value);
+              if (manualFactor) handleManualFactorChange(manualFactor, event.target.value);
+            }}
+            className="h-8 text-sm"
+          />
         </div>
       )}
 
@@ -518,7 +578,7 @@ export const EmissionFactorSelector: React.FC<EmissionFactorSelectorProps> = ({
           onClick={() => setShowManualInput(true)}
         >
           <Pencil className="h-3 w-3 mr-1" />
-          Ou saisir un FE manuellement
+          Ou saisir un facteur
         </Button>
       )}
     </div>

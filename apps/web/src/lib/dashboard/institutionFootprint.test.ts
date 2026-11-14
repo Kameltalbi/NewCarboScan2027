@@ -62,7 +62,7 @@ describe("portefeuille financier — agrégat des moteurs", () => {
     expect(summary.currency).toBe("TND");
     expect(summary.mixedCurrencies).toBe(false);
     expect(summary.exposure).toBe(325_300_000);
-    expect(summary.scope12Tco2e).toBeCloseTo(129_138, 0);
+    expect(summary.scope12Tco2e).toBeCloseTo(129_250, 0);
     expect(summary.scope3Tco2e).toBeCloseTo(46_295, 0);
     expect(summary.scope12Score).toBeCloseTo(2.63, 2);
     expect(summary.scope3Score).toBeCloseTo(3.02, 2);

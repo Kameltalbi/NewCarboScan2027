@@ -20,6 +20,11 @@ import {
   type ReportHistoryPoint,
 } from "@/lib/reporting/gesReportDataset";
 import { downloadGesReport, renderGesReport, reportObjectUrl } from "@/lib/reporting/renderGesReport";
+import {
+  clientReportBlockReason,
+  electricityCorrectionNotice,
+  reportUsesUnsourcedTunisiaElectricity,
+} from "@/lib/factors/tunisiaElectricityNotice";
 
 const FORMATS: Array<{ id: ReportFormat; title: string; subtitle: string; detail: string; icon: typeof FileText }> = [
   {
@@ -116,6 +121,28 @@ export const GenerateGesReport: React.FC = () => {
     setError(null);
     advance(2, "Préparation…");
     try {
+      advance(8, "Contrôle du facteur électricité…");
+      const current = await BilanCarboneCalculator.calculate(organizationId, `${year}-01-01`, `${year}-12-31`);
+      const notices = await api.listElectricityNotices().catch(() => ({ items: [] as Array<Record<string, unknown>> }));
+      const notice = notices.items.find((item) => Number(item.year) === year);
+      const noticeText = notice
+        ? electricityCorrectionNotice({
+            factorUsed: Number(notice.factor_used),
+            electricityKwh: Number(notice.electricity_kwh),
+            currentTotalKg: Number(notice.current_total_kg),
+          }).text
+        : null;
+      const blocked = clientReportBlockReason(reportUsesUnsourcedTunisiaElectricity({
+        organizationCountry: organization?.country,
+        scope2Kg: current.scope2,
+        lines: current.detailedBreakdown,
+      }) || Boolean(notice));
+      if (blocked) {
+        setProgress(null);
+        setError(noticeText ? `${blocked} ${noticeText}` : blocked);
+        toast({ title: blocked, description: noticeText || undefined, variant: "destructive" });
+        return;
+      }
       if (selected === "pdf") {
         const file = await api.downloadStandardReport(year, (event) => advance(event.percent, event.label));
         if (file.bytes.byteLength < 8) throw new Error("Le fichier généré est vide.");
@@ -128,7 +155,6 @@ export const GenerateGesReport: React.FC = () => {
         return;
       }
       advance(12, "Calcul du bilan…");
-      const current = await BilanCarboneCalculator.calculate(organizationId, `${year}-01-01`, `${year}-12-31`);
       const site = sites.find((item) => item.id === perimeter);
       const bilan = applySite(current, perimeter === "all" ? null : perimeter);
       const siteId = perimeter === "all" ? null : perimeter;
@@ -159,6 +185,7 @@ export const GenerateGesReport: React.FC = () => {
         bilan,
         history,
         financedLines,
+        electricityNotice: noticeText,
       });
       advance(88, "Mise en page du rapport…");
       const file = await renderGesReport(dataset, selected);

@@ -5,6 +5,7 @@
  */
 
 import { parseStoredFactor } from '@/lib/factors/ademeFactor';
+import { electricityQuantityToKwh, TN_ELECTRICITY_KG_PER_KWH } from '@/lib/factors/tunisiaElectricityNotice';
 
 export type ActivityFamily = 'electricity' | 'fuel' | 'food' | 'transport' | 'purchase' | 'other';
 
@@ -128,7 +129,7 @@ export function searchRequests(input: {
 
   if (family === 'electricity') {
     const code = countryCode(input.siteCountry);
-    if (!code) {
+    if (!(input.siteCountry || '').trim()) {
       return {
         requests: [],
         gap: 'Indiquez le pays du site qui consomme l’électricité. Le pays du siège n’est pas utilisé.',
@@ -136,16 +137,13 @@ export function searchRequests(input: {
     }
     if (code === 'TN') {
       return {
-        requests: [{ q: 'électricité', source: 'internal', role: 'match' }],
-        gap: 'Le pack interne documente l’électricité location-based Tunisie, en kWh. S’il ne correspond pas, élargir la recherche.',
+        requests: [],
+        gap: null,
       };
     }
-    if (code === 'FR') return { requests: [{ q: 'électricité', source: 'ademe', role: 'match' }], gap: null };
-    if (code === 'GB') return { requests: [{ q: 'electricity', source: 'uk_gov_ghg', role: 'match' }], gap: null };
-    if (code === 'US') return { requests: [{ q: 'electricity', source: 'epa_ghg_emission_factors_hub', role: 'match' }], gap: null };
     return {
-      requests: [{ q: 'électricité', source: 'ipcc_efdb', role: 'replacement' }],
-      gap: 'Pas de facteur national identifié pour ce pays dans les bases chargées. Le GIEC est un ordre de grandeur, pas le mix du site.',
+      requests: [{ q: 'électricité', source: 'ademe', role: 'match' }],
+      gap: 'Pour ce pays, la base ADEME est utilisée. Vous pouvez aussi saisir votre facteur.',
     };
   }
 
@@ -319,6 +317,7 @@ export function resolveRecordedFactor(input: {
   quantity?: number | string | null;
   unit?: string | null;
   notes?: string | null;
+  siteCountry?: string | null;
 }):
   | { kind: 'none' }
   | { kind: 'incomplete'; reason: string }
@@ -326,8 +325,28 @@ export function resolveRecordedFactor(input: {
   const stored = parseStoredFactor(input.notes);
   const key = subcategoryKey(input.subcategory);
   if (!stored) {
-    if (UNCONFIRMED_FOOD_KEYS.has(key) || UNCONFIRMED_ELECTRICITY_KEYS.has(key)) {
+    if ((input.notes || "").includes("A_COMPLETER:")) {
+      return { kind: "incomplete", reason: "Ligne à compléter" };
+    }
+    if (UNCONFIRMED_FOOD_KEYS.has(key)) {
       return { kind: 'incomplete', reason: 'Facteur non confirmé' };
+    }
+    if (UNCONFIRMED_ELECTRICITY_KEYS.has(key)) {
+      if (isTunisiaCountry(input.siteCountry)) {
+        const kwh = electricityQuantityToKwh(Number(input.quantity) || 0, input.unit || '');
+        if (kwh == null) return { kind: 'incomplete', reason: 'Unité d’électricité non convertie en kWh' };
+        return {
+          kind: 'calculated',
+          kg: kwh * TN_ELECTRICITY_KG_PER_KWH,
+          value: TN_ELECTRICITY_KG_PER_KWH,
+          unit: 'kgCO2e/kWh',
+          sourceName: 'Newcarboscan Core Pack TN',
+        };
+      }
+      if ((input.siteCountry || '').trim()) {
+        return { kind: 'incomplete', reason: 'Base ADEME à retenir, ou saisir le facteur' };
+      }
+      return { kind: 'incomplete', reason: 'Pays du site manquant' };
     }
     return { kind: 'none' };
   }
@@ -360,10 +379,11 @@ export function tunisiaElectricityCorrection(input: {
   subcategory?: string | null;
   unit?: string | null;
   siteCountry?: string | null;
+  siteCountryCode?: string | null;
   organizationCountry?: string | null;
   notes?: string | null;
   catalogValue?: number | null;
-}): { correct: false; reason: string } | { correct: true; previousValue: number } {
+}): { correct: false; reason: string } | { correct: true; previousValue: number; countryBasis: 'site' | 'organisation' } {
   const key = subcategoryKey(input.subcategory);
   if (!UNCONFIRMED_ELECTRICITY_KEYS.has(key)) {
     return { correct: false, reason: 'Pas une ligne d’électricité.' };
@@ -375,16 +395,20 @@ export function tunisiaElectricityCorrection(input: {
     return { correct: false, reason: 'Facteur déjà copié sur la ligne.' };
   }
   const site = (input.siteCountry || '').trim();
+  const siteCode = (input.siteCountryCode ?? '').trim();
   const org = (input.organizationCountry || '').trim();
-  const siteIsTunisia = site ? isTunisiaCountry(site) : false;
-  const siteIsOther = Boolean(site) && !siteIsTunisia;
+  const textIsTunisia = site ? isTunisiaCountry(site) : false;
+  const codeIsTunisia = siteCode ? isTunisiaCountry(siteCode) : false;
+  const siteIsOther = (Boolean(site) && !textIsTunisia) || (Boolean(siteCode) && !codeIsTunisia);
   if (siteIsOther) return { correct: false, reason: 'Site hors Tunisie.' };
-  if (!siteIsTunisia && !isTunisiaCountry(org)) {
+  // Un code pays vide, même si le texte dit « Tunisie », est le repli de migration.
+  const siteKnown = codeIsTunisia || (textIsTunisia && input.siteCountryCode === undefined);
+  if (!siteKnown && !isTunisiaCountry(org)) {
     return { correct: false, reason: 'Pays du site et de l’organisation non tunisiens.' };
   }
   const linked = input.catalogValue;
   const previousValue = linked != null && Number.isFinite(linked) ? linked : 0.56;
-  return { correct: true, previousValue };
+  return { correct: true, previousValue, countryBasis: siteKnown ? 'site' : 'organisation' };
 }
 
 export const UNCONFIRMED_FOOD_KEYS = new Set([

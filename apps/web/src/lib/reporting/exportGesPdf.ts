@@ -129,6 +129,7 @@ function sectionLines(dataset: GesReportDataset, title: string): string[] {
     if (dataset.financed) {
       lines.push(`Émissions financées, présentées à part : Scope 1+2 ${formatT(dataset.financed.scope12T)}, Scope 3 ${formatT(dataset.financed.scope3T)}.`);
     }
+    for (const notice of dataset.notices) lines.push(notice);
     return lines;
   }
   if (title === "Périmètre et méthodologie") {

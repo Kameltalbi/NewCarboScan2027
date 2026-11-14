@@ -45,6 +45,85 @@ export async function registerBilanRoutes(app: FastifyInstance) {
   );
 
   app.get(
+    "/v1/bilans/electricity-notices",
+    { preHandler: [app.requireOrgMember] },
+    async (request) => {
+      const { rows } = await pool.query(
+        `SELECT n.bilan_id, n.factor_used, n.factor_correct, n.electricity_kwh,
+                n.current_total_kg, n.recalculated_total_kg, n.delta_kg, n.delta_pct, n.marker,
+                b.name, b.year, b.status
+         FROM bilan_electricity_notices n
+         JOIN bilans_carbone b ON b.id = n.bilan_id AND b.organization_id = n.organization_id
+         WHERE n.organization_id = $1
+         ORDER BY b.year`,
+        [request.user!.organizationId],
+      );
+      return { items: rows };
+    },
+  );
+
+  app.post(
+    "/v1/bilans/:id/recalculate-electricity",
+    { preHandler: [app.requireOrgMember] },
+    async (request, reply) => {
+      const params = orgIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.code(400).send({ error: "Invalid id" });
+      const orgId = request.user!.organizationId!;
+      const existing = await pool.query(
+        `SELECT id FROM bilans_carbone
+         WHERE supersedes_bilan_id = $1 AND organization_id = $2
+         ORDER BY created_at DESC
+         LIMIT 1`,
+        [params.data.id, orgId],
+      );
+      if (existing.rows[0]) {
+        return { bilan: existing.rows[0], originalId: params.data.id, created: false };
+      }
+      const notice = await pool.query(
+        `SELECT n.delta_kg, n.recalculated_total_kg, b.scope1_kgco2e, b.scope2_kgco2e, b.scope3_kgco2e,
+                b.scope1_emission, b.name, b.year
+         FROM bilan_electricity_notices n
+         JOIN bilans_carbone b ON b.id = n.bilan_id
+         WHERE n.bilan_id = $1 AND n.organization_id = $2`,
+        [params.data.id, orgId],
+      );
+      if (!notice.rows[0]) {
+        return reply.code(404).send({ error: "Aucun marqueur de facteur électricité sur ce bilan." });
+      }
+      const row = notice.rows[0];
+      const delta = Number(row.delta_kg);
+      const nextTotal = Number(row.recalculated_total_kg);
+      const scope2 = Number(row.scope2_kgco2e) + delta;
+      const inserted = await pool.query(
+        `INSERT INTO bilans_carbone
+           (organization_id, user_id, name, year, status,
+            total_emission, scope1_emission, scope2_emission, scope3_emission,
+            total_kgco2e, scope1_kgco2e, scope2_kgco2e, scope3_kgco2e,
+            date_bilan, supersedes_bilan_id, analyse_commentaire)
+         VALUES ($1,$2,$3,$4,'draft',$5,$6,$7,$8,$9,$10,$11,$12,CURRENT_DATE,$13,$14)
+         RETURNING *`,
+        [
+          orgId,
+          request.user!.id,
+          `${row.name} — facteur 0,53`,
+          row.year,
+          nextTotal / 1000,
+          row.scope1_emission,
+          scope2 / 1000,
+          Number(row.scope3_kgco2e) / 1000,
+          nextTotal,
+          row.scope1_kgco2e,
+          scope2,
+          row.scope3_kgco2e,
+          params.data.id,
+          "Recalcul avec le facteur électricité 0,53 kgCO2e/kWh. Le bilan validé d'origine n'est pas modifié.",
+        ],
+      );
+      return { bilan: inserted.rows[0], originalId: params.data.id, created: true };
+    },
+  );
+
+  app.get(
     "/v1/bilans/:id",
     { preHandler: [app.requireOrgMember] },
     async (request, reply) => {

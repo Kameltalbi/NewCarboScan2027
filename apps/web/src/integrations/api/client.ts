@@ -1248,6 +1248,15 @@ export const api = {
       body: JSON.stringify({ items }),
     }),
 
+  getCollectCategories: () =>
+    request<{ ids: string[] }>("/v1/collect/categories"),
+
+  saveCollectCategories: (ids: string[]) =>
+    request<{ ids: string[] }>("/v1/collect/categories", {
+      method: "PUT",
+      body: JSON.stringify({ ids }),
+    }),
+
   listActivityData: (filters: Record<string, string | undefined> = {}) => {
     const q = new URLSearchParams();
     if (filters.siteId) q.set("siteId", filters.siteId);
@@ -1285,6 +1294,15 @@ export const api = {
 
   listBilans: () =>
     request<{ items: Array<Record<string, unknown>> }>("/v1/bilans"),
+
+  listElectricityNotices: () =>
+    request<{ items: Array<Record<string, unknown>> }>("/v1/bilans/electricity-notices"),
+
+  recalculateElectricityBilan: (id: string) =>
+    request<{ bilan: Record<string, unknown>; originalId: string; created: boolean }>(
+      `/v1/bilans/${id}/recalculate-electricity`,
+      { method: "POST" },
+    ),
 
   getBilan: (id: string) =>
     request<{ bilan: Record<string, unknown> }>(`/v1/bilans/${id}`),

@@ -18,11 +18,13 @@ interface QualityIssue {
 
 interface CollectQualityCardProps {
   issues: QualityIssue[];
+  totalCount?: number;
   totalIncomplete: number;
 }
 
 export const CollectQualityCard: React.FC<CollectQualityCardProps> = ({
   issues,
+  totalCount = 0,
   totalIncomplete,
 }) => {
   const navigate = useNavigate();
@@ -65,6 +67,8 @@ export const CollectQualityCard: React.FC<CollectQualityCardProps> = ({
               ))}
             </div>
           </>
+        ) : totalCount === 0 ? (
+          <p className="text-sm font-medium">Aucune donnée à contrôler</p>
         ) : (
           <div className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
             <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />

@@ -23,12 +23,13 @@ import { Save, Loader2, Zap, Flame, Snowflake, MapPin, Info } from 'lucide-react
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { EmissionFactorSelector } from '@/components/scope3/EmissionFactorSelector';
-import { ademeFactorNote, emissionFactorSourceLabel, selectionToFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
+import { ademeFactorNote, emissionFactorSourceLabel, selectionToFactor, tunisiaGridFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
+import { isTunisiaCountry, UNCONFIRMED_ELECTRICITY_KEYS } from '@/lib/factors/factorSelection';
 import { SourceUncertaintyFields } from './SourceUncertaintyFields';
 import { parseOptionalUncertainty, type SourceType } from '@/lib/activity-data/uncertaintySummary';
 
 // Catégories Scope 2
-const SCOPE2_CATEGORIES = [
+export const SCOPE2_CATEGORIES = [
   {
     id: 'electricity',
     label: 'Électricité',
@@ -77,6 +78,19 @@ export const Scope2DataEntry: React.FC<Scope2DataEntryProps> = ({ onSuccess }) =
   const [selectedSite, setSelectedSite] = useState<string>('all');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedAdemeFactor, setSelectedAdemeFactor] = useState<AdemeFactorRef | null>(null);
+
+  useEffect(() => {
+    const key = (selectedSubcategory || '').split(':').pop() || '';
+    const country = sites.find((site) => site.id === selectedSite)?.country || '';
+    if (!UNCONFIRMED_ELECTRICITY_KEYS.has(key)) return;
+    if (isTunisiaCountry(country)) {
+      setSelectedAdemeFactor((current) =>
+        current && current.id !== 'tn-grid-electricity' ? current : tunisiaGridFactor(),
+      );
+      return;
+    }
+    setSelectedAdemeFactor((current) => (current?.id === 'tn-grid-electricity' ? null : current));
+  }, [selectedSubcategory, selectedSite, sites]);
 
   const [formData, setFormData] = useState({
     quantity: '',

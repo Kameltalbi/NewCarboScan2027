@@ -61,7 +61,7 @@ const sidebarGroups: SidebarGroupDef[] = [
       {
         id: 'data-collection',
         labelKey: 'sidebarNav.items.collect',
-        path: '/app/collecte',
+        path: '/app/collecte/nouvelle',
         icon: Database,
       },
       {
@@ -191,6 +191,9 @@ export const SimplifiedSidebar: React.FC<SimplifiedSidebarProps> = React.memo(({
         location.pathname.startsWith('/app/scenarios') ||
         location.pathname.startsWith('/app/decarbotech')
       );
+    }
+    if (path.startsWith('/app/collecte')) {
+      return location.pathname.startsWith('/app/collecte');
     }
     return location.pathname.startsWith(path);
   };

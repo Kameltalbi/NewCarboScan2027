@@ -35,6 +35,22 @@ export async function buildStandardReport(
   };
   report(8, "Lecture de l'inventaire publié…");
   const context = await loadRunContext(client, orgId, year, runId);
+  const official = await client.query(
+    `SELECT official_source, official_year
+     FROM emission_factors
+     WHERE stable_factor_id = 'electricity_kwh'
+     LIMIT 1`,
+  );
+  const usesTunisiaGrid = context.lines.some((line) => {
+    const unit = line.activityUnit.toLowerCase();
+    const factor = Number(line.factorValue);
+    return (unit === "kwh" || unit === "mwh" || unit === "gwh") && (factor === 0.53 || factor === 0.523 || factor === 0.56);
+  });
+  const source = official.rows[0]?.official_source;
+  const sourceYear = official.rows[0]?.official_year;
+  if (usesTunisiaGrid && (!source || sourceYear == null)) {
+    throw new Error("Source du facteur électricité Tunisie à renseigner");
+  }
   report(14, "Préparation du dossier…");
   const data = reportDataFromRun(context);
   const enriched = await enrichReport(data, undefined, {
@@ -146,6 +162,22 @@ async function loadRunContext(
   const row = org.rows[0];
   const priorTotal = prior.rows[0]?.total == null ? null : String(prior.rows[0].total);
   const hasPrior = priorTotal != null && priorTotal !== "0";
+  const notice = await client.query(
+    `SELECT n.factor_used, n.delta_kg, n.delta_pct
+     FROM bilan_electricity_notices n
+     JOIN bilans_carbone b ON b.id = n.bilan_id
+     WHERE b.organization_id = $1 AND b.year = $2 AND b.status IN ('validated', 'submitted')
+     LIMIT 1`,
+    [orgId, year],
+  );
+  const electricityNotice = notice.rows[0]
+    ? [
+        "Facteur électricité corrigé depuis la validation.",
+        `Facteur utilisé : ${Number(notice.rows[0].factor_used).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 3 })} kgCO2e/kWh.`,
+        "Facteur correct : 0,53 kgCO2e/kWh.",
+        `Écart estimé : ${(Number(notice.rows[0].delta_kg) / 1000).toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} tCO2e (${Number(notice.rows[0].delta_pct).toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %).`,
+      ].join(" ")
+    : null;
   return {
     companyName: String(row.name),
     country: row.country ? String(row.country) : "",
@@ -156,7 +188,9 @@ async function loadRunContext(
     methodology: methodLabel(String(run.rows[0].method ?? "")),
     methodologyVersion: String(run.rows[0].methodology_version ?? ""),
     consolidation: row.consolidation_method === "financial_control" ? "Contrôle financier" : "Contrôle opérationnel",
-    electricityAccounting: "Location-based",
+    electricityAccounting: electricityNotice
+      ? `Location-based. ${electricityNotice}`
+      : "Location-based",
     employees: row.employees == null ? null : String(row.employees),
     revenue: row.annual_revenue == null ? null : String(row.annual_revenue),
     revenueUnit: row.currency ? String(row.currency) : "unité",

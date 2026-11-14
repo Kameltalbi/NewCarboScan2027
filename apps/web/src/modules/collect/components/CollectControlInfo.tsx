@@ -9,23 +9,28 @@ interface QualityIssue {
 
 interface CollectControlInfoProps {
   issues: QualityIssue[];
+  totalCount?: number;
   totalIncomplete: number;
   status: 'draft' | 'in_progress' | 'validated' | 'locked';
 }
 
 export const CollectControlInfo: React.FC<CollectControlInfoProps> = ({
   issues,
+  totalCount = 0,
   totalIncomplete,
   status,
 }) => {
   const hasIssues = totalIncomplete > 0;
+  const empty = totalCount === 0;
   const isLocked = status === 'locked' || status === 'validated';
 
   return (
     <div className="flex flex-wrap items-center gap-6 text-sm">
       {/* Quality status */}
       <div className="flex items-center gap-3">
-        {hasIssues ? (
+        {empty ? (
+          <span className="font-medium text-foreground">Aucune donnée à contrôler</span>
+        ) : hasIssues ? (
           <>
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10">
               <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />

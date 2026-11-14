@@ -16,6 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Zap, Fuel, Truck, ShoppingCart, Trash2, Package, MapPin, Settings, Snowflake } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { ademeFactorNote, emissionFactorSourceLabel, tunisiaGridFactor } from '@/lib/factors/ademeFactor';
+import { isTunisiaCountry } from '@/lib/factors/factorSelection';
 
 // Fonction utilitaire pour générer les dates basées sur l'année de référence
 const getDefaultDates = (referenceYear: number) => {
@@ -93,6 +95,7 @@ export const SimpleDataEntry: React.FC<SimpleDataEntryProps> = ({ onSuccess }) =
   const [selectedType, setSelectedType] = useState<string>('energy');
   const [selectedSite, setSelectedSite] = useState<string>('all');
   const [selectedEnergyType, setSelectedEnergyType] = useState<string>('electricity_grid');
+  const [customElectricityFactor, setCustomElectricityFactor] = useState('');
   
   // Initialiser les dates avec l'année de référence
   const defaultDates = getDefaultDates(referenceYear);
@@ -164,6 +167,30 @@ export const SimpleDataEntry: React.FC<SimpleDataEntryProps> = ({ onSuccess }) =
       }
 
       const dbActivityType = selectedType;
+      const siteCountry = sites.find((site) => site.id === selectedSite)?.country || '';
+      const electricity = selectedType === 'energy'
+        && ['electricite', 'electricity', 'electricity_grid'].includes(selectedEnergyType);
+      let notes = formData.description || undefined;
+      let emissionFactorSource: string | undefined;
+      if (electricity && isTunisiaCountry(siteCountry)) {
+        const factor = tunisiaGridFactor();
+        notes = ademeFactorNote(factor, formData.description);
+        emissionFactorSource = emissionFactorSourceLabel(factor);
+      } else if (electricity && customElectricityFactor.trim()) {
+        const value = Number(customElectricityFactor);
+        if (Number.isFinite(value) && value > 0) {
+          const factor = {
+            id: `manual-${value}`,
+            name: 'Facteur saisi',
+            value,
+            unit: `kgCO2e/${formData.unit || 'kWh'}`,
+            sourceKey: 'manual',
+            sourceName: 'Facteur saisi',
+          };
+          notes = ademeFactorNote(factor, formData.description);
+          emissionFactorSource = emissionFactorSourceLabel(factor);
+        }
+      }
 
       await ActivityDataService.create({
         organization_id: organizationId,
@@ -175,7 +202,8 @@ export const SimpleDataEntry: React.FC<SimpleDataEntryProps> = ({ onSuccess }) =
         period_start: formData.period_start,
         period_end: formData.period_end,
         data_quality: 'estimated',
-        notes: formData.description || undefined,
+        notes,
+        emission_factor_source: emissionFactorSource,
         site_id: selectedSite === 'all' ? null : selectedSite,
         data_method: /tnd|eur|€|keur/i.test(formData.unit)
           ? 'monetary'
@@ -286,6 +314,28 @@ export const SimpleDataEntry: React.FC<SimpleDataEntryProps> = ({ onSuccess }) =
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          )}
+
+          {selectedType === 'energy' && ['electricite', 'electricity', 'electricity_grid'].includes(selectedEnergyType) && (
+            <div className="rounded-lg border bg-muted/40 px-3 py-2 text-sm">
+              {isTunisiaCountry(sites.find((site) => site.id === selectedSite)?.country) ? (
+                <p>Électricité Tunisie : 0,53 kgCO2e/kWh. Ce facteur est appliqué automatiquement.</p>
+              ) : sites.find((site) => site.id === selectedSite)?.country ? (
+                <div className="space-y-2">
+                  <p>Pour ce pays, la base ADEME est utilisée dans la saisie détaillée. Vous pouvez saisir votre facteur.</p>
+                  <Input
+                    type="number"
+                    step="any"
+                    min="0"
+                    placeholder="Votre facteur, en kgCO2e/kWh"
+                    value={customElectricityFactor}
+                    onChange={(event) => setCustomElectricityFactor(event.target.value)}
+                  />
+                </div>
+              ) : (
+                <p>Choisissez un site avec un pays. Sans pays, l’électricité n’est pas comptée.</p>
+              )}
             </div>
           )}
 

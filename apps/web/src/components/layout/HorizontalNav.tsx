@@ -54,6 +54,8 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = React.memo(({ items, 
                 return (
                   <button
                     key={item.path}
+                    type="button"
+                    aria-current={active ? "page" : undefined}
                     onClick={() => {
                       navigate(basePath + item.path);
                       setMobileOpen(false);
@@ -83,6 +85,8 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = React.memo(({ items, 
             return (
               <button
                 key={item.path}
+                type="button"
+                aria-current={active ? "page" : undefined}
                 onClick={() => navigate(basePath + item.path)}
                 className={cn(
                   "flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap",

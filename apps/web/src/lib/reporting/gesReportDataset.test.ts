@@ -121,7 +121,7 @@ describe("rapport GES — institution financière", () => {
     const financed = dataset.financed!;
     expect(financed.exposure).toBe(325_300_000);
     expect(financed.currency).toBe("TND");
-    expect(financed.scope12T).toBeCloseTo(129_138, 0);
+    expect(financed.scope12T).toBeCloseTo(129_250, 0);
     expect(financed.scope3T).toBeCloseTo(46_295, 0);
     expect(financed.scope12Score).toBeCloseTo(2.63, 2);
     expect(financed.scope3Score).toBeCloseTo(3.02, 2);
@@ -190,7 +190,7 @@ describe("rapport GES — institution financière", () => {
     );
     expect(opaque.operational.missingData.join(" ")).toMatch(/catégorie 15/);
     expect(opaque.operational.posts).toEqual([]);
-    expect(opaque.financed?.scope12T).toBeCloseTo(129_138, 0);
+    expect(opaque.financed?.scope12T).toBeCloseTo(129_250, 0);
 
     const xlsx = await renderGesExcel(opaque);
     expect(await cell(xlsx, "01_Synthese", "Empreinte opérationnelle")).toBeNull();

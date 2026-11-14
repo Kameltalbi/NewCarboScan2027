@@ -33,7 +33,7 @@ import { EmissionFactorSelector } from '@/components/scope3/EmissionFactorSelect
 import { ademeFactorNote, emissionFactorSourceLabel, selectionToFactor, type AdemeFactorRef } from '@/lib/factors/ademeFactor';
 
 // Catégories Scope 1 - v2 (enrichies avec coke et autres combustibles industriels)
-const SCOPE1_CATEGORIES = [
+export const SCOPE1_CATEGORIES = [
   {
     id: 'fossil_fuels',
     label: 'Combustibles fossiles (fixes)',

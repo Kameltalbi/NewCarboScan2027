@@ -29,6 +29,7 @@ interface ActivityDataRow {
   data_quality: string;
   updated_at?: string;
   site_id?: string | null;
+  notes?: string | null;
 }
 
 interface QualityIssue {
@@ -42,7 +43,7 @@ const fetchActivityData = async (organizationId: string, year: number): Promise<
   const yearEnd = `${year}-12-31`;
   const { data, error } = await supabase
     .from('activity_data')
-    .select('id, category, activity_type, subcategory, period_start, period_end, quantity, unit, data_quality, updated_at, site_id')
+    .select('id, category, activity_type, subcategory, period_start, period_end, quantity, unit, data_quality, updated_at, site_id, notes')
     .eq('organization_id', organizationId)
     .gte('period_start', yearStart)
     .lte('period_start', yearEnd)
@@ -61,6 +62,7 @@ const fetchActivityData = async (organizationId: string, year: number): Promise<
     data_quality: item.data_quality,
     updated_at: item.updated_at,
     site_id: item.site_id,
+    notes: item.notes,
   }));
 };
 
@@ -110,7 +112,7 @@ const calculateStats = (data: ActivityDataRow[]) => {
       const updated = new Date(item.updated_at);
       if (!latestUpdate || updated > latestUpdate) latestUpdate = updated;
     }
-    if (!item.unit || item.quantity === null) incompleteCount++;
+    if (!item.unit || item.quantity === null || (item.notes || "").includes("A_COMPLETER:")) incompleteCount++;
   }
 
   const qualityIssues: QualityIssue[] = [];
@@ -276,9 +278,20 @@ export const CollectHome: React.FC = () => {
       >
         <CollectControlInfo
           issues={stats.qualityIssues}
+          totalCount={totalCount}
           totalIncomplete={stats.totalIncomplete}
           status={stats.status}
         />
+        {totalCount > 0 && (
+          <div className="mt-3 flex flex-wrap gap-3 text-sm">
+            <button type="button" className="underline" onClick={() => navigate("/app/collecte/donnees?statut=compte")}>
+              Lignes comptées
+            </button>
+            <button type="button" className="underline" onClick={() => navigate("/app/collecte/donnees?statut=a-completer")}>
+              Lignes à compléter
+            </button>
+          </div>
+        )}
       </section>
 
       {/* Quick actions – utilise l’espace et rend la page pro */}
