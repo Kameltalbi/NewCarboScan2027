@@ -118,10 +118,15 @@ FROM (
 ) src
 WHERE a.id = src.id;
 
-UPDATE emission_factors
+-- Un facteur déjà cité dans un calcul publié reste immuable.
+-- Les lignes d'activité portent 0,53 dans leur snapshot.
+UPDATE emission_factors f
 SET value = 0.53
-WHERE stable_factor_id = 'electricity_kwh'
-  AND value IS DISTINCT FROM 0.53;
+WHERE f.stable_factor_id = 'electricity_kwh'
+  AND f.value IS DISTINCT FROM 0.53
+  AND NOT EXISTS (
+    SELECT 1 FROM calculation_ledger l WHERE l.factor_id = f.id
+  );
 
 -- Marqueur sur les bilans validés. Les totaux figés ne sont pas réécrits.
 INSERT INTO bilan_electricity_notices (
