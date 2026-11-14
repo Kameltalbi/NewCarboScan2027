@@ -132,13 +132,17 @@ export const NouvelleSaisie: React.FC<{ scope: 1 | 2 | 3 }> = ({ scope }) => {
     queryFn: async () => sanitizeCollectCategoryIds((await api.getCollectCategories()).ids),
   });
   const enabledIds = categoriesQuery.data ?? EMPTY_CATEGORY_IDS;
-  const scopeHasCategory = enabledIds.some((id) => catalog.some((item) => item.id === id));
+  const categoryChoice = scope === 3;
+  const listedIds = categoryChoice ? enabledIds : catalog.map((item) => item.id);
+  const scopeHasCategory = categoryChoice
+    ? enabledIds.some((id) => catalog.some((item) => item.id === id))
+    : catalog.length > 0;
   const selected = catalog.find((item) => item.id === categoryId) ?? null;
   const choice = selected?.choices.find((item) => item.value === choiceValue) ?? selected?.choices[0] ?? null;
-  const suggestions = categorySuggestions(catalog, enabledIds, categoryQuery);
+  const suggestions = categorySuggestions(catalog, listedIds, categoryQuery);
   const recent = recentIds
     .map((id) => catalog.find((item) => item.id === id))
-    .filter((item): item is CollectCategory => Boolean(item && enabledIds.includes(item.id)));
+    .filter((item): item is CollectCategory => Boolean(item && listedIds.includes(item.id)));
   const organizationCountry = organization?.country || "";
   const proposed = !factorTouched && choice && proposeTunisiaElectricity(organizationCountry, choice.subcategory)
     ? tunisiaGridFactor()
@@ -326,11 +330,13 @@ export const NouvelleSaisie: React.FC<{ scope: 1 | 2 | 3 }> = ({ scope }) => {
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-3">
           <Label htmlFor="categorie-activite">Catégorie d’activité</Label>
-          <Button type="button" variant="link" className="h-auto px-0" onClick={() => setPanelOpen(true)}>
-            Gérer mes catégories
-          </Button>
+          {categoryChoice && (
+            <Button type="button" variant="link" className="h-auto px-0" onClick={() => setPanelOpen(true)}>
+              Gérer mes catégories
+            </Button>
+          )}
         </div>
-        {!scopeHasCategory && !categoryQuery.trim() && !selected && !categoriesQuery.isLoading && (
+        {categoryChoice && !scopeHasCategory && !categoryQuery.trim() && !selected && !categoriesQuery.isLoading && (
           <div className="rounded-md border bg-muted/40 p-4">
             <p className="text-sm">Choisissez les catégories à afficher dans votre collecte. Vous pourrez ensuite ajouter une ligne dans l’une d’elles.</p>
             <Button type="button" variant="outline" className="mt-3" onClick={() => setPanelOpen(true)}>
@@ -371,7 +377,7 @@ export const NouvelleSaisie: React.FC<{ scope: 1 | 2 | 3 }> = ({ scope }) => {
                 <span className="shrink-0 text-xs text-muted-foreground">{categorySecondary(item)}</span>
               </button>
             ))}
-            {suggestions.hidden.map((item) => (
+            {categoryChoice && suggestions.hidden.map((item) => (
               <div key={item.id} className="flex items-center justify-between gap-3 border-b px-3 py-2 last:border-b-0">
                 <div className="min-w-0">
                   <div className="text-sm">{item.label}</div>
@@ -390,7 +396,7 @@ export const NouvelleSaisie: React.FC<{ scope: 1 | 2 | 3 }> = ({ scope }) => {
             <span className="ml-2 text-xs text-muted-foreground">{categorySecondary(selected)}</span>
           </p>
         )}
-        {selected && !enabledIds.includes(selected.id) && (
+        {categoryChoice && selected && !enabledIds.includes(selected.id) && (
           <p className="text-xs text-muted-foreground">Cette catégorie est masquée pour les prochaines saisies. La ligne en cours est conservée.</p>
         )}
       </div>
@@ -598,13 +604,15 @@ export const NouvelleSaisie: React.FC<{ scope: 1 | 2 | 3 }> = ({ scope }) => {
         </DialogContent>
       </Dialog>
 
-      <CollectCategoryPanel
-        open={panelOpen}
-        onOpenChange={setPanelOpen}
-        selectedIds={enabledIds}
-        saving={savingCategories}
-        onSave={saveCategorySelection}
-      />
+      {categoryChoice && (
+        <CollectCategoryPanel
+          open={panelOpen}
+          onOpenChange={setPanelOpen}
+          selectedIds={enabledIds}
+          saving={savingCategories}
+          onSave={saveCategorySelection}
+        />
+      )}
     </div>
   );
 };

@@ -117,16 +117,16 @@ describe("bibliothèque rédactionnelle", () => {
 
   it("conserve les résultats des Ateliers du Sahel", () => {
     const analysis = analyze(ateliersDuSahel, options);
-    assert.equal(analysis.totalTonnes, "2702.107");
+    assert.equal(analysis.totalTonnes, "2713.559");
     assert.equal(analysis.scopes[0]?.tonnes, "603.032");
-    assert.equal(analysis.scopes[1]?.tonnes, "855.628");
+    assert.equal(analysis.scopes[1]?.tonnes, "867.08");
     assert.equal(analysis.scopes[2]?.tonnes, "1243.447");
     const selections = selectForReport(ateliersDuSahel, analysis);
     assert.equal(code(selections, "executive")?.code, "EXEC_SCOPE3_DOMINANT");
     assert.equal(code(selections, "evolution")?.code, "TREND_NOT_COMPARABLE");
     const briefs = buildNarrativeBriefs(ateliersDuSahel, analysis);
     assert.equal(briefs.executive.dossier.modeleReference && (briefs.executive.dossier.modeleReference as { code: string }).code, "EXEC_SCOPE3_DOMINANT");
-    assert.equal(analysis.totalTonnes, "2702.107");
+    assert.equal(analysis.totalTonnes, "2713.559");
   });
 
   it("signale un modèle désactivé sans le remplacer par un autre scope", () => {

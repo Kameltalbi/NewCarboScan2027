@@ -35,7 +35,6 @@ import { useOrganizationData } from '@/hooks/useOrganizationData';
 import { useOrganizationSites } from '@/hooks/useOrganizationSites';
 import { useOrganizationYears } from '@/hooks/useOrganizationYears';
 import { api } from '@/integrations/api/client';
-import { electricityCorrectionNotice } from '@/lib/factors/tunisiaElectricityNotice';
 import { DashboardContextBar } from '@/components/dashboard/DashboardContextBar';
 import { LazyDataQualityRadarChart } from '@/components/dashboard/LazyCharts';
 import { PhysicalVsMonetaryCard } from '@/components/dashboard/PhysicalVsMonetaryCard';
@@ -95,17 +94,7 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
   const [showDataQualityPanel, setShowDataQualityPanel] = useState(false);
   const [financedTotal, setFinancedTotal] = useState<number | null>(null);
   const [pastBilanPanel, setPastBilanPanel] = useState<'hidden' | 'empty' | 'list'>('hidden');
-  const [electricityNotices, setElectricityNotices] = useState<Array<Record<string, unknown>>>([]);
-  const [recalculating, setRecalculating] = useState(false);
-  const [electricityNoticeDone, setElectricityNoticeDone] = useState(false);
   const financialInstitution = Boolean(organization?.financed_emissions_enabled);
-
-  useEffect(() => {
-    if (!organizationId) return;
-    api.listElectricityNotices()
-      .then((result) => setElectricityNotices(result.items))
-      .catch(() => setElectricityNotices([]));
-  }, [organizationId]);
 
   const setActiveYear = (year: number) => {
     setHeaderYear(year);
@@ -603,14 +592,6 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
     && (row.unit || '').toLowerCase() === 'kwh',
   );
   const electricityGapKwh = electricityGap.reduce((sum, row) => sum + (Number(row.quantity) || 0), 0);
-  const electricityNotice = electricityNotices.find((item) => Number(item.year) === activeYear);
-  const electricityNoticeText = electricityNotice
-    ? electricityCorrectionNotice({
-        factorUsed: Number(electricityNotice.factor_used),
-        electricityKwh: Number(electricityNotice.electricity_kwh),
-        currentTotalKg: Number(electricityNotice.current_total_kg),
-      }).text
-    : null;
 
   return (
     <div className="space-y-6">
@@ -620,34 +601,6 @@ export const HeroStyleDashboard: React.FC<Props> = ({ selectedYear }) => {
           {electricityGap.length} lignes / {new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(electricityGapKwh)} kWh sans facteur — non comptés dans le total
         </p>
       )}
-      {electricityNoticeText && (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          <p>{electricityNoticeText}</p>
-          <p className="mt-1 text-amber-800">Le bilan validé reste consultable. Le total affiché n'est pas écrasé.</p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-3"
-            disabled={recalculating}
-            onClick={async () => {
-              setRecalculating(true);
-              try {
-                await api.recalculateElectricityBilan(String(electricityNotice?.bilan_id));
-                setElectricityNoticeDone(true);
-              } finally {
-                setRecalculating(false);
-              }
-            }}
-          >
-            {recalculating ? 'Recalcul…' : 'Recalculer avec le facteur corrigé'}
-          </Button>
-          {electricityNoticeDone && (
-            <p className="mt-2">Nouvelle version créée. L'original validé n'a pas été modifié.</p>
-          )}
-        </div>
-      )}
-
       <p className="text-sm text-muted-foreground">
         {data?.bilanCarbone.frozen
           ? `Bilan validé${data.bilanCarbone.frozenAt ? ` le ${new Date(data.bilanCarbone.frozenAt).toLocaleDateString("fr-FR")}` : ""} — résultats figés`

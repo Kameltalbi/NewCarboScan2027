@@ -51,15 +51,6 @@ export function planExecutiveSlides(dataset: GesReportDataset): SlidePlan[] {
     });
   }
 
-  for (const notice of dataset.notices) {
-    slides.push({
-      id: "electricity-factor",
-      kicker: "Facteur d'émission",
-      title: "Facteur électricité corrigé depuis la validation",
-      message: notice,
-    });
-  }
-
   if (!op.determinable) {
     slides.push({
       id: "operational-gap",

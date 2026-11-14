@@ -13,8 +13,6 @@ import {
 import { foldText } from "@/lib/collect/importReview";
 
 const SECTIONS = [
-  { id: "s1", scope: 1 as const, title: "Émissions directes — Scope 1" },
-  { id: "s2", scope: 2 as const, title: "Énergie achetée — Scope 2" },
   { id: "s3", scope: 3 as const, title: "Autres émissions indirectes — Scope 3" },
 ];
 
@@ -44,17 +42,18 @@ export function CollectCategoryPanel({
   saving: boolean;
   onSave: (ids: string[]) => Promise<void>;
 }) {
-  const catalog = useMemo(() => collectCatalog(), []);
-  const [draft, setDraft] = useState<string[]>(selectedIds);
+  const catalog = useMemo(() => collectCatalog().filter((category) => category.scope === 3), []);
+  const scope3Ids = useMemo(() => new Set(catalog.map((category) => category.id)), [catalog]);
+  const [draft, setDraft] = useState<string[]>(selectedIds.filter((id) => scope3Ids.has(id)));
   const [query, setQuery] = useState("");
   const [opened, setOpened] = useState<Record<string, boolean>>({ s1: true, s2: true, s3: true });
 
   useEffect(() => {
     if (!open) return;
-    setDraft(selectedIds);
+    setDraft(selectedIds.filter((id) => scope3Ids.has(id)));
     setQuery("");
     setOpened({ s1: true, s2: true, s3: true });
-  }, [open, selectedIds]);
+  }, [open, selectedIds, scope3Ids]);
 
   useEffect(() => {
     if (query.trim()) setOpened({ s1: true, s2: true, s3: true });
@@ -74,7 +73,7 @@ export function CollectCategoryPanel({
         <SheetHeader className="space-y-3 border-b p-4 pr-12 text-left">
           <SheetTitle>Gérer mes catégories</SheetTitle>
           <SheetDescription>
-            Sélectionnez les catégories à afficher dans votre collecte. Une catégorie non sélectionnée n’est pas automatiquement considérée comme non applicable au bilan.
+            Sélectionnez les catégories du Scope 3 à afficher dans votre collecte. Une catégorie non sélectionnée n’est pas automatiquement considérée comme non applicable au bilan.
           </SheetDescription>
           <Input
             value={query}

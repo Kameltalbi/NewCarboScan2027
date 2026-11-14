@@ -138,7 +138,6 @@ export interface GesReportDataset {
   actions: ReportAction[];
   /** Null quand l'option n'est pas demandée ou qu'il n'y a pas d'institution financière. */
   financed: FinancedReportBlock | null;
-  notices: string[];
 }
 
 export interface FinancedSourceLine {
@@ -161,7 +160,6 @@ export interface BuildGesReportInput {
   history?: ReportHistoryPoint[];
   actions?: ReportAction[];
   financedLines?: FinancedSourceLine[];
-  electricityNotice?: string | null;
 }
 
 const EMPTY_SCOPE = {
@@ -289,7 +287,6 @@ export function buildGesReportDataset(input: BuildGesReportInput): GesReportData
       .sort((a, b) => a.year - b.year),
     actions: input.actions ?? [],
     financed,
-    notices: input.electricityNotice ? [input.electricityNotice] : [],
   };
 }
 

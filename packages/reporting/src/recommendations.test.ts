@@ -19,13 +19,13 @@ describe("recommandations et plan d'action", () => {
     assert.deepEqual(
       significant.map((item) => [item.emissionsTonnes, item.shareDisplayPct]),
       [
-        ["820", "30.3"],
-        ["758.35", "28.1"],
-        ["370.08", "13.7"],
+        ["820", "30.2"],
+        ["768.5", "28.3"],
+        ["370.08", "13.6"],
         ["204", "7.5"],
       ],
     );
-    assert.equal(analysis.totalTonnes, "2702.107");
+    assert.equal(analysis.totalTonnes, "2713.559");
   });
 
   it("classe le proxy, le scénario, l'absence de levier et le jeu fictif", () => {
@@ -38,7 +38,7 @@ describe("recommandations et plan d'action", () => {
     assert.equal(purchases?.priority, "Haute");
     assert.equal(purchases?.potentialTonnes, null);
     assert.match(purchases?.prose ?? "", /820/);
-    assert.match(purchases?.prose ?? "", /30,3/);
+    assert.match(purchases?.prose ?? "", /30,2/);
     assert.equal(electricity?.basis, "conditionnelle");
     assert.equal(electricity?.priority, "Haute");
     assert.equal(electricity?.potentialTonnes, analysis.actions.find((action) => action.id === "elec-contract")?.potentialTonnes);

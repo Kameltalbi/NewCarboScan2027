@@ -162,22 +162,6 @@ async function loadRunContext(
   const row = org.rows[0];
   const priorTotal = prior.rows[0]?.total == null ? null : String(prior.rows[0].total);
   const hasPrior = priorTotal != null && priorTotal !== "0";
-  const notice = await client.query(
-    `SELECT n.factor_used, n.delta_kg, n.delta_pct
-     FROM bilan_electricity_notices n
-     JOIN bilans_carbone b ON b.id = n.bilan_id
-     WHERE b.organization_id = $1 AND b.year = $2 AND b.status IN ('validated', 'submitted')
-     LIMIT 1`,
-    [orgId, year],
-  );
-  const electricityNotice = notice.rows[0]
-    ? [
-        "Facteur électricité corrigé depuis la validation.",
-        `Facteur utilisé : ${Number(notice.rows[0].factor_used).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 3 })} kgCO2e/kWh.`,
-        "Facteur correct : 0,53 kgCO2e/kWh.",
-        `Écart estimé : ${(Number(notice.rows[0].delta_kg) / 1000).toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} tCO2e (${Number(notice.rows[0].delta_pct).toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %).`,
-      ].join(" ")
-    : null;
   return {
     companyName: String(row.name),
     country: row.country ? String(row.country) : "",
@@ -188,9 +172,7 @@ async function loadRunContext(
     methodology: methodLabel(String(run.rows[0].method ?? "")),
     methodologyVersion: String(run.rows[0].methodology_version ?? ""),
     consolidation: row.consolidation_method === "financial_control" ? "Contrôle financier" : "Contrôle opérationnel",
-    electricityAccounting: electricityNotice
-      ? `Location-based. ${electricityNotice}`
-      : "Location-based",
+    electricityAccounting: "Location-based",
     employees: row.employees == null ? null : String(row.employees),
     revenue: row.annual_revenue == null ? null : String(row.annual_revenue),
     revenueUnit: row.currency ? String(row.currency) : "unité",

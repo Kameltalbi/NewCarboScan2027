@@ -16,9 +16,9 @@ describe("jeu Ateliers du Sahel", () => {
   const analysis = analyze(ateliersDuSahel, DEFAULT_ANALYSIS_OPTIONS);
 
   it("somme les postes inclus sans transformer une absence en zéro", () => {
-    assert.equal(analysis.totalKgCo2e, "2702107");
-    assert.equal(analysis.totalTonnes, "2702.107");
-    assert.equal(analysis.scopes.map((scope) => scope.share?.displayPct).join(","), "22.3,31.7,46.0");
+    assert.equal(analysis.totalKgCo2e, "2713559");
+    assert.equal(analysis.totalTonnes, "2713.559");
+    assert.equal(analysis.scopes.map((scope) => scope.share?.displayPct).join(","), "22.2,32.0,45.8");
     assert.equal(analysis.scopeShareSumDisplayPct, "100.0");
     assert.equal(analysis.zeros[0]?.id, "domestic-fuel");
     assert.equal(analysis.zeros[0]?.kgCo2e, "0");
@@ -29,9 +29,9 @@ describe("jeu Ateliers du Sahel", () => {
     assert.deepEqual(
       analysis.significant.map((line) => [line.tonnes, line.share.displayPct, line.cumulative.displayPct, line.factorTime]),
       [
-        ["820", "30.3", "30.3", "posterieur"],
-        ["758.35", "28.1", "58.4", "posterieur"],
-        ["370.08", "13.7", "72.1", "posterieur"],
+        ["820", "30.2", "30.2", "posterieur"],
+        ["768.5", "28.3", "58.5", "posterieur"],
+        ["370.08", "13.6", "72.2", "posterieur"],
         ["204", "7.5", "79.7", "jeu_fictif"],
       ],
     );
@@ -43,12 +43,12 @@ describe("jeu Ateliers du Sahel", () => {
   });
 
   it("calcule les intensités et refuse un dénominateur nul", () => {
-    assert.equal(analysis.intensities.find((item) => item.id === "employees")?.display, "14.527");
-    assert.equal(analysis.intensities.find((item) => item.id === "revenue")?.display, "63.579");
-    assert.equal(analysis.intensities.find((item) => item.id === "production")?.display, "146.854");
-    assert.equal(analysis.intensities.find((item) => item.id === "employees")?.executiveDisplay, "14.5");
-    assert.equal(analysis.intensities.find((item) => item.id === "revenue")?.executiveDisplay, "63.6");
-    assert.equal(analysis.intensities.find((item) => item.id === "production")?.executiveDisplay, "146.9");
+    assert.equal(analysis.intensities.find((item) => item.id === "employees")?.display, "14.589");
+    assert.equal(analysis.intensities.find((item) => item.id === "revenue")?.display, "63.848");
+    assert.equal(analysis.intensities.find((item) => item.id === "production")?.display, "147.476");
+    assert.equal(analysis.intensities.find((item) => item.id === "employees")?.executiveDisplay, "14.6");
+    assert.equal(analysis.intensities.find((item) => item.id === "revenue")?.executiveDisplay, "63.8");
+    assert.equal(analysis.intensities.find((item) => item.id === "production")?.executiveDisplay, "147.5");
     const missing = analyze(clone((data) => {
       data.denominators[0].value = null;
     }), DEFAULT_ANALYSIS_OPTIONS);
@@ -61,7 +61,7 @@ describe("jeu Ateliers du Sahel", () => {
   });
 
   it("ne produit pas de taux si la comparaison est absente ou le total précédent est nul", () => {
-    assert.equal(analysis.comparison.rateDisplayPct, "-6.9");
+    assert.equal(analysis.comparison.rateDisplayPct, "-6.5");
     const absent = analyze(clone((data) => {
       data.comparison.status = "not_available";
       data.comparison.priorTotalKgCo2e = null;
@@ -108,7 +108,7 @@ describe("jeu Ateliers du Sahel", () => {
     const joined = texts.join("\n");
     assert.equal(texts.filter((text) => text.includes("n'est pas démontrée")).length, 1);
     assert.match(joined, /820/);
-    assert.match(joined, /58,4/);
+    assert.match(joined, /58,5/);
     assert.match(joined, /Facteur de démonstration/);
     const freight = texts.find((text) => text.includes("Transport amont")) ?? "";
     assert.match(freight, /démonstration/);

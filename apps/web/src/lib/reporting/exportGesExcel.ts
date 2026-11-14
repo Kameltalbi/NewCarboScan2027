@@ -39,7 +39,6 @@ function addSynthesis(workbook: ExcelJS.Workbook, dataset: GesReportDataset) {
   styleHeader(sheet);
   const rows: Array<[string, number | string | null, string, string]> = [
     ["Organisation", dataset.organizationName, "", ""],
-    ...dataset.notices.map((notice) => ["Facteur électricité", notice, "", "Bilan figé conservé"] as [string, string, string, string]),
     ["Exercice", dataset.year, "", ""],
     ["Périmètre", dataset.perimeterLabel, "", ""],
     [

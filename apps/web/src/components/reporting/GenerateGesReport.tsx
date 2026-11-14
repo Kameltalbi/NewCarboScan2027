@@ -22,7 +22,6 @@ import {
 import { downloadGesReport, renderGesReport, reportObjectUrl } from "@/lib/reporting/renderGesReport";
 import {
   clientReportBlockReason,
-  electricityCorrectionNotice,
   reportUsesUnsourcedTunisiaElectricity,
 } from "@/lib/factors/tunisiaElectricityNotice";
 
@@ -123,24 +122,15 @@ export const GenerateGesReport: React.FC = () => {
     try {
       advance(8, "Contrôle du facteur électricité…");
       const current = await BilanCarboneCalculator.calculate(organizationId, `${year}-01-01`, `${year}-12-31`);
-      const notices = await api.listElectricityNotices().catch(() => ({ items: [] as Array<Record<string, unknown>> }));
-      const notice = notices.items.find((item) => Number(item.year) === year);
-      const noticeText = notice
-        ? electricityCorrectionNotice({
-            factorUsed: Number(notice.factor_used),
-            electricityKwh: Number(notice.electricity_kwh),
-            currentTotalKg: Number(notice.current_total_kg),
-          }).text
-        : null;
       const blocked = clientReportBlockReason(reportUsesUnsourcedTunisiaElectricity({
         organizationCountry: organization?.country,
         scope2Kg: current.scope2,
         lines: current.detailedBreakdown,
-      }) || Boolean(notice));
+      }));
       if (blocked) {
         setProgress(null);
-        setError(noticeText ? `${blocked} ${noticeText}` : blocked);
-        toast({ title: blocked, description: noticeText || undefined, variant: "destructive" });
+        setError(blocked);
+        toast({ title: blocked, variant: "destructive" });
         return;
       }
       if (selected === "pdf") {
@@ -185,7 +175,6 @@ export const GenerateGesReport: React.FC = () => {
         bilan,
         history,
         financedLines,
-        electricityNotice: noticeText,
       });
       advance(88, "Mise en page du rapport…");
       const file = await renderGesReport(dataset, selected);
