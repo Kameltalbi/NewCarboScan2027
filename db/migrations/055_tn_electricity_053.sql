@@ -64,19 +64,16 @@ SET
   factor_correction_previous_notes = a.notes,
   factor_correction_previous_source = a.emission_factor_source,
   factor_correction_previous_value = CASE
-    WHEN f.stable_factor_id = 'electricity_kwh' THEN f.value
+    WHEN src.stable_factor_id = 'electricity_kwh' THEN src.factor_value
     ELSE 0.56
   END,
   factor_correction_new_value = 0.53,
   factor_correction_at = now(),
   factor_correction_reason = 'correction facteur erroné',
-  factor_correction_country_basis = CASE
-    WHEN upper(btrim(COALESCE(s.country_code, ''))) IN ('TN', 'TUN') THEN 'site'
-    ELSE 'pays déduit de l''organisation'
-  END,
+  factor_correction_country_basis = src.country_basis,
   emission_factor_source = 'Newcarboscan Core Pack TN — Électricité location-based TN',
   notes = 'FE_SNAPSHOT:' || json_build_object(
-    'id', COALESCE(f.id::text, 'tn-grid-electricity'),
+    'id', COALESCE(src.factor_row_id, 'tn-grid-electricity'),
     'name', 'Électricité location-based TN',
     'value', 0.53,
     'unit', 'kgCO2e/kWh',
@@ -88,29 +85,38 @@ SET
     'factorYear', NULL,
     'stableFactorId', 'electricity_kwh',
     'replacementReason', NULL,
-    'countryBasis', CASE
-      WHEN upper(btrim(COALESCE(s.country_code, ''))) IN ('TN', 'TUN') THEN 'site'
-      ELSE 'pays déduit de l''organisation'
-    END,
+    'countryBasis', src.country_basis,
     'officialSource', NULL,
     'officialYear', NULL
   )::text || CASE WHEN COALESCE(a.notes, '') = '' THEN '' ELSE E'\n' || a.notes END
-FROM organizations o
-LEFT JOIN collect_sites s ON s.id = a.site_id
-LEFT JOIN emission_factors f ON f.id = a.factor_id
-WHERE o.id = a.organization_id
-  AND lower(CASE WHEN a.subcategory LIKE '%:%' THEN split_part(a.subcategory, ':', 2) ELSE a.subcategory END)
-      IN ('electricite', 'electricity', 'electricity_grid')
-  AND lower(a.unit) = 'kwh'
-  AND COALESCE(a.notes, '') !~ 'FE_SNAPSHOT:|FE_ADEME:'
-  AND a.factor_correction_at IS NULL
-  AND (
-    upper(COALESCE(s.country_code, '')) IN ('TN', 'TUN')
-    OR (
-      COALESCE(s.country_code, '') = ''
-      AND lower(COALESCE(o.country, '')) IN ('tn', 'tun', 'tunisie', 'tunisia')
+FROM (
+  SELECT
+    a2.id,
+    f.stable_factor_id,
+    f.value AS factor_value,
+    f.id::text AS factor_row_id,
+    CASE
+      WHEN upper(btrim(COALESCE(s.country_code, ''))) IN ('TN', 'TUN') THEN 'site'
+      ELSE 'pays déduit de l''organisation'
+    END AS country_basis
+  FROM activity_data a2
+  JOIN organizations o ON o.id = a2.organization_id
+  LEFT JOIN collect_sites s ON s.id = a2.site_id
+  LEFT JOIN emission_factors f ON f.id = a2.factor_id
+  WHERE lower(CASE WHEN a2.subcategory LIKE '%:%' THEN split_part(a2.subcategory, ':', 2) ELSE a2.subcategory END)
+        IN ('electricite', 'electricity', 'electricity_grid')
+    AND lower(a2.unit) = 'kwh'
+    AND COALESCE(a2.notes, '') !~ 'FE_SNAPSHOT:|FE_ADEME:'
+    AND a2.factor_correction_at IS NULL
+    AND (
+      upper(COALESCE(s.country_code, '')) IN ('TN', 'TUN')
+      OR (
+        COALESCE(s.country_code, '') = ''
+        AND lower(COALESCE(o.country, '')) IN ('tn', 'tun', 'tunisie', 'tunisia')
+      )
     )
-  );
+) src
+WHERE a.id = src.id;
 
 UPDATE emission_factors
 SET value = 0.53
